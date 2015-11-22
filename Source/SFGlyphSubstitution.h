@@ -19,17 +19,16 @@
 
 /*
  * NOTE:
- *    This file is part of SFShapingEngine class which handles substitution
- *    aspects of glyphs.
+ *      This file is part of SFTextProcessor class which handles substitution
+ *      aspects of glyphs.
  */
 
 #include <SFConfig.h>
 
 #include "SFData.h"
-#include "SFLocator.h"
-#include "SFShapingEngine.h"
+#include "SFTextProcessor.h"
 
-SF_PRIVATE void _SFApplyGSUBLookup(SFShapingEngineRef engine, SFLocatorRef locator, SFData lookup);
-SF_PRIVATE SFBoolean _SFApplySubst(SFShapingEngineRef engine, SFLocatorRef locator, SFLookupType lookupType, SFData subtable);
+SF_PRIVATE void _SFApplyGSUBLookup(SFTextProcessorRef processor, SFData lookup);
+SF_PRIVATE SFBoolean _SFApplySubst(SFTextProcessorRef processor, SFLookupType lookupType, SFData subtable);
 
 #endif

@@ -24,13 +24,12 @@
 #include <SFTypes.h>
 
 #include "SFCollection.h"
-#include "SFCommon.h"
-#include "SFData.h"
 #include "SFFont.h"
 #include "SFScriptCache.h"
-#include "SFTableCache.h"
 
-/* ShapingEngine is an abstract class. */
+/* NOTE:
+ *      SFShapingEngine is an abstract class.
+ */
 
 struct _SFScriptKnowledge;
 struct _SFShapingKnowledge;
@@ -66,23 +65,12 @@ struct _SFShapingKnowledge {
     SFScriptKnowledgeRef (*_seekScript)(const void *, SFScript);
 };
 
-typedef struct _SFShapingTraits {
-    SFScript script;
-    SFLanguage language;
-    SFDirection direction;
-} SFShapingTraits;
-
 struct _SFShapingEngine {
     SFFontRef _font;
-    SFTableCache _tables;
-    SFData _glyphClassDef;
     SFLanguageDetailRef _langDetail;
-    SFCollectionRef _collection;
-    SFShapingTraits _traits;
-    /* State values. */
-    SFFeature _feature;
-    SFLookupFlag _lookupFlag;
-    SFHeaderKind _headerKind;
+    SFScript _script;
+    SFLanguage _language;
+    SFDirection _direction;
 };
 
 /**
@@ -95,8 +83,7 @@ SF_INTERNAL SFScriptKnowledgeRef SFShapingKnowledgeSeekScript(SFShapingKnowledge
  */
 SF_INTERNAL SFUInteger SFScriptKnowledgeSeekFeature(SFScriptKnowledgeRef scriptKnowledge, SFFeature feature);
 
-SF_INTERNAL void SFShapingEngineInitialize(SFShapingEngineRef shapingEngine, SFShapingTraits traits, SFFont font, SFCollectionRef collection);
-
-SF_INTERNAL void SFShapingEngineDiscoverGlyphs(SFShapingEngineRef shapingEngine);
+SF_INTERNAL void SFShapingEngineInitialize(SFShapingEngineRef shapingEngine, SFFontRef font, SFScript script, SFLanguage language);
+SF_INTERNAL void SFShapingEngineProcessCollection(SFShapingEngineRef shapingEngine, SFCollectionRef collection);
 
 #endif

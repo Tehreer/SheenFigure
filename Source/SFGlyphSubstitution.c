@@ -24,17 +24,17 @@
 
 #include "SFGlyphManipulation.h"
 #include "SFGlyphSubstitution.h"
-#include "SFShapingEngine.h"
+#include "SFTextProcessor.h"
 
-static SFBoolean _SFApplySingleSubst(SFShapingEngineRef engine, SFLocatorRef locator, SFData singleSubst);
+static SFBoolean _SFApplySingleSubst(SFTextProcessorRef processor, SFData singleSubst);
 
-static SFBoolean _SFApplyMultipleSubst(SFShapingEngineRef engine, SFLocatorRef locator, SFData multipleSubst);
-static SFBoolean _SFApplySequence(SFShapingEngineRef engine, SFLocatorRef locator, SFData sequence);
+static SFBoolean _SFApplyMultipleSubst(SFTextProcessorRef processor, SFData multipleSubst);
+static SFBoolean _SFApplySequence(SFTextProcessorRef processor, SFData sequence);
 
-static SFBoolean _SFApplyLigatureSubst(SFShapingEngineRef engine, SFLocatorRef locator, SFData subtable);
-static SFBoolean _SFApplyLigatureSet(SFShapingEngineRef engine, SFLocatorRef locator, SFData ligatureSet);
+static SFBoolean _SFApplyLigatureSubst(SFTextProcessorRef processor, SFData subtable);
+static SFBoolean _SFApplyLigatureSet(SFTextProcessorRef processor, SFData ligatureSet);
 
-SF_PRIVATE void _SFApplyGSUBLookup(SFShapingEngineRef engine, SFLocatorRef locator, SFData lookup)
+SF_PRIVATE void _SFApplyGSUBLookup(SFTextProcessorRef processor, SFData lookup)
 {
     SFLookupType lookupType = SF_LOOKUP__LOOKUP_TYPE(lookup);
     SFLookupFlag lookupFlag = SF_LOOKUP__LOOKUP_FLAG(lookup);
@@ -42,7 +42,7 @@ SF_PRIVATE void _SFApplyGSUBLookup(SFShapingEngineRef engine, SFLocatorRef locat
     SFUInt16 subtableIndex;
 
     /* Set lookup flag in shaping engine. */
-    engine->_lookupFlag = lookupFlag;
+    processor->_lookupFlag = lookupFlag;
 
     /* Apply subtables in order until one of them performs substitution. */
     for (subtableIndex = 0; subtableIndex < subtableCount; subtableIndex++) {
@@ -50,7 +50,7 @@ SF_PRIVATE void _SFApplyGSUBLookup(SFShapingEngineRef engine, SFLocatorRef locat
         SFData subtable = SF_DATA__SUBDATA(lookup, offset);
         SFBoolean didSubstitute;
 
-        didSubstitute = _SFApplySubst(engine, locator, lookupType, subtable);
+        didSubstitute = _SFApplySubst(processor, lookupType, subtable);
 
         /* A subtable has performed substition, so break the loop. */
         if (didSubstitute) {
@@ -59,20 +59,20 @@ SF_PRIVATE void _SFApplyGSUBLookup(SFShapingEngineRef engine, SFLocatorRef locat
     }
 }
 
-SF_PRIVATE SFBoolean _SFApplySubst(SFShapingEngineRef engine, SFLocatorRef locator, SFLookupType lookupType, SFData subtable)
+SF_PRIVATE SFBoolean _SFApplySubst(SFTextProcessorRef processor, SFLookupType lookupType, SFData subtable)
 {
     switch (lookupType) {
     case SFLookupTypeSingle:
-        return _SFApplySingleSubst(engine, locator, subtable);
+        return _SFApplySingleSubst(processor, subtable);
 
     case SFLookupTypeMultiple:
-        return _SFApplyMultipleSubst(engine, locator, subtable);
+        return _SFApplyMultipleSubst(processor, subtable);
 
     case SFLookupTypeAlternate:
         break;
 
     case SFLookupTypeLigature:
-        return _SFApplyLigatureSubst(engine, locator, subtable);
+        return _SFApplyLigatureSubst(processor, subtable);
 
     case SFLookupTypeContext:
         break;
@@ -81,7 +81,7 @@ SF_PRIVATE SFBoolean _SFApplySubst(SFShapingEngineRef engine, SFLocatorRef locat
         break;
 
     case SFLookupTypeExtension:
-        return _SFApplyExtensionSubtable(engine, locator, subtable);
+        return _SFApplyExtensionSubtable(processor, subtable);
 
     case SFLookupTypeReverseChainingContext:
         break;
@@ -90,9 +90,10 @@ SF_PRIVATE SFBoolean _SFApplySubst(SFShapingEngineRef engine, SFLocatorRef locat
     return SFFalse;
 }
 
-static SFBoolean _SFApplySingleSubst(SFShapingEngineRef engine, SFLocatorRef locator, SFData singleSubst)
+static SFBoolean _SFApplySingleSubst(SFTextProcessorRef processor, SFData singleSubst)
 {
-    SFCollectionRef collection = engine->_collection;
+    SFCollectionRef collection = processor->_collection;
+    SFLocatorRef locator = processor->_locator;
     SFUInteger inputIndex = locator->index;
     SFGlyph inputGlyph = collection->glyphArray[inputIndex];
     SFUInt16 format;
@@ -114,7 +115,7 @@ static SFBoolean _SFApplySingleSubst(SFShapingEngineRef engine, SFLocatorRef loc
 
                 /* Substitute the glyph and set its traits. */
                 collection->glyphArray[inputIndex] = substitute;
-                collection->detailArray[inputIndex].traits = _SFGetGlyphTrait(engine, substitute);
+                collection->detailArray[inputIndex].traits = _SFGetGlyphTrait(processor, substitute);
 
                 return SFTrue;
             }
@@ -137,7 +138,7 @@ static SFBoolean _SFApplySingleSubst(SFShapingEngineRef engine, SFLocatorRef loc
 
                     /* Substitute the glyph and set its traits. */
                     collection->glyphArray[inputIndex] = substitute;
-                    collection->detailArray[inputIndex].traits = _SFGetGlyphTrait(engine, substitute);
+                    collection->detailArray[inputIndex].traits = _SFGetGlyphTrait(processor, substitute);
 
                     return SFTrue;
                 }
@@ -149,9 +150,10 @@ static SFBoolean _SFApplySingleSubst(SFShapingEngineRef engine, SFLocatorRef loc
     return SFFalse;
 }
 
-static SFBoolean _SFApplyMultipleSubst(SFShapingEngineRef engine, SFLocatorRef locator, SFData multipleSubst)
+static SFBoolean _SFApplyMultipleSubst(SFTextProcessorRef processor, SFData multipleSubst)
 {
-    SFCollectionRef collection = engine->_collection;
+    SFCollectionRef collection = processor->_collection;
+    SFLocatorRef locator = processor->_locator;
     SFUInteger inputIndex = locator->index;
     SFGlyph inputGlyph = collection->glyphArray[inputIndex];
     SFUInt16 format;
@@ -176,7 +178,7 @@ static SFBoolean _SFApplyMultipleSubst(SFShapingEngineRef engine, SFLocatorRef l
                     offset = SF_MULTIPLE_SUBST_F1__SEQUENCE(multipleSubst, inputIndex);
                     sequence = SF_DATA__SUBDATA(multipleSubst, offset);
 
-                    return _SFApplySequence(engine, locator, sequence);
+                    return _SFApplySequence(processor, sequence);
                 }
             }
         }
@@ -186,9 +188,10 @@ static SFBoolean _SFApplyMultipleSubst(SFShapingEngineRef engine, SFLocatorRef l
     return SFFalse;
 }
 
-static SFBoolean _SFApplySequence(SFShapingEngineRef engine, SFLocatorRef locator, SFData sequence)
+static SFBoolean _SFApplySequence(SFTextProcessorRef processor, SFData sequence)
 {
-    SFCollectionRef collection = engine->_collection;
+    SFCollectionRef collection = processor->_collection;
+    SFLocatorRef locator = processor->_locator;
     SFUInteger inputIndex = locator->index;
     SFGlyph inputGlyph = collection->glyphArray[inputIndex];
     SFUInt16 glyphCount;
@@ -203,7 +206,7 @@ static SFBoolean _SFApplySequence(SFShapingEngineRef engine, SFLocatorRef locato
 
         /* Put substitute of first glyph and set its traits. */
         collection->glyphArray[inputIndex] = substitute;
-        collection->detailArray[inputIndex].traits = _SFGetGlyphTrait(engine, substitute);
+        collection->detailArray[inputIndex].traits = _SFGetGlyphTrait(processor, substitute);
 
         if (glyphCount != 1) {
             SFUInteger association = collection->detailArray[inputIndex].association;
@@ -222,7 +225,7 @@ static SFBoolean _SFApplySequence(SFShapingEngineRef engine, SFLocatorRef locato
                 /* Initialize the glyph with substitute. */
                 collection->glyphArray[newIndex] = substitute;
                 collection->detailArray[newIndex].association = association;
-                collection->detailArray[newIndex].traits = _SFGetGlyphTrait(engine, substitute);
+                collection->detailArray[newIndex].traits = _SFGetGlyphTrait(processor, substitute);
             }
 
             /* Skip added elements in the locator. */
@@ -241,9 +244,10 @@ static SFBoolean _SFApplySequence(SFShapingEngineRef engine, SFLocatorRef locato
     return SFFalse;
 }
 
-static SFBoolean _SFApplyLigatureSubst(SFShapingEngineRef engine, SFLocatorRef locator, SFData ligatureSubst)
+static SFBoolean _SFApplyLigatureSubst(SFTextProcessorRef processor, SFData ligatureSubst)
 {
-    SFCollectionRef collection = engine->_collection;
+    SFCollectionRef collection = processor->_collection;
+    SFLocatorRef locator = processor->_locator;
     SFUInteger inputIndex = locator->index;
     SFGlyph inputGlyph = collection->glyphArray[inputIndex];
     SFUInt16 format;
@@ -267,7 +271,7 @@ static SFBoolean _SFApplyLigatureSubst(SFShapingEngineRef engine, SFLocatorRef l
                     offset = SF_LIGATURE_SUBST_F1__LIGATURE_SET(ligatureSubst, coverageIndex);
                     ligatureSet = SF_DATA__SUBDATA(ligatureSubst, offset);
 
-                    return _SFApplyLigatureSet(engine, locator, ligatureSet);
+                    return _SFApplyLigatureSet(processor, ligatureSet);
                 }
             }
         }
@@ -277,9 +281,10 @@ static SFBoolean _SFApplyLigatureSubst(SFShapingEngineRef engine, SFLocatorRef l
     return SFFalse;
 }
 
-static SFBoolean _SFApplyLigatureSet(SFShapingEngineRef engine, SFLocatorRef locator, SFData ligatureSet)
+static SFBoolean _SFApplyLigatureSet(SFTextProcessorRef processor, SFData ligatureSet)
 {
-    SFCollectionRef collection = engine->_collection;
+    SFCollectionRef collection = processor->_collection;
+    SFLocatorRef locator = processor->_locator;
     SFUInteger inputIndex = locator->index;
     SFUInt16 ligCount;
     SFUInteger ligIndex;
@@ -322,7 +327,7 @@ static SFBoolean _SFApplyLigatureSet(SFShapingEngineRef engine, SFLocatorRef loc
 
             /* Substitute the ligature glyph. */
             collection->glyphArray[inputIndex] = ligGlyph;
-            collection->detailArray[inputIndex].traits = _SFGetGlyphTrait(engine, ligGlyph);
+            collection->detailArray[inputIndex].traits = _SFGetGlyphTrait(processor, ligGlyph);
 
             association = collection->detailArray[inputIndex].association;
             prevIndex = inputIndex;

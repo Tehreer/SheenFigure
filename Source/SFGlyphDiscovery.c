@@ -21,19 +21,18 @@
 #include "SFFont.h"
 
 #include "SFGlyphDiscovery.h"
-#include "SFShapingEngine.h"
+#include "SFTextProcessor.h"
 
-SF_INTERNAL void _SFDiscoverGlyphs(SFShapingEngineRef shapingEngine)
+SF_INTERNAL void _SFDiscoverGlyphs(SFTextProcessorRef processor)
 {
-    SFCollectionRef collection = shapingEngine->_collection;
-    SFFontRef font = shapingEngine->_font;
-    const SFCodePoint *codePoints = collection->codePointArray;
+    SFFontRef font = processor->_font;
+    SFCollectionRef collection = processor->_collection;
     SFUInteger length = collection->codePointCount;
     SFUInteger index;
 
     for (index = 0; index < length; index++) {
-        SFCodePoint codePoint = codePoints[index];
-        SFGlyph glyphIndex = SFFontGetGlyphForCodePoint(font, codePoint);
-        SFCollectionAddGlyph(collection, glyphIndex, index);
+        SFCodePoint codePoint = collection->codePointArray[index];
+        SFGlyph glyph = SFFontGetGlyphForCodePoint(font, codePoint);
+        SFCollectionAddGlyph(collection, glyph, index);
     }
 }

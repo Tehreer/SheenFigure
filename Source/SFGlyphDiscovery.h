@@ -18,15 +18,15 @@
 #define SF_GLYPH_DISCOVERY_INTERNAL_H
 
 /*
- * Note:
- *  This file is part of SFShapingEngine class. It discovers glyphs of
- *  characters.
+ * NOTE:
+ *      This file is part of SFTextProcessor class whose purpose is to discover
+ *      character glyphs.
  */
 
 #include <SFConfig.h>
 
-#include "SFShapingEngine.h"
+#include "SFTextProcessor.h"
 
-SF_PRIVATE void _SFDiscoverGlyphs(SFShapingEngineRef shapingEngine);
+SF_PRIVATE void _SFDiscoverGlyphs(SFTextProcessorRef processor);
 
 #endif

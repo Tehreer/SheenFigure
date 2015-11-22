@@ -18,18 +18,17 @@
 #define SF_GLYPH_POSITIONING_INTERNAL_H
 
  /*
- * NOTE:
- *    This file is part of SFShapingEngine class which handles positioning
- *    aspects of glyphs.
- */
+  * NOTE:
+  *     This file is part of SFTextProcessor class which handles positioning
+  *     aspects of glyphs.
+  */
 
 #include <SFConfig.h>
 
 #include "SFData.h"
-#include "SFLocator.h"
 #include "SFShapingEngine.h"
 
-SF_PRIVATE void _SFApplyGPOSLookup(SFShapingEngineRef engine, SFLocatorRef locator, SFData lookup);
-SF_PRIVATE SFBoolean _SFApplyPos(SFShapingEngineRef engine, SFLocatorRef locator, SFLookupType lookupType, SFData subtable);
+SF_PRIVATE void _SFApplyGPOSLookup(SFTextProcessorRef processor, SFData lookup);
+SF_PRIVATE SFBoolean _SFApplyPos(SFTextProcessorRef processor, SFLookupType lookupType, SFData subtable);
 
 #endif

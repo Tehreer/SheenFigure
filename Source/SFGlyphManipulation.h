@@ -18,9 +18,9 @@
 #define SF_GLYPH_MANIPULATION_INTERNAL_H
 
 /*
- * Note:
- *  This file is part of SFShapingEngine class. It handles common aspects of
- *  both substitution and positioning of glyphs.
+ * NOTE:
+ *      This file is part of SFTextProcessor class. It handles common aspects of
+ *      substitution and positioning of glyphs.
  */
 
 #include <SFConfig.h>
@@ -28,13 +28,13 @@
 #include "SFCollection.h"
 #include "SFData.h"
 #include "SFLocator.h"
-#include "SFShapingEngine.h"
+#include "SFTextProcessor.h"
 
 SF_PRIVATE SFUInteger _SFSearchCoverageIndex(SFData coverage, SFGlyph glyph);
 SF_PRIVATE SFUInt16 _SFSearchGlyphClass(SFData classDef, SFGlyph glyph);
 
-SF_PRIVATE SFGlyphTrait _SFGetGlyphTrait(SFShapingEngineRef engine, SFGlyph glyph);
+SF_PRIVATE SFGlyphTrait _SFGetGlyphTrait(SFTextProcessorRef processor, SFGlyph glyph);
 
-SF_PRIVATE SFBoolean _SFApplyExtensionSubtable(SFShapingEngineRef engine, SFLocatorRef locator, SFData extensionSubtable);
+SF_PRIVATE SFBoolean _SFApplyExtensionSubtable(SFTextProcessorRef processor, SFData extensionSubtable);
 
 #endif

@@ -178,24 +178,19 @@ static SFGlyphTrait _SFGlyphClassToGlyphTrait(SFUInt16 glyphClass)
     return SFGlyphTraitNone;
 }
 
-SF_PRIVATE SFGlyphTrait _SFGetGlyphTrait(SFShapingEngineRef engine, SFGlyph glyph)
+SF_PRIVATE SFGlyphTrait _SFGetGlyphTrait(SFTextProcessorRef processor, SFGlyph glyph)
 {
-    if (engine->_glyphClassDef) {
-        SFUInt16 glyphClass = _SFSearchGlyphClass(engine->_glyphClassDef, glyph);
+    if (processor->_glyphClassDef) {
+        SFUInt16 glyphClass = _SFSearchGlyphClass(processor->_glyphClassDef, glyph);
         return _SFGlyphClassToGlyphTrait(glyphClass);
     }
 
     return SFGlyphTraitNone;
 }
 
-SF_PRIVATE SFBoolean _SFApplyExtensionSubtable(SFShapingEngineRef engine, SFLocatorRef locator, SFData extensionSubtable)
+SF_PRIVATE SFBoolean _SFApplyExtensionSubtable(SFTextProcessorRef processor, SFData extensionSubtable)
 {
-    SFCollectionRef collection = engine->_collection;
-    SFUInteger inputIndex = locator->index;
-    SFGlyph inputGlyph = collection->glyphArray[inputIndex];
-    SFUInt16 format;
-
-    format = SF_EXTENSION_FORMAT(extensionSubtable);
+    SFUInt16 format = SF_EXTENSION_FORMAT(extensionSubtable);
 
     switch (format) {
     case 1:
@@ -204,12 +199,12 @@ SF_PRIVATE SFBoolean _SFApplyExtensionSubtable(SFShapingEngineRef engine, SFLoca
             SFUInteger offset = SF_EXTENSION_F1__SUBTABLE(extensionSubtable);
             SFData innerSubtable = SF_DATA__SUBDATA(extensionSubtable, offset);
 
-            switch (engine->_headerKind) {
+            switch (processor->_headerKind) {
             case SFHeaderKindGSUB:
-                return _SFApplySubst(engine, locator, lookupType, innerSubtable);
+                return _SFApplySubst(processor, lookupType, innerSubtable);
 
             case SFHeaderKindGPOS:
-                return _SFApplyPos(engine, locator, lookupType, innerSubtable);
+                return _SFApplyPos(processor, lookupType, innerSubtable);
             }
         }
         break;

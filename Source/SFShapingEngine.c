@@ -22,19 +22,8 @@
 #include "SFAssert.h"
 #include "SFCommon.h"
 #include "SFData.h"
-
-#include "SFGlyphManipulation.h"
-#include "SFGlyphPositioning.h"
-#include "SFGlyphSubstitution.h"
-
-#include "SFGlyphDiscovery.h"
+#include "SFTextProcessor.h"
 #include "SFShapingEngine.h"
-
-static void _SFApplyAllFeatures(SFShapingEngineRef shapingEngine);
-static void _SFApplyFeaturesInRange(SFShapingEngineRef shapingEngine, SFUInteger startIndex, SFUInteger limitIndex);
-static void _SFApplyFeature(SFShapingEngineRef shapingEngine, SFUInteger featureIndex);
-static void _SFApplyGroup(SFShapingEngineRef shapingEngine, SFUInteger groupIndex);
-static void _SFApplyLookup(SFShapingEngineRef shapingEngine, SFData lookup, SFHeaderKind headerKind);
 
 SF_INTERNAL SFScriptKnowledgeRef SFShapingKnowledgeSeekScript(SFShapingKnowledgeRef shapingKnowledge, SFScript script)
 {
@@ -59,103 +48,27 @@ SF_INTERNAL SFUInteger SFScriptKnowledgeSeekFeature(SFScriptKnowledgeRef scriptK
     return (*scriptKnowledge->_seekFeature)(scriptKnowledge, feature);
 }
 
-SF_INTERNAL void SFShapingEngineInitialize(SFShapingEngineRef shapingEngine, SFShapingTraits traits, SFFontRef font, SFCollectionRef collection)
+SF_INTERNAL void SFShapingEngineInitialize(SFShapingEngineRef shapingEngine, SFFontRef font, SFScript script, SFLanguage language)
 {
-	/* The font must NOT be null. */
+	/* Font must NOT be null. */
 	SFAssert(font != NULL);
-	/* The collection must NOT be null. */
-	SFAssert(collection != NULL);
 
-    shapingEngine->_langDetail = SFScriptCacheFindLanguage(&font->scripts, traits.script, traits.language);
-    shapingEngine->_collection = collection;
-    shapingEngine->_traits = traits;
+    shapingEngine->_font = font;
+    shapingEngine->_langDetail = SFScriptCacheFindLanguage(&font->scripts, script, language);
+    shapingEngine->_script = script;
+    shapingEngine->_language = language;
 }
 
-SF_INTERNAL void SFShapingEnginePerformShaping(SFShapingEngineRef shapingEngine)
+SF_INTERNAL void SFShapingEngineProcessCollection(SFShapingEngineRef shapingEngine, SFCollectionRef collection)
 {
-	_SFDiscoverGlyphs(shapingEngine);
-	_SFApplyAllFeatures(shapingEngine);
-}
+    SFTextProcessor processor;
 
-static void _SFApplyAllFeatures(SFShapingEngineRef shapingEngine)
-{
-    SFLanguageDetailRef langDetail = shapingEngine->_langDetail;
+    /* Collection must NOT be null. */
+    SFAssert(collection != NULL);
 
-    if (langDetail) {
-        SFGroupDetail *groupArray = langDetail->groupArray;
-        SFUInteger groupCount = langDetail->groupCount;
-        SFUInteger gapIndex = 0;
-        SFUInteger groupIndex;
-
-        for (groupIndex = 0; groupIndex < groupCount; groupIndex++) {
-            SFGroupDetailRef group = &groupArray[groupIndex];
-            SFUInteger startIndex = group->featureIndex;
-
-            /* The range of group features must fall within language features. */
-            SFAssert((startIndex + group->featureCount) <= langDetail->featureCount);
-            /* Group ranges must be continuous. */
-            SFAssert(gapIndex <= startIndex);
-
-            /* Apply all features in the gap before group. */
-            _SFApplyFeaturesInRange(shapingEngine, gapIndex, startIndex);
-            /* Apply the group. */
-            _SFApplyGroup(shapingEngine, groupIndex);
-
-            gapIndex = startIndex + group->featureCount;
-        }
-
-        /* Apply remaining features. */
-        _SFApplyFeaturesInRange(shapingEngine, gapIndex, langDetail->featureCount);
-    }
-}
-
-static void _SFApplyFeaturesInRange(SFShapingEngineRef shapingEngine, SFUInteger startIndex, SFUInteger limitIndex)
-{
-    /* Apply all features individually. */
-    for (; startIndex < limitIndex; startIndex++) {
-        _SFApplyFeature(shapingEngine, startIndex);
-    }
-}
-
-static void _SFApplyFeature(SFShapingEngineRef shapingEngine, SFUInteger featureIndex)
-{
-    SFFeatureDetailRef feature = &shapingEngine->_langDetail->featureArray[featureIndex];
-    SFLookupDetail *lookupArray = feature->lookupArray;
-    SFUInteger lookupCount = feature->lookupCount;
-    SFUInteger lookupIndex;
-
-    shapingEngine->_feature = feature->feature;
-
-    /* Apply all lookups of the feature. */
-    for (lookupIndex = 0; lookupIndex < lookupCount; lookupIndex++) {
-        SFLookupDetailRef lookup = &lookupArray[lookupIndex];
-        _SFApplyLookup(shapingEngine, lookup->table, feature->headerKind);
-    }
-}
-
-static void _SFApplyGroup(SFShapingEngineRef shapingEngine, SFUInteger groupIndex)
-{
-    SFLanguageDetailRef langDetail = shapingEngine->_langDetail;
-    SFGroupDetailRef group = &langDetail->groupArray[groupIndex];
-    SFHeaderKind headerKind = langDetail->featureArray[group->featureIndex].headerKind;
-    SFLookupDetail *lookupArray = group->lookupArray;
-    SFUInteger lookupCount = group->lookupCount;
-    SFUInteger lookupIndex;
-
-    /* Apply all lookups of the group. */
-    for (lookupIndex = 0; lookupIndex < lookupCount; lookupIndex++) {
-        SFLookupDetailRef lookup = &lookupArray[lookupIndex];
-        _SFApplyLookup(shapingEngine, lookup->table, headerKind);
-    }
-}
-
-static void _SFApplyLookup(SFShapingEngineRef shapingEngine, SFData lookup, SFHeaderKind headerKind)
-{
-    shapingEngine->_headerKind = headerKind;
-
-    if (headerKind == SFHeaderKindGSUB) {
-        _SFApplyGSUBLookup(shapingEngine, lookup);
-    } else if (headerKind == SFHeaderKindGPOS) {
-        _SFApplyGPOSLookup(shapingEngine, lookup);
+    SFTextProcessorInitialize(&processor, shapingEngine->_font, shapingEngine->_langDetail, collection);
+    SFTextProcessorDiscoverGlyphs(&processor);
+    if (shapingEngine->_langDetail != NULL) {
+        SFTextProcessorManipulateGlyphs(&processor);
     }
 }

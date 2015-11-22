@@ -212,7 +212,15 @@ SF_INTERNAL void SFScriptBuilderAddFeature(SFScriptBuilderRef builder, SFFeature
     SFAssert(currentLanguage->featureArray[orderIndex].feature == 0);
 
     /* Increment feature count. */
-    currentLanguage->featureCount++;
+    switch (kind) {
+    case SFHeaderKindGSUB:
+        currentLanguage->featureCount.gsub++;
+        break;
+
+    case SFHeaderKindGPOS:
+        currentLanguage->featureCount.gpos++;
+        break;
+    }
 
     /* Initialize current feature. */
     currentFeature = &currentLanguage->featureArray[orderIndex];
@@ -392,6 +400,7 @@ SF_INTERNAL void SFScriptBuilderCloseLanguage(SFScriptBuilderRef builder)
 {
     SFLanguageDetailRef language = builder->_currentLanguage;
     SFFeatureDetail *featureArray = language->featureArray;
+    SFUInteger featureCount = language->featureCount.gsub + language->featureCount.gpos;
     SFUInteger capacity = builder->_featureCapacity;
     SFUInteger shiftIndex = SFInvalidIndex;
     SFUInteger index;
@@ -410,9 +419,9 @@ SF_INTERNAL void SFScriptBuilderCloseLanguage(SFScriptBuilderRef builder)
         }
     }
 
-    if (language->featureCount) {
+    if (featureCount) {
         /* Shrink feature array to actual size. */
-        language->featureArray = realloc(featureArray, sizeof(SFFeatureDetail) * language->featureCount);
+        language->featureArray = realloc(featureArray, sizeof(SFFeatureDetail) * featureCount);
         /* Build language groups. */
         _SFBuildLanguageGroups(language);
     } else {
