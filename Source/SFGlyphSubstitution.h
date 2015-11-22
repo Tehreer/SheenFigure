@@ -29,6 +29,7 @@
 #include "SFLocator.h"
 #include "SFShapingEngine.h"
 
-SF_PRIVATE void _SFApplyGSUBLookup(SFShapingEngineRef shapingEngine, SFLocatorRef locator, SFData lookup);
+SF_PRIVATE void _SFApplyGSUBLookup(SFShapingEngineRef engine, SFLocatorRef locator, SFData lookup);
+SF_PRIVATE SFBoolean _SFApplySubst(SFShapingEngineRef engine, SFLocatorRef locator, SFLookupType lookupType, SFData subtable);
 
 #endif

@@ -26,8 +26,6 @@
 #include "SFGlyphSubstitution.h"
 #include "SFShapingEngine.h"
 
-static SFBoolean _SFApplySubstSubtable(SFShapingEngineRef engine, SFLocatorRef locator, SFData subtable);
-
 static SFBoolean _SFApplySingleSubst(SFShapingEngineRef engine, SFLocatorRef locator, SFData singleSubst);
 
 static SFBoolean _SFApplyMultipleSubst(SFShapingEngineRef engine, SFLocatorRef locator, SFData multipleSubst);
@@ -35,8 +33,6 @@ static SFBoolean _SFApplySequence(SFShapingEngineRef engine, SFLocatorRef locato
 
 static SFBoolean _SFApplyLigatureSubst(SFShapingEngineRef engine, SFLocatorRef locator, SFData subtable);
 static SFBoolean _SFApplyLigatureSet(SFShapingEngineRef engine, SFLocatorRef locator, SFData ligatureSet);
-
-static SFBoolean _SFApplyExtensionSubst(SFShapingEngineRef engine, SFLocatorRef locator, SFData extension);
 
 SF_PRIVATE void _SFApplyGSUBLookup(SFShapingEngineRef engine, SFLocatorRef locator, SFData lookup)
 {
@@ -54,40 +50,44 @@ SF_PRIVATE void _SFApplyGSUBLookup(SFShapingEngineRef engine, SFLocatorRef locat
         SFData subtable = SF_DATA__SUBDATA(lookup, offset);
         SFBoolean didSubstitute;
 
-        switch (lookupType) {
-        case SFLookupTypeSingle:
-            didSubstitute = _SFApplySingleSubst(engine, locator, subtable);
-            break;
-
-        case SFLookupTypeMultiple:
-            didSubstitute = _SFApplyMultipleSubst(engine, locator, subtable);
-            break;
-
-        case SFLookupTypeAlternate:
-            break;
-
-        case SFLookupTypeLigature:
-            didSubstitute = _SFApplyLigatureSubst(engine, locator, subtable);
-            break;
-
-        case SFLookupTypeContext:
-            break;
-
-        case SFLookupTypeChainingContext:
-            break;
-
-        case SFLookupTypeExtension:
-            break;
-
-        case SFLookupTypeReverseChainingContext:
-            break;
-        }
+        didSubstitute = _SFApplySubst(engine, locator, lookupType, subtable);
 
         /* A subtable has performed substition, so break the loop. */
         if (didSubstitute) {
             break;
         }
     }
+}
+
+SF_PRIVATE SFBoolean _SFApplySubst(SFShapingEngineRef engine, SFLocatorRef locator, SFLookupType lookupType, SFData subtable)
+{
+    switch (lookupType) {
+    case SFLookupTypeSingle:
+        return _SFApplySingleSubst(engine, locator, subtable);
+
+    case SFLookupTypeMultiple:
+        return _SFApplyMultipleSubst(engine, locator, subtable);
+
+    case SFLookupTypeAlternate:
+        break;
+
+    case SFLookupTypeLigature:
+        return _SFApplyLigatureSubst(engine, locator, subtable);
+
+    case SFLookupTypeContext:
+        break;
+
+    case SFLookupTypeChainingContext:
+        break;
+
+    case SFLookupTypeExtension:
+        return _SFApplyExtensionSubtable(engine, locator, subtable);
+
+    case SFLookupTypeReverseChainingContext:
+        break;
+    }
+
+    return SFFalse;
 }
 
 static SFBoolean _SFApplySingleSubst(SFShapingEngineRef engine, SFLocatorRef locator, SFData singleSubst)
@@ -236,7 +236,7 @@ static SFBoolean _SFApplySequence(SFShapingEngineRef engine, SFLocatorRef locato
      * NOTE:
      *      Latest OpenType standard prohibits the removal of glyph, if the
      *      sequence is empty.
-    */
+     */
 
     return SFFalse;
 }

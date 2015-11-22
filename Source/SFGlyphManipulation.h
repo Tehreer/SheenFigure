@@ -27,11 +27,14 @@
 
 #include "SFCollection.h"
 #include "SFData.h"
+#include "SFLocator.h"
 #include "SFShapingEngine.h"
 
 SF_PRIVATE SFUInteger _SFSearchCoverageIndex(SFData coverage, SFGlyph glyph);
 SF_PRIVATE SFUInt16 _SFSearchGlyphClass(SFData classDef, SFGlyph glyph);
 
 SF_PRIVATE SFGlyphTrait _SFGetGlyphTrait(SFShapingEngineRef engine, SFGlyph glyph);
+
+SF_PRIVATE SFBoolean _SFApplyExtensionSubtable(SFShapingEngineRef engine, SFLocatorRef locator, SFData extensionSubtable);
 
 #endif

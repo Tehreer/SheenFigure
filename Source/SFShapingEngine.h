@@ -82,6 +82,7 @@ struct _SFShapingEngine {
     /* State values. */
     SFFeature _feature;
     SFLookupFlag _lookupFlag;
+    SFHeaderKind _headerKind;
 };
 
 /**

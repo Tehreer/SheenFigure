@@ -151,6 +151,8 @@ static void _SFApplyGroup(SFShapingEngineRef shapingEngine, SFUInteger groupInde
 
 static void _SFApplyLookup(SFShapingEngineRef shapingEngine, SFData lookup, SFHeaderKind headerKind)
 {
+    shapingEngine->_headerKind = headerKind;
+
     if (headerKind == SFHeaderKindGSUB) {
         _SFApplyGSUBLookup(shapingEngine, lookup);
     } else if (headerKind == SFHeaderKindGPOS) {

@@ -24,8 +24,11 @@
 #include "SFCommon.h"
 #include "SFData.h"
 #include "SFGDEF.h"
+#include "SFLocator.h"
 
 #include "SFGlyphManipulation.h"
+#include "SFGlyphPositioning.h"
+#include "SFGlyphSubstitution.h"
 #include "SFShapingEngine.h"
 
 SF_INTERNAL SFUInteger SFBinarySearchUInt16(SFData uint16Array, SFUInteger length, SFUInt16 value)
@@ -183,4 +186,34 @@ SF_PRIVATE SFGlyphTrait _SFGetGlyphTrait(SFShapingEngineRef engine, SFGlyph glyp
     }
 
     return SFGlyphTraitNone;
+}
+
+SF_PRIVATE SFBoolean _SFApplyExtensionSubtable(SFShapingEngineRef engine, SFLocatorRef locator, SFData extensionSubtable)
+{
+    SFCollectionRef collection = engine->_collection;
+    SFUInteger inputIndex = locator->index;
+    SFGlyph inputGlyph = collection->glyphArray[inputIndex];
+    SFUInt16 format;
+
+    format = SF_EXTENSION_FORMAT(extensionSubtable);
+
+    switch (format) {
+    case 1:
+        {
+            SFLookupType lookupType = SF_EXTENSION_F1__LOOKUP_TYPE(extensionSubtable);
+            SFUInteger offset = SF_EXTENSION_F1__SUBTABLE(extensionSubtable);
+            SFData innerSubtable = SF_DATA__SUBDATA(extensionSubtable, offset);
+
+            switch (engine->_headerKind) {
+            case SFHeaderKindGSUB:
+                return _SFApplySubst(engine, locator, lookupType, innerSubtable);
+
+            case SFHeaderKindGPOS:
+                return _SFApplyPos(engine, locator, lookupType, innerSubtable);
+            }
+        }
+        break;
+    }
+
+    return SFFalse;
 }

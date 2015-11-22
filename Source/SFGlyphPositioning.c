@@ -53,7 +53,7 @@ static SFBoolean _SFApplyMarkToMarkPos(SFShapingEngineRef engine, SFLocatorRef l
 static SFBoolean _SFApplyMarkToMarkArrays(SFShapingEngineRef engine, SFData markMarkPos, SFUInteger mark1Index, SFUInteger mark2Index);
 static SFData _SFMarkArrayGetAnchor(SFData markArray, SFUInteger markIndex, SFUInteger *outClass);
 
-SF_PRIVATE void _SFApplyGPOSLookup(SFShapingEngineRef shapingEngine, SFLocatorRef locator, SFData lookup)
+SF_PRIVATE void _SFApplyGPOSLookup(SFShapingEngineRef engine, SFLocatorRef locator, SFData lookup)
 {
     SFLookupType lookupType = SF_LOOKUP__LOOKUP_TYPE(lookup);
     SFLookupFlag lookupFlag = SF_LOOKUP__LOOKUP_FLAG(lookup);
@@ -64,48 +64,49 @@ SF_PRIVATE void _SFApplyGPOSLookup(SFShapingEngineRef shapingEngine, SFLocatorRe
     for (subtableIndex = 0; subtableIndex < subtableCount; subtableIndex++) {
         SFOffset subtableOffset = SF_LOOKUP__SUB_TABLE(lookup, subtableIndex);
         SFData subtable = SF_DATA__SUBDATA(lookup, subtableOffset);
-        SFBoolean didPosition = SFFalse;
+        SFBoolean didPosition;
 
-        switch (lookupType) {
-        case SFLookupTypeSingleAdjustment:
-            didPosition = _SFApplySinglePos(shapingEngine, &locator, subtable);
-            break;
-
-        case SFLookupTypePairAdjustment:
-            didPosition = _SFApplyPairPos(shapingEngine, locator, subtable);
-            break;
-
-        case SFLookupTypeCursiveAttachment:
-            didPosition = _SFApplyCursivePos(shapingEngine, locator, subtable);
-            break;
-
-        case SFLookupTypeMarkToBaseAttachment:
-            didPosition = _SFApplyMarkToBasePos(shapingEngine, locator, subtable);
-            break;
-
-        case SFLookupTypeMarkToLigatureAttachment:
-            didPosition = _SFApplyMarkLigPos(shapingEngine, locator, subtable);
-            break;
-
-        case SFLookupTypeMarkToMarkAttachment:
-            didPosition = _SFApplyMarkToMarkPos(shapingEngine, locator, subtable);
-            break;
-
-        case SFLookupTypeContextPositioning:
-            break;
-
-        case SFLookupTypeChainedContextPositioning:
-            break;
-
-        case SFLookupTypeExtensionPositioning:
-            break;
-        }
+        didPosition = _SFApplyPos(engine, locator, lookupType, subtable);
 
         /* A subtable has performed positioning, so break the loop. */
         if (didPosition) {
             break;
         }
     }
+}
+
+SF_PRIVATE SFBoolean _SFApplyPos(SFShapingEngineRef engine, SFLocatorRef locator, SFLookupType lookupType, SFData subtable)
+{
+    switch (lookupType) {
+    case SFLookupTypeSingleAdjustment:
+        return _SFApplySinglePos(engine, &locator, subtable);
+
+    case SFLookupTypePairAdjustment:
+        return _SFApplyPairPos(engine, locator, subtable);
+
+    case SFLookupTypeCursiveAttachment:
+        return _SFApplyCursivePos(engine, locator, subtable);
+
+    case SFLookupTypeMarkToBaseAttachment:
+        return _SFApplyMarkToBasePos(engine, locator, subtable);
+
+    case SFLookupTypeMarkToLigatureAttachment:
+        return _SFApplyMarkLigPos(engine, locator, subtable);
+
+    case SFLookupTypeMarkToMarkAttachment:
+        return _SFApplyMarkToMarkPos(engine, locator, subtable);
+
+    case SFLookupTypeContextPositioning:
+        break;
+
+    case SFLookupTypeChainedContextPositioning:
+        break;
+
+    case SFLookupTypeExtensionPositioning:
+        break;
+    }
+
+    return SFFalse;
 }
 
 static SFBoolean _SFApplySinglePos(SFShapingEngineRef engine, SFLocatorRef locator, SFData singlePos)
