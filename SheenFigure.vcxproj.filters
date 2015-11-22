@@ -1,0 +1,174 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Headers">
+      <UniqueIdentifier>{5df6cfb2-6357-4744-b2c5-23569a75a0b6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source">
+      <UniqueIdentifier>{ae50a3e2-fbf7-4927-8afe-95aa4020ed02}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\OpenType">
+      <UniqueIdentifier>{cfacd6e5-b5fe-4e0b-bf4b-97cd03242fe6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\ShapingEngine">
+      <UniqueIdentifier>{623c1237-d040-4e4c-94ea-2269d982b034}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\FontCache">
+      <UniqueIdentifier>{20b8af1e-9408-462d-a5fa-64f5025bb106}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Headers\SFConfig.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\SFScript.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\SFTypes.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\SFFeature.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\SFLanguage.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\SFCollection.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\SFScriptBuilder.h">
+      <Filter>Source\FontCache</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\SFScriptCache.h">
+      <Filter>Source\FontCache</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\SFStandardEngine.h">
+      <Filter>Source\ShapingEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\SFShapingEngine.h">
+      <Filter>Source\ShapingEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\SFArabicEngine.h">
+      <Filter>Source\ShapingEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\SFScriptManager.h">
+      <Filter>Source\FontCache</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\SFCommon.h">
+      <Filter>Source\OpenType</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\SFGPOS.h">
+      <Filter>Source\OpenType</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\SFGSUB.h">
+      <Filter>Source\OpenType</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\SFOpenType.h">
+      <Filter>Source\OpenType</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\SFData.h">
+      <Filter>Source\OpenType</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\SFKnowledge.h">
+      <Filter>Source\ShapingEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\SFFont.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\SFFont.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\SFTableCache.h">
+      <Filter>Source\FontCache</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\SFShapingContext.h">
+      <Filter>Source\ShapingEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\SFDirection.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\SFFontCache.h">
+      <Filter>Source\FontCache</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\SFGlyphPositioning.h">
+      <Filter>Source\ShapingEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\SFGlyphSubstitution.h">
+      <Filter>Source\ShapingEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\SFGlyphManipulation.h">
+      <Filter>Source\ShapingEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\SFGDEF.h">
+      <Filter>Source\OpenType</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\SFGlyphDiscovery.h">
+      <Filter>Source\ShapingEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\SFLocator.h">
+      <Filter>Source\ShapingEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\SFList.h">
+      <Filter>Source\FontCache</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Source\SFCollection.c">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\SFScriptBuilder.c">
+      <Filter>Source\FontCache</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\SFScriptCache.c">
+      <Filter>Source\FontCache</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\SFStandardEngine.c">
+      <Filter>Source\ShapingEngine</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\SFShapingEngine.c">
+      <Filter>Source\ShapingEngine</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\SFArabicEngine.c">
+      <Filter>Source\ShapingEngine</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\SFScriptManager.c">
+      <Filter>Source\FontCache</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\SFCommon.c">
+      <Filter>Source\OpenType</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\SFOpenType.c">
+      <Filter>Source\OpenType</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\SFKnowledge.c">
+      <Filter>Source\ShapingEngine</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\SFFont.c">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\SFTableCache.c">
+      <Filter>Source\FontCache</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\SFGlyphDiscovery.c">
+      <Filter>Source\ShapingEngine</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\SFFontCache.c">
+      <Filter>Source\FontCache</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\SFGlyphPositioning.c">
+      <Filter>Source\ShapingEngine</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\SFGlyphSubstitution.c">
+      <Filter>Source\ShapingEngine</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\SFGlyphManipulation.c">
+      <Filter>Source\ShapingEngine</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\SFLocator.c">
+      <Filter>Source\ShapingEngine</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\SFList.c">
+      <Filter>Source\FontCache</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>
