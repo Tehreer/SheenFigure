@@ -95,7 +95,7 @@ static SFBoolean _SFApplySingleSubst(SFTextProcessorRef processor, SFData single
     SFCollectionRef collection = processor->_collection;
     SFLocatorRef locator = processor->_locator;
     SFUInteger inputIndex = locator->index;
-    SFGlyph inputGlyph = collection->glyphArray[inputIndex];
+    SFGlyph inputGlyph = SFCollectionGetGlyph(collection, inputIndex);
     SFUInt16 format;
 
     format = SF_SINGLE_SUBST_FORMAT(singleSubst);
@@ -112,10 +112,11 @@ static SFBoolean _SFApplySingleSubst(SFTextProcessorRef processor, SFData single
             if (coverageIndex != SFInvalidIndex) {
                 SFInt16 delta = SF_SINGLE_SUBST_F1__DELTA_GLYPH_ID(singleSubst);
                 SFGlyph substitute = (SFGlyph)(inputGlyph + delta);
+                SFGlyphTrait traits = _SFGetGlyphTrait(processor, substitute);
 
                 /* Substitute the glyph and set its traits. */
-                collection->glyphArray[inputIndex] = substitute;
-                collection->detailArray[inputIndex].traits = _SFGetGlyphTrait(processor, substitute);
+                SFCollectionSetGlyph(collection, inputIndex, substitute);
+                SFCollectionSetTraits(collection, inputIndex, traits);
 
                 return SFTrue;
             }
@@ -135,10 +136,11 @@ static SFBoolean _SFApplySingleSubst(SFTextProcessorRef processor, SFData single
 
                 if (coverageIndex < glyphCount) {
                     SFGlyph substitute = SF_SINGLE_SUBST_F2__SUBSTITUTE(singleSubst, coverageIndex);
+                    SFGlyphTrait traits = _SFGetGlyphTrait(processor, substitute);
 
                     /* Substitute the glyph and set its traits. */
-                    collection->glyphArray[inputIndex] = substitute;
-                    collection->detailArray[inputIndex].traits = _SFGetGlyphTrait(processor, substitute);
+                    SFCollectionSetGlyph(collection, inputIndex, substitute);
+                    SFCollectionSetTraits(collection, inputIndex, traits);
 
                     return SFTrue;
                 }
@@ -155,7 +157,7 @@ static SFBoolean _SFApplyMultipleSubst(SFTextProcessorRef processor, SFData mult
     SFCollectionRef collection = processor->_collection;
     SFLocatorRef locator = processor->_locator;
     SFUInteger inputIndex = locator->index;
-    SFGlyph inputGlyph = collection->glyphArray[inputIndex];
+    SFGlyph inputGlyph = SFCollectionGetGlyph(collection, inputIndex);
     SFUInt16 format;
 
     format = SF_MULTIPLE_SUBST_FORMAT(multipleSubst);
@@ -193,23 +195,24 @@ static SFBoolean _SFApplySequence(SFTextProcessorRef processor, SFData sequence)
     SFCollectionRef collection = processor->_collection;
     SFLocatorRef locator = processor->_locator;
     SFUInteger inputIndex = locator->index;
-    SFGlyph inputGlyph = collection->glyphArray[inputIndex];
     SFUInt16 glyphCount;
 
     glyphCount = SF_SEQUENCE__GLYPH_COUNT(sequence);
 
     if (glyphCount > 0) {
         SFGlyph substitute;
+        SFGlyphTrait traits;
 
-        /* Get first substitute. */
+        /* Get first substitute and its traits. */
         substitute = SF_SEQUENCE__SUBSTITUTE(sequence, 0);
+        traits = _SFGetGlyphTrait(processor, substitute);
 
         /* Put substitute of first glyph and set its traits. */
-        collection->glyphArray[inputIndex] = substitute;
-        collection->detailArray[inputIndex].traits = _SFGetGlyphTrait(processor, substitute);
+        SFCollectionSetGlyph(collection, inputIndex, substitute);
+        SFCollectionSetTraits(collection, inputIndex, traits);
 
         if (glyphCount != 1) {
-            SFUInteger association = collection->detailArray[inputIndex].association;
+            SFUInteger association = SFCollectionGetAssociation(collection, inputIndex);
             SFUInteger subIndex;
 
             /* Reserve glyphs for remaining substitutes in the collection. */
@@ -219,13 +222,14 @@ static SFBoolean _SFApplySequence(SFTextProcessorRef processor, SFData sequence)
             for (subIndex = 1; subIndex < glyphCount; subIndex++) {
                 SFUInteger newIndex = inputIndex + subIndex;
 
-                /* Get substitute at current index. */
+                /* Get substitute along with traits at current index. */
                 substitute = SF_SEQUENCE__SUBSTITUTE(sequence, subIndex);
+                traits = _SFGetGlyphTrait(processor, substitute);
 
                 /* Initialize the glyph with substitute. */
-                collection->glyphArray[newIndex] = substitute;
-                collection->detailArray[newIndex].association = association;
-                collection->detailArray[newIndex].traits = _SFGetGlyphTrait(processor, substitute);
+                SFCollectionSetGlyph(collection, newIndex, substitute);
+                SFCollectionSetTraits(collection, newIndex, traits);
+                SFCollectionSetAssociation(collection, newIndex, association);
             }
 
             /* Skip added elements in the locator. */
@@ -249,7 +253,7 @@ static SFBoolean _SFApplyLigatureSubst(SFTextProcessorRef processor, SFData liga
     SFCollectionRef collection = processor->_collection;
     SFLocatorRef locator = processor->_locator;
     SFUInteger inputIndex = locator->index;
-    SFGlyph inputGlyph = collection->glyphArray[inputIndex];
+    SFGlyph inputGlyph = SFCollectionGetGlyph(collection, inputIndex);
     SFUInt16 format;
 
     format = SF_LIGATURE_SUBST_FORMAT(ligatureSubst);
@@ -308,7 +312,7 @@ static SFBoolean _SFApplyLigatureSet(SFTextProcessorRef processor, SFData ligatu
 
             if (inputIndex != SFInvalidIndex) {
                 SFGlyph component = SF_LIGATURE__COMPONENT(ligature, compIndex);
-                SFGlyph glyph = collection->glyphArray[nextIndex];
+                SFGlyph glyph = SFCollectionGetGlyph(collection, nextIndex);
 
                 if (component != glyph) {
                     break;
@@ -323,25 +327,23 @@ static SFBoolean _SFApplyLigatureSet(SFTextProcessorRef processor, SFData ligatu
         /* Do the substitution, if all components are matched. */
         if (compIndex == compCount) {
             SFGlyph ligGlyph = SF_LIGATURE__LIG_GLYPH(ligature);
+            SFGlyphTrait traits = _SFGetGlyphTrait(processor, ligGlyph);
             SFUInteger association;
 
-            /* Substitute the ligature glyph. */
-            collection->glyphArray[inputIndex] = ligGlyph;
-            collection->detailArray[inputIndex].traits = _SFGetGlyphTrait(processor, ligGlyph);
+            /* Substitute the ligature glyph and set its traits. */
+            SFCollectionSetGlyph(collection, inputIndex, ligGlyph);
+            SFCollectionSetTraits(collection, inputIndex, traits);
 
-            association = collection->detailArray[inputIndex].association;
+            association = SFCollectionGetAssociation(collection, inputIndex);
             prevIndex = inputIndex;
 
-            /* Set traits of component glyphs. */
+            /* Initialize component glyphs. */
             for (compIndex = 1; compIndex < compCount; compIndex++) {
                 nextIndex = SFLocatorGetAfter(locator, prevIndex);
 
-                /* Set offset to this component in previous component. */
-                collection->detailArray[prevIndex].offset = nextIndex - prevIndex;
-                /* Mark the component as removed. */
-                collection->glyphArray[nextIndex] = 0;
-                collection->detailArray[nextIndex].association = association;
-                collection->detailArray[nextIndex].traits = SFGlyphTraitRemoved;
+                SFCollectionSetGlyph(collection, nextIndex, 0);
+                SFCollectionSetTraits(collection, nextIndex, SFGlyphTraitRemoved);
+                SFCollectionSetAssociation(collection, nextIndex, association);
 
                 prevIndex = nextIndex;
             }

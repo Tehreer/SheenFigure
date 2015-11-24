@@ -37,7 +37,7 @@ union {                         \
     struct {                    \
         type *at;               \
         SFUInteger count;       \
-    } items;                     \
+    } items;                    \
 }
 
 SF_INTERNAL void SFListInitialize(SFListRef list, SFUInteger itemSize);
@@ -58,6 +58,6 @@ SF_INTERNAL void SFListClear(SFListRef list);
 
 SF_INTERNAL void SFListTrimExcess(SFListRef list);
 
-SF_INTERNAL void SFListInvalidate(SFListRef list);
+SF_INTERNAL void SFListFinalize(SFListRef list);
 
 #endif

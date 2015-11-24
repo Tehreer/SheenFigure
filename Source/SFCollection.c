@@ -31,10 +31,10 @@ SF_INTERNAL void SFCollectionInitialize(SFCollectionRef collection, SFCodePoint 
 	SFAssert(codePointArray != NULL && codePointCount > 0);
 
     collection->codePointArray = codePointArray;
-    collection->glyphArray = NULL;
-    collection->detailArray = NULL;
-	collection->positionArray = NULL;
-	collection->advanceArray = NULL;
+    collection->_glyphArray = NULL;
+    collection->_detailArray = NULL;
+	collection->_positionArray = NULL;
+	collection->_advanceArray = NULL;
 	collection->mapArray = NULL;
     collection->codePointCount = codePointCount;
     collection->elementCount = 0;
@@ -45,8 +45,8 @@ SF_INTERNAL void SFCollectionAllocateGlyphs(SFCollectionRef collection)
 {
 	SFUInteger capacity = collection->codePointCount * 1.5;
 
-	collection->glyphArray = malloc(sizeof(SFGlyph) * capacity);
-	collection->detailArray = malloc(sizeof(SFGlyphDetail) * capacity);
+	collection->_glyphArray = malloc(sizeof(SFGlyph) * capacity);
+	collection->_detailArray = malloc(sizeof(SFGlyphDetail) * capacity);
 	collection->elementCount = collection->codePointCount;
 	collection->_elementCapacity = capacity;
 }
@@ -54,52 +54,128 @@ SF_INTERNAL void SFCollectionAllocateGlyphs(SFCollectionRef collection)
 static void _SFIncreaseCapacity(SFCollectionRef collection, SFUInteger glyphCount)
 {
     SFUInteger newCapacity = (collection->_elementCapacity + glyphCount) * _SF_CAPACITY_FACTOR;
-    collection->glyphArray = realloc(collection->glyphArray, sizeof(SFGlyph) * newCapacity);
-    collection->detailArray = realloc(collection->detailArray, sizeof(SFGlyphDetail) * newCapacity);
+    collection->_glyphArray = realloc(collection->_glyphArray, sizeof(SFGlyph) * newCapacity);
+    collection->_detailArray = realloc(collection->_detailArray, sizeof(SFGlyphDetail) * newCapacity);
     collection->_elementCapacity = newCapacity;
 }
 
 static void _SFMakeRoomForGlyphs(SFCollectionRef collection, SFUInteger sourceIndex, SFUInteger glyphCount) {
-    memmove(collection->glyphArray + sourceIndex + glyphCount,
-            collection->glyphArray + sourceIndex + 0,
+    memmove(collection->_glyphArray + sourceIndex + glyphCount,
+            collection->_glyphArray + sourceIndex + 0,
             sizeof(SFGlyph));
-    memmove(collection->detailArray + sourceIndex + glyphCount,
-            collection->detailArray + sourceIndex + 0,
+    memmove(collection->_detailArray + sourceIndex + glyphCount,
+            collection->_detailArray + sourceIndex + 0,
             sizeof(SFGlyphDetail));
 }
 
 SF_INTERNAL void SFCollectionAddGlyph(SFCollectionRef collection, SFGlyph glyph, SFUInteger association) {
-    SFElementDetailRef detail;
-
     /* Added number of glyphs must be less than total number of characters. */
     SFAssert(collection->elementCount < collection->codePointCount);
 
     /* Initialize glyph along with its details. */
-    collection->valueArray[collection->elementCount].glyph = glyph;
-    detail = &collection->detailArray[collection->elementCount];
-    detail->association = association;
-    detail->traits = SFGlyphTraitNone;
+    SFCollectionSetGlyph(collection, collection->elementCount, glyph);
+    SFCollectionSetTraits(collection, collection->elementCount, association);
+    SFCollectionSetAssociation(collection, collection->elementCount, SFGlyphTraitNone);
 
     /* Increment glyph count. */
     collection->elementCount++;
 }
 
-SF_INTERNAL void SFCollectionReserveElements(SFCollectionRef collection, SFUInteger index, SFUInteger elementCount) {
+SF_INTERNAL void SFCollectionReserveGlyphs(SFCollectionRef collection, SFUInteger index, SFUInteger glyphCount) {
     /* Index must be less than or equal to total number of glyphs.*/
     SFAssert(index <= collection->elementCount);
     /* The number of glyphs to be inserted must be greater than zero. */
-    SFAssert(elementCount > 0);
+    SFAssert(glyphCount > 0);
 
     /* Increase capacity if there is no room for new glyphs. */
-    if (collection->_elementCapacity < (collection->elementCount + elementCount)) {
-        _SFIncreaseCapacity(collection, elementCount);
+    if (collection->_elementCapacity < (collection->elementCount + glyphCount)) {
+        _SFIncreaseCapacity(collection, glyphCount);
     }
 
     /* Make room for new glyphs at the given index. */
-    _SFMakeRoomForGlyphs(collection, index, elementCount);
+    _SFMakeRoomForGlyphs(collection, index, glyphCount);
 }
 
-SF_INTERNAL void SFCollectionInvalidate(SFCollectionRef collection) {
-    free(collection->valueArray);
-    free(collection->detailArray);
+static void SFValidateCollectionIndex(SFCollectionRef collection, SFIndex index)
+{
+    SFAssert(index < collection->elementCount);
+}
+
+SF_INTERNAL SFGlyph SFCollectionGetGlyph(SFCollectionRef collection, SFIndex index)
+{
+    SFValidateCollectionIndex(collection, index);
+    return collection->_glyphArray[index];
+}
+
+SF_INTERNAL void SFCollectionSetGlyph(SFCollectionRef collection, SFIndex index, SFGlyph glyph)
+{
+    SFValidateCollectionIndex(collection, index);
+    collection->_glyphArray[index] = glyph;
+}
+
+SF_INTERNAL SFGlyphTrait SFCollectionGetTraits(SFCollectionRef collection, SFIndex index)
+{
+    SFValidateCollectionIndex(collection, index);
+    return collection->_detailArray[index].traits;
+}
+
+SF_INTERNAL void SFCollectionSetTraits(SFCollectionRef collection, SFIndex index, SFGlyphTrait traits)
+{
+    SFValidateCollectionIndex(collection, index);
+    collection->_detailArray[index].traits = traits;
+}
+
+SF_INTERNAL SFIndex SFCollectionGetAssociation(SFCollectionRef collection, SFIndex index)
+{
+    SFValidateCollectionIndex(collection, index);
+    return collection->_detailArray[index].association;
+}
+
+SF_INTERNAL void SFCollectionSetAsociation(SFCollectionRef collection, SFIndex index, SFIndex association)
+{
+    SFValidateCollectionIndex(collection, index);
+    collection->_detailArray[index].association = association;
+}
+
+SF_INTERNAL SFPoint SFCollectionGetPosition(SFCollectionRef collection, SFIndex index)
+{
+    SFValidateCollectionIndex(collection, index);
+    return collection->_positionArray[index];
+}
+
+SF_INTERNAL void SFCollectionSetPosition(SFCollectionRef collection, SFIndex index, SFPoint position)
+{
+    SFValidateCollectionIndex(collection, index);
+    collection->_positionArray[index] = position;
+}
+
+SF_INTERNAL SFInteger SFCollectionGetAdvance(SFCollectionRef collection, SFIndex index)
+{
+    SFValidateCollectionIndex(collection, index);
+    return collection->_advanceArray[index]
+}
+
+SF_INTERNAL void SFCollectionSetAdvance(SFCollectionRef collection, SFIndex index, SFInteger advance)
+{
+    SFValidateCollectionIndex(collection, index);
+    collection->_advanceArray[index] = advance;
+}
+
+SF_INTERNAL SFUInt16 SFCollectionGetOffset(SFCollectionRef collection, SFIndex index)
+{
+    SFValidateCollectionIndex(collection, index);
+    return collection->_detailArray[index].offset;
+}
+
+SF_INTERNAL void SFCollectionSetOffset(SFCollectionRef collection, SFIndex index, SFUInt16 offset)
+{
+    SFValidateCollectionIndex(collection, index);
+    collection->_detailArray[index].offset = offset;
+}
+
+SF_INTERNAL void SFCollectionFinalize(SFCollectionRef collection) {
+    free(collection->_glyphArray);
+    free(collection->_detailArray);
+    free(collection->_positionArray);
+    free(collection->_advanceArray);
 }

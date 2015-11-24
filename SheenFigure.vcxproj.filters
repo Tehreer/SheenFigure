@@ -16,6 +16,9 @@
     <Filter Include="Source\FontCache">
       <UniqueIdentifier>{20b8af1e-9408-462d-a5fa-64f5025bb106}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\TextProcessor">
+      <UniqueIdentifier>{ad4d8390-65d8-4316-8daf-f2a6d29df109}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Headers\SFConfig.h">
@@ -90,26 +93,29 @@
     <ClInclude Include="Source\SFFontCache.h">
       <Filter>Source\FontCache</Filter>
     </ClInclude>
-    <ClInclude Include="Source\SFGlyphPositioning.h">
-      <Filter>Source\ShapingEngine</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\SFGlyphSubstitution.h">
-      <Filter>Source\ShapingEngine</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\SFGlyphManipulation.h">
-      <Filter>Source\ShapingEngine</Filter>
-    </ClInclude>
     <ClInclude Include="Source\SFGDEF.h">
       <Filter>Source\OpenType</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\SFGlyphDiscovery.h">
-      <Filter>Source\ShapingEngine</Filter>
     </ClInclude>
     <ClInclude Include="Source\SFLocator.h">
       <Filter>Source\ShapingEngine</Filter>
     </ClInclude>
     <ClInclude Include="Source\SFList.h">
       <Filter>Source\FontCache</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\SFGlyphDiscovery.h">
+      <Filter>Source\TextProcessor</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\SFGlyphManipulation.h">
+      <Filter>Source\TextProcessor</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\SFGlyphPositioning.h">
+      <Filter>Source\TextProcessor</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\SFGlyphSubstitution.h">
+      <Filter>Source\TextProcessor</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\SFTextProcessor.h">
+      <Filter>Source\TextProcessor</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -149,26 +155,29 @@
     <ClCompile Include="Source\SFTableCache.c">
       <Filter>Source\FontCache</Filter>
     </ClCompile>
-    <ClCompile Include="Source\SFGlyphDiscovery.c">
-      <Filter>Source\ShapingEngine</Filter>
-    </ClCompile>
     <ClCompile Include="Source\SFFontCache.c">
       <Filter>Source\FontCache</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\SFGlyphPositioning.c">
-      <Filter>Source\ShapingEngine</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\SFGlyphSubstitution.c">
-      <Filter>Source\ShapingEngine</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\SFGlyphManipulation.c">
-      <Filter>Source\ShapingEngine</Filter>
     </ClCompile>
     <ClCompile Include="Source\SFLocator.c">
       <Filter>Source\ShapingEngine</Filter>
     </ClCompile>
     <ClCompile Include="Source\SFList.c">
       <Filter>Source\FontCache</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\SFGlyphDiscovery.c">
+      <Filter>Source\TextProcessor</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\SFGlyphManipulation.c">
+      <Filter>Source\TextProcessor</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\SFGlyphPositioning.c">
+      <Filter>Source\TextProcessor</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\SFGlyphSubstitution.c">
+      <Filter>Source\TextProcessor</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\SFTextProcessor.c">
+      <Filter>Source\TextProcessor</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

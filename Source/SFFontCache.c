@@ -52,7 +52,7 @@ SF_INTERNAL void SFTableCacheInitialize(SFTableCacheRef tableCache, FT_Face ftFa
     _SFLoadTableFromFTFace(ftFace, FT_MAKE_TAG('G', 'P', 'O', 'S'), &tableCache->gpos);
 }
 
-SF_INTERNAL void SFTableCacheInvalidate(SFTableCacheRef tableCache) {
+SF_INTERNAL void SFTableCacheFinalize(SFTableCacheRef tableCache) {
     free(tableCache->gdef);
     free(tableCache->gsub);
     free(tableCache->gpos);

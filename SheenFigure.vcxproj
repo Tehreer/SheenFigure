@@ -211,6 +211,7 @@
     <ClInclude Include="Source\SFShapingEngine.h" />
     <ClInclude Include="Source\SFScriptManager.h" />
     <ClInclude Include="Source\SFStandardEngine.h" />
+    <ClInclude Include="Source\SFTextProcessor.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\SFList.c" />
@@ -232,6 +233,7 @@
     <ClCompile Include="Source\SFShapingEngine.c" />
     <ClCompile Include="Source\SFScriptManager.c" />
     <ClCompile Include="Source\SFStandardEngine.c" />
+    <ClCompile Include="Source\SFTextProcessor.c" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\WindowsPhone\v$(TargetPlatformVersion)\Microsoft.Cpp.WindowsPhone.$(TargetPlatformVersion).targets" />

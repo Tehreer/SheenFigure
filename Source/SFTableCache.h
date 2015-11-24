@@ -35,6 +35,6 @@ struct _SFTableCache {
 };
 
 SF_INTERNAL void SFTableCacheInitialize(SFTableCacheRef tableCache, FT_Face ftFace);
-SF_INTERNAL void SFTableCacheInvalidate(SFTableCacheRef tableCache);
+SF_INTERNAL void SFTableCacheFinalize(SFTableCacheRef tableCache);
 
 #endif

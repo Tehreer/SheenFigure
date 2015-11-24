@@ -63,47 +63,47 @@ SF_INTERNAL SFLanguageDetailRef SFScriptCacheFindLanguage(SFScriptCacheRef scrip
     return NULL;
 }
 
-static void _SFInvalidateGroup(SFGroupDetailRef group)
+static void _SFFinalizeGroup(SFGroupDetailRef group)
 {
     free(group->lookupArray);
 }
 
-static void _SFInvalidateFeature(SFFeatureDetailRef feature)
+static void _SFFinalizeFeature(SFFeatureDetailRef feature)
 {
     free(feature->lookupArray);
 }
 
-static void _SFInvalidateLanguage(SFLanguageDetailRef language)
+static void _SFFinalizeLanguage(SFLanguageDetailRef language)
 {
     SFUInteger index;
 
-    /* Invalidate all features. */
+    /* Finalize all features. */
     for (index = 0; index < language->featureCount; index++) {
-        _SFInvalidateFeature(&language->featureArray[index]);
+        _SFFinalizeFeature(&language->featureArray[index]);
     }
 
-    /* Invalidate all groups. */
+    /* Finalize all groups. */
     for (index = 0; index < language->groupCount; index++) {
-        _SFInvalidateGroup(&language->groupArray[index]);
+        _SFFinalizeGroup(&language->groupArray[index]);
     }
 }
 
-static void _SFInvalidateScript(SFScriptDetailRef script)
+static void _SFFinalizeScript(SFScriptDetailRef script)
 {
     SFUInteger index;
 
-    /* Invalidate all languages. */
+    /* Finalize all languages. */
     for (index = 0; index < script->languageCount; index++) {
-        _SFInvalidateLanguage(&script->languageArray[index]);
+        _SFFinalizeLanguage(&script->languageArray[index]);
     }
 }
 
-SF_INTERNAL void SFScriptCacheInvalidate(SFScriptCacheRef scriptCache)
+SF_INTERNAL void SFScriptCacheFinalize(SFScriptCacheRef scriptCache)
 {
     SFUInteger index;
 
-    /* Invalidate scripts. */
+    /* Finalize scripts. */
     for (index = 0; index < scriptCache->scriptCount; index++) {
-        _SFInvalidateScript(&scriptCache->scriptArray[index]);
+        _SFFinalizeScript(&scriptCache->scriptArray[index]);
     }
 }

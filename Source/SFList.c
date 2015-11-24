@@ -137,7 +137,7 @@ SF_INTERNAL void SFListTrimExcess(SFListRef list)
     SFListSetCapacity(list, list->count);
 }
 
-SF_INTERNAL void SFListInvalidate(SFListRef list)
+SF_INTERNAL void SFListFinalize(SFListRef list)
 {
     free(list->_data);
 }

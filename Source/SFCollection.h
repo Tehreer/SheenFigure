@@ -60,10 +60,10 @@ struct _SFGlyphDetail {
 
 struct _SFCollection {
     const SFCodePoint *codePointArray; /**< The array of codepoints which are to be shaped. */
-    SFGlyph *glyphArray;
-	SFGlyphDetail *detailArray;
-    SFPoint *positionArray;
-    SFInteger *advanceArray;
+    SFGlyph *_glyphArray;
+	SFGlyphDetail *_detailArray;
+    SFPoint *_positionArray;
+    SFInteger *_advanceArray;
 	SFUInteger *mapArray;
     SFUInteger codePointCount;
     SFUInteger elementCount;
@@ -96,9 +96,27 @@ SF_INTERNAL void SFCollectionAllocateMap(SFCollectionRef collection);
 
 SF_INTERNAL void SFCollectionAllocatePositions(SFCollectionRef collection);
 
+SF_INTERNAL SFGlyph SFCollectionGetGlyph(SFCollectionRef collection, SFIndex index);
+SF_INTERNAL void SFCollectionSetGlyph(SFCollectionRef collection, SFIndex index, SFGlyph glyph);
+
+SF_INTERNAL SFGlyphTrait SFCollectionGetTraits(SFCollectionRef collection, SFIndex index);
+SF_INTERNAL void SFCollectionSetTraits(SFCollectionRef collection, SFIndex index, SFGlyphTrait trait);
+
+SF_INTERNAL SFIndex SFCollectionGetAssociation(SFCollectionRef collection, SFIndex index);
+SF_INTERNAL void SFCollectionSetAsociation(SFCollectionRef collection, SFIndex index, SFIndex association);
+
+SF_INTERNAL SFPoint SFCollectionGetPosition(SFCollectionRef collection, SFIndex index);
+SF_INTERNAL void SFCollectionSetPosition(SFCollectionRef collection, SFIndex index, SFPoint position);
+
+SF_INTERNAL SFInteger SFCollectionGetAdvance(SFCollectionRef collection, SFIndex index);
+SF_INTERNAL void SFCollectionSetAdvance(SFCollectionRef collection, SFIndex index, SFInteger advance);
+
+SF_INTERNAL SFUInt16 SFCollectionGetOffset(SFCollectionRef collection, SFIndex index);
+SF_INTERNAL void SFCollectionSetOffset(SFCollectionRef collection, SFIndex index, SFUInt16 offset);
+
 /**
- * Invalidates the collection.
+ * Finalizes the collection.
  */
-SF_INTERNAL void SFCollectionInvalidate(SFCollectionRef collection);
+SF_INTERNAL void SFCollectionFinalize(SFCollectionRef collection);
 
 #endif

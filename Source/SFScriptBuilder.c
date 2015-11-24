@@ -458,6 +458,6 @@ SF_INTERNAL void SFScriptBuilderCloseScript(SFScriptBuilderRef builder)
     builder->_languageCapacity = 0;
 }
 
-SF_INTERNAL void SFScriptBuilderInvalidate(SFScriptBuilderRef builder)
+SF_INTERNAL void SFScriptBuilderFinalize(SFScriptBuilderRef builder)
 {
 }

@@ -361,6 +361,6 @@ static void _SFInsertAllLookups(SFScriptManagerRef manager, _SFHeaderDetailRef d
     }
 }
 
-SF_INTERNAL void SFScriptManagerInvalidate(SFScriptManagerRef scriptManager)
+SF_INTERNAL void SFScriptManagerFinalize(SFScriptManagerRef scriptManager)
 {
 }

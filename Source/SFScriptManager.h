@@ -64,6 +64,6 @@ SF_INTERNAL void SFScriptManagerInitialize(SFScriptManagerRef scriptManager, SFS
 
 SF_INTERNAL void SFScriptManagerBuildCache(SFScriptManagerRef scriptManager);
 
-SF_INTERNAL void SFScriptManagerInvalidate(SFScriptManagerRef scriptManager);
+SF_INTERNAL void SFScriptManagerFinalize(SFScriptManagerRef scriptManager);
 
 #endif

@@ -82,6 +82,8 @@ typedef intptr_t        SFInteger;
  */
 typedef uintptr_t       SFUInteger;
 
+typedef size_t          SFIndex;
+
 /**
  * A value that indicates an invalid unsigned index.
  */

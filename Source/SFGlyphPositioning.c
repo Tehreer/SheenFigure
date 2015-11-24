@@ -115,7 +115,7 @@ static SFBoolean _SFApplySinglePos(SFTextProcessorRef processor, SFData singlePo
     SFCollectionRef collection = processor->_collection;
     SFLocatorRef locator = processor->_locator;
     SFUInteger inputIndex = locator->index;
-    SFGlyph inputGlyph = collection->glyphArray[inputIndex];
+    SFGlyph inputGlyph = SFCollectionGetGlyph(collection, inputIndex);
     SFUInt16 format;
 
     format = SF_SINGLE_POS_FORMAT(singlePos);
@@ -207,8 +207,8 @@ static SFBoolean _SFApplyPairPos(SFTextProcessorRef processor, SFData pairPos)
 static SFBoolean _SFApplyPairPosF1(SFTextProcessorRef processor, SFData pairPos, SFUInteger firstIndex, SFUInteger secondIndex, SFBoolean *outShouldSkip)
 {
     SFCollectionRef collection = processor->_collection;
-    SFGlyph firstGlyph = collection->glyphArray[firstIndex];
-    SFGlyph secondGlyph = collection->glyphArray[secondIndex];
+    SFGlyph firstGlyph = SFCollectionGetGlyph(collection, firstIndex);
+    SFGlyph secondGlyph = SFCollectionGetGlyph(collection, secondIndex);
     SFOffset offset;
     SFData coverage;
     SFUInteger coverageIndex;
@@ -264,8 +264,8 @@ static SFBoolean _SFApplyPairPosF1(SFTextProcessorRef processor, SFData pairPos,
 static SFBoolean _SFApplyPairPosF2(SFTextProcessorRef processor, SFData pairPos, SFUInteger firstIndex, SFUInteger secondIndex, SFBoolean *outShouldSkip)
 {
     SFCollectionRef collection = processor->_collection;
-    SFGlyph firstGlyph = collection->glyphArray[firstIndex];
-    SFGlyph secondGlyph = collection->glyphArray[secondIndex];
+    SFGlyph firstGlyph = SFCollectionGetGlyph(collection, firstIndex);
+    SFGlyph secondGlyph = SFCollectionGetGlyph(collection, secondIndex);
     SFOffset offset;
     SFData coverage;
     SFUInteger coverageIndex;
@@ -349,22 +349,38 @@ static SFData _SFSearchPairRecord(SFData pairSet, SFUInteger recordSize, SFGlyph
 static void _SFApplyValueRecord(SFTextProcessorRef processor, SFData valueRecord, SFUInt16 valueFormat, SFUInteger inputIndex)
 {
     SFCollectionRef collection = processor->_collection;
+    SFInt16 value;
     SFOffset offset;
 
     offset = 0;
 
     if (SF_VALUE_FORMAT__X_PLACEMENT(valueFormat)) {
-        collection->positionArray[inputIndex].x += (SFInt16)SF_VALUE_RECORD__NEXT_VALUE(valueRecord, offset);
+        SFPoint position = SFCollectionGetPosition(collection, inputIndex);
+
+        value = (SFInt16)SF_VALUE_RECORD__NEXT_VALUE(valueRecord, offset);
+        position.x += value;
+
+        SFCollectionSetPosition(collection, inputIndex, position);
     }
 
     if (SF_VALUE_FORMAT__Y_PLACEMENT(valueFormat)) {
-        collection->positionArray[inputIndex].y += (SFInt16)SF_VALUE_RECORD__NEXT_VALUE(valueRecord, offset);
+        SFPoint position = SFCollectionGetPosition(collection, inputIndex);
+
+        value = (SFInt16)SF_VALUE_RECORD__NEXT_VALUE(valueRecord, offset);
+        position.y += value;
+
+        SFCollectionSetPosition(collection, inputIndex, position);
     }
 
     switch (processor->_direction) {
     case SFDirectionHorizontal:
         if (SF_VALUE_FORMAT__X_ADVANCE(valueFormat)) {
-            collection->advanceArray[inputIndex] += (SFInt16)SF_VALUE_RECORD__NEXT_VALUE(valueRecord, offset);
+            SFInteger advance = SFCollectionGetAdvance(collection, inputIndex);
+
+            value = (SFInt16)SF_VALUE_RECORD__NEXT_VALUE(valueRecord, offset);
+            advance += value;
+
+            SFCollectionSetAdvance(collection, inputIndex, advance);
         }
         break;
     }
@@ -442,29 +458,31 @@ static SFBoolean _SFApplyCursivePosF1(SFTextProcessorRef processor, SFData cursi
 {
     SFCollectionRef collection = processor->_collection;
     SFLocatorRef locator = processor->_locator;
-    SFUInteger inputIndex = locator->index;
-    SFGlyph inputGlyph = collection->glyphArray[inputIndex];
-    SFData *inputExitAnchor;
-    SFData *inputEntryAnchor;
+    SFUInteger firstIndex = locator->index;
+    SFGlyph firstGlyph = SFCollectionGetGlyph(collection, firstIndex);
+    SFData *firstExitAnchor;
+    SFData *firstEntryAnchor;
 
-    _SFSearchCursiveAnchors(cursivePos, inputGlyph, inputExitAnchor, inputEntryAnchor);
+    _SFSearchCursiveAnchors(cursivePos, firstGlyph, firstExitAnchor, firstEntryAnchor);
 
-    /* Proceed only if exit anchor of input glyph exists. */
-    if (inputExitAnchor) {
-        SFUInteger nextIndex = SFLocatorGetAfter(locator, inputIndex);
+    /* Proceed only if exit anchor of first glyph exists. */
+    if (firstExitAnchor) {
+        SFUInteger secondIndex = SFLocatorGetAfter(locator, firstIndex);
 
-        if (nextIndex != SFInvalidIndex) {
-            SFGlyph nextGlyph = collection->glyphArray[nextIndex];
-            SFData *nextExitAnchor;
-            SFData *nextEntryAnchor;
+        if (secondIndex != SFInvalidIndex) {
+            SFGlyph secondGlyph = SFCollectionGetGlyph(collection, secondIndex);
+            SFData *secondExitAnchor;
+            SFData *secondEntryAnchor;
 
-            _SFSearchCursiveAnchors(cursivePos, nextGlyph, nextExitAnchor, nextEntryAnchor);
+            _SFSearchCursiveAnchors(cursivePos, secondGlyph, secondExitAnchor, secondEntryAnchor);
 
-            /* Proceed only if entry anchor of next glyph exists. */
-            if (nextEntryAnchor) {
-                SFPoint exitPoint = _SFConvertAnchorToPoint(inputExitAnchor);
-                SFPoint entryPoint = _SFConvertAnchorToPoint(nextEntryAnchor);
-                SFInteger oldX;
+            /* Proceed only if entry anchor of second glyph exists. */
+            if (secondEntryAnchor) {
+                SFPoint exitPoint = _SFConvertAnchorToPoint(firstExitAnchor);
+                SFPoint entryPoint = _SFConvertAnchorToPoint(secondEntryAnchor);
+                SFPoint firstPosition = SFCollectionGetPosition(collection, firstIndex);
+                SFPoint secondPosition = SFCollectionGetPosition(collection, secondIndex);
+                SFInteger secondAdvance = SFCollectionGetAdvance(collection, secondIndex);
 
                 switch (processor->_direction) {
                 case SFDirectionHorizontal:
@@ -473,28 +491,36 @@ static SFBoolean _SFApplyCursivePosF1(SFTextProcessorRef processor, SFData cursi
                      * will replace its old advance) while preserving its x so
                      * that it is placed at intended location.
                      */
-                    collection->advanceArray[inputIndex] = collection->positionArray[inputIndex].x + exitPoint.x;
+                    SFCollectionSetAdvance(collection, firstIndex, firstPosition.x + exitPoint.x);
                     /*
                      * The entry glyph must be connected with exit glyph (which
                      * will replace its old x) while preserving its advance so
                      * that the pen moves to the intended location.
                      */
-                    oldX = collection->positionArray[nextIndex].x;
-                    collection->positionArray[nextIndex].x = -entryPoint.x;
-                    collection->advanceArray[nextIndex] -= oldX + entryPoint.x;
+                    secondAdvance -= secondPosition.x + entryPoint.x;
+                    secondPosition.x = -entryPoint.x;
 
                     /* Connect entry glyph with exit glyph vertically. */
-                    collection->positionArray[nextIndex].y = exitPoint.y - entryPoint.y;
+                    secondPosition.y = exitPoint.y - entryPoint.y;
+
+                    SFCollectionSetPosition(collection, secondIndex, secondPosition);
+                    SFCollectionSetAdvance(collection, secondIndex, secondAdvance);
 
                     break;
                 }
 
                 /* Set traits of both elements. */
                 if (processor->_lookupFlag & SFLookupFlagRightToLeft) {
-                    collection->detailArray[inputIndex].traits |= SFGlyphTraitRightToLeft;
-                    collection->detailArray[inputIndex].offset = nextIndex - inputIndex;
+                    SFGlyphTrait traits;
 
-                    collection->detailArray[nextIndex].traits |= SFGlyphTraitRightToLeft;
+                    traits = SFCollectionGetTraits(collection, firstIndex)
+                           | SFGlyphTraitRightToLeft;
+                    SFCollectionSetTraits(collection, firstIndex, traits);
+                    SFCollectionSetOffset(collection, firstIndex, secondIndex - firstIndex);
+
+                    traits = SFCollectionGetTraits(collection, secondIndex)
+                           | SFGlyphTraitRightToLeft;
+                    SFCollectionSetTraits(collection, secondIndex, traits);
                 }
 
                 return SFTrue;
@@ -511,10 +537,10 @@ static SFUInteger _SFGetPreviousBaseGlyphIndex(SFTextProcessorRef processor)
     SFLookupFlag lookupFlag = processor->_lookupFlag | SFLookupFlagIgnoreMarks;
 
     /*
-    * NOTE:
-    *      Previous non-mark glyph is assumed as a base glyph. It is not
-    *      necessary to confirm whether that is actually a base glyph or not.
-    */
+     * NOTE:
+     *      Previous non-mark glyph is assumed as a base glyph. It is not
+     *      necessary to confirm whether that is actually a base glyph or not.
+     */
     return SFLocatorGetBefore(locator, lookupFlag, locator->index, lookupFlag);
 }
 
@@ -522,7 +548,7 @@ static SFBoolean _SFApplyMarkToBasePos(SFTextProcessorRef processor, SFData mark
 {
     SFCollectionRef collection = processor->_collection;
     SFUInteger inputIndex = processor->_locator->index;
-    SFGlyph inputGlyph = collection->glyphArray[inputIndex];
+    SFGlyph inputGlyph = SFCollectionGetGlyph(collection, inputIndex);
     SFUInt16 format;
 
     format = SF_MARK_BASE_POS__FORMAT(markBasePos);
@@ -541,7 +567,7 @@ static SFBoolean _SFApplyMarkToBasePos(SFTextProcessorRef processor, SFData mark
 
                 /* Proceed only if there is a previous base glyph. */
                 if (prevIndex != SFInvalidIndex) {
-                    SFGlyph prevGlyph = collection->glyphArray[prevIndex];
+                    SFGlyph prevGlyph = SFCollectionGetGlyph(collection, prevIndex);
                     SFData baseCoverage;
                     SFUInteger baseIndex;
 
@@ -587,6 +613,7 @@ static SFBoolean _SFApplyMarkToBaseArrays(SFTextProcessorRef processor, SFData m
 
         /* Validate base index. */
         if (baseIndex < baseCount) {
+            SFPoint markPosition = SFCollectionGetPosition(collection, markIndex);
             SFData baseRecord;
             SFData baseAnchor;
             SFPoint markPoint;
@@ -601,8 +628,10 @@ static SFBoolean _SFApplyMarkToBaseArrays(SFTextProcessorRef processor, SFData m
             basePoint = _SFConvertAnchorToPoint(baseAnchor);
 
             /* Connect mark glyph with base glyph. */
-            collection->positionArray[markIndex].x = markPoint.x - basePoint.x;
-            collection->positionArray[markIndex].y = markPoint.y - basePoint.y;
+            markPosition.x = markPoint.x - basePoint.x;
+            markPosition.y = markPoint.y - basePoint.y;
+
+            SFCollectionSetPosition(collection, markIndex, markPosition);
 
             return SFTrue;
         }
@@ -630,7 +659,7 @@ static SFUInteger _SFGetPreviousLigatureGlyphIndex(SFTextProcessorRef processor,
     prevIndex = SFLocatorGetBefore(locator, lookupFlag, inputIndex);
 
     if (prevIndex != SFInvalidIndex) {
-        SFUInteger association = collection->detailArray[prevIndex].association;
+        SFUInteger association = SFCollectionGetAssociation(collection, prevIndex);
         SFUInteger nextIndex;
 
         /*
@@ -647,7 +676,7 @@ static SFUInteger _SFGetPreviousLigatureGlyphIndex(SFTextProcessorRef processor,
          *      3) Increase component counter for each matched association.
          */
         for (nextIndex = prevIndex + 1; nextIndex < inputIndex; nextIndex++) {
-            if (collection->detailArray[nextIndex].association == association) {
+            if (SFCollectionGetAssociation(collection, nextIndex) == association) {
                 *outComponent++;
             }
         }
@@ -662,7 +691,7 @@ static SFBoolean _SFApplyMarkToLigPos(SFTextProcessorRef processor, SFData markL
 {
     SFCollectionRef collection = processor->_collection;
     SFUInteger inputIndex = processor->_locator->index;
-    SFGlyph inputGlyph = collection->glyphArray[inputIndex];
+    SFGlyph inputGlyph = SFCollectionGetGlyph(collection, inputIndex);
     SFUInt16 format;
 
     format = SF_MARK_LIG_POS__FORMAT(markLigPos);
@@ -684,7 +713,7 @@ static SFBoolean _SFApplyMarkToLigPos(SFTextProcessorRef processor, SFData markL
 
                 /* Proceed only if there is a previous ligature glyph. */
                 if (prevIndex != SFInvalidIndex) {
-                    SFGlyph prevGlyph = collection->glyphArray[prevIndex];
+                    SFGlyph prevGlyph = SFCollectionGetGlyph(collection, prevIndex);
                     SFData ligCoverage;
                     SFUInteger ligIndex;
 
@@ -739,6 +768,8 @@ static SFBoolean _SFApplyMarkToLigArrays(SFTextProcessorRef processor, SFData ma
 
             /* Validate ligature component. */
             if (ligComponent < componentCount) {
+                SFPoint markPosition = SFCollectionGetPosition(collection, markIndex);
+
                 SFData compRecord;
                 SFData ligAnchor;
                 SFPoint markPoint;
@@ -753,8 +784,10 @@ static SFBoolean _SFApplyMarkToLigArrays(SFTextProcessorRef processor, SFData ma
                 ligPoint = _SFConvertAnchorToPoint(ligAnchor);
 
                 /* Connect mark glyph with ligature glyph. */
-                collection->positionArray[markIndex].x = markPoint.x - ligPoint.x;
-                collection->positionArray[markIndex].y = markPoint.y - ligPoint.y;
+                markPosition.x = markPoint.x - ligPoint.x;
+                markPosition.y = markPoint.y - ligPoint.y;
+
+                SFCollectionSetPosition(collection, markIndex, markPosition);
 
                 return SFTrue;
             }
@@ -784,7 +817,7 @@ static SFBoolean _SFApplyMarkToMarkPos(SFTextProcessorRef processor, SFData mark
 {
     SFCollectionRef collection = processor->_collection;
     SFUInteger inputIndex = processor->_locator->index;
-    SFGlyph inputGlyph = collection->glyphArray[inputIndex];
+    SFGlyph inputGlyph = SFCollectionGetGlyph(collection, inputIndex);
     SFUInt16 format;
 
     format = SF_MARK_MARK_POS__FORMAT(markMarkPos);
@@ -803,7 +836,7 @@ static SFBoolean _SFApplyMarkToMarkPos(SFTextProcessorRef processor, SFData mark
 
                 /* Proceed only if there is a previous mark glyph. */
                 if (prevIndex != SFInvalidIndex) {
-                    SFGlyph prevGlyph = collection->glyphArray[prevIndex];
+                    SFGlyph prevGlyph = SFCollectionGetGlyph(collection, prevIndex);
                     SFData mark2Coverage;
                     SFUInteger mark2Index;
 
@@ -849,6 +882,7 @@ static SFBoolean _SFApplyMarkToMarkArrays(SFTextProcessorRef processor, SFData m
 
         /* Validate mark 2 index. */
         if (mark2Index < mark2Count) {
+            SFPoint mark1Position = SFCollectionGetPosition(collection, mark1Index);
             SFData mark2Record;
             SFData mark2Anchor;
             SFPoint mark1Point;
@@ -863,8 +897,10 @@ static SFBoolean _SFApplyMarkToMarkArrays(SFTextProcessorRef processor, SFData m
             mark2Point = _SFConvertAnchorToPoint(mark2Anchor);
 
             /* Connect mark1 glyph with mark2 glyph. */
-            collection->positionArray[mark1Index].x = mark1Point.x - mark2Point.x;
-            collection->positionArray[mark1Index].y = mark1Point.y - mark2Point.y;
+            mark1Position.x = mark1Point.x - mark2Point.x;
+            mark1Position.y = mark1Point.y - mark2Point.y;
+
+            SFCollectionSetPosition(collection, mark1Index, mark1Position);
 
             return SFTrue;
         }

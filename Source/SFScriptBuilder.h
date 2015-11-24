@@ -134,6 +134,6 @@ SF_INTERNAL void SFScriptBuilderCloseLanguage(SFScriptBuilderRef builder);
  */
 SF_INTERNAL void SFScriptBuilderCloseScript(SFScriptBuilderRef builder);
 
-SF_INTERNAL void SFScriptBuilderInvalidate(SFScriptBuilderRef builder);
+SF_INTERNAL void SFScriptBuilderFinalize(SFScriptBuilderRef builder);
 
 #endif

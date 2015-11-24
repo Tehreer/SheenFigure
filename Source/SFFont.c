@@ -40,8 +40,8 @@ static void _SFBuildScriptCache(SFScriptCacheRef scriptCache, SFData gsub, SFDat
     SFScriptManagerInitialize(&manager, &builder, gsub, gpos);
     SFScriptManagerBuildCache(&manager);
 
-    SFScriptBuilderInvalidate(&builder);
-    SFScriptManagerInvalidate(&manager);
+    SFScriptBuilderFinalize(&builder);
+    SFScriptManagerFinalize(&manager);
 }
 
 SFFontRef SFFontCreateWithFTFace(FT_Face ftFace)
@@ -128,8 +128,8 @@ void SFFontRelease(SFFontRef font)
 {
     if (font && --font->_retainCount == 0) {
         FT_Done_Face(font->_ftFace);
-        SFTableCacheInvalidate(&font->tables);
-        SFScriptCacheInvalidate(&font->scripts);
+        SFTableCacheFinalize(&font->tables);
+        SFScriptCacheFinalize(&font->scripts);
         free(font);
     }
 }

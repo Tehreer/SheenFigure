@@ -124,6 +124,6 @@ struct _SFScriptCache {
  */
 SF_INTERNAL SFLanguageDetailRef SFScriptCacheFindLanguage(SFScriptCacheRef scriptCache, SFScript script, SFLanguage language);
 
-SF_INTERNAL void SFScriptCacheInvalidate(SFScriptCacheRef scriptCache);
+SF_INTERNAL void SFScriptCacheFinalize(SFScriptCacheRef scriptCache);
 
 #endif
