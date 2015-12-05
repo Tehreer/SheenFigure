@@ -27,6 +27,8 @@ SF_INTERNAL SFBoolean SFOpenTypeValidateScriptList(SFData scriptList) {
     if (scriptCount == 0) {
         return SFFalse;
     }
+
+    return SFTrue;
 }
 
 SF_INTERNAL SFBoolean SFOpenTypeValidateGSUB(SFData gsub) {

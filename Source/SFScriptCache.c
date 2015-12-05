@@ -75,10 +75,11 @@ static void _SFFinalizeFeature(SFFeatureDetailRef feature)
 
 static void _SFFinalizeLanguage(SFLanguageDetailRef language)
 {
+    SFUInteger featureCount = language->featureCount.gsub + language->featureCount.gpos;
     SFUInteger index;
 
     /* Finalize all features. */
-    for (index = 0; index < language->featureCount; index++) {
+    for (index = 0; index < featureCount; index++) {
         _SFFinalizeFeature(&language->featureArray[index]);
     }
 
@@ -102,7 +103,7 @@ SF_INTERNAL void SFScriptCacheFinalize(SFScriptCacheRef scriptCache)
 {
     SFUInteger index;
 
-    /* Finalize scripts. */
+    /* Finalize all scripts. */
     for (index = 0; index < scriptCache->scriptCount; index++) {
         _SFFinalizeScript(&scriptCache->scriptArray[index]);
     }

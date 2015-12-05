@@ -31,6 +31,7 @@
 #include "SFGPOS.h"
 #include "SFTableCache.h"
 
+/*
 static void _SFLoadTableFromFTFace(FT_Face ftFace, FT_ULong tag, SFData *table) {
     FT_ULong length = 0;
     FT_Error error;
@@ -57,3 +58,4 @@ SF_INTERNAL void SFTableCacheFinalize(SFTableCacheRef tableCache) {
     free(tableCache->gsub);
     free(tableCache->gpos);
 }
+*/

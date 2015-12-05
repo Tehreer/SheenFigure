@@ -52,7 +52,7 @@ static SFUInteger _SFGetPreviousMarkGlyphIndex(SFTextProcessorRef processor);
 static SFBoolean _SFApplyMarkToMarkPos(SFTextProcessorRef processor, SFData markMarkPos);
 static SFBoolean _SFApplyMarkToMarkArrays(SFTextProcessorRef processor, SFData markMarkPos, SFUInteger mark1Index, SFUInteger mark2Index);
 
-static SFData _SFMarkArrayGetAnchor(SFData markArray, SFUInteger markIndex, SFUInteger *outClass);
+static SFData _SFMarkArrayGetAnchor(SFData markArray, SFUInteger markIndex, SFUInt16 *outClass);
 
 SF_PRIVATE void _SFApplyGPOSLookup(SFTextProcessorRef processor, SFData lookup)
 {
@@ -460,10 +460,10 @@ static SFBoolean _SFApplyCursivePosF1(SFTextProcessorRef processor, SFData cursi
     SFLocatorRef locator = processor->_locator;
     SFUInteger firstIndex = locator->index;
     SFGlyph firstGlyph = SFCollectionGetGlyph(collection, firstIndex);
-    SFData *firstExitAnchor;
-    SFData *firstEntryAnchor;
+    SFData firstExitAnchor;
+    SFData firstEntryAnchor;
 
-    _SFSearchCursiveAnchors(cursivePos, firstGlyph, firstExitAnchor, firstEntryAnchor);
+    _SFSearchCursiveAnchors(cursivePos, firstGlyph, &firstExitAnchor, &firstEntryAnchor);
 
     /* Proceed only if exit anchor of first glyph exists. */
     if (firstExitAnchor) {
@@ -471,10 +471,10 @@ static SFBoolean _SFApplyCursivePosF1(SFTextProcessorRef processor, SFData cursi
 
         if (secondIndex != SFInvalidIndex) {
             SFGlyph secondGlyph = SFCollectionGetGlyph(collection, secondIndex);
-            SFData *secondExitAnchor;
-            SFData *secondEntryAnchor;
+            SFData secondExitAnchor;
+            SFData secondEntryAnchor;
 
-            _SFSearchCursiveAnchors(cursivePos, secondGlyph, secondExitAnchor, secondEntryAnchor);
+            _SFSearchCursiveAnchors(cursivePos, secondGlyph, &secondExitAnchor, &secondEntryAnchor);
 
             /* Proceed only if entry anchor of second glyph exists. */
             if (secondEntryAnchor) {
@@ -541,7 +541,7 @@ static SFUInteger _SFGetPreviousBaseGlyphIndex(SFTextProcessorRef processor)
      *      Previous non-mark glyph is assumed as a base glyph. It is not
      *      necessary to confirm whether that is actually a base glyph or not.
      */
-    return SFLocatorGetBefore(locator, lookupFlag, locator->index, lookupFlag);
+    return SFLocatorGetBefore(locator, locator->index, lookupFlag);
 }
 
 static SFBoolean _SFApplyMarkToBasePos(SFTextProcessorRef processor, SFData markBasePos)
@@ -656,7 +656,7 @@ static SFUInteger _SFGetPreviousLigatureGlyphIndex(SFTextProcessorRef processor,
      *      Previous non-mark glyph is assumed to be a ligature glyph. It is not
      *      necessary to confirm whether that is actually a ligature glyph or not.
      */
-    prevIndex = SFLocatorGetBefore(locator, lookupFlag, inputIndex);
+    prevIndex = SFLocatorGetBefore(locator, inputIndex, lookupFlag);
 
     if (prevIndex != SFInvalidIndex) {
         SFUInteger association = SFCollectionGetAssociation(collection, prevIndex);
@@ -762,7 +762,7 @@ static SFBoolean _SFApplyMarkToLigArrays(SFTextProcessorRef processor, SFData ma
             SFData ligAttach;
             SFUInteger componentCount;
 
-            offset = SF_LIGATURE_ARRAY__LIGATURE_ATTACH(ligArray, ligIndex, classCount);
+            offset = SF_LIGATURE_ARRAY__LIGATURE_ATTACH(ligArray, ligIndex);
             ligAttach = SF_DATA__SUBDATA(ligArray, offset);
             componentCount = SF_LIGATURE_ATTACH__COMPONENT_COUNT(ligAttach);
 
@@ -810,7 +810,7 @@ static SFUInteger _SFGetPreviousMarkGlyphIndex(SFTextProcessorRef processor)
      *      Previous glyph is assumed to be a mark glyph. It is not necessary to
      *      confirm whether that is actually a mark glyph or not.
      */
-    return SFLocatorGetBefore(locator, lookupFlag, locator->index, lookupFlag);
+    return SFLocatorGetBefore(locator, locator->index, lookupFlag);
 }
 
 static SFBoolean _SFApplyMarkToMarkPos(SFTextProcessorRef processor, SFData markMarkPos)
@@ -909,7 +909,7 @@ static SFBoolean _SFApplyMarkToMarkArrays(SFTextProcessorRef processor, SFData m
     return SFFalse;
 }
 
-static SFData _SFMarkArrayGetAnchor(SFData markArray, SFUInteger markIndex, SFUInteger *outClass)
+static SFData _SFMarkArrayGetAnchor(SFData markArray, SFUInteger markIndex, SFUInt16 *outClass)
 {
     SFUInt16 markCount = SF_MARK_ARRAY__MARK_COUNT(markArray);
 

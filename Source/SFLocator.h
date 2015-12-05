@@ -61,6 +61,6 @@ SF_INTERNAL SFUInteger SFLocatorGetAfter(SFLocatorRef locator, SFUInteger index)
  *      The index of previous glyph, or SFInvalidIndex if there is no
  *      appropriate glyph after the given index.
  */
-SF_INTERNAL SFUInteger SFLocatorGetBefore(SFLocatorRef locator, SFUInteger index);
+SF_INTERNAL SFUInteger SFLocatorGetBefore(SFLocatorRef locator, SFUInteger index, SFLookupFlag lookupFlag);
 
 #endif

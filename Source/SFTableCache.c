@@ -25,10 +25,6 @@
 #include <stddef.h>
 #include <stdlib.h>
 
-#include "SFCommon.h"
-#include "SFData.h"
-#include "SFGSUB.h"
-#include "SFGPOS.h"
 #include "SFTableCache.h"
 
 static void _SFLoadTableFromFTFace(FT_Face ftFace, FT_ULong tag, SFData *table) {
