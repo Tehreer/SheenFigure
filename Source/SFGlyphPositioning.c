@@ -401,7 +401,7 @@ static SFPoint _SFConvertAnchorToPoint(SFData anchor)
     switch (format) {
     case 1:
         point.x = SF_ANCHOR_F1__X_COORDINATE(anchor);
-        point.y = SF_ANCHOR_F2__Y_COORDINATE(anchor);
+        point.y = SF_ANCHOR_F1__Y_COORDINATE(anchor);
         break;
 
         /* TODO: Support remaining anchor formats. */
