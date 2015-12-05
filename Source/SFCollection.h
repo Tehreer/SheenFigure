@@ -20,6 +20,8 @@
 #include <SFConfig.h>
 #include <SFTypes.h>
 
+#include "SFList.h"
+
 struct _SFGlyphDetail;
 struct _SFCollection;
 
@@ -60,32 +62,30 @@ struct _SFGlyphDetail {
 
 struct _SFCollection {
     const SFCodePoint *codePointArray; /**< The array of codepoints which are to be shaped. */
-    SFGlyph *_glyphArray;
-	SFGlyphDetail *_detailArray;
-    SFPoint *_positionArray;
-    SFInteger *_advanceArray;
-	SFUInteger *mapArray;
+    SFUInteger *mapArray;
     SFUInteger codePointCount;
     SFUInteger elementCount;
-    SFUInteger _elementCapacity;
+
+    SF_LIST(SFGlyph) _glyphs;
+    SF_LIST(SFGlyphDetail) _details;
+    SF_LIST(SFPoint) _positions;
+    SF_LIST(SFInteger) _advances;
 };
 
 /**
- * Initializes the collection for given characters.
- * @note
- *      The arrays of glyphs and its details will be uninitialized.
+ * Initializes the collection for given code points.
  */
 SF_INTERNAL void SFCollectionInitialize(SFCollectionRef collection, SFCodePoint *codePointArray, SFUInteger codePointCount);
 
 SF_INTERNAL void SFCollectionAllocateGlyphs(SFCollectionRef collection);
+SF_INTERNAL void SFCollectionAllocatePositions(SFCollectionRef collection);
 
 /**
- * Reserves specified number of glyphs at the given index by shifting old ones
- * to the right.
+ * Reserves specified number of glyphs at the given index.
  * @note
  *      The reserved glyphs will be uninitialized.
  */
-SF_INTERNAL void SFCollectionReserveGlyphs(SFCollectionRef collection, SFUInteger index, SFUInteger glyphCount);
+SF_INTERNAL void SFCollectionReserveGlyphs(SFCollectionRef collection, SFUInteger index, SFUInteger count);
 
 /**
  * Allocates an array for charater to glyph map.
@@ -93,8 +93,6 @@ SF_INTERNAL void SFCollectionReserveGlyphs(SFCollectionRef collection, SFUIntege
  *      The allocated map will be uninitialized.
  */
 SF_INTERNAL void SFCollectionAllocateMap(SFCollectionRef collection);
-
-SF_INTERNAL void SFCollectionAllocatePositions(SFCollectionRef collection);
 
 SF_INTERNAL SFGlyph SFCollectionGetGlyph(SFCollectionRef collection, SFIndex index);
 SF_INTERNAL void SFCollectionSetGlyph(SFCollectionRef collection, SFIndex index, SFGlyph glyph);
