@@ -45,7 +45,6 @@ SF_PRIVATE void _SFListInitialize(_SFListRef list, SFUInteger itemSize);
 SF_PRIVATE void _SFListFinalize(_SFListRef list);
 
 SF_PRIVATE void _SFListSetCapacity(_SFListRef list, SFUInteger capacity);
-
 SF_PRIVATE void _SFListReserveRange(_SFListRef list, SFUInteger index, SFUInteger count);
 SF_PRIVATE void _SFListRemoveRange(_SFListRef list, SFUInteger index, SFUInteger count);
 

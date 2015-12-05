@@ -26,9 +26,8 @@
 
 #define SF_DEFAULT_LIST_CAPACITY 4
 
-static void *_SFGetListItemPtr(_SFListRef list, SFUInteger index);
-
 static void _SFListEnsureCapacity(_SFListRef list, SFUInteger capacity);
+static void *_SFListGetItemPtr(_SFListRef list, SFUInteger index);
 static void _SFListMoveItems(_SFListRef list, SFUInteger srcIndex, SFUInteger dstIndex, SFUInteger itemCount);
 
 SF_PRIVATE void _SFListInitialize(_SFListRef list, SFUInteger itemSize)
@@ -67,20 +66,12 @@ static void _SFListEnsureCapacity(_SFListRef list, SFUInteger capacity)
     }
 }
 
-static void *_SFGetListItemPtr(_SFListRef list, SFUInteger index)
+static void *_SFListGetItemPtr(_SFListRef list, SFUInteger index)
 {
     /* The index must fall within allocated capacity. */
     SFAssert(index < list->capacity);
 
     return list->_data + (index * list->_itemSize);
-}
-
-static void _SFSetListItem(_SFListRef list, SFUInteger index, void *item)
-{
-    /* The index must fall within allocated capacity. */
-    SFAssert(index < list->capacity);
-
-    memcpy(_SFGetListItemPtr(list, index), item, list->_itemSize);
 }
 
 static void _SFListMoveItems(_SFListRef list, SFUInteger srcIndex, SFUInteger dstIndex, SFUInteger itemCount)
@@ -89,7 +80,7 @@ static void _SFListMoveItems(_SFListRef list, SFUInteger srcIndex, SFUInteger ds
     SFAssert((srcIndex + itemCount) <= list->capacity && (dstIndex + itemCount) <= list->capacity);
 
     if (itemCount) {
-        memmove(_SFGetListItemPtr(list, dstIndex), _SFGetListItemPtr(list, srcIndex), list->_itemSize * itemCount);
+        memmove(_SFListGetItemPtr(list, dstIndex), _SFListGetItemPtr(list, srcIndex), list->_itemSize * itemCount);
     }
 }
 
