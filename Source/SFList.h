@@ -51,11 +51,27 @@ SF_PRIVATE void _SFListRemoveRange(_SFListRef list, SFUInteger index, SFUInteger
 SF_PRIVATE void _SFListClear(_SFListRef list);
 SF_PRIVATE void _SFListTrimExcess(_SFListRef list);
 
+#define _SFListValidateIndex(list_, index_)             \
+(                                                       \
+    SFAssert(index_ < (list_)->items.count)             \
+)
+
+#define _SFListGetRef(list_, index_)                    \
+(                                                       \
+    _SFListValidateIndex(list_, index),                 \
+    &(list_)->items.at[index_]                          \
+)
+
+#define _SFListGet(list_, index_)                       \
+(                                                       \
+    _SFListValidateIndex(list_, index),                 \
+    (list_)->items.at[index_]                           \
+)
+
 #define _SFListSet(list_, index_, item_)                \
 do {                                                    \
-    SFUInteger __setIndex = index_;                     \
-    SFAssert(__setIndex < (list_)->items.count);        \
-    (list_)->items.at[__setIndex] = item_;              \
+    _SFListValidateIndex(list_, index),                 \
+    (list_)->items.at[index_] = item_;                  \
 } while (0)
 
 #define _SFListInsert(list_, index_, item_)             \
@@ -75,7 +91,10 @@ do {                                                    \
 #define SFListReserveRange(list, index, count)      _SFListReserveRange(&(list)->_base, index, count)
 #define SFListRemoveRange(list, index, count)       _SFListRemoveRange(&(list)->_base, index, count)
 
+#define SFListGetRef(list, index)                   _SFListGetRef(list, index)
+#define SFListGet(list, index)                      _SFListGet(list, index)
 #define SFListSet(list, index, item)                _SFListSet(list, index, item)
+
 #define SFListAdd(list, item)                       _SFListAdd(list, item)
 #define SFListInsert(list, index, item)             _SFListInsert(list, index, item)
 #define SFListRemoveAt(list, index)                 _SFListRemoveRange(&(list)->_base, index, 1)
