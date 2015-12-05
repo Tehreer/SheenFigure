@@ -21,8 +21,8 @@
 #include <SFTypes.h>
 
 struct _SFList;
-typedef struct _SFList SFList;
-typedef SFList *SFListRef;
+typedef struct _SFList _SFList;
+typedef _SFList *_SFListRef;
 
 struct _SFList {
     SFUInt8 *_data;
@@ -33,31 +33,55 @@ struct _SFList {
 
 #define SF_LIST(type)           \
 union {                         \
-    SFList _base;               \
+    _SFList _base;              \
     struct {                    \
         type *at;               \
         SFUInteger count;       \
+        SFUInteger capacity;    \
     } items;                    \
 }
 
-SF_INTERNAL void SFListInitialize(SFListRef list, SFUInteger itemSize);
+SF_PRIVATE void _SFListInitialize(_SFListRef list, SFUInteger itemSize);
+SF_PRIVATE void _SFListFinalize(_SFListRef list);
 
-SF_INTERNAL void SFListSetCapacity(SFListRef list, SFUInteger capacity);
+SF_PRIVATE void _SFListSetCapacity(_SFListRef list, SFUInteger capacity);
 
-SF_INTERNAL void *SFListGetItem(SFListRef list, SFUInteger index);
+SF_PRIVATE void _SFListReserveRange(_SFListRef list, SFUInteger index, SFUInteger count);
+SF_PRIVATE void _SFListRemoveRange(_SFListRef list, SFUInteger index, SFUInteger count);
 
-SF_INTERNAL void SFListSetItem(SFListRef list, SFUInteger index, void *item);
+SF_PRIVATE void _SFListClear(_SFListRef list);
+SF_PRIVATE void _SFListTrimExcess(_SFListRef list);
 
-SF_INTERNAL void SFListAdd(SFListRef list, void *item);
+#define _SFListSet(list_, index_, item_)                \
+do {                                                    \
+    SFUInteger __setIndex = index_;                     \
+    SFAssert(__setIndex < (list_)->items.count);        \
+    (list_)->items.at[__setIndex] = item_;              \
+} while (0)
 
-SF_INTERNAL void SFListInsert(SFListRef list, SFUInteger index, void *item);
+#define _SFListInsert(list_, index_, item_)             \
+do {                                                    \
+    SFUInteger __insertIndex = index_;                  \
+    _SFListReserveRange(&(list_)->_base, __insertIndex, 1); \
+    _SFListSet(list_, __insertIndex, item_);            \
+} while (0)
 
-SF_INTERNAL void SFListRemoveAt(SFListRef list, SFUInteger index);
+#define _SFListAdd(list_, item_)                        \
+        _SFListInsert(list_, (list_)->items.count, item_)
 
-SF_INTERNAL void SFListClear(SFListRef list);
+#define SFListInitialize(list, itemSize)            _SFListInitialize(&(list)->_base, itemSize)
+#define SFListFinalize(list)                        _SFListFinalize(&(list)->_base)
 
-SF_INTERNAL void SFListTrimExcess(SFListRef list);
+#define SFListSetCapacity(list, capacity)           _SFListSetCapacity(&(list)->_base, capacity)
+#define SFListReserveRange(list, index, count)      _SFListReserveRange(&(list)->_base, index, count)
+#define SFListRemoveRange(list, index, count)       _SFListRemoveRange(&(list)->_base, index, count)
 
-SF_INTERNAL void SFListFinalize(SFListRef list);
+#define SFListSet(list, index, item)                _SFListSet(list, index, item)
+#define SFListAdd(list, item)                       _SFListAdd(list, item)
+#define SFListInsert(list, index, item)             _SFListInsert(list, index, item)
+#define SFListRemoveAt(list, index)                 _SFListRemoveRange(&(list)->_base, index, 1)
+
+#define SFListClear(list)                           _SFListClear(&(list)->_base)
+#define SFListTrimExcess(list)                      _SFListTrimExcess(&(list)->_base)
 
 #endif

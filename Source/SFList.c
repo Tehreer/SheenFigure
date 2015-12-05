@@ -26,7 +26,12 @@
 
 #define SF_DEFAULT_LIST_CAPACITY 4
 
-SF_INTERNAL void SFListInitialize(SFListRef list, SFUInteger itemSize)
+static void *_SFGetListItemPtr(_SFListRef list, SFUInteger index);
+
+static void _SFListEnsureCapacity(_SFListRef list, SFUInteger capacity);
+static void _SFListMoveItems(_SFListRef list, SFUInteger srcIndex, SFUInteger dstIndex, SFUInteger itemCount);
+
+SF_PRIVATE void _SFListInitialize(_SFListRef list, SFUInteger itemSize)
 {
     list->_data = NULL;
     list->count = 0;
@@ -34,7 +39,35 @@ SF_INTERNAL void SFListInitialize(SFListRef list, SFUInteger itemSize)
     list->_itemSize = itemSize;
 }
 
-static void *_SFListItemPtr(SFListRef list, SFUInteger index)
+SF_PRIVATE void _SFListFinalize(_SFListRef list)
+{
+    free(list->_data);
+}
+
+SF_PRIVATE void _SFListSetCapacity(_SFListRef list, SFUInteger capacity)
+{
+    /* The new capacity must be larger than total number of elements in the list. */
+    SFAssert(capacity >= list->count);
+
+    if (capacity != list->capacity) {
+        list->_data = realloc(list->_data, list->_itemSize * capacity);
+        list->capacity = capacity;
+    }
+}
+
+static void _SFListEnsureCapacity(_SFListRef list, SFUInteger capacity)
+{
+    if (list->capacity < capacity) {
+        SFUInteger newCapacity = (list->capacity ? list->count * 2 : SF_DEFAULT_LIST_CAPACITY);
+        if (newCapacity < capacity) {
+            newCapacity = capacity;
+        }
+
+        _SFListSetCapacity(list, newCapacity);
+    }
+}
+
+static void *_SFGetListItemPtr(_SFListRef list, SFUInteger index)
 {
     /* The index must fall within allocated capacity. */
     SFAssert(index < list->capacity);
@@ -42,102 +75,51 @@ static void *_SFListItemPtr(SFListRef list, SFUInteger index)
     return list->_data + (index * list->_itemSize);
 }
 
-static void _SFSetListItem(SFListRef list, SFUInteger index, void *item)
+static void _SFSetListItem(_SFListRef list, SFUInteger index, void *item)
 {
     /* The index must fall within allocated capacity. */
     SFAssert(index < list->capacity);
 
-    memcpy(_SFListItemPtr(list, index), item, list->_itemSize);
+    memcpy(_SFGetListItemPtr(list, index), item, list->_itemSize);
 }
 
-static void _SFMoveItems(SFListRef list, SFUInteger srcIndex, SFUInteger dstIndex, SFUInteger itemCount)
+static void _SFListMoveItems(_SFListRef list, SFUInteger srcIndex, SFUInteger dstIndex, SFUInteger itemCount)
 {
     /* The capacity must be available to move the block. */
     SFAssert((srcIndex + itemCount) <= list->capacity && (dstIndex + itemCount) <= list->capacity);
 
-    memmove(_SFListItemPtr(list, dstIndex), _SFListItemPtr(list, srcIndex), list->_itemSize * itemCount);
-}
-
-SF_INTERNAL void SFListSetCapacity(SFListRef list, SFUInteger capacity)
-{
-    /* The new capacity must be larger than total number of elements in the list. */
-    SFAssert(capacity > list->count);
-
-    if (capacity != list->capacity) {
-        list->_data = realloc(list->_data, list->_itemSize * capacity);
+    if (itemCount) {
+        memmove(_SFGetListItemPtr(list, dstIndex), _SFGetListItemPtr(list, srcIndex), list->_itemSize * itemCount);
     }
 }
 
-static void _SFEnsureCapacity(SFListRef list, SFUInteger capacity)
+SF_PRIVATE void _SFListReserveRange(_SFListRef list, SFUInteger index, SFUInteger count)
 {
-    if (list->count < capacity) {
-        SFUInteger newCapacity = (list->capacity ? list->count * 2 : SF_DEFAULT_LIST_CAPACITY);
-        if (newCapacity < capacity) {
-            newCapacity = capacity;
-        }
+    /* The index must be valid and there should be no integer overflow. */
+    SFAssert(index <= list->count && (index + count) >= 0);
 
-        SFListSetCapacity(list, newCapacity);
-    }
+    _SFListEnsureCapacity(list, list->count + count);
+    _SFListMoveItems(list, index, index + count, list->count - index);
+    list->count += count;
 }
 
-SF_INTERNAL void *SFListGetItem(SFListRef list, SFUInteger index)
+SF_PRIVATE void _SFListRemoveRange(_SFListRef list, SFUInteger index, SFUInteger count)
 {
-    /* The index must belong to an item in the list. */
-    SFAssert(index < list->count);
+    SFUInteger nextIndex = index + count;
 
-    return _SFListItemPtr(list, index);
+    /* The specified item indexes must be valid and there should be no integer overflow. */
+    SFAssert(nextIndex <= list->count && (index + count) >= 0);
+
+    _SFListMoveItems(list, nextIndex, index, list->count - nextIndex);
+    list->count -= count;
 }
 
-SF_INTERNAL void SFListSetItem(SFListRef list, SFUInteger index, void *item)
-{
-    /* The index must belong to an item in the list. */
-    SFAssert(index < list->count);
-
-    _SFSetListItem(list, index, item);
-}
-
-SF_INTERNAL void SFListAdd(SFListRef list, void *item)
-{
-    SFListInsert(list, list->count + 1, item);
-}
-
-SF_INTERNAL void SFListInsert(SFListRef list, SFUInteger index, void *item)
-{
-    /* The index must be valid. */
-    SFAssert(index <= list->count);
-
-    if (list->capacity == list->count) {
-        _SFEnsureCapacity(list, list->count + 1);
-    }
-
-    if (index < list->count) {
-        _SFMoveItems(list, index, index + 1, list->count - index);
-    }
-
-    _SFSetListItem(list, index, item);
-    list->count++;
-}
-
-SF_INTERNAL void SFListRemoveAt(SFListRef list, SFUInteger index)
-{
-    /* The index must belong to an item in the list. */
-    SFAssert(index < list->count);
-
-    list->count--;
-    _SFMoveItems(list, index + 1, index, list->count - index);
-}
-
-SF_INTERNAL void SFListClear(SFListRef list)
+SF_PRIVATE void _SFListClear(_SFListRef list)
 {
     list->count = 0;
 }
 
-SF_INTERNAL void SFListTrimExcess(SFListRef list)
+SF_PRIVATE void _SFListTrimExcess(_SFListRef list)
 {
-    SFListSetCapacity(list, list->count);
-}
-
-SF_INTERNAL void SFListFinalize(SFListRef list)
-{
-    free(list->_data);
+    _SFListSetCapacity(list, list->count);
 }
