@@ -39,9 +39,6 @@
     <ClInclude Include="Source\SFCollection.h">
       <Filter>Source</Filter>
     </ClInclude>
-    <ClInclude Include="Source\SFScriptBuilder.h">
-      <Filter>Source\FontCache</Filter>
-    </ClInclude>
     <ClInclude Include="Source\SFScriptCache.h">
       <Filter>Source\FontCache</Filter>
     </ClInclude>
@@ -117,13 +114,22 @@
     <ClInclude Include="Source\SFTextProcessor.h">
       <Filter>Source\TextProcessor</Filter>
     </ClInclude>
+    <ClInclude Include="Source\SFScheme.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\SFPatternBuilder.h">
+      <Filter>Source\FontCache</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\SFPattern.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\SFScheme.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\SFCollection.c">
       <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\SFScriptBuilder.c">
-      <Filter>Source\FontCache</Filter>
     </ClCompile>
     <ClCompile Include="Source\SFScriptCache.c">
       <Filter>Source\FontCache</Filter>
@@ -178,6 +184,15 @@
     </ClCompile>
     <ClCompile Include="Source\SFTextProcessor.c">
       <Filter>Source\TextProcessor</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\SFScheme.c">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\SFPatternBuilder.c">
+      <Filter>Source\FontCache</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\SFPattern.c">
+      <Filter>Source</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

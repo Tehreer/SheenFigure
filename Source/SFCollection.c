@@ -79,13 +79,13 @@ static void SFValidateCollectionIndex(SFCollectionRef collection, SFIndex index)
 SF_INTERNAL SFGlyph SFCollectionGetGlyph(SFCollectionRef collection, SFIndex index)
 {
     SFValidateCollectionIndex(collection, index);
-    return SFListGet(&collection->_glyphs, index);
+    return SFListGetVal(&collection->_glyphs, index);
 }
 
 SF_INTERNAL void SFCollectionSetGlyph(SFCollectionRef collection, SFIndex index, SFGlyph glyph)
 {
     SFValidateCollectionIndex(collection, index);
-    SFListSet(&collection->_glyphs, index, glyph);
+    SFListSetVal(&collection->_glyphs, index, glyph);
 }
 
 SF_INTERNAL SFGlyphTrait SFCollectionGetTraits(SFCollectionRef collection, SFIndex index)
@@ -115,25 +115,25 @@ SF_INTERNAL void SFCollectionSetAsociation(SFCollectionRef collection, SFIndex i
 SF_INTERNAL SFPoint SFCollectionGetPosition(SFCollectionRef collection, SFIndex index)
 {
     SFValidateCollectionIndex(collection, index);
-    return SFListGet(&collection->_positions, index);
+    return SFListGetVal(&collection->_positions, index);
 }
 
 SF_INTERNAL void SFCollectionSetPosition(SFCollectionRef collection, SFIndex index, SFPoint position)
 {
     SFValidateCollectionIndex(collection, index);
-    SFListSet(&collection->_positions, index, position);
+    SFListSetVal(&collection->_positions, index, position);
 }
 
 SF_INTERNAL SFInteger SFCollectionGetAdvance(SFCollectionRef collection, SFIndex index)
 {
     SFValidateCollectionIndex(collection, index);
-    return SFListGet(&collection->_advances, index);
+    return SFListGetVal(&collection->_advances, index);
 }
 
 SF_INTERNAL void SFCollectionSetAdvance(SFCollectionRef collection, SFIndex index, SFInteger advance)
 {
     SFValidateCollectionIndex(collection, index);
-    SFListSet(&collection->_advances, index, advance);
+    SFListSetVal(&collection->_advances, index, advance);
 }
 
 SF_INTERNAL SFUInt16 SFCollectionGetOffset(SFCollectionRef collection, SFIndex index)

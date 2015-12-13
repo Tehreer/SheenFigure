@@ -185,6 +185,7 @@
     <ClInclude Include="Headers\SFFeature.h" />
     <ClInclude Include="Headers\SFFont.h" />
     <ClInclude Include="Headers\SFLanguage.h" />
+    <ClInclude Include="Headers\SFScheme.h" />
     <ClInclude Include="Headers\SFScript.h" />
     <ClInclude Include="Headers\SFTypes.h" />
     <ClInclude Include="Source\SFList.h" />
@@ -196,6 +197,8 @@
     <ClInclude Include="Source\SFGlyphManipulation.h" />
     <ClInclude Include="Source\SFGlyphPositioning.h" />
     <ClInclude Include="Source\SFGlyphSubstitution.h" />
+    <ClInclude Include="Source\SFPattern.h" />
+    <ClInclude Include="Source\SFScheme.h" />
     <ClInclude Include="Source\SFShapingContext.h" />
     <ClInclude Include="Source\SFTableCache.h" />
     <ClInclude Include="Source\SFKnowledge.h" />
@@ -206,7 +209,7 @@
     <ClInclude Include="Source\SFGPOS.h" />
     <ClInclude Include="Source\SFGSUB.h" />
     <ClInclude Include="Source\SFCommon.h" />
-    <ClInclude Include="Source\SFScriptBuilder.h" />
+    <ClInclude Include="Source\SFPatternBuilder.h" />
     <ClInclude Include="Source\SFScriptCache.h" />
     <ClInclude Include="Source\SFShapingEngine.h" />
     <ClInclude Include="Source\SFScriptManager.h" />
@@ -223,12 +226,14 @@
     <ClCompile Include="Source\SFGlyphManipulation.c" />
     <ClCompile Include="Source\SFGlyphPositioning.c" />
     <ClCompile Include="Source\SFGlyphSubstitution.c" />
+    <ClCompile Include="Source\SFPattern.c" />
+    <ClCompile Include="Source\SFScheme.c" />
     <ClCompile Include="Source\SFTableCache.c" />
     <ClCompile Include="Source\SFKnowledge.c" />
     <ClCompile Include="Source\SFOpenType.c" />
     <ClCompile Include="Source\SFArabicEngine.c" />
     <ClCompile Include="Source\SFCollection.c" />
-    <ClCompile Include="Source\SFScriptBuilder.c" />
+    <ClCompile Include="Source\SFPatternBuilder.c" />
     <ClCompile Include="Source\SFScriptCache.c" />
     <ClCompile Include="Source\SFShapingEngine.c" />
     <ClCompile Include="Source\SFScriptManager.c" />
