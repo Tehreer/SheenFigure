@@ -64,8 +64,10 @@ struct _SFPattern {
     SFUInteger featureCount;       /**< Total number of features. */
     SFScript script;               /**< Tag of the script. */
     SFLanguage language;           /**< Tag of the language. */
+
+    SFUInteger _retainCount;
 };
 
-SF_INTERNAL SFPatternFinalize(SFPatternRef pattern);
+SF_INTERNAL SFPatternRef SFPatternCreate(void);
 
 #endif

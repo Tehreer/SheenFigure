@@ -30,7 +30,6 @@
 SF_INTERNAL void SFPatternBuilderInitialize(SFPatternBuilderRef builder, SFPatternRef pattern)
 {
     /* Initialize builder. */
-    builder->_currentGroup = NULL;
     builder->_currentHeader = 0;
     builder->_gsubGroupCount = 0;
     builder->_gposGroupCount = 0;
@@ -41,6 +40,9 @@ SF_INTERNAL void SFPatternBuilderInitialize(SFPatternBuilderRef builder, SFPatte
 
     SFListInitialize(&builder->_featureGroups, sizeof(SFFeatureGroup));
     SFListSetCapacity(&builder->_featureGroups, 0, 24);
+
+    SFListInitialize(&builder->_lookupIndexes, sizeof(SFUInt16));
+    SFListSetCapacity(&builder->_lookupIndexes, 0, 32);
 }
 
 SF_INTERNAL void SFPatternBuilderSetScript(SFPatternBuilderRef builder, SFScript script)
@@ -66,43 +68,8 @@ SF_INTERNAL void SFPatternBuilderBeginHeader(SFPatternBuilderRef builder, SFHead
     builder->_currentHeader = kind;
 }
 
-SF_INTERNAL void SFPatternBuilderAddGroup(SFPatternBuilderRef builder, SFUInteger featureCount)
-{
-    SFFeatureGroup featureGroup;
-
-    /* The previous group must be closed before adding a new one. */
-    SFAssert(builder->_currentGroup == NULL);
-    /* Feature count must be valid. */
-    SFAssert((builder->_featureIndex + featureCount) <= builder->_featureTags.items.count);
-
-    featureGroup.lookupIndexes = NULL;
-    featureGroup.lookupCount = 0;
-    featureGroup.featureIndex = builder->_featureIndex;
-    featureGroup.featureCount = featureCount;
-    featureGroup.headerKind = builder->_currentHeader;
-
-    SFListAdd(&builder->_featureGroups, featureGroup);
-    builder->_currentGroup = SFListGetRef(&builder->_featureGroups, builder->_featureGroups.items.count);
-
-    switch (builder->_currentHeader) {
-    case SFHeaderKindGSUB:
-        builder->_gsubGroupCount++;
-        break;
-
-    case SFHeaderKindGPOS:
-        builder->_gposGroupCount++;
-        break;
-    }
-
-    SFListInitialize(&builder->_lookupIndexes, sizeof(SFUInt16));
-    SFListSetCapacity(&builder->_lookupIndexes, 32);
-}
-
 SF_INTERNAL void SFPatternBuilderAddLookup(SFPatternBuilderRef builder, SFUInt16 lookupIndex)
 {
-    /* A feature group must be available before adding lookups. */
-    SFAssert(builder->_currentGroup != NULL);
-
     /* Add only unique lookup indexes. */
     if (!SFListContainsItem(&builder->_lookupIndexes, &lookupIndex)) {
         SFListAdd(&builder->_lookupIndexes, lookupIndex);
@@ -117,21 +84,36 @@ static int _SFLookupIndexComparison(const void *item1, const void *item2)
     return (*ref1 - *ref2);
 }
 
-SF_INTERNAL void SFPatternBuilderCloseGroup(SFPatternBuilderRef builder)
+SF_INTERNAL void SFPatternBuilderMakeGroup(SFPatternBuilderRef builder)
 {
-    SFFeatureGroupRef featureGroup = builder->_currentGroup;
-
-    /* A feature must be available before it can be closed. */
-    SFAssert(featureGroup != NULL);
+    SFFeatureGroup featureGroup;
+    featureGroup.lookupIndexes = NULL;
+    featureGroup.lookupCount = 0;
+    featureGroup.featureIndex = builder->_featureIndex;
+    featureGroup.featureCount = builder->_featureTags.items.count - featureGroup.featureIndex;
+    featureGroup.headerKind = builder->_currentHeader;
 
     /* Sort all lookup indexes. */
     SFListSort(&builder->_lookupIndexes, 0, builder->_lookupIndexes.items.count, _SFLookupIndexComparison);
     /* Set lookup indexes in current feature group. */
-    SFListFinalizeKeepingArray(&builder->_lookupIndexes, &featureGroup->lookupIndexes, &featureGroup->lookupCount);
+    SFListFinalizeKeepingArray(&builder->_lookupIndexes, &featureGroup.lookupIndexes, &featureGroup.lookupCount);
 
-    /* Dismiss current feature group from builder. */
-    builder->_featureIndex += featureGroup->featureCount;
-    builder->_currentGroup = NULL;
+    /* Add the group in the list. */
+    SFListAdd(&builder->_featureGroups, featureGroup);
+
+    switch (builder->_currentHeader) {
+    case SFHeaderKindGSUB:
+        builder->_gsubGroupCount++;
+        break;
+
+    case SFHeaderKindGPOS:
+        builder->_gposGroupCount++;
+        break;
+    }
+
+    /* Initialize lookup indexes array. */
+    SFListInitialize(&builder->_lookupIndexes, sizeof(SFUInt16));
+    SFListSetCapacity(&builder->_lookupIndexes, 0, 32);
 }
 
 SF_INTERNAL void SFPatternBuilderBuild(SFPatternBuilderRef builder, SFPatternRef pattern)
@@ -150,4 +132,5 @@ SF_INTERNAL void SFPatternBuilderBuild(SFPatternBuilderRef builder, SFPatternRef
 
 SF_INTERNAL void SFPatternBuilderFinalize(SFPatternBuilderRef builder)
 {
+    SFListFinalize(&builder->_lookupIndexes);
 }

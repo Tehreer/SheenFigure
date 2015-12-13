@@ -39,7 +39,6 @@ typedef SFPatternBuilder *SFPatternBuilderRef;
  * Provides a way to cache scripts, languages, features and lookups.
  */
 struct _SFPatternBuilder {
-    SFFeatureGroupRef _currentGroup;    /**< Reference to the feature group being built. */
     SFHeaderKind _currentHeader;        /**< The kind of table whose features are being added. */
     SFUInteger _gsubGroupCount;
     SFUInteger _gposGroupCount;
@@ -68,12 +67,7 @@ SF_INTERNAL void SFPatternBuilderBeginHeader(SFPatternBuilderRef builder, SFHead
 /**
  * Adds a new feature for specified header.
  */
-SF_INTERNAL void SFPatternBuilderAddFeature(SFPatternBuilderRef builder, SFFeature feature, SFHeaderKind kind);
-
-/**
- * Adds a new feature group for specified header.
- */
-SF_INTERNAL void SFPatternBuilderAddGroup(SFPatternBuilderRef builder, SFUInteger featureCount);
+SF_INTERNAL void SFPatternBuilderAddFeature(SFPatternBuilderRef builder, SFFeature feature);
 
 /**
  * Adds a new lookup in recently added feature group.
@@ -81,9 +75,9 @@ SF_INTERNAL void SFPatternBuilderAddGroup(SFPatternBuilderRef builder, SFUIntege
 SF_INTERNAL void SFPatternBuilderAddLookup(SFPatternBuilderRef builder, SFUInt16 lookupIndex);
 
 /**
- * Closes recently added feature group.
+ * Makes a group of recently added features.
  */
-SF_INTERNAL void SFPatternBuilderCloseGroup(SFPatternBuilderRef builder);
+SF_INTERNAL void SFPatternBuilderMakeGroup(SFPatternBuilderRef builder);
 
 SF_INTERNAL void SFPatternBuilderBuild(SFPatternBuilderRef builder, SFPatternRef pattern);
 

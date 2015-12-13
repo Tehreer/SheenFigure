@@ -17,16 +17,32 @@
 #include <SFConfig.h>
 #include <SFTypes.h>
 
+#include <stddef.h>
 #include <stdlib.h>
 
 #include "SFPattern.h"
+
+SF_INTERNAL SFPatternRef SFPatternCreate(void)
+{
+    SFPatternRef pattern = malloc(sizeof(SFPattern));
+    pattern->featureTagArray = NULL;
+    pattern->featureGroupArray = NULL;
+    pattern->groupCount.gsub = 0;
+    pattern->groupCount.gpos = 0;
+    pattern->featureCount = 0;
+    pattern->script = 0;
+    pattern->language = 0;
+    pattern->_retainCount = 1;
+
+    return pattern;
+}
 
 static void _SFFinalizeGroup(SFFeatureGroupRef featureGroup)
 {
     free(featureGroup->lookupIndexes);
 }
 
-SF_INTERNAL SFPatternFinalize(SFPatternRef pattern)
+static void SFPatternFinalize(SFPatternRef pattern)
 {
     SFUInteger groupCount = pattern->groupCount.gsub + pattern->groupCount.gpos;
     SFUInteger index;
@@ -38,4 +54,11 @@ SF_INTERNAL SFPatternFinalize(SFPatternRef pattern)
 
     free(pattern->featureTagArray);
     free(pattern->featureGroupArray);
+}
+
+void SFPatternRelease(SFPatternRef pattern)
+{
+    if (pattern && --pattern->_retainCount == 0) {
+        SFPatternFinalize(pattern);
+    }
 }

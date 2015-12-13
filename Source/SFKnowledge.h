@@ -39,8 +39,9 @@ SF_INTERNAL SFBoolean SFKnowledgeSeekScript(SFKnowledgeRef knowledge, SFScript s
 
 SF_INTERNAL SFUInteger SFKnowledgeCountFeatures(SFKnowledgeRef knowledge);
 SF_INTERNAL SFUInteger SFKnowledgeSeekFeature(SFKnowledgeRef knowledge, SFFeature feature);
+SF_INTERNAL SFFeature SFKnowledgeGetFeatureAt(SFKnowledgeRef knowledge, SFUInteger index);
 
 SF_INTERNAL SFUInteger SFKnowledgeCountGroups(SFKnowledgeRef knowledge);
-SF_INTERNAL SFRange SFKnowledgeSeekGroup(SFKnowledgeRef knowledge, SFUInteger groupIndex);
+SF_INTERNAL SFRange SFKnowledgeGetGroupAt(SFKnowledgeRef knowledge, SFUInteger index);
 
 #endif
