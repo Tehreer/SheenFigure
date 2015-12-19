@@ -15,8 +15,8 @@
  */
 
 #include <SFConfig.h>
-#include <SFFeature.h>
-#include <SFScript.h>
+#include <SFFeatureTag.h>
+#include <SFScriptTag.h>
 #include <SFTypes.h>
 
 #include "SFAssert.h"
@@ -25,18 +25,18 @@
 #include "SFTextProcessor.h"
 #include "SFShapingEngine.h"
 
-SF_INTERNAL SFScriptKnowledgeRef SFShapingKnowledgeSeekScript(SFShapingKnowledgeRef shapingKnowledge, SFScript script)
+SF_INTERNAL SFScriptKnowledgeRef SFShapingKnowledgeSeekScript(SFShapingKnowledgeRef shapingKnowledge, SFScriptTag scriptTag)
 {
-    (*shapingKnowledge->_seekScript)(shapingKnowledge, script);
+    (*shapingKnowledge->_seekScript)(shapingKnowledge, scriptTag);
 }
 
-SF_INTERNAL SFUInteger SFScriptKnowledgeSeekFeature(SFScriptKnowledgeRef scriptKnowledge, SFFeature feature)
+SF_INTERNAL SFUInteger SFScriptKnowledgeSeekFeature(SFScriptKnowledgeRef scriptKnowledge, SFFeatureTag featureTag)
 {
     if (!scriptKnowledge->_seekFeature) {
         SFUInteger index;
 
-        for (index = 0; index < scriptKnowledge->featureCount; index++) {
-            if (scriptKnowledge->featureArray[index] == feature) {
+        for (index = 0; index < scriptKnowledge->featureTagCount; index++) {
+            if (scriptKnowledge->featureTagArray[index] == featureTag) {
                 return index;
             }
         }
@@ -45,18 +45,18 @@ SF_INTERNAL SFUInteger SFScriptKnowledgeSeekFeature(SFScriptKnowledgeRef scriptK
     }
 
     /* Invoke overridden implementation. */
-    return (*scriptKnowledge->_seekFeature)(scriptKnowledge, feature);
+    return (*scriptKnowledge->_seekFeature)(scriptKnowledge, featureTag);
 }
 
-SF_INTERNAL void SFShapingEngineInitialize(SFShapingEngineRef shapingEngine, SFFontRef font, SFScript script, SFLanguage language, SFPatternRef pattern)
+SF_INTERNAL void SFShapingEngineInitialize(SFShapingEngineRef shapingEngine, SFFontRef font, SFScriptTag scriptTag, SFLanguageTag languageTag, SFPatternRef pattern)
 {
 	/* Font must NOT be null. */
 	SFAssert(font != NULL);
 
     shapingEngine->_font = font;
     shapingEngine->_pattern = pattern;
-    shapingEngine->_script = script;
-    shapingEngine->_language = language;
+    shapingEngine->_scriptTag = scriptTag;
+    shapingEngine->_languageTag = languageTag;
 }
 
 SF_INTERNAL void SFShapingEngineProcessCollection(SFShapingEngineRef shapingEngine, SFCollectionRef collection)

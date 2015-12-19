@@ -18,9 +18,9 @@
 #define SF_PATTERN_BUILDER_INTERNAL_H
 
 #include <SFConfig.h>
-#include <SFFeature.h>
-#include <SFLanguage.h>
-#include <SFScript.h>
+#include <SFFeatureTag.h>
+#include <SFLanguageTag.h>
+#include <SFScriptTag.h>
 #include <SFTypes.h>
 
 #include "SFList.h"
@@ -43,10 +43,10 @@ struct _SFPatternBuilder {
     SFUInteger _gsubGroupCount;
     SFUInteger _gposGroupCount;
     SFUInteger _featureIndex;
-    SFScript _script;                   /**< Tag of the script. */
-    SFLanguage _language;               /**< Tag of the language. */
+    SFScriptTag _scriptTag;             /**< Tag of the script. */
+    SFLanguageTag _languageTag;         /**< Tag of the language. */
 
-    SF_LIST(SFFeature) _featureTags;
+    SF_LIST(SFFeatureTag) _featureTags;
     SF_LIST(SFFeatureGroup) _featureGroups;
     SF_LIST(SFUInt16) _lookupIndexes;
 };
@@ -59,15 +59,15 @@ struct _SFPatternBuilder {
  */
 SF_INTERNAL void SFPatternBuilderInitialize(SFPatternBuilderRef builder);
 
-SF_INTERNAL void SFPatternBuilderSetScript(SFPatternBuilderRef builder, SFScript script);
-SF_INTERNAL void SFPatternBuilderSetLanguage(SFPatternBuilderRef builder, SFLanguage language);
+SF_INTERNAL void SFPatternBuilderSetScript(SFPatternBuilderRef builder, SFScriptTag scriptTag);
+SF_INTERNAL void SFPatternBuilderSetLanguage(SFPatternBuilderRef builder, SFLanguageTag languageTag);
 
 SF_INTERNAL void SFPatternBuilderBeginHeader(SFPatternBuilderRef builder, SFHeaderKind kind);
 
 /**
  * Adds a new feature for specified header.
  */
-SF_INTERNAL void SFPatternBuilderAddFeature(SFPatternBuilderRef builder, SFFeature feature);
+SF_INTERNAL void SFPatternBuilderAddFeature(SFPatternBuilderRef builder, SFFeatureTag featureTag);
 
 /**
  * Adds a new lookup in recently added feature group.

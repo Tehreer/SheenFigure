@@ -18,9 +18,9 @@
 #define SF_PATTERN_INTERNAL_H
 
 #include <SFConfig.h>
-#include <SFFeature.h>
-#include <SFLanguage.h>
-#include <SFScript.h>
+#include <SFFeatureTag.h>
+#include <SFLanguageTag.h>
+#include <SFScriptTag.h>
 #include <SFTypes.h>
 
 struct _SFPattern;
@@ -55,15 +55,15 @@ struct _SFFeatureGroup {
  * Keeps details of a script from both 'GSUB' and 'GPOS' tables.
  */
 struct _SFPattern {
-    SFFeature *featureTagArray;     /**< Tags of features. */
+    SFFeatureTag *featureTagArray;     /**< Tags of features. */
     SFFeatureGroup *featureGroupArray; /**<  Array of feature groups in implementation order. Substitution features will be followed by positioning features. */
     struct {
         SFUInteger gsub;           /**< Total number of gsub feature groups.*/
         SFUInteger gpos;	       /**< Total number of gpos feature groups.*/
     } groupCount;
     SFUInteger featureCount;       /**< Total number of features. */
-    SFScript script;               /**< Tag of the script. */
-    SFLanguage language;           /**< Tag of the language. */
+    SFScriptTag scriptTag;         /**< Tag of the script. */
+    SFLanguageTag languageTag;     /**< Tag of the language. */
 
     SFUInteger _retainCount;
 };

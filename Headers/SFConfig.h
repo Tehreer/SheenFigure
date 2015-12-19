@@ -22,6 +22,4 @@
 #define SF_INTERNAL
 #define SF_PRIVATE
 
-
-
 #endif

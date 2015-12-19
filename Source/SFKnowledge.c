@@ -15,8 +15,8 @@
  */
 
 #include <SFConfig.h>
-#include <SFFeature.h>
-#include <SFScript.h>
+#include <SFFeatureTag.h>
+#include <SFScriptTag.h>
 #include <SFTypes.h>
 
 #include <stddef.h>
@@ -38,13 +38,13 @@ SF_INTERNAL void SFKnowledgeInitialize(SFKnowledgeRef knowledge)
     knowledge->_seek = NULL;
 }
 
-SF_INTERNAL SFBoolean SFKnowledgeSeekScript(SFKnowledgeRef knowledge, SFScript script)
+SF_INTERNAL SFBoolean SFKnowledgeSeekScript(SFKnowledgeRef knowledge, SFScriptTag scriptTag)
 {
     SFUInteger index;
 
     for (index = 0; index < _SFKnowledgeSize; index++) {
         const SFShapingKnowledgeRef shapingKnowledge = _SFKnowledgeArray[index];
-        const SFScriptKnowledgeRef scriptKnowledge = SFShapingKnowledgeSeekScript(shapingKnowledge, script);
+        const SFScriptKnowledgeRef scriptKnowledge = SFShapingKnowledgeSeekScript(shapingKnowledge, scriptTag);
 
         if (scriptKnowledge) {
             knowledge->_seek = scriptKnowledge;
@@ -57,20 +57,20 @@ SF_INTERNAL SFBoolean SFKnowledgeSeekScript(SFKnowledgeRef knowledge, SFScript s
 
 SF_INTERNAL SFUInteger SFKnowledgeCountFeatures(SFKnowledgeRef knowledge)
 {
-    return knowledge->_seek->featureCount;
+    return knowledge->_seek->featureTagCount;
 }
 
-SF_INTERNAL SFUInteger SFKnowledgeSeekFeature(SFKnowledgeRef knowledge, SFFeature feature)
+SF_INTERNAL SFUInteger SFKnowledgeSeekFeature(SFKnowledgeRef knowledge, SFFeatureTag featureTag)
 {
-    return SFScriptKnowledgeSeekFeature(knowledge->_seek, feature);
+    return SFScriptKnowledgeSeekFeature(knowledge->_seek, featureTag);
 }
 
-SF_INTERNAL SFFeature SFKnowledgeGetFeatureAt(SFKnowledgeRef knowledge, SFUInteger index)
+SF_INTERNAL SFFeatureTag SFKnowledgeGetFeatureAt(SFKnowledgeRef knowledge, SFUInteger index)
 {
     /* The index must be valid. */
-    SFAsset(index < knowledge->_seek->featureCount);
+    SFAsset(index < knowledge->_seek->featureTagCount);
 
-    return knowledge->_seek->featureArray[index];
+    return knowledge->_seek->featureTagArray[index];
 }
 
 SF_INTERNAL SFUInteger SFKnowledgeCountGroups(SFKnowledgeRef knowledge)

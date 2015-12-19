@@ -24,16 +24,7 @@
     <ClInclude Include="Headers\SFConfig.h">
       <Filter>Headers</Filter>
     </ClInclude>
-    <ClInclude Include="Headers\SFScript.h">
-      <Filter>Headers</Filter>
-    </ClInclude>
     <ClInclude Include="Headers\SFTypes.h">
-      <Filter>Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="Headers\SFFeature.h">
-      <Filter>Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="Headers\SFLanguage.h">
       <Filter>Headers</Filter>
     </ClInclude>
     <ClInclude Include="Source\SFCollection.h">
@@ -75,14 +66,8 @@
     <ClInclude Include="Source\SFTableCache.h">
       <Filter>Source\FontCache</Filter>
     </ClInclude>
-    <ClInclude Include="Source\SFShapingContext.h">
-      <Filter>Source\ShapingEngine</Filter>
-    </ClInclude>
     <ClInclude Include="Headers\SFDirection.h">
       <Filter>Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\SFFontCache.h">
-      <Filter>Source\FontCache</Filter>
     </ClInclude>
     <ClInclude Include="Source\SFGDEF.h">
       <Filter>Source\OpenType</Filter>
@@ -123,6 +108,15 @@
     <ClInclude Include="Headers\SFPattern.h">
       <Filter>Headers</Filter>
     </ClInclude>
+    <ClInclude Include="Headers\SFLanguageTag.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\SFFeatureTag.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\SFScriptTag.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\SFCollection.c">
@@ -150,9 +144,6 @@
       <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="Source\SFTableCache.c">
-      <Filter>Source\FontCache</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\SFFontCache.c">
       <Filter>Source\FontCache</Filter>
     </ClCompile>
     <ClCompile Include="Source\SFLocator.c">

@@ -34,9 +34,9 @@ typedef struct {
 typedef _SFSchemeState *_SFSchemeStateRef;
 
 struct _SFScheme {
-    SFFontRef _font;        /**< Font, whose scheme is being built. */
-    SFScript _script;       /**< Tag of the script. */
-    SFLanguage _language;   /**< Tag of the language. */
+    SFFontRef _font;            /**< Font, whose scheme is being built. */
+    SFScriptTag _scriptTag;     /**< Tag of the script. */
+    SFLanguageTag _languageTag; /**< Tag of the language. */
 
     SFInteger _retainCount;
 };

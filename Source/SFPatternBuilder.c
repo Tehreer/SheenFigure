@@ -15,9 +15,9 @@
  */
 
 #include <SFConfig.h>
-#include <SFFeature.h>
-#include <SFLanguage.h>
-#include <SFScript.h>
+#include <SFFeatureTag.h>
+#include <SFLanguageTag.h>
+#include <SFScriptTag.h>
 #include <SFTypes.h>
 
 #include <stddef.h>
@@ -35,7 +35,7 @@ SF_INTERNAL void SFPatternBuilderInitialize(SFPatternBuilderRef builder, SFPatte
     builder->_gposGroupCount = 0;
     builder->_featureIndex = 0;
 
-    SFListInitialize(&builder->_featureTags, sizeof(SFFeature));
+    SFListInitialize(&builder->_featureTags, sizeof(SFFeatureTag));
     SFListSetCapacity(&builder->_featureTags, 0, 24);
 
     SFListInitialize(&builder->_featureGroups, sizeof(SFFeatureGroup));
@@ -45,22 +45,22 @@ SF_INTERNAL void SFPatternBuilderInitialize(SFPatternBuilderRef builder, SFPatte
     SFListSetCapacity(&builder->_lookupIndexes, 0, 32);
 }
 
-SF_INTERNAL void SFPatternBuilderSetScript(SFPatternBuilderRef builder, SFScript script)
+SF_INTERNAL void SFPatternBuilderSetScript(SFPatternBuilderRef builder, SFScriptTag scriptTag)
 {
-    builder->_script = script;
+    builder->_scriptTag = scriptTag;
 }
 
-SF_INTERNAL void SFPatternBuilderSetLanguage(SFPatternBuilderRef builder, SFLanguage language)
+SF_INTERNAL void SFPatternBuilderSetLanguage(SFPatternBuilderRef builder, SFLanguageTag languageTag)
 {
-    builder->_language = language;
+    builder->_languageTag = languageTag;
 }
 
-SF_INTERNAL void SFPatternBuilderAddFeature(SFPatternBuilderRef builder, SFFeature feature)
+SF_INTERNAL void SFPatternBuilderAddFeature(SFPatternBuilderRef builder, SFFeatureTag featureTag)
 {
     /* Only unique features can be added. */
-    SFAssert(!SFListContainsItem(&builder->_featureTags, &feature));
+    SFAssert(!SFListContainsItem(&builder->_featureTags, &featureTag));
 
-    SFListAdd(&builder->_featureTags, feature);
+    SFListAdd(&builder->_featureTags, featureTag);
 }
 
 SF_INTERNAL void SFPatternBuilderBeginHeader(SFPatternBuilderRef builder, SFHeaderKind kind)
@@ -123,8 +123,8 @@ SF_INTERNAL void SFPatternBuilderBuild(SFPatternBuilderRef builder, SFPatternRef
     /* Initialize pattern. */
     pattern->groupCount.gsub = builder->_gsubGroupCount;
     pattern->groupCount.gpos = builder->_gposGroupCount;
-    pattern->script = builder->_script;
-    pattern->language = builder->_language;
+    pattern->scriptTag = builder->_scriptTag;
+    pattern->languageTag = builder->_languageTag;
 
     SFListFinalizeKeepingArray(&builder->_featureTags, &pattern->featureTagArray, &pattern->featureCount);
     SFListFinalizeKeepingArray(&builder->_featureGroups, &pattern->featureGroupArray, &groupCount);

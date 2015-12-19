@@ -39,7 +39,7 @@ struct _SFTextProcessor {
     SFData _glyphClassDef;
     SFDirection _direction;
     /* State values. */
-    SFFeature _feature;
+    SFFeatureTag _featureTag;
     SFLookupFlag _lookupFlag;
     SFHeaderKind _headerKind;
 };

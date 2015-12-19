@@ -18,8 +18,8 @@
 #define SF_KNOWLEDGE_INTERNAL_H
 
 #include <SFConfig.h>
-#include <SFFeature.h>
-#include <SFScript.h>
+#include <SFFeatureTag.h>
+#include <SFScriptTag.h>
 #include <SFTypes.h>
 
 #include "SFShapingEngine.h"
@@ -35,11 +35,11 @@ struct _SFKnowledge {
 };
 
 SF_INTERNAL void SFKnowledgeInitialize(SFKnowledgeRef knowledge);
-SF_INTERNAL SFBoolean SFKnowledgeSeekScript(SFKnowledgeRef knowledge, SFScript script);
+SF_INTERNAL SFBoolean SFKnowledgeSeekScript(SFKnowledgeRef knowledge, SFScriptTag scriptTag);
 
 SF_INTERNAL SFUInteger SFKnowledgeCountFeatures(SFKnowledgeRef knowledge);
-SF_INTERNAL SFUInteger SFKnowledgeSeekFeature(SFKnowledgeRef knowledge, SFFeature feature);
-SF_INTERNAL SFFeature SFKnowledgeGetFeatureAt(SFKnowledgeRef knowledge, SFUInteger index);
+SF_INTERNAL SFUInteger SFKnowledgeSeekFeature(SFKnowledgeRef knowledge, SFFeatureTag featureTag);
+SF_INTERNAL SFFeatureTag SFKnowledgeGetFeatureAt(SFKnowledgeRef knowledge, SFUInteger index);
 
 SF_INTERNAL SFUInteger SFKnowledgeCountGroups(SFKnowledgeRef knowledge);
 SF_INTERNAL SFRange SFKnowledgeGetGroupAt(SFKnowledgeRef knowledge, SFUInteger index);

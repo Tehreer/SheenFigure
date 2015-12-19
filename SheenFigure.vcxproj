@@ -182,16 +182,15 @@
   <ItemGroup>
     <ClInclude Include="Headers\SFConfig.h" />
     <ClInclude Include="Headers\SFDirection.h" />
-    <ClInclude Include="Headers\SFFeature.h" />
+    <ClInclude Include="Headers\SFFeatureTag.h" />
     <ClInclude Include="Headers\SFFont.h" />
-    <ClInclude Include="Headers\SFLanguage.h" />
+    <ClInclude Include="Headers\SFLanguageTag.h" />
     <ClInclude Include="Headers\SFPattern.h" />
     <ClInclude Include="Headers\SFScheme.h" />
-    <ClInclude Include="Headers\SFScript.h" />
+    <ClInclude Include="Headers\SFScriptTag.h" />
     <ClInclude Include="Headers\SFTypes.h" />
     <ClInclude Include="Source\SFList.h" />
     <ClInclude Include="Source\SFFont.h" />
-    <ClInclude Include="Source\SFFontCache.h" />
     <ClInclude Include="Source\SFGDEF.h" />
     <ClInclude Include="Source\SFGlyphDiscovery.h" />
     <ClInclude Include="Source\SFLocator.h" />
@@ -200,7 +199,6 @@
     <ClInclude Include="Source\SFGlyphSubstitution.h" />
     <ClInclude Include="Source\SFPattern.h" />
     <ClInclude Include="Source\SFScheme.h" />
-    <ClInclude Include="Source\SFShapingContext.h" />
     <ClInclude Include="Source\SFTableCache.h" />
     <ClInclude Include="Source\SFKnowledge.h" />
     <ClInclude Include="Source\SFData.h" />
@@ -219,7 +217,6 @@
     <ClCompile Include="Source\SFList.c" />
     <ClCompile Include="Source\SFCommon.c" />
     <ClCompile Include="Source\SFFont.c" />
-    <ClCompile Include="Source\SFFontCache.c" />
     <ClCompile Include="Source\SFGlyphDiscovery.c" />
     <ClCompile Include="Source\SFLocator.c" />
     <ClCompile Include="Source\SFGlyphManipulation.c" />

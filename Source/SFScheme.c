@@ -15,8 +15,8 @@
  */
 
 #include <SFConfig.h>
-#include <SFLanguage.h>
-#include <SFScript.h>
+#include <SFLanguageTag.h>
+#include <SFScriptTag.h>
 #include <SFTypes.h>
 
 #include <stddef.h>
@@ -30,16 +30,16 @@
 #include "SFPattern.h"
 #include "SFScheme.h"
 
-static SFData _SFSearchScriptInList(SFData scriptList, SFScript tag)
+static SFData _SFSearchScriptInList(SFData scriptList, SFScriptTag scriptTag)
 {
     SFUInt16 scriptCount = SF_SCRIPT_LIST__SCRIPT_COUNT(scriptList);
     SFUInt16 index;
 
     for (index = 0; index < scriptCount; index++) {
         SFData scriptRecord = SF_SCRIPT_LIST__SCRIPT_RECORD(scriptList, index);
-        SFUInt32 scriptTag = SF_SCRIPT_RECORD__SCRIPT_TAG(scriptRecord);
+        SFTag scriptRecordTag = SF_SCRIPT_RECORD__SCRIPT_TAG(scriptRecord);
 
-        if (scriptTag == tag) {
+        if (scriptRecordTag == scriptTag) {
             SFOffset offset = SF_SCRIPT_RECORD__SCRIPT(scriptRecord);
             return SF_DATA__SUBDATA(scriptList, offset);
         }
@@ -48,17 +48,17 @@ static SFData _SFSearchScriptInList(SFData scriptList, SFScript tag)
     return NULL;
 }
 
-static SFData _SFSearchLangSysInScript(SFData script, SFLanguage tag)
+static SFData _SFSearchLangSysInScript(SFData script, SFLanguageTag languageTag)
 {
     SFUInt16 langSysCount = SF_SCRIPT__LANG_SYS_COUNT(script);
     SFUInt16 index;
 
     for (index = 0; index < langSysCount; index++) {
         SFData langSysRecord = SF_SCRIPT__LANG_SYS_RECORD(script, index);
-        SFUInt32 langSysTag = SF_LANG_SYS_RECORD__LANG_SYS_TAG(langSysRecord);
+        SFTag langSysTag = SF_LANG_SYS_RECORD__LANG_SYS_TAG(langSysRecord);
         SFUInt16 offset;
 
-        if (langSysTag == tag) {
+        if (langSysTag == languageTag) {
             offset = SF_LANG_SYS_RECORD__LANG_SYS(langSysRecord);
             return SF_DATA__SUBDATA(script, offset);
         }
@@ -67,7 +67,7 @@ static SFData _SFSearchLangSysInScript(SFData script, SFLanguage tag)
     return NULL;
 }
 
-static SFData _SFSearchFeatureInLangSys(SFData langSys, SFData featureList, SFFeature tag)
+static SFData _SFSearchFeatureInLangSys(SFData langSys, SFData featureList, SFFeatureTag featureTag)
 {
     SFUInt16 featureCount = SF_LANG_SYS__FEATURE_COUNT(langSys);
     SFUInt16 index;
@@ -75,9 +75,9 @@ static SFData _SFSearchFeatureInLangSys(SFData langSys, SFData featureList, SFFe
     for (index = 0; index < featureCount; index++) {
         SFUInt16 featureIndex = SF_LANG_SYS__FEATURE_INDEX(langSys, index);
         SFData featureRecord = SF_FEATURE_LIST__FEATURE_RECORD(featureList, featureIndex);
-        SFTag featureTag = SF_FEATURE_RECORD__FEATURE_TAG(featureRecord);
+        SFTag featureRecordTag = SF_FEATURE_RECORD__FEATURE_TAG(featureRecord);
 
-        if (tag == featureTag) {
+        if (featureRecordTag == featureTag) {
             SFOffset offset = SF_FEATURE_RECORD__FEATURE(featureRecord);
             return SF_DATA__SUBDATA(featureList, offset);
         }
@@ -102,7 +102,7 @@ static void _SFAddFeatureGroup(_SFSchemeStateRef state, SFUInteger index, SFUInt
     SFUInteger limit = index + count;
 
     for (; index < limit; index++) {
-        SFFeature featureTag = SFKnowledgeGetFeatureAt(&state->knowledge, index);
+        SFFeatureTag featureTag = SFKnowledgeGetFeatureAt(&state->knowledge, index);
         SFData feature = _SFSearchFeatureInLangSys(state->langSys, state->featureList, featureTag);
 
         if (feature) {
@@ -155,11 +155,11 @@ static void _SFAddHeader(_SFSchemeStateRef state, SFData header)
     state->featureList = SF_DATA__SUBDATA(header, offset);
 
     /* Get script table belonging to desired tag. */
-    state->script = _SFSearchScriptInList(state->scriptList, scheme->_script);
+    state->script = _SFSearchScriptInList(state->scriptList, scheme->_scriptTag);
 
     if (state->script) {
         /* Get lang sys table belonging to desired tag. */
-        state->langSys = _SFSearchLangSysInScript(state->script, scheme->_language);
+        state->langSys = _SFSearchLangSysInScript(state->script, scheme->_languageTag);
 
         if (state->langSys) {
             SFPatternBuilderBeginHeader(&state->builder, SFHeaderKindGSUB);
@@ -172,8 +172,8 @@ SFSchemeRef SFSchemeCreate(void)
 {
     SFSchemeRef scheme = malloc(sizeof(SFScheme));
     scheme->_font = NULL;
-    scheme->_script = 0;
-    scheme->_language = 0;
+    scheme->_scriptTag = 0;
+    scheme->_languageTag = 0;
     scheme->_retainCount = 1;
 
     return scheme;
@@ -184,14 +184,14 @@ void SFSchemeSetFont(SFSchemeRef scheme, SFFontRef font)
     scheme->_font = font;
 }
 
-void SFSchemeSetScript(SFSchemeRef scheme, SFScript script)
+void SFSchemeSetScript(SFSchemeRef scheme, SFScriptTag scriptTag)
 {
-    scheme->_script = script;
+    scheme->_scriptTag = scriptTag;
 }
 
-void SFSchemeSetLanguage(SFSchemeRef scheme, SFLanguage language)
+void SFSchemeSetLanguage(SFSchemeRef scheme, SFLanguageTag languageTag)
 {
-    scheme->_language = language;
+    scheme->_languageTag = languageTag;
 }
 
 SFPatternRef SFSchemeBuildPattern(SFSchemeRef scheme)
@@ -202,7 +202,7 @@ SFPatternRef SFSchemeBuildPattern(SFSchemeRef scheme)
     SFKnowledgeInitialize(&state.knowledge);
 
     /* Check whether Sheen Figure has knowledge about this script. */
-    if (SFKnowledgeSeekScript(&state.knowledge, scheme->_script)) {
+    if (SFKnowledgeSeekScript(&state.knowledge, scheme->_scriptTag)) {
         SFData gsub = scheme->_font->tables.gsub;
         SFData gpos = scheme->_font->tables.gpos;
 
@@ -210,8 +210,8 @@ SFPatternRef SFSchemeBuildPattern(SFSchemeRef scheme)
             SFPatternRef pattern = SFPatternCreate();
 
             SFPatternBuilderInitialize(&state.builder);
-            SFPatternBuilderSetScript(&state.builder, scheme->_script);
-            SFPatternBuilderSetLanguage(&state.builder, scheme->_language);
+            SFPatternBuilderSetScript(&state.builder, scheme->_scriptTag);
+            SFPatternBuilderSetLanguage(&state.builder, scheme->_languageTag);
 
             if (gsub) {
                 _SFAddHeader(&state, gsub);

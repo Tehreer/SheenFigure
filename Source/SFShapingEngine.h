@@ -19,8 +19,8 @@
 
 #include <SFConfig.h>
 #include <SFDirection.h>
-#include <SFFeature.h>
-#include <SFScript.h>
+#include <SFFeatureTag.h>
+#include <SFScriptTag.h>
 #include <SFTypes.h>
 
 #include "SFCollection.h"
@@ -45,45 +45,45 @@ typedef SFShapingEngine *SFShapingEngineRef;
 
 struct _SFScriptKnowledge {
     /* Virtual function. */
-    SFUInteger (*_seekFeature)(const void *, SFFeature);
+    SFUInteger (*_seekFeature)(const void *, SFFeatureTag);
 	/**
 	 * All features of the script, substitution as well as positioning, in
 	 * implementation order.
 	 */
-    const SFFeature *featureArray;
+    const SFFeatureTag *featureTagArray;
 	/**
 	 * All group ranges covering those features which must be applied
 	 * simultaneously.
 	 */
     const SFRange *groupArray;
-    SFUInteger featureCount;                /**< Total number of features supported by the script. */
+    SFUInteger featureTagCount;                /**< Total number of features supported by the script. */
     SFUInteger groupCount;                  /**< Total number of groups. */
 };
 
 struct _SFShapingKnowledge {
     /* Abstract function. */
-    SFScriptKnowledgeRef (*_seekScript)(const void *, SFScript);
+    SFScriptKnowledgeRef (*_seekScript)(const void *, SFScriptTag);
 };
 
 struct _SFShapingEngine {
     SFFontRef _font;
     SFPatternRef _pattern;
-    SFScript _script;
-    SFLanguage _language;
+    SFScriptTag _scriptTag;
+    SFLanguageTag _languageTag;
     SFDirection _direction;
 };
 
 /**
  * Returns script knowledge related to given script, or NULL.
  */
-SF_INTERNAL SFScriptKnowledgeRef SFShapingKnowledgeSeekScript(SFShapingKnowledgeRef shapingKnowledge, SFScript script);
+SF_INTERNAL SFScriptKnowledgeRef SFShapingKnowledgeSeekScript(SFShapingKnowledgeRef shapingKnowledge, SFScriptTag scriptTag);
 
 /**
  * Returns feature index in script knowledge, or SFInvalidIndex.
  */
-SF_INTERNAL SFUInteger SFScriptKnowledgeSeekFeature(SFScriptKnowledgeRef scriptKnowledge, SFFeature feature);
+SF_INTERNAL SFUInteger SFScriptKnowledgeSeekFeature(SFScriptKnowledgeRef scriptKnowledge, SFFeatureTag featureTag);
 
-SF_INTERNAL void SFShapingEngineInitialize(SFShapingEngineRef shapingEngine, SFFontRef font, SFScript script, SFLanguage language, SFPatternRef pattern);
+SF_INTERNAL void SFShapingEngineInitialize(SFShapingEngineRef shapingEngine, SFFontRef font, SFScriptTag scriptTag, SFLanguageTag languageTag, SFPatternRef pattern);
 SF_INTERNAL void SFShapingEngineProcessCollection(SFShapingEngineRef shapingEngine, SFCollectionRef collection);
 
 #endif

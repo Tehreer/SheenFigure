@@ -14,34 +14,32 @@
  * limitations under the License.
  */
 
-#ifndef SF_FONT_H
-#define SF_FONT_H
+#ifndef SF_SCHEME_H
+#define SF_SCHEME_H
 
 #include "SFConfig.h"
+#include "SFFont.h"
+#include "SFLanguageTag.h"
+#include "SFPattern.h"
 #include "SFScriptTag.h"
 #include "SFTypes.h"
 
-#include <ft2build.h>
-#include FT_FREETYPE_H
-
-struct _SFFont;
-typedef struct _SFFont SFFont;
+struct _SFScheme;
+typedef struct _SFScheme SFScheme;
 /**
- * The type used to represent a font.
+ * The type used to represent a scheme.
  */
-typedef SFFont *SFFontRef;
+typedef SFScheme *SFSchemeRef;
 
-SFFontRef SFFontCreateWithFTFace(FT_Face ftFace);
+SFSchemeRef SFSchemeCreate(void);
 
-SFInteger SFFontGetUnitsPerEm(SFFontRef font);
-SFInteger SFFontGetAscender(SFFontRef font);
-SFInteger SFFontGetDescender(SFFontRef font);
-SFInteger SFFontGetLeading(SFFontRef font);
+void SFSchemeSetFont(SFSchemeRef scheme, SFFontRef font);
+void SFSchemeSetScript(SFSchemeRef scheme, SFScriptTag scriptTag);
+void SFSchemeSetLanguage(SFSchemeRef scheme, SFLanguageTag languageTag);
 
-SFGlyph SFFontGetGlyphForCodePoint(SFFontRef font, SFCodePoint codePoint);
-SFInteger SFFontGetGlyphAdvance(SFFontRef font, SFGlyph glyph);
+SFPatternRef SFSchemeBuildPattern(SFSchemeRef scheme);
 
-SFFontRef SFFontRetain(SFFontRef font);
-void SFFontRelease(SFFontRef font);
+SFSchemeRef SFSchemeRetain(SFSchemeRef scheme);
+void SFSchemeRelease(SFSchemeRef scheme);
 
 #endif

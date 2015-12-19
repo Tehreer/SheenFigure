@@ -15,8 +15,8 @@
  */
 
 #include <SFConfig.h>
-#include <SFFeature.h>
-#include <SFScript.h>
+#include <SFFeatureTag.h>
+#include <SFScriptTag.h>
 #include <SFTypes.h>
 
 #include <stddef.h>
@@ -24,29 +24,29 @@
 #include "SFShapingEngine.h"
 #include "SFArabicEngine.h"
 
-static SFScriptKnowledgeRef _SFArabicKnowledgeSeekScript(const void *obj, SFScript script);
+static SFScriptKnowledgeRef _SFArabicKnowledgeSeekScript(const void *obj, SFScriptTag scriptTag);
 
-static const SFFeature _SFArabicFeatureArray[] = {
+static const SFFeatureTag _SFArabicFeatureArray[] = {
     /* Language based forms */
-    SFFeatureCcmp,
-    SFFeatureIsol,
-    SFFeatureFina,
-    SFFeatureMedi,
-    SFFeatureInit,
-    SFFeatureRlig,
-    SFFeatureCalt,
+    SFFeatureTagCCMP,
+    SFFeatureTagISOL,
+    SFFeatureTagFINA,
+    SFFeatureTagMEDI,
+    SFFeatureTagINIT,
+    SFFeatureTagRLIG,
+    SFFeatureTagCALT,
     /* Typographical forms */
-    SFFeatureLiga,
-    SFFeatureDlig,
-    SFFeatureCswh,
-    SFFeatureMset,
+    SFFeatureTagLIGA,
+    SFFeatureTagDLIG,
+    SFFeatureTagCSWH,
+    SFFeatureTagMSET,
     /* Positioning features */
-    SFFeatureCurs,
-    SFFeatureKern,
-    SFFeatureMark,
-    SFFeatureMkmk
+    SFFeatureTagCURS,
+    SFFeatureTagKERN,
+    SFFeatureTagMARK,
+    SFFeatureTagMKMK
 };
-#define _SF_ARABIC_FEATURE_COUNT (sizeof(_SFArabicFeatureArray) / sizeof(SFFeature))
+#define _SF_ARABIC_FEATURE_COUNT (sizeof(_SFArabicFeatureArray) / sizeof(SFFeatureTag))
 
 static SFScriptKnowledge _SFArabicScriptKnowledge = {
     NULL,
@@ -58,10 +58,10 @@ const SFShapingKnowledge SFArabicKnowledgeInstance = {
     &_SFArabicKnowledgeSeekScript
 };
 
-static SFScriptKnowledgeRef _SFArabicKnowledgeSeekScript(const void *obj, SFScript script)
+static SFScriptKnowledgeRef _SFArabicKnowledgeSeekScript(const void *obj, SFScriptTag scriptTag)
 {
-    switch (script) {
-    case SFScriptARAB:
+    switch (scriptTag) {
+    case SFScriptTagARAB:
         return &_SFArabicScriptKnowledge;
     }
 

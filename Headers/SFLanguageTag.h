@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,9 +14,18 @@
  * limitations under the License.
  */
 
-#ifndef SF_SHAPING_CONTEXT_INTERNAL_H
-#define SF_SHAPING_CONTEXT_INTERNAL_H
+#ifndef SF_LANGUAGE_TAG_H
+#define SF_LANGUAGE_TAG_H
 
+#include "SFTypes.h"
 
+/**
+ * Referance: https://www.microsoft.com/typography/otspec/scripttags.htm
+ */
+
+enum {
+    SFLanguageTagDFLT = SF_TAG__MAKE('d', 'f', 'l', 't')
+};
+typedef SF_TAG SFLanguageTag;
 
 #endif

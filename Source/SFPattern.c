@@ -30,8 +30,8 @@ SF_INTERNAL SFPatternRef SFPatternCreate(void)
     pattern->groupCount.gsub = 0;
     pattern->groupCount.gpos = 0;
     pattern->featureCount = 0;
-    pattern->script = 0;
-    pattern->language = 0;
+    pattern->scriptTag = 0;
+    pattern->languageTag = 0;
     pattern->_retainCount = 1;
 
     return pattern;

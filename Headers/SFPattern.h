@@ -14,20 +14,13 @@
  * limitations under the License.
  */
 
-#ifndef SF_FONT_CACHE_INTERNAL_H
-#define SF_FONT_CACHE_INTERNAL_H
+#ifndef SF_PATTERN_H
+#define SF_PATTERN_H
 
-#include <SFConfig.h>
+#include "SFConfig.h"
 
-#include "SFScriptCache.h"
-#include "SFTableCache.h"
-
-struct _SFFontCache;
-typedef struct _SFFontCache SFFontCache;
-
-struct _SFFontCache {
-    SFTableCacheRef tables;
-    SFScriptCacheRef scripts;
-};
+struct _SFPattern;
+typedef struct _SFPattern SFPattern;
+typedef SFPattern *SFPatternRef;
 
 #endif

@@ -15,8 +15,8 @@
 */
 
 #include <SFConfig.h>
-#include <SFFeature.h>
-#include <SFScript.h>
+#include <SFFeatureTag.h>
+#include <SFScriptTag.h>
 #include <SFTypes.h>
 
 #include <stddef.h>
@@ -24,19 +24,19 @@
 #include "SFShapingEngine.h"
 #include "SFStandardEngine.h"
 
-static const SFFeature _SFStandardFeatureArray[] = {
+static const SFFeatureTag _SFStandardFeatureArray[] = {
     /* Language based forms. */
-    SFFeatureCcmp,
+    SFFeatureTagCCMP,
     /* Typographical forms */
-    SFFeatureLiga,
-    SFFeatureClig,
+    SFFeatureTagLIGA,
+    SFFeatureTagCLIG,
     /* Positioning features. */
-    SFFeatureDist,
-    SFFeatureKern,
-    SFFeatureMark,
-    SFFeatureMkmk
+    SFFeatureTagDIST,
+    SFFeatureTagKERN,
+    SFFeatureTagMARK,
+    SFFeatureTagMKMK
 };
-#define _SF_STANDARD_FEATURE_COUNT (sizeof(_SFStandardFeatureArray) / sizeof(SFFeature))
+#define _SF_STANDARD_FEATURE_COUNT (sizeof(_SFStandardFeatureArray) / sizeof(SFFeatureTag))
 
 static const SFScriptKnowledge _SFStandardScriptKnowledge = {
     NULL,
@@ -44,22 +44,22 @@ static const SFScriptKnowledge _SFStandardScriptKnowledge = {
     _SF_STANDARD_FEATURE_COUNT, 0
 };
 
-static SFScriptKnowledgeRef _SFStandardKnowledgeSeekScript(const void *obj, SFScript script);
+static SFScriptKnowledgeRef _SFStandardKnowledgeSeekScript(const void *obj, SFScriptTag scriptTag);
 
 const SFShapingKnowledge SFStandardKnowledgeInstance = {
     &_SFStandardKnowledgeSeekScript
 };
 
-static SFScriptKnowledgeRef _SFStandardKnowledgeSeekScript(const void *obj, SFScript script)
+static SFScriptKnowledgeRef _SFStandardKnowledgeSeekScript(const void *obj, SFScriptTag scriptTag)
 {
-    switch (script) {
-    case SFScriptARMN:
-    case SFScriptCYRL:
-    case SFScriptGEOR:
-    case SFScriptGREK:
-    case SFScriptLATN:
-    case SFScriptOGAM:
-    case SFScriptRUNR:
+    switch (scriptTag) {
+    case SFScriptTagARMN:
+    case SFScriptTagCYRL:
+    case SFScriptTagGEOR:
+    case SFScriptTagGREK:
+    case SFScriptTagLATN:
+    case SFScriptTagOGAM:
+    case SFScriptTagRUNR:
         return &_SFStandardScriptKnowledge;
     }
 
