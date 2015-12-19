@@ -31,14 +31,17 @@ static void _SFLoadTableFromFTFace(FT_Face ftFace, FT_ULong tag, SFData *table) 
     FT_ULong length = 0;
     FT_Error error;
 
+    *table = NULL;
     error = FT_Load_Sfnt_Table(ftFace, tag, 0, NULL, &length);
 
     if (!error) {
         FT_Byte *buffer = malloc(length);
         error = FT_Load_Sfnt_Table(ftFace, tag, 0, buffer, &length);
-        *table = error ? NULL : buffer;
-    } else {
-        *table = NULL;
+        if (!error) {
+            *table = buffer;
+        } else {
+            free(buffer);
+        }
     }
 }
 

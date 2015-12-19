@@ -48,13 +48,13 @@ SF_INTERNAL SFUInteger SFScriptKnowledgeSeekFeature(SFScriptKnowledgeRef scriptK
     return (*scriptKnowledge->_seekFeature)(scriptKnowledge, feature);
 }
 
-SF_INTERNAL void SFShapingEngineInitialize(SFShapingEngineRef shapingEngine, SFFontRef font, SFScript script, SFLanguage language)
+SF_INTERNAL void SFShapingEngineInitialize(SFShapingEngineRef shapingEngine, SFFontRef font, SFScript script, SFLanguage language, SFPatternRef pattern)
 {
 	/* Font must NOT be null. */
 	SFAssert(font != NULL);
 
     shapingEngine->_font = font;
-    shapingEngine->_langDetail = SFScriptCacheFindLanguage(&font->scripts, script, language);
+    shapingEngine->_pattern = pattern;
     shapingEngine->_script = script;
     shapingEngine->_language = language;
 }
@@ -66,9 +66,9 @@ SF_INTERNAL void SFShapingEngineProcessCollection(SFShapingEngineRef shapingEngi
     /* Collection must NOT be null. */
     SFAssert(collection != NULL);
 
-    SFTextProcessorInitialize(&processor, shapingEngine->_font, shapingEngine->_langDetail, collection);
+    SFTextProcessorInitialize(&processor, shapingEngine->_font, shapingEngine->_pattern, collection);
     SFTextProcessorDiscoverGlyphs(&processor);
-    if (shapingEngine->_langDetail != NULL) {
+    if (shapingEngine->_pattern != NULL) {
         SFTextProcessorManipulateGlyphs(&processor);
     }
 }

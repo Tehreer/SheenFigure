@@ -75,7 +75,7 @@ static SFData _SFSearchFeatureInLangSys(SFData langSys, SFData featureList, SFFe
     for (index = 0; index < featureCount; index++) {
         SFUInt16 featureIndex = SF_LANG_SYS__FEATURE_INDEX(langSys, index);
         SFData featureRecord = SF_FEATURE_LIST__FEATURE_RECORD(featureList, featureIndex);
-        SFData featureTag = SF_FEATURE_RECORD__FEATURE_TAG(featureRecord);
+        SFTag featureTag = SF_FEATURE_RECORD__FEATURE_TAG(featureRecord);
 
         if (tag == featureTag) {
             SFOffset offset = SF_FEATURE_RECORD__FEATURE(featureRecord);
@@ -163,12 +163,12 @@ static void _SFAddHeader(_SFSchemeStateRef state, SFData header)
 
         if (state->langSys) {
             SFPatternBuilderBeginHeader(&state->builder, SFHeaderKindGSUB);
-            _SFAddFeatures(&state);
+            _SFAddFeatures(state);
         }
     }
 }
 
-SFSchemeRef SFSchemeCreate(SFSchemeRef scheme)
+SFSchemeRef SFSchemeCreate(void)
 {
     SFSchemeRef scheme = malloc(sizeof(SFScheme));
     scheme->_font = NULL;

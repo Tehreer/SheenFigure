@@ -185,6 +185,7 @@
     <ClInclude Include="Headers\SFFeature.h" />
     <ClInclude Include="Headers\SFFont.h" />
     <ClInclude Include="Headers\SFLanguage.h" />
+    <ClInclude Include="Headers\SFPattern.h" />
     <ClInclude Include="Headers\SFScheme.h" />
     <ClInclude Include="Headers\SFScript.h" />
     <ClInclude Include="Headers\SFTypes.h" />
@@ -210,9 +211,7 @@
     <ClInclude Include="Source\SFGSUB.h" />
     <ClInclude Include="Source\SFCommon.h" />
     <ClInclude Include="Source\SFPatternBuilder.h" />
-    <ClInclude Include="Source\SFScriptCache.h" />
     <ClInclude Include="Source\SFShapingEngine.h" />
-    <ClInclude Include="Source\SFScriptManager.h" />
     <ClInclude Include="Source\SFStandardEngine.h" />
     <ClInclude Include="Source\SFTextProcessor.h" />
   </ItemGroup>
@@ -234,9 +233,7 @@
     <ClCompile Include="Source\SFArabicEngine.c" />
     <ClCompile Include="Source\SFCollection.c" />
     <ClCompile Include="Source\SFPatternBuilder.c" />
-    <ClCompile Include="Source\SFScriptCache.c" />
     <ClCompile Include="Source\SFShapingEngine.c" />
-    <ClCompile Include="Source\SFScriptManager.c" />
     <ClCompile Include="Source\SFStandardEngine.c" />
     <ClCompile Include="Source\SFTextProcessor.c" />
   </ItemGroup>

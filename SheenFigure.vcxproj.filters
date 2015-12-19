@@ -39,9 +39,6 @@
     <ClInclude Include="Source\SFCollection.h">
       <Filter>Source</Filter>
     </ClInclude>
-    <ClInclude Include="Source\SFScriptCache.h">
-      <Filter>Source\FontCache</Filter>
-    </ClInclude>
     <ClInclude Include="Source\SFStandardEngine.h">
       <Filter>Source\ShapingEngine</Filter>
     </ClInclude>
@@ -50,9 +47,6 @@
     </ClInclude>
     <ClInclude Include="Source\SFArabicEngine.h">
       <Filter>Source\ShapingEngine</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\SFScriptManager.h">
-      <Filter>Source\FontCache</Filter>
     </ClInclude>
     <ClInclude Include="Source\SFCommon.h">
       <Filter>Source\OpenType</Filter>
@@ -126,13 +120,13 @@
     <ClInclude Include="Headers\SFScheme.h">
       <Filter>Headers</Filter>
     </ClInclude>
+    <ClInclude Include="Headers\SFPattern.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\SFCollection.c">
       <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\SFScriptCache.c">
-      <Filter>Source\FontCache</Filter>
     </ClCompile>
     <ClCompile Include="Source\SFStandardEngine.c">
       <Filter>Source\ShapingEngine</Filter>
@@ -142,9 +136,6 @@
     </ClCompile>
     <ClCompile Include="Source\SFArabicEngine.c">
       <Filter>Source\ShapingEngine</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\SFScriptManager.c">
-      <Filter>Source\FontCache</Filter>
     </ClCompile>
     <ClCompile Include="Source\SFCommon.c">
       <Filter>Source\OpenType</Filter>

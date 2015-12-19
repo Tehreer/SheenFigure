@@ -25,7 +25,7 @@
 
 #include "SFCollection.h"
 #include "SFFont.h"
-#include "SFScriptCache.h"
+#include "SFPattern.h"
 
 /* NOTE:
  *      SFShapingEngine is an abstract class.
@@ -67,7 +67,7 @@ struct _SFShapingKnowledge {
 
 struct _SFShapingEngine {
     SFFontRef _font;
-    SFLanguageDetailRef _langDetail;
+    SFPatternRef _pattern;
     SFScript _script;
     SFLanguage _language;
     SFDirection _direction;
@@ -83,7 +83,7 @@ SF_INTERNAL SFScriptKnowledgeRef SFShapingKnowledgeSeekScript(SFShapingKnowledge
  */
 SF_INTERNAL SFUInteger SFScriptKnowledgeSeekFeature(SFScriptKnowledgeRef scriptKnowledge, SFFeature feature);
 
-SF_INTERNAL void SFShapingEngineInitialize(SFShapingEngineRef shapingEngine, SFFontRef font, SFScript script, SFLanguage language);
+SF_INTERNAL void SFShapingEngineInitialize(SFShapingEngineRef shapingEngine, SFFontRef font, SFScript script, SFLanguage language, SFPatternRef pattern);
 SF_INTERNAL void SFShapingEngineProcessCollection(SFShapingEngineRef shapingEngine, SFCollectionRef collection);
 
 #endif

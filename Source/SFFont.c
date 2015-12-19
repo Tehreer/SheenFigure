@@ -26,23 +26,7 @@
 #include <stdlib.h>
 
 #include "SFData.h"
-#include "SFScriptBuilder.h"
-#include "SFScriptCache.h"
-#include "SFScriptManager.h"
 #include "SFFont.h"
-
-static void _SFBuildScriptCache(SFScriptCacheRef scriptCache, SFData gsub, SFData gpos)
-{
-    SFScriptBuilder builder;
-    SFScriptManager manager;
-
-    SFScriptBuilderInitialize(&builder, scriptCache);
-    SFScriptManagerInitialize(&manager, &builder, gsub, gpos);
-    SFScriptManagerBuildCache(&manager);
-
-    SFScriptBuilderFinalize(&builder);
-    SFScriptManagerFinalize(&manager);
-}
 
 SFFontRef SFFontCreateWithFTFace(FT_Face ftFace)
 {
@@ -50,8 +34,6 @@ SFFontRef SFFontCreateWithFTFace(FT_Face ftFace)
         SFFontRef font = malloc(sizeof(SFFont));
 
         FT_Reference_Face(ftFace);
-        SFTableCacheInitialize(&font->tables, ftFace);
-        _SFBuildScriptCache(&font->scripts, font->tables.gsub, font->tables.gpos);
 
         font->_ftFace = ftFace;
         font->unitsPerEm = ftFace->units_per_EM;
@@ -62,8 +44,7 @@ SFFontRef SFFontCreateWithFTFace(FT_Face ftFace)
 
         return font;
     }
-    
-    
+
     return NULL;
 }
 
@@ -89,7 +70,7 @@ SFInteger SFFontGetLeading(SFFontRef font)
 
 SFGlyph SFFontGetCodePointGlyph(SFFontRef font, SFCodePoint codePoint) {
     /*
-     * OpenType Recommendation for 'cmap' Table:
+     * OpenType recommendation for 'cmap' table:
      *      "The number of glyphs that may be included in one font is limited to
      *       64k."
      * Reference:
@@ -109,10 +90,10 @@ SFGlyph SFFontGetCodePointGlyph(SFFontRef font, SFCodePoint codePoint) {
 
 SFInteger SFFontGetGlyphAdvance(SFFontRef font, SFGlyph glyph)
 {
-    FT_Fixed adv;
-    FT_Get_Advance(font->_ftFace, glyph, FT_LOAD_NO_SCALE, &adv);
-        
-    return adv;
+    FT_Fixed advance;
+    FT_Get_Advance(font->_ftFace, glyph, FT_LOAD_NO_SCALE, &advance);
+
+    return advance;
 }
 
 SFFontRef SFFontRetain(SFFontRef font)
@@ -120,7 +101,7 @@ SFFontRef SFFontRetain(SFFontRef font)
     if (font) {
         font->_retainCount++;
     }
-    
+
     return font;
 }
 
@@ -129,7 +110,6 @@ void SFFontRelease(SFFontRef font)
     if (font && --font->_retainCount == 0) {
         FT_Done_Face(font->_ftFace);
         SFTableCacheFinalize(&font->tables);
-        SFScriptCacheFinalize(&font->scripts);
         free(font);
     }
 }

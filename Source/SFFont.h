@@ -25,13 +25,10 @@
 #include FT_FREETYPE_H
 
 #include "SFTableCache.h"
-#include "SFScriptCache.h"
 
 struct _SFFont {
     SFTableCache tables;
     FT_Face _ftFace;
-
-    SFScriptCache scripts;
 
     SFInteger unitsPerEm;
     SFInteger ascender;

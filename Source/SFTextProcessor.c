@@ -18,6 +18,9 @@
 #include <SFTypes.h>
 
 #include "SFAssert.h"
+#include "SFCommon.h"
+#include "SFData.h"
+#include "SFPattern.h"
 
 #include "SFGlyphDiscovery.h"
 #include "SFGlyphManipulation.h"
@@ -25,13 +28,13 @@
 #include "SFGlyphSubstitution.h"
 #include "SFTextProcessor.h"
 
-static void _SFApplyAllFeatures(SFTextProcessorRef processor);
-static void _SFApplyFeaturesInRange(SFTextProcessorRef processor, SFUInteger startIndex, SFUInteger limitIndex);
-static void _SFApplyFeature(SFTextProcessorRef processor, SFUInteger featureIndex);
-static void _SFApplyGroup(SFTextProcessorRef processor, SFUInteger groupIndex);
-static void _SFApplyLookup(SFTextProcessorRef processor, SFData lookup, SFHeaderKind headerKind);
+static SFData _SFGetLookupFromHeader(SFData header, SFUInt16 lookupIndex);
 
-SF_INTERNAL void SFTextProcessorInitialize(SFTextProcessorRef textProcessor, SFFontRef font, SFLanguageDetailRef langDetail, SFCollectionRef collection)
+static void _SFApplyAllFeatures(SFTextProcessorRef processor);
+static void _SFApplyFeatureGroup(SFTextProcessorRef processor, SFFeatureGroupRef featureGroup);
+static void _SFApplyLookup(SFTextProcessorRef processor, SFUInt16 lookupIndex, SFHeaderKind headerKind);
+
+SF_INTERNAL void SFTextProcessorInitialize(SFTextProcessorRef textProcessor, SFFontRef font, SFPatternRef pattern, SFCollectionRef collection)
 {
     /* Font must NOT be null. */
     SFAssert(font != NULL);
@@ -39,7 +42,7 @@ SF_INTERNAL void SFTextProcessorInitialize(SFTextProcessorRef textProcessor, SFF
     SFAssert(collection != NULL);
 
     textProcessor->_font = font;
-    textProcessor->_langDetail = langDetail;
+    textProcessor->_pattern = pattern;
     textProcessor->_collection = collection;
 }
 
@@ -50,87 +53,66 @@ SF_INTERNAL void SFTextProcessorDiscoverGlyphs(SFTextProcessorRef textProcessor)
 
 SF_INTERNAL void SFTextProcessorManipulateGlyphs(SFTextProcessorRef textProcessor)
 {
-    /* Language detail must NOT be null. */
-    SFAssert(textProcessor->_langDetail != NULL);
+    /* Pattern must NOT be null. */
+    SFAssert(textProcessor->_pattern != NULL);
 
     _SFApplyAllFeatures(textProcessor);
 }
 
+static SFData _SFGetLookupFromHeader(SFData header, SFUInt16 lookupIndex)
+{
+    SFOffset listOffset = SF_HEADER__LOOKUP_LIST(header);
+    SFData lookupList = SF_DATA__SUBDATA(header, listOffset);
+    SFOffset lookupOffset = SF_LOOKUP_LIST__LOOKUP(lookupList, lookupIndex);
+    SFData lookup = SF_DATA__SUBDATA(lookupList, lookupOffset);
+
+    return lookup;
+}
+
 static void _SFApplyAllFeatures(SFTextProcessorRef processor)
 {
-    SFLanguageDetailRef langDetail = processor->_langDetail;
-    SFUInteger featureCount = langDetail->featureCount.gsub + langDetail->featureCount.gpos;
-    SFUInteger groupCount = langDetail->groupCount;
-    SFUInteger gapIndex = 0;
+    SFPatternRef pattern = processor->_pattern;
+    SFUInteger featureCount = pattern->featureCount;
+    SFUInteger groupCount = pattern->groupCount.gsub + pattern->groupCount.gpos;
+    SFUInteger nextIndex = 0;
     SFUInteger groupIndex;
 
     for (groupIndex = 0; groupIndex < groupCount; groupIndex++) {
-        SFGroupDetailRef group = &langDetail->groupArray[groupIndex];
-        SFUInteger startIndex = group->featureIndex;
+        SFFeatureGroupRef featureGroup = &pattern->featureGroupArray[groupIndex];
+        SFUInteger startIndex = featureGroup->featureIndex;
 
-        /* The range of group features must fall within language features. */
-        SFAssert((startIndex + group->featureCount) <= featureCount);
         /* Group ranges must be continuous. */
-        SFAssert(gapIndex <= startIndex);
+        SFAssert(nextIndex == startIndex);
 
-        /* Apply all features in the gap before group. */
-        _SFApplyFeaturesInRange(processor, gapIndex, startIndex);
         /* Apply the group. */
-        _SFApplyGroup(processor, groupIndex);
+        _SFApplyFeatureGroup(processor, featureGroup);
 
-        gapIndex = startIndex + group->featureCount;
-    }
-
-    /* Apply remaining features. */
-    _SFApplyFeaturesInRange(processor, gapIndex, featureCount);
-}
-
-static void _SFApplyFeaturesInRange(SFTextProcessorRef processor, SFUInteger startIndex, SFUInteger limitIndex)
-{
-    /* Apply all features individually. */
-    for (; startIndex < limitIndex; startIndex++) {
-        _SFApplyFeature(processor, startIndex);
+        nextIndex = startIndex + featureGroup->featureCount;
     }
 }
 
-static void _SFApplyFeature(SFTextProcessorRef processor, SFUInteger featureIndex)
+static void _SFApplyFeatureGroup(SFTextProcessorRef processor, SFFeatureGroupRef featureGroup)
 {
-    SFFeatureDetailRef feature = &processor->_langDetail->featureArray[featureIndex];
-    SFUInteger lookupCount = feature->lookupCount;
-    SFUInteger lookupIndex;
-
-    processor->_feature = feature->feature;
-
-    /* Apply all lookups of the feature. */
-    for (lookupIndex = 0; lookupIndex < lookupCount; lookupIndex++) {
-        SFLookupDetailRef lookup = &feature->lookupArray[lookupIndex];
-        _SFApplyLookup(processor, lookup->table, feature->headerKind);
-    }
-}
-
-static void _SFApplyGroup(SFTextProcessorRef processor, SFUInteger groupIndex)
-{
-    SFLanguageDetailRef langDetail = processor->_langDetail;
-    SFGroupDetailRef group = &langDetail->groupArray[groupIndex];
-    SFHeaderKind headerKind = langDetail->featureArray[group->featureIndex].headerKind;
-    SFLookupDetail *lookupArray = group->lookupArray;
-    SFUInteger lookupCount = group->lookupCount;
+    SFHeaderKind headerKind = featureGroup->headerKind;
+    SFUInt16 *lookupArray = featureGroup->lookupIndexes;
+    SFUInteger lookupCount = featureGroup->lookupCount;
     SFUInteger lookupIndex;
 
     /* Apply all lookups of the group. */
     for (lookupIndex = 0; lookupIndex < lookupCount; lookupIndex++) {
-        SFLookupDetailRef lookup = &lookupArray[lookupIndex];
-        _SFApplyLookup(processor, lookup->table, headerKind);
+        _SFApplyLookup(processor, lookupArray[lookupIndex], headerKind);
     }
 }
 
-static void _SFApplyLookup(SFTextProcessorRef processor, SFData lookup, SFHeaderKind headerKind)
+static void _SFApplyLookup(SFTextProcessorRef processor, SFUInt16 lookupIndex, SFHeaderKind headerKind)
 {
     processor->_headerKind = headerKind;
 
     if (headerKind == SFHeaderKindGSUB) {
+        SFData lookup = _SFGetLookupFromHeader(processor->_font->tables.gsub, lookupIndex);
         _SFApplyGSUBLookup(processor, lookup);
     } else if (headerKind == SFHeaderKindGPOS) {
+        SFData lookup = _SFGetLookupFromHeader(processor->_font->tables.gpos, lookupIndex);
         _SFApplyGPOSLookup(processor, lookup);
     }
 }

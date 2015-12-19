@@ -42,7 +42,7 @@ static void _SFFinalizeGroup(SFFeatureGroupRef featureGroup)
     free(featureGroup->lookupIndexes);
 }
 
-static void SFPatternFinalize(SFPatternRef pattern)
+static void _SFPatternFinalize(SFPatternRef pattern)
 {
     SFUInteger groupCount = pattern->groupCount.gsub + pattern->groupCount.gpos;
     SFUInteger index;
@@ -59,6 +59,6 @@ static void SFPatternFinalize(SFPatternRef pattern)
 void SFPatternRelease(SFPatternRef pattern)
 {
     if (pattern && --pattern->_retainCount == 0) {
-        SFPatternFinalize(pattern);
+        _SFPatternFinalize(pattern);
     }
 }

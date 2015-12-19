@@ -24,7 +24,7 @@
 #include "SFCollection.h"
 #include "SFFont.h"
 #include "SFLocator.h"
-#include "SFScriptCache.h"
+#include "SFPattern.h"
 #include "SFTableCache.h"
 
 struct _SFTextProcessor;
@@ -33,10 +33,10 @@ typedef SFTextProcessor *SFTextProcessorRef;
 
 struct _SFTextProcessor {
     SFFontRef _font;
+    SFPatternRef _pattern;
     SFCollectionRef _collection;
     SFLocatorRef _locator;
     SFData _glyphClassDef;
-    SFLanguageDetailRef _langDetail;
     SFDirection _direction;
     /* State values. */
     SFFeature _feature;
@@ -44,7 +44,7 @@ struct _SFTextProcessor {
     SFHeaderKind _headerKind;
 };
 
-SF_INTERNAL void SFTextProcessorInitialize(SFTextProcessorRef textProcessor, SFFontRef font, SFLanguageDetailRef langDetail, SFCollectionRef collection);
+SF_INTERNAL void SFTextProcessorInitialize(SFTextProcessorRef textProcessor, SFFontRef font, SFPatternRef pattern, SFCollectionRef collection);
 
 SF_INTERNAL void SFTextProcessorDiscoverGlyphs(SFTextProcessorRef textProcessor);
 SF_INTERNAL void SFTextProcessorManipulateGlyphs(SFTextProcessorRef textProcessor);
