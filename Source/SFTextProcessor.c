@@ -105,13 +105,20 @@ static void _SFApplyFeatureGroup(SFTextProcessorRef processor, SFFeatureGroupRef
 
 static void _SFApplyLookup(SFTextProcessorRef processor, SFUInt16 lookupIndex, SFHeaderKind headerKind)
 {
+    SFLocatorRef locator = processor->_locator;
+    SFLocatorReset(locator);
+
     processor->_headerKind = headerKind;
 
     if (headerKind == SFHeaderKindGSUB) {
         SFData lookup = _SFGetLookupFromHeader(processor->_font->tables.gsub, lookupIndex);
-        _SFApplyGSUBLookup(processor, lookup);
+        while (SFLocatorMoveNext(locator)) {
+            _SFApplyGSUBLookup(processor, lookup);
+        }
     } else if (headerKind == SFHeaderKindGPOS) {
         SFData lookup = _SFGetLookupFromHeader(processor->_font->tables.gpos, lookupIndex);
-        _SFApplyGPOSLookup(processor, lookup);
+        while (SFLocatorMoveNext(locator)) {
+            _SFApplyGPOSLookup(processor, lookup);
+        }
     }
 }

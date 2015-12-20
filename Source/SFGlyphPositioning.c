@@ -62,7 +62,7 @@ SF_PRIVATE void _SFApplyGPOSLookup(SFTextProcessorRef processor, SFData lookup)
     SFUInt16 subtableCount = SF_LOOKUP__SUB_TABLE_COUNT(lookup);
     SFUInteger subtableIndex;
 
-    processor->_lookupFlag = lookupFlag;
+    SFLocatorSetLookupFlag(processor->_locator, lookupFlag);
 
     /* Apply subtables in order until one of them performs positioning. */
     for (subtableIndex = 0; subtableIndex < subtableCount; subtableIndex++) {
@@ -177,7 +177,7 @@ static SFBoolean _SFApplyPairPos(SFTextProcessorRef processor, SFData pairPos)
     SFUInteger secondIndex;
 
     firstIndex = locator->index;
-    secondIndex = SFLocatorGetAfter(locator, firstIndex, processor->_lookupFlag);
+    secondIndex = SFLocatorGetAfter(locator, firstIndex, locator->lookupFlag);
 
     /* Proceed only if pair glyph is available. */
     if (secondIndex != SFInvalidIndex) {
@@ -464,7 +464,7 @@ static SFBoolean _SFApplyCursivePosF1(SFTextProcessorRef processor, SFData cursi
 
     /* Proceed only if exit anchor of first glyph exists. */
     if (firstExitAnchor) {
-        SFUInteger secondIndex = SFLocatorGetAfter(locator, firstIndex, processor->_lookupFlag);
+        SFUInteger secondIndex = SFLocatorGetAfter(locator, firstIndex, locator->lookupFlag);
 
         if (secondIndex != SFInvalidIndex) {
             SFGlyphID secondGlyph = SFCollectionGetGlyph(collection, secondIndex);
@@ -507,7 +507,7 @@ static SFBoolean _SFApplyCursivePosF1(SFTextProcessorRef processor, SFData cursi
                 }
 
                 /* Set traits of both elements. */
-                if (processor->_lookupFlag & SFLookupFlagRightToLeft) {
+                if (locator->lookupFlag & SFLookupFlagRightToLeft) {
                     SFGlyphTrait traits;
 
                     traits = SFCollectionGetTraits(collection, firstIndex)
@@ -531,7 +531,7 @@ static SFBoolean _SFApplyCursivePosF1(SFTextProcessorRef processor, SFData cursi
 static SFUInteger _SFGetPreviousBaseGlyphIndex(SFTextProcessorRef processor)
 {
     SFLocatorRef locator = processor->_locator;
-    SFLookupFlag lookupFlag = processor->_lookupFlag | SFLookupFlagIgnoreMarks;
+    SFLookupFlag lookupFlag = locator->lookupFlag | SFLookupFlagIgnoreMarks;
 
     /*
      * NOTE:
@@ -641,7 +641,7 @@ static SFUInteger _SFGetPreviousLigatureGlyphIndex(SFTextProcessorRef processor,
 {
     SFCollectionRef collection = processor->_collection;
     SFLocatorRef locator = processor->_locator;
-    SFLookupFlag lookupFlag = processor->_lookupFlag | SFLookupFlagIgnoreMarks;
+    SFLookupFlag lookupFlag = locator->lookupFlag | SFLookupFlagIgnoreMarks;
     SFUInteger inputIndex = locator->index;
     SFUInteger prevIndex;
 
@@ -800,7 +800,7 @@ static SFUInteger _SFGetPreviousMarkGlyphIndex(SFTextProcessorRef processor)
     SFLookupFlag ignoreFlag = SFLookupFlagIgnoreBaseGlyphs
                             | SFLookupFlagIgnoreMarks
                             | SFLookupFlagIgnoreLigatures;
-    SFLookupFlag lookupFlag = processor->_lookupFlag & ~ignoreFlag;
+    SFLookupFlag lookupFlag = locator->lookupFlag & ~ignoreFlag;
 
     /*
      * NOTE:

@@ -29,13 +29,15 @@ typedef struct {
     SFData _markGlyphSetsDef;
     SFUInteger index;
     SFUInteger _state;
-    SFLookupFlag _lookupFlag;
+    SFLookupFlag lookupFlag;
 } SFLocator;
 typedef SFLocator *SFLocatorRef;
 
 SF_INTERNAL void SFLocatorInitialize(SFLocatorRef locator, SFCollectionRef collection, SFData gdef);
 
-SF_INTERNAL void SFLocatorReset(SFLocatorRef locator, SFLookupFlag lookupFlag);
+SF_INTERNAL void SFLocatorReset(SFLocatorRef locator);
+
+SF_INTERNAL void SFLocatorSetLookupFlag(SFLocatorRef locator, SFLookupFlag lookupFlag);
 
 /**
  * Advances the locator to next glyph.
@@ -43,7 +45,7 @@ SF_INTERNAL void SFLocatorReset(SFLocatorRef locator, SFLookupFlag lookupFlag);
 SF_INTERNAL SFBoolean SFLocatorMoveNext(SFLocatorRef locator);
 
 /**
- * Skips the given number of glyphs.
+ * Jumps the locator to given index.
  */
 SF_INTERNAL void SFLocatorJumpTo(SFLocatorRef locator, SFUInteger index);
 

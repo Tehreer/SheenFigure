@@ -40,7 +40,6 @@ struct _SFTextProcessor {
     SFDirection _direction;
     /* State values. */
     SFFeatureTag _featureTag;
-    SFLookupFlag _lookupFlag;
     SFHeaderKind _headerKind;
 };
 

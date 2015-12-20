@@ -37,7 +37,7 @@ SF_INTERNAL void SFLocatorInitialize(SFLocatorRef locator, SFCollectionRef colle
     locator->_markGlyphSetsDef = NULL;
     locator->index = SFInvalidIndex;
     locator->_state = 0;
-    locator->_lookupFlag = 0;
+    locator->lookupFlag = 0;
 
     if (gdef) {
         SFOffset offset = SF_GDEF__MARK_ATTACH_CLASS_DEF_OFFSET(gdef);
@@ -50,11 +50,15 @@ SF_INTERNAL void SFLocatorInitialize(SFLocatorRef locator, SFCollectionRef colle
     }
 }
 
-SF_INTERNAL void SFLocatorReset(SFLocatorRef locator, SFLookupFlag lookupFlag)
+SF_INTERNAL void SFLocatorReset(SFLocatorRef locator)
 {
     locator->index = SFInvalidIndex;
     locator->_state = 0;
-    locator->_lookupFlag = lookupFlag;
+}
+
+SF_INTERNAL void SFLocatorSetLookupFlag(SFLocatorRef locator, SFLookupFlag lookupFlag)
+{
+    locator->lookupFlag = lookupFlag;
 }
 
 static SFBoolean _SFIsIgnoredGlyph(SFLocatorRef locator, SFUInteger index, SFLookupFlag lookupFlag) {
@@ -103,7 +107,7 @@ SF_INTERNAL SFBoolean SFLocatorMoveNext(SFLocatorRef locator)
     do {
         SFUInteger index = locator->_state++;
 
-        if (!_SFIsIgnoredGlyph(locator, index, locator->_lookupFlag)) {
+        if (!_SFIsIgnoredGlyph(locator, index, locator->lookupFlag)) {
             locator->index = index;
             return SFTrue;
         }

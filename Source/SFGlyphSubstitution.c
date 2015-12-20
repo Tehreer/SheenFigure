@@ -41,8 +41,7 @@ SF_PRIVATE void _SFApplyGSUBLookup(SFTextProcessorRef processor, SFData lookup)
     SFUInt16 subtableCount = SF_LOOKUP__SUB_TABLE_COUNT(lookup);
     SFUInt16 subtableIndex;
 
-    /* Set lookup flag in text processor. */
-    processor->_lookupFlag = lookupFlag;
+    SFLocatorSetLookupFlag(processor->_locator, lookupFlag);
 
     /* Apply subtables in order until one of them performs substitution. */
     for (subtableIndex = 0; subtableIndex < subtableCount; subtableIndex++) {
@@ -307,7 +306,7 @@ static SFBoolean _SFApplyLigatureSet(SFTextProcessorRef processor, SFData ligatu
 
         /* Match all compononets starting from second one with input glyphs. */
         for (compIndex = 1; compIndex < compCount; compIndex++) {
-            nextIndex = SFLocatorGetAfter(locator, prevIndex, processor->_lookupFlag);
+            nextIndex = SFLocatorGetAfter(locator, prevIndex, locator->lookupFlag);
 
             if (inputIndex != SFInvalidIndex) {
                 SFGlyphID component = SF_LIGATURE__COMPONENT(ligature, compIndex);
@@ -338,7 +337,7 @@ static SFBoolean _SFApplyLigatureSet(SFTextProcessorRef processor, SFData ligatu
 
             /* Initialize component glyphs. */
             for (compIndex = 1; compIndex < compCount; compIndex++) {
-                nextIndex = SFLocatorGetAfter(locator, prevIndex, processor->_lookupFlag);
+                nextIndex = SFLocatorGetAfter(locator, prevIndex, locator->lookupFlag);
 
                 SFCollectionSetGlyph(collection, nextIndex, 0);
                 SFCollectionSetTraits(collection, nextIndex, SFGlyphTraitRemoved);
