@@ -28,7 +28,7 @@ typedef struct {
     SFData _markAttachClassDef;
     SFData _markGlyphSetsDef;
     SFUInteger index;
-    SFUInteger _iterIndex;
+    SFUInteger _state;
     SFLookupFlag _lookupFlag;
 } SFLocator;
 typedef SFLocator *SFLocatorRef;
@@ -45,21 +45,21 @@ SF_INTERNAL SFBoolean SFLocatorMoveNext(SFLocatorRef locator);
 /**
  * Skips the given number of glyphs.
  */
-SF_INTERNAL void SFLocatorSkip(SFLocatorRef locator, SFUInteger glyphCount);
+SF_INTERNAL void SFLocatorJumpTo(SFLocatorRef locator, SFUInteger index);
 
 /**
  * Gets the index of appropriate glyph after the given index.
  * @return
- *      The index of next glyph, or SFInvalidIndex if there is no appropriate
- *      glyph after the given index.
+ *      The index of next glyph, or SFInvalidIndex if there is no appropriate glyph after the given
+ *      index.
  */
-SF_INTERNAL SFUInteger SFLocatorGetAfter(SFLocatorRef locator, SFUInteger index);
+SF_INTERNAL SFUInteger SFLocatorGetAfter(SFLocatorRef locator, SFUInteger index, SFLookupFlag lookupFlag);
 
 /**
  * Gets the index of appropriate glyph before the given index.
  * @return
- *      The index of previous glyph, or SFInvalidIndex if there is no
- *      appropriate glyph after the given index.
+ *      The index of previous glyph, or SFInvalidIndex if there is no appropriate glyph after the
+ *      given index.
  */
 SF_INTERNAL SFUInteger SFLocatorGetBefore(SFLocatorRef locator, SFUInteger index, SFLookupFlag lookupFlag);
 

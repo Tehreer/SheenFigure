@@ -27,7 +27,7 @@
 
 SF_INTERNAL SFScriptKnowledgeRef SFShapingKnowledgeSeekScript(SFShapingKnowledgeRef shapingKnowledge, SFScriptTag scriptTag)
 {
-    (*shapingKnowledge->_seekScript)(shapingKnowledge, scriptTag);
+    return (*shapingKnowledge->_seekScript)(shapingKnowledge, scriptTag);
 }
 
 SF_INTERNAL SFUInteger SFScriptKnowledgeSeekFeature(SFScriptKnowledgeRef scriptKnowledge, SFFeatureTag featureTag)

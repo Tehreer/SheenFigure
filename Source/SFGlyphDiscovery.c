@@ -32,7 +32,7 @@ SF_INTERNAL void _SFDiscoverGlyphs(SFTextProcessorRef processor)
 
     for (index = 0; index < length; index++) {
         SFCodePoint codePoint = collection->codePointArray[index];
-        SFGlyphID glyph = SFFontGetGlyphForCodePoint(font, codePoint);
+        SFGlyphID glyph = SFFontGetGlyphIDForCodePoint(font, codePoint);
         SFCollectionAddGlyph(collection, glyph, index);
     }
 }

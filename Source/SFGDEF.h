@@ -34,7 +34,7 @@ typedef SFUInt16 SFGlyphClassValue;
 #define SF_GDEF__ATTACH_LIST_OFFSET(t)                  SF_DATA__READ_UINT16(t, 6)
 #define SF_GDEF__LIG_CARET_LIST_OFFSET(t)               SF_DATA__READ_UINT16(t, 8)
 #define SF_GDEF__MARK_ATTACH_CLASS_DEF_OFFSET(t)        SF_DATA__READ_UINT16(t, 10)
-#define SF_GDEF__MARK_GLYPH_SETS_DEF_OFFSET(t)          ((SF_GDEF_VERSION(t) == 0x00010002) ? SF_DATA__READ_UINT16(t, 12) : 0)
+#define SF_GDEF__MARK_GLYPH_SETS_DEF_OFFSET(t)          SF_DATA__READ_UINT16(t, 12)
 
 #define SF_ATTACH_LIST__COVERAGE(t)                     SF_DATA__READ_UINT16(t, 0)
 #define SF_ATTACH_LIST__GLYPH_COUNT(t)                  SF_DATA__READ_UINT16(t, 2)

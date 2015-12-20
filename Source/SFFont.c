@@ -68,7 +68,7 @@ SFInteger SFFontGetLeading(SFFontRef font)
     return font->leading;
 }
 
-SFGlyphID SFFontGetCodePointGlyph(SFFontRef font, SFCodePoint codePoint) {
+SFGlyphID SFFontGetGlyphIDForCodePoint(SFFontRef font, SFCodePoint codePoint) {
     /*
      * OpenType recommendation for 'cmap' table:
      *      "The number of glyphs that may be included in one font is limited to

@@ -196,7 +196,7 @@ SF_PRIVATE SFBoolean _SFApplyExtensionSubtable(SFTextProcessorRef processor, SFD
     case 1:
         {
             SFLookupType lookupType = SF_EXTENSION_F1__LOOKUP_TYPE(extensionSubtable);
-            SFUInteger offset = SF_EXTENSION_F1__SUBTABLE(extensionSubtable);
+            SFUInt32 offset = SF_EXTENSION_F1__SUBTABLE(extensionSubtable);
             SFData innerSubtable = SF_DATA__SUBDATA(extensionSubtable, offset);
 
             switch (processor->_headerKind) {

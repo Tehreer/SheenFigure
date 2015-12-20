@@ -62,6 +62,8 @@ SF_PRIVATE void _SFApplyGPOSLookup(SFTextProcessorRef processor, SFData lookup)
     SFUInt16 subtableCount = SF_LOOKUP__SUB_TABLE_COUNT(lookup);
     SFUInteger subtableIndex;
 
+    processor->_lookupFlag = lookupFlag;
+
     /* Apply subtables in order until one of them performs positioning. */
     for (subtableIndex = 0; subtableIndex < subtableCount; subtableIndex++) {
         SFOffset subtableOffset = SF_LOOKUP__SUB_TABLE(lookup, subtableIndex);
@@ -175,7 +177,7 @@ static SFBoolean _SFApplyPairPos(SFTextProcessorRef processor, SFData pairPos)
     SFUInteger secondIndex;
 
     firstIndex = locator->index;
-    secondIndex = SFLocatorGetAfter(locator, firstIndex);
+    secondIndex = SFLocatorGetAfter(locator, firstIndex, processor->_lookupFlag);
 
     /* Proceed only if pair glyph is available. */
     if (secondIndex != SFInvalidIndex) {
@@ -193,12 +195,6 @@ static SFBoolean _SFApplyPairPos(SFTextProcessorRef processor, SFData pairPos)
     }
 
     if (shouldSkip) {
-        SFLocatorJumpTo(locator, secondIndex + 1);
-    } else {
-        /*
-         * Whether pair positioning is applied or not, next element will always
-         * be the one found above. So jump the locator to it.
-         */
         SFLocatorJumpTo(locator, secondIndex);
     }
 
@@ -468,7 +464,7 @@ static SFBoolean _SFApplyCursivePosF1(SFTextProcessorRef processor, SFData cursi
 
     /* Proceed only if exit anchor of first glyph exists. */
     if (firstExitAnchor) {
-        SFUInteger secondIndex = SFLocatorGetAfter(locator, firstIndex);
+        SFUInteger secondIndex = SFLocatorGetAfter(locator, firstIndex, processor->_lookupFlag);
 
         if (secondIndex != SFInvalidIndex) {
             SFGlyphID secondGlyph = SFCollectionGetGlyph(collection, secondIndex);

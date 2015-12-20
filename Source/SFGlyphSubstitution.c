@@ -41,7 +41,7 @@ SF_PRIVATE void _SFApplyGSUBLookup(SFTextProcessorRef processor, SFData lookup)
     SFUInt16 subtableCount = SF_LOOKUP__SUB_TABLE_COUNT(lookup);
     SFUInt16 subtableIndex;
 
-    /* Set lookup flag in shaping engine. */
+    /* Set lookup flag in text processor. */
     processor->_lookupFlag = lookupFlag;
 
     /* Apply subtables in order until one of them performs substitution. */
@@ -216,7 +216,7 @@ static SFBoolean _SFApplySequence(SFTextProcessorRef processor, SFData sequence)
             SFUInteger subIndex;
 
             /* Reserve glyphs for remaining substitutes in the collection. */
-            SFCollectionReserveElements(collection, inputIndex + 1, glyphCount - 1);
+            SFCollectionReserveGlyphs(collection, inputIndex + 1, glyphCount - 1);
 
             /* Initialize reserved glyphs. */
             for (subIndex = 1; subIndex < glyphCount; subIndex++) {
@@ -233,7 +233,7 @@ static SFBoolean _SFApplySequence(SFTextProcessorRef processor, SFData sequence)
             }
 
             /* Skip added elements in the locator. */
-            SFLocatorSkip(locator, glyphCount - 1);
+            SFLocatorJumpTo(locator, locator->index + glyphCount - 1);
         }
 
         return SFTrue;
@@ -241,8 +241,7 @@ static SFBoolean _SFApplySequence(SFTextProcessorRef processor, SFData sequence)
 
     /*
      * NOTE:
-     *      Latest OpenType standard prohibits the removal of glyph, if the
-     *      sequence is empty.
+     *      Latest OpenType standard prohibits the removal of glyph, if the sequence is empty.
      */
 
     return SFFalse;
@@ -308,7 +307,7 @@ static SFBoolean _SFApplyLigatureSet(SFTextProcessorRef processor, SFData ligatu
 
         /* Match all compononets starting from second one with input glyphs. */
         for (compIndex = 1; compIndex < compCount; compIndex++) {
-            nextIndex = SFLocatorGetAfter(locator, prevIndex);
+            nextIndex = SFLocatorGetAfter(locator, prevIndex, processor->_lookupFlag);
 
             if (inputIndex != SFInvalidIndex) {
                 SFGlyphID component = SF_LIGATURE__COMPONENT(ligature, compIndex);
@@ -339,7 +338,7 @@ static SFBoolean _SFApplyLigatureSet(SFTextProcessorRef processor, SFData ligatu
 
             /* Initialize component glyphs. */
             for (compIndex = 1; compIndex < compCount; compIndex++) {
-                nextIndex = SFLocatorGetAfter(locator, prevIndex);
+                nextIndex = SFLocatorGetAfter(locator, prevIndex, processor->_lookupFlag);
 
                 SFCollectionSetGlyph(collection, nextIndex, 0);
                 SFCollectionSetTraits(collection, nextIndex, SFGlyphTraitRemoved);
