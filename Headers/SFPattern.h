@@ -23,4 +23,7 @@ struct _SFPattern;
 typedef struct _SFPattern SFPattern;
 typedef SFPattern *SFPatternRef;
 
+SFPatternRef SFPatternRetain(SFPatternRef pattern);
+void SFPatternRelease(SFPatternRef pattern);
+
 #endif

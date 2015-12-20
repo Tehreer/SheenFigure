@@ -30,10 +30,10 @@
 #include "SFLocator.h"
 #include "SFTextProcessor.h"
 
-SF_PRIVATE SFUInteger _SFSearchCoverageIndex(SFData coverage, SFGlyph glyph);
-SF_PRIVATE SFUInt16 _SFSearchGlyphClass(SFData classDef, SFGlyph glyph);
+SF_PRIVATE SFUInteger _SFSearchCoverageIndex(SFData coverage, SFGlyphID glyph);
+SF_PRIVATE SFUInt16 _SFSearchGlyphClass(SFData classDef, SFGlyphID glyph);
 
-SF_PRIVATE SFGlyphTrait _SFGetGlyphTrait(SFTextProcessorRef processor, SFGlyph glyph);
+SF_PRIVATE SFGlyphTrait _SFGetGlyphTrait(SFTextProcessorRef processor, SFGlyphID glyph);
 
 SF_PRIVATE SFBoolean _SFApplyExtensionSubtable(SFTextProcessorRef processor, SFData extensionSubtable);
 

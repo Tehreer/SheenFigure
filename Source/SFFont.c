@@ -68,7 +68,7 @@ SFInteger SFFontGetLeading(SFFontRef font)
     return font->leading;
 }
 
-SFGlyph SFFontGetCodePointGlyph(SFFontRef font, SFCodePoint codePoint) {
+SFGlyphID SFFontGetCodePointGlyph(SFFontRef font, SFCodePoint codePoint) {
     /*
      * OpenType recommendation for 'cmap' table:
      *      "The number of glyphs that may be included in one font is limited to
@@ -82,13 +82,13 @@ SFGlyph SFFontGetCodePointGlyph(SFFontRef font, SFCodePoint codePoint) {
      */
     FT_UInt glyphIndex =  FT_Get_Char_Index(font->_ftFace, codePoint);
     if (glyphIndex <= 64000) {
-        return (SFGlyph)glyphIndex;
+        return (SFGlyphID)glyphIndex;
     }
 
     return 0;
 }
 
-SFInteger SFFontGetGlyphAdvance(SFFontRef font, SFGlyph glyph)
+SFInteger SFFontGetGlyphAdvance(SFFontRef font, SFGlyphID glyph)
 {
     FT_Fixed advance;
     FT_Get_Advance(font->_ftFace, glyph, FT_LOAD_NO_SCALE, &advance);

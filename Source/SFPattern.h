@@ -20,6 +20,7 @@
 #include <SFConfig.h>
 #include <SFFeatureTag.h>
 #include <SFLanguageTag.h>
+#include <SFPattern.h>
 #include <SFScriptTag.h>
 #include <SFTypes.h>
 

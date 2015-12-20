@@ -97,7 +97,7 @@ typedef SFUInt32        SFCodePoint;
 /**
  * A type to represent a glyph identifier.
  */
-typedef SFUInt16        SFGlyph;
+typedef SFUInt16        SFGlyphID;
 
 /**
  * A type to represent a tag of 4 characters.

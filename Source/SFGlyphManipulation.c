@@ -81,7 +81,7 @@ static SFUInteger _SFBinarySearchGlyphRange(SFData rangeArray, SFUInteger length
     return SFInvalidIndex;
 }
 
-SF_PRIVATE SFUInteger _SFSearchCoverageIndex(SFData coverage, SFGlyph glyph)
+SF_PRIVATE SFUInteger _SFSearchCoverageIndex(SFData coverage, SFGlyphID glyph)
 {
     SFUInt16 format;
 
@@ -114,7 +114,7 @@ SF_PRIVATE SFUInteger _SFSearchCoverageIndex(SFData coverage, SFGlyph glyph)
     return SFInvalidIndex;
 }
 
-SF_PRIVATE SFUInt16 _SFSearchGlyphClass(SFData classDef, SFGlyph glyph)
+SF_PRIVATE SFUInt16 _SFSearchGlyphClass(SFData classDef, SFGlyphID glyph)
 {
     SFUInt16 format;
 
@@ -126,7 +126,7 @@ SF_PRIVATE SFUInt16 _SFSearchGlyphClass(SFData classDef, SFGlyph glyph)
     switch (format) {
     case 1:
         {
-            SFGlyph startGlyph = SF_CLASS_DEF_F1__START_GLYPH(classDef);
+            SFGlyphID startGlyph = SF_CLASS_DEF_F1__START_GLYPH(classDef);
             SFUInt16 glyphCount = SF_CLASS_DEF_F1__GLYPH_COUNT(classDef);
             SFUInteger limit = startGlyph + glyphCount;
             SFUInteger index = glyph - startGlyph;
@@ -178,7 +178,7 @@ static SFGlyphTrait _SFGlyphClassToGlyphTrait(SFUInt16 glyphClass)
     return SFGlyphTraitNone;
 }
 
-SF_PRIVATE SFGlyphTrait _SFGetGlyphTrait(SFTextProcessorRef processor, SFGlyph glyph)
+SF_PRIVATE SFGlyphTrait _SFGetGlyphTrait(SFTextProcessorRef processor, SFGlyphID glyph)
 {
     if (processor->_glyphClassDef) {
         SFUInt16 glyphClass = _SFSearchGlyphClass(processor->_glyphClassDef, glyph);

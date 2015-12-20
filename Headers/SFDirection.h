@@ -20,7 +20,7 @@
 #include "SFTypes.h"
 
 enum {
-    SFDirectionHorizontal = 0,
+    SFDirectionHorizontal = 0
 };
 typedef SFUInt32 SFDirection;
 

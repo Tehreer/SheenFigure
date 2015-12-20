@@ -93,7 +93,7 @@ do {                                                    \
 #define SFListInitialize(list, itemSize)            _SFListInitialize(&(list)->_base, itemSize)
 #define SFListFinalize(list)                        _SFListFinalize(&(list)->_base)
 #define SFListFinalizeKeepingArray(list, outArray, outCount) \
-                                    _SFListFinalizeKeepingArray(&(list)->_base, outArray, outCount)
+                                    _SFListFinalizeKeepingArray(&(list)->_base, (void **)outArray, outCount)
 
 #define SFListSetCapacity(list, capacity)           _SFListSetCapacity(&(list)->_base, capacity)
 #define SFListReserveRange(list, index, count)      _SFListReserveRange(&(list)->_base, index, count)

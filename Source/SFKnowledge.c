@@ -68,7 +68,7 @@ SF_INTERNAL SFUInteger SFKnowledgeSeekFeature(SFKnowledgeRef knowledge, SFFeatur
 SF_INTERNAL SFFeatureTag SFKnowledgeGetFeatureAt(SFKnowledgeRef knowledge, SFUInteger index)
 {
     /* The index must be valid. */
-    SFAsset(index < knowledge->_seek->featureTagCount);
+    SFAssert(index < knowledge->_seek->featureTagCount);
 
     return knowledge->_seek->featureTagArray[index];
 }
@@ -81,7 +81,7 @@ SF_INTERNAL SFUInteger SFKnowledgeCountGroups(SFKnowledgeRef knowledge)
 SF_INTERNAL SFRange SFKnowledgeGetGroupAt(SFKnowledgeRef knowledge, SFUInteger index)
 {
     /* The index must be valid. */
-    SFAsset(index < knowledge->_seek->groupCount);
+    SFAssert(index < knowledge->_seek->groupCount);
 
     return knowledge->_seek->groupArray[index];
 }

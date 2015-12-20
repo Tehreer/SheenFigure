@@ -66,7 +66,7 @@ struct _SFCollection {
     SFUInteger codePointCount;
     SFUInteger elementCount;
 
-    SF_LIST(SFGlyph) _glyphs;
+    SF_LIST(SFGlyphID) _glyphs;
     SF_LIST(SFGlyphDetail) _details;
     SF_LIST(SFPoint) _positions;
     SF_LIST(SFInteger) _advances;
@@ -79,6 +79,8 @@ SF_INTERNAL void SFCollectionInitialize(SFCollectionRef collection, SFCodePoint 
 
 SF_INTERNAL void SFCollectionAllocateGlyphs(SFCollectionRef collection);
 SF_INTERNAL void SFCollectionAllocatePositions(SFCollectionRef collection);
+
+SF_INTERNAL void SFCollectionAddGlyph(SFCollectionRef collection, SFGlyphID glyph, SFUInteger association);
 
 /**
  * Reserves specified number of glyphs at the given index.
@@ -94,14 +96,14 @@ SF_INTERNAL void SFCollectionReserveGlyphs(SFCollectionRef collection, SFUIntege
  */
 SF_INTERNAL void SFCollectionAllocateMap(SFCollectionRef collection);
 
-SF_INTERNAL SFGlyph SFCollectionGetGlyph(SFCollectionRef collection, SFIndex index);
-SF_INTERNAL void SFCollectionSetGlyph(SFCollectionRef collection, SFIndex index, SFGlyph glyph);
+SF_INTERNAL SFGlyphID SFCollectionGetGlyph(SFCollectionRef collection, SFIndex index);
+SF_INTERNAL void SFCollectionSetGlyph(SFCollectionRef collection, SFIndex index, SFGlyphID glyph);
 
 SF_INTERNAL SFGlyphTrait SFCollectionGetTraits(SFCollectionRef collection, SFIndex index);
 SF_INTERNAL void SFCollectionSetTraits(SFCollectionRef collection, SFIndex index, SFGlyphTrait trait);
 
 SF_INTERNAL SFIndex SFCollectionGetAssociation(SFCollectionRef collection, SFIndex index);
-SF_INTERNAL void SFCollectionSetAsociation(SFCollectionRef collection, SFIndex index, SFIndex association);
+SF_INTERNAL void SFCollectionSetAssociation(SFCollectionRef collection, SFIndex index, SFIndex association);
 
 SF_INTERNAL SFPoint SFCollectionGetPosition(SFCollectionRef collection, SFIndex index);
 SF_INTERNAL void SFCollectionSetPosition(SFCollectionRef collection, SFIndex index, SFPoint position);

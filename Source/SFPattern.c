@@ -56,6 +56,15 @@ static void _SFPatternFinalize(SFPatternRef pattern)
     free(pattern->featureGroupArray);
 }
 
+SFPatternRef SFPatternRetain(SFPatternRef pattern)
+{
+    if (pattern) {
+        pattern->_retainCount++;
+    }
+
+    return pattern;
+}
+
 void SFPatternRelease(SFPatternRef pattern)
 {
     if (pattern && --pattern->_retainCount == 0) {

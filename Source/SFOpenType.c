@@ -69,7 +69,7 @@ static SFUInteger _SFBinarySearchGlyphRange(SFData rangeArray, SFUInteger length
     return SFInvalidIndex;
 }
 
-SF_INTERNAL SFUInteger SFOpenTypeSearchGlyphIndex(SFData coverage, SFGlyph glyph)
+SF_INTERNAL SFUInteger SFOpenTypeSearchGlyphIndex(SFData coverage, SFGlyphID glyph)
 {
     SFUInt16 format = SF_COVERAGE_FORMAT(coverage);
     switch (format) {
@@ -93,13 +93,13 @@ SF_INTERNAL SFUInteger SFOpenTypeSearchGlyphIndex(SFData coverage, SFGlyph glyph
     return SFInvalidIndex;
 }
 
-SF_INTERNAL SFBoolean SFOpenTypeSearchGlyphClass(SFData classDef, SFGlyph glyph, SFUInt16 *glyphClass)
+SF_INTERNAL SFBoolean SFOpenTypeSearchGlyphClass(SFData classDef, SFGlyphID glyph, SFUInt16 *glyphClass)
 {
     SFUInt16 format = SF_CLASS_DEF_FORMAT(classDef);
     switch (format) {
     case 1:
         {
-            SFGlyph startGlyph = SF_CLASS_DEF_F1__START_GLYPH(classDef);
+            SFGlyphID startGlyph = SF_CLASS_DEF_F1__START_GLYPH(classDef);
             SFUInt16 glyphCount = SF_CLASS_DEF_F1__GLYPH_COUNT(classDef);
             SFData classArray = SF_CLASS_DEF_F1__CLASS_VALUE_ARRAY(classDef);
 

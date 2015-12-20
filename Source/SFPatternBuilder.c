@@ -24,10 +24,11 @@
 #include <stdlib.h>
 
 #include "SFAssert.h"
+#include "SFList.h"
 #include "SFPattern.h"
 #include "SFPatternBuilder.h"
 
-SF_INTERNAL void SFPatternBuilderInitialize(SFPatternBuilderRef builder, SFPatternRef pattern)
+SF_INTERNAL void SFPatternBuilderInitialize(SFPatternBuilderRef builder)
 {
     /* Initialize builder. */
     builder->_currentHeader = 0;
@@ -36,13 +37,13 @@ SF_INTERNAL void SFPatternBuilderInitialize(SFPatternBuilderRef builder, SFPatte
     builder->_featureIndex = 0;
 
     SFListInitialize(&builder->_featureTags, sizeof(SFFeatureTag));
-    SFListSetCapacity(&builder->_featureTags, 0, 24);
+    SFListSetCapacity(&builder->_featureTags, 24);
 
     SFListInitialize(&builder->_featureGroups, sizeof(SFFeatureGroup));
-    SFListSetCapacity(&builder->_featureGroups, 0, 24);
+    SFListSetCapacity(&builder->_featureGroups, 24);
 
     SFListInitialize(&builder->_lookupIndexes, sizeof(SFUInt16));
-    SFListSetCapacity(&builder->_lookupIndexes, 0, 32);
+    SFListSetCapacity(&builder->_lookupIndexes, 32);
 }
 
 SF_INTERNAL void SFPatternBuilderSetScript(SFPatternBuilderRef builder, SFScriptTag scriptTag)
@@ -81,7 +82,7 @@ static int _SFLookupIndexComparison(const void *item1, const void *item2)
     SFUInteger *ref1 = (SFUInteger *)item1;
     SFUInteger *ref2 = (SFUInteger *)item2;
 
-    return (*ref1 - *ref2);
+    return (int)(*ref1 - *ref2);
 }
 
 SF_INTERNAL void SFPatternBuilderMakeGroup(SFPatternBuilderRef builder)
@@ -113,7 +114,7 @@ SF_INTERNAL void SFPatternBuilderMakeGroup(SFPatternBuilderRef builder)
 
     /* Initialize lookup indexes array. */
     SFListInitialize(&builder->_lookupIndexes, sizeof(SFUInt16));
-    SFListSetCapacity(&builder->_lookupIndexes, 0, 32);
+    SFListSetCapacity(&builder->_lookupIndexes, 32);
 }
 
 SF_INTERNAL void SFPatternBuilderBuild(SFPatternBuilderRef builder, SFPatternRef pattern)

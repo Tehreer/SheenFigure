@@ -38,8 +38,8 @@ SFInteger SFFontGetAscender(SFFontRef font);
 SFInteger SFFontGetDescender(SFFontRef font);
 SFInteger SFFontGetLeading(SFFontRef font);
 
-SFGlyph SFFontGetGlyphForCodePoint(SFFontRef font, SFCodePoint codePoint);
-SFInteger SFFontGetGlyphAdvance(SFFontRef font, SFGlyph glyph);
+SFGlyphID SFFontGetGlyphForCodePoint(SFFontRef font, SFCodePoint codePoint);
+SFInteger SFFontGetGlyphAdvance(SFFontRef font, SFGlyphID glyph);
 
 SFFontRef SFFontRetain(SFFontRef font);
 void SFFontRelease(SFFontRef font);

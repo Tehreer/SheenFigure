@@ -23,8 +23,6 @@
 #include <stdlib.h>
 
 #include "SFCommon.h"
-#include "SFGSUB.h"
-#include "SFGPOS.h"
 #include "SFKnowledge.h"
 #include "SFPatternBuilder.h"
 #include "SFPattern.h"
@@ -134,12 +132,12 @@ static void _SFAddFeatures(_SFSchemeStateRef state)
             _SFAddFeatureGroup(state, featureIndex, groupRange.start - featureIndex, SFFalse);
             featureIndex = groupRange.start;
         } else {
-            SFAddFeatureGroup(state, featureIndex, groupRange.start, groupRange.length, SFTrue);
+            _SFAddFeatureGroup(state, groupRange.start, groupRange.length, SFTrue);
             featureIndex += groupRange.length;
         }
     }
 
-    SFAddFeatureGroup(state, featureIndex, featureCount - featureIndex, SFFalse);
+    _SFAddFeatureGroup(state, featureIndex, featureCount - featureIndex, SFFalse);
 }
 
 static void _SFAddHeader(_SFSchemeStateRef state, SFData header)

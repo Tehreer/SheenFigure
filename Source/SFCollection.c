@@ -33,7 +33,7 @@ SF_INTERNAL void SFCollectionInitialize(SFCollectionRef collection, SFCodePoint 
     collection->codePointCount = codePointCount;
     collection->elementCount = 0;
 
-    SFListInitialize(&collection->_glyphs, sizeof(SFGlyph));
+    SFListInitialize(&collection->_glyphs, sizeof(SFGlyphID));
     SFListInitialize(&collection->_details, sizeof(SFGlyphDetail));
     SFListInitialize(&collection->_positions, sizeof(SFPoint));
     SFListInitialize(&collection->_advances, sizeof(SFInteger));
@@ -55,11 +55,11 @@ SF_INTERNAL void SFCollectionAllocatePositions(SFCollectionRef collection)
     SFListReserveRange(&collection->_advances, 0, collection->elementCount);
 }
 
-SF_INTERNAL void SFCollectionAddGlyph(SFCollectionRef collection, SFGlyph glyph, SFUInteger association) {
+SF_INTERNAL void SFCollectionAddGlyph(SFCollectionRef collection, SFGlyphID glyph, SFUInteger association) {
     /* Initialize glyph along with its details. */
     SFCollectionSetGlyph(collection, collection->elementCount, glyph);
-    SFCollectionSetTraits(collection, collection->elementCount, association);
-    SFCollectionSetAssociation(collection, collection->elementCount, SFGlyphTraitNone);
+    SFCollectionSetTraits(collection, collection->elementCount, SFGlyphTraitNone);
+    SFCollectionSetAssociation(collection, collection->elementCount, association);
 
     /* Increment element count. */
     collection->elementCount++;
@@ -76,13 +76,13 @@ static void SFValidateCollectionIndex(SFCollectionRef collection, SFIndex index)
     SFAssert(index < collection->elementCount);
 }
 
-SF_INTERNAL SFGlyph SFCollectionGetGlyph(SFCollectionRef collection, SFIndex index)
+SF_INTERNAL SFGlyphID SFCollectionGetGlyph(SFCollectionRef collection, SFIndex index)
 {
     SFValidateCollectionIndex(collection, index);
     return SFListGetVal(&collection->_glyphs, index);
 }
 
-SF_INTERNAL void SFCollectionSetGlyph(SFCollectionRef collection, SFIndex index, SFGlyph glyph)
+SF_INTERNAL void SFCollectionSetGlyph(SFCollectionRef collection, SFIndex index, SFGlyphID glyph)
 {
     SFValidateCollectionIndex(collection, index);
     SFListSetVal(&collection->_glyphs, index, glyph);
@@ -106,7 +106,7 @@ SF_INTERNAL SFIndex SFCollectionGetAssociation(SFCollectionRef collection, SFInd
     return SFListGetRef(&collection->_details, index)->association;
 }
 
-SF_INTERNAL void SFCollectionSetAsociation(SFCollectionRef collection, SFIndex index, SFIndex association)
+SF_INTERNAL void SFCollectionSetAssociation(SFCollectionRef collection, SFIndex index, SFIndex association)
 {
     SFValidateCollectionIndex(collection, index);
     SFListGetRef(&collection->_details, index)->association = association;

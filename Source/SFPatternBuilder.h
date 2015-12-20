@@ -27,8 +27,8 @@
 #include "SFPattern.h"
 
 /**
- * ScriptBuilder is an inner class of ScriptCache, therefore it can access private members of
- * ScriptCache.
+ * SFPatternBuilder is an inner class of SFPattern, therefore it can access private members of
+ * SFPattern.
  */
 
 struct _SFPatternBuilder;
@@ -53,9 +53,6 @@ struct _SFPatternBuilder {
 
 /**
  * Initializes builder for a script cache.
- * @param scriptCache
- *      The script cache to be built. It must be an uninitialized object as it
- *		will be manipulated by the builder.
  */
 SF_INTERNAL void SFPatternBuilderInitialize(SFPatternBuilderRef builder);
 

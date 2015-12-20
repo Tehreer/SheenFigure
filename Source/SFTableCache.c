@@ -52,7 +52,7 @@ SF_INTERNAL void SFTableCacheInitialize(SFTableCacheRef tableCache, FT_Face ftFa
 }
 
 SF_INTERNAL void SFTableCacheFinalize(SFTableCacheRef tableCache) {
-    free(tableCache->gdef);
-    free(tableCache->gsub);
-    free(tableCache->gpos);
+    free((void *)tableCache->gdef);
+    free((void *)tableCache->gsub);
+    free((void *)tableCache->gpos);
 }

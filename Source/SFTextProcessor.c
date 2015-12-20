@@ -72,7 +72,6 @@ static SFData _SFGetLookupFromHeader(SFData header, SFUInt16 lookupIndex)
 static void _SFApplyAllFeatures(SFTextProcessorRef processor)
 {
     SFPatternRef pattern = processor->_pattern;
-    SFUInteger featureCount = pattern->featureCount;
     SFUInteger groupCount = pattern->groupCount.gsub + pattern->groupCount.gpos;
     SFUInteger nextIndex = 0;
     SFUInteger groupIndex;
