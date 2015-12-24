@@ -21,10 +21,10 @@
 
 #include "SFCommon.h"
 #include "SFData.h"
-#include "SFCollection.h"
+#include "SFAlbum.h"
 
 typedef struct {
-    SFCollectionRef _collection;
+    SFAlbumRef _album;
     SFData _markAttachClassDef;
     SFData _markGlyphSetsDef;
     SFUInteger index;
@@ -33,7 +33,7 @@ typedef struct {
 } SFLocator;
 typedef SFLocator *SFLocatorRef;
 
-SF_INTERNAL void SFLocatorInitialize(SFLocatorRef locator, SFCollectionRef collection, SFData gdef);
+SF_INTERNAL void SFLocatorInitialize(SFLocatorRef locator, SFAlbumRef album, SFData gdef);
 
 SF_INTERNAL void SFLocatorReset(SFLocatorRef locator);
 

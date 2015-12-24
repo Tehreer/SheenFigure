@@ -129,28 +129,12 @@ typedef struct SFRange {
 typedef SFRange *SFRangeRef;
 
 /**
- * A type to represent an ordered pair of x- and y-coordinates that defines a
- * point.
+ * A type to represent an ordered pair of integer x- and y-coordinates that defines a point in a
+ * two-dimensional plane.
  */
 typedef struct SFPoint {
     SFInteger x; /**< The x-coordinate of the point. */
     SFInteger y; /**< The y-coordinate of the point. */
 } SFPoint;
-
-/**
- * A type to represent an ordered pair of width and height that defines a size.
- */
-typedef struct SFSize {
-    SFUInteger width;  /**< The width of the size. */
-    SFUInteger height; /**< The height of the size. */
-} SFSize;
-
-/**
- * A type to represent a frame.
- */
-typedef struct SFFrame {
-    SFPoint position; /**< The position of the frame. */
-    SFSize size;      /**< The size of the frame. */
-} SFFrame;
 
 #endif

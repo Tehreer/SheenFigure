@@ -23,13 +23,13 @@
 #include "SFList.h"
 
 struct _SFGlyphDetail;
-struct _SFCollection;
+struct _SFAlbum;
 
 typedef struct _SFGlyphDetail SFGlyphDetail;
-typedef struct _SFCollection SFCollection;
+typedef struct _SFAlbum SFAlbum;
 
 typedef SFGlyphDetail *SFGlyphDetailRef;
-typedef SFCollection *SFCollectionRef;
+typedef SFAlbum *SFAlbumRef;
 
 enum {
     SFGlyphTraitNone = 0,
@@ -60,7 +60,7 @@ struct _SFGlyphDetail {
     SFUInt16 offset;
 };
 
-struct _SFCollection {
+struct _SFAlbum {
     const SFCodePoint *codePointArray; /**< The array of codepoints which are to be shaped. */
     SFUInteger *mapArray;
     SFUInteger codePointCount;
@@ -73,50 +73,50 @@ struct _SFCollection {
 };
 
 /**
- * Initializes the collection for given code points.
+ * Initializes the album for given code points.
  */
-SF_INTERNAL void SFCollectionInitialize(SFCollectionRef collection, SFCodePoint *codePointArray, SFUInteger codePointCount);
+SF_INTERNAL void SFAlbumInitialize(SFAlbumRef album, SFCodePoint *codePointArray, SFUInteger codePointCount);
 
-SF_INTERNAL void SFCollectionAllocateGlyphs(SFCollectionRef collection);
-SF_INTERNAL void SFCollectionAllocatePositions(SFCollectionRef collection);
+SF_INTERNAL void SFAlbumAllocateGlyphs(SFAlbumRef album);
+SF_INTERNAL void SFAlbumAllocatePositions(SFAlbumRef album);
 
-SF_INTERNAL void SFCollectionAddGlyph(SFCollectionRef collection, SFGlyphID glyph, SFUInteger association);
+SF_INTERNAL void SFAlbumAddGlyph(SFAlbumRef album, SFGlyphID glyph, SFUInteger association);
 
 /**
  * Reserves specified number of glyphs at the given index.
  * @note
  *      The reserved glyphs will be uninitialized.
  */
-SF_INTERNAL void SFCollectionReserveGlyphs(SFCollectionRef collection, SFUInteger index, SFUInteger count);
+SF_INTERNAL void SFAlbumReserveGlyphs(SFAlbumRef album, SFUInteger index, SFUInteger count);
 
 /**
  * Allocates an array for charater to glyph map.
  * @note
  *      The allocated map will be uninitialized.
  */
-SF_INTERNAL void SFCollectionAllocateMap(SFCollectionRef collection);
+SF_INTERNAL void SFAlbumAllocateMap(SFAlbumRef album);
 
-SF_INTERNAL SFGlyphID SFCollectionGetGlyph(SFCollectionRef collection, SFIndex index);
-SF_INTERNAL void SFCollectionSetGlyph(SFCollectionRef collection, SFIndex index, SFGlyphID glyph);
+SF_INTERNAL SFGlyphID SFAlbumGetGlyph(SFAlbumRef album, SFIndex index);
+SF_INTERNAL void SFAlbumSetGlyph(SFAlbumRef album, SFIndex index, SFGlyphID glyph);
 
-SF_INTERNAL SFGlyphTrait SFCollectionGetTraits(SFCollectionRef collection, SFIndex index);
-SF_INTERNAL void SFCollectionSetTraits(SFCollectionRef collection, SFIndex index, SFGlyphTrait trait);
+SF_INTERNAL SFGlyphTrait SFAlbumGetTraits(SFAlbumRef album, SFIndex index);
+SF_INTERNAL void SFAlbumSetTraits(SFAlbumRef album, SFIndex index, SFGlyphTrait trait);
 
-SF_INTERNAL SFIndex SFCollectionGetAssociation(SFCollectionRef collection, SFIndex index);
-SF_INTERNAL void SFCollectionSetAssociation(SFCollectionRef collection, SFIndex index, SFIndex association);
+SF_INTERNAL SFIndex SFAlbumGetAssociation(SFAlbumRef album, SFIndex index);
+SF_INTERNAL void SFAlbumSetAssociation(SFAlbumRef album, SFIndex index, SFIndex association);
 
-SF_INTERNAL SFPoint SFCollectionGetPosition(SFCollectionRef collection, SFIndex index);
-SF_INTERNAL void SFCollectionSetPosition(SFCollectionRef collection, SFIndex index, SFPoint position);
+SF_INTERNAL SFPoint SFAlbumGetPosition(SFAlbumRef album, SFIndex index);
+SF_INTERNAL void SFAlbumSetPosition(SFAlbumRef album, SFIndex index, SFPoint position);
 
-SF_INTERNAL SFInteger SFCollectionGetAdvance(SFCollectionRef collection, SFIndex index);
-SF_INTERNAL void SFCollectionSetAdvance(SFCollectionRef collection, SFIndex index, SFInteger advance);
+SF_INTERNAL SFInteger SFAlbumGetAdvance(SFAlbumRef album, SFIndex index);
+SF_INTERNAL void SFAlbumSetAdvance(SFAlbumRef album, SFIndex index, SFInteger advance);
 
-SF_INTERNAL SFUInt16 SFCollectionGetOffset(SFCollectionRef collection, SFIndex index);
-SF_INTERNAL void SFCollectionSetOffset(SFCollectionRef collection, SFIndex index, SFUInt16 offset);
+SF_INTERNAL SFUInt16 SFAlbumGetOffset(SFAlbumRef album, SFIndex index);
+SF_INTERNAL void SFAlbumSetOffset(SFAlbumRef album, SFIndex index, SFUInt16 offset);
 
 /**
- * Finalizes the collection.
+ * Finalizes the album.
  */
-SF_INTERNAL void SFCollectionFinalize(SFCollectionRef collection);
+SF_INTERNAL void SFAlbumFinalize(SFAlbumRef album);
 
 #endif

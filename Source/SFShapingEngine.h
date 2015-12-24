@@ -23,7 +23,7 @@
 #include <SFScriptTag.h>
 #include <SFTypes.h>
 
-#include "SFCollection.h"
+#include "SFAlbum.h"
 #include "SFFont.h"
 #include "SFPattern.h"
 
@@ -84,6 +84,6 @@ SF_INTERNAL SFScriptKnowledgeRef SFShapingKnowledgeSeekScript(SFShapingKnowledge
 SF_INTERNAL SFUInteger SFScriptKnowledgeSeekFeature(SFScriptKnowledgeRef scriptKnowledge, SFFeatureTag featureTag);
 
 SF_INTERNAL void SFShapingEngineInitialize(SFShapingEngineRef shapingEngine, SFFontRef font, SFScriptTag scriptTag, SFLanguageTag languageTag, SFPatternRef pattern);
-SF_INTERNAL void SFShapingEngineProcessCollection(SFShapingEngineRef shapingEngine, SFCollectionRef collection);
+SF_INTERNAL void SFShapingEngineProcessCollection(SFShapingEngineRef shapingEngine, SFAlbumRef album);
 
 #endif

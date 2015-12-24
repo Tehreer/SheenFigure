@@ -25,7 +25,7 @@
 
 #include <SFConfig.h>
 
-#include "SFCollection.h"
+#include "SFAlbum.h"
 #include "SFData.h"
 #include "SFLocator.h"
 #include "SFTextProcessor.h"

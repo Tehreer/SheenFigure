@@ -21,7 +21,7 @@
 #include <SFDirection.h>
 #include <SFTypes.h>
 
-#include "SFCollection.h"
+#include "SFAlbum.h"
 #include "SFFont.h"
 #include "SFLocator.h"
 #include "SFPattern.h"
@@ -34,7 +34,7 @@ typedef SFTextProcessor *SFTextProcessorRef;
 struct _SFTextProcessor {
     SFFontRef _font;
     SFPatternRef _pattern;
-    SFCollectionRef _collection;
+    SFAlbumRef _album;
     SFLocatorRef _locator;
     SFData _glyphClassDef;
     SFDirection _direction;
@@ -43,7 +43,7 @@ struct _SFTextProcessor {
     SFHeaderKind _headerKind;
 };
 
-SF_INTERNAL void SFTextProcessorInitialize(SFTextProcessorRef textProcessor, SFFontRef font, SFPatternRef pattern, SFCollectionRef collection);
+SF_INTERNAL void SFTextProcessorInitialize(SFTextProcessorRef textProcessor, SFFontRef font, SFPatternRef pattern, SFAlbumRef album);
 
 SF_INTERNAL void SFTextProcessorDiscoverGlyphs(SFTextProcessorRef textProcessor);
 SF_INTERNAL void SFTextProcessorManipulateGlyphs(SFTextProcessorRef textProcessor);

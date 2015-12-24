@@ -20,7 +20,7 @@
 #include <stddef.h>
 
 #include "SFAssert.h"
-#include "SFCollection.h"
+#include "SFAlbum.h"
 #include "SFCommon.h"
 #include "SFData.h"
 #include "SFGDEF.h"

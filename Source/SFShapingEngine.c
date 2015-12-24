@@ -59,14 +59,14 @@ SF_INTERNAL void SFShapingEngineInitialize(SFShapingEngineRef shapingEngine, SFF
     shapingEngine->_languageTag = languageTag;
 }
 
-SF_INTERNAL void SFShapingEngineProcessCollection(SFShapingEngineRef shapingEngine, SFCollectionRef collection)
+SF_INTERNAL void SFShapingEngineProcessCollection(SFShapingEngineRef shapingEngine, SFAlbumRef album)
 {
     SFTextProcessor processor;
 
     /* Collection must NOT be null. */
-    SFAssert(collection != NULL);
+    SFAssert(album != NULL);
 
-    SFTextProcessorInitialize(&processor, shapingEngine->_font, shapingEngine->_pattern, collection);
+    SFTextProcessorInitialize(&processor, shapingEngine->_font, shapingEngine->_pattern, album);
     SFTextProcessorDiscoverGlyphs(&processor);
     if (shapingEngine->_pattern != NULL) {
         SFTextProcessorManipulateGlyphs(&processor);

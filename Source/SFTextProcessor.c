@@ -34,16 +34,16 @@ static void _SFApplyAllFeatures(SFTextProcessorRef processor);
 static void _SFApplyFeatureGroup(SFTextProcessorRef processor, SFFeatureGroupRef featureGroup);
 static void _SFApplyLookup(SFTextProcessorRef processor, SFUInt16 lookupIndex, SFHeaderKind headerKind);
 
-SF_INTERNAL void SFTextProcessorInitialize(SFTextProcessorRef textProcessor, SFFontRef font, SFPatternRef pattern, SFCollectionRef collection)
+SF_INTERNAL void SFTextProcessorInitialize(SFTextProcessorRef textProcessor, SFFontRef font, SFPatternRef pattern, SFAlbumRef album)
 {
     /* Font must NOT be null. */
     SFAssert(font != NULL);
     /* Collection must NOT be null. */
-    SFAssert(collection != NULL);
+    SFAssert(album != NULL);
 
     textProcessor->_font = font;
     textProcessor->_pattern = pattern;
-    textProcessor->_collection = collection;
+    textProcessor->_album = album;
 }
 
 SF_INTERNAL void SFTextProcessorDiscoverGlyphs(SFTextProcessorRef textProcessor)

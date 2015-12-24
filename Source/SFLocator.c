@@ -20,19 +20,19 @@
 #include <stddef.h>
 
 #include "SFAssert.h"
-#include "SFCollection.h"
+#include "SFAlbum.h"
 #include "SFGDEF.h"
 #include "SFOpenType.h"
 #include "SFLocator.h"
 
 static SFBoolean _SFIsIgnoredGlyph(SFLocatorRef locator, SFUInteger index, SFLookupFlag lookupFlag);
 
-SF_INTERNAL void SFLocatorInitialize(SFLocatorRef locator, SFCollectionRef collection, SFData gdef)
+SF_INTERNAL void SFLocatorInitialize(SFLocatorRef locator, SFAlbumRef album, SFData gdef)
 {
     /* Collection must NOT be null. */
-    SFAssert(collection != NULL);
+    SFAssert(album != NULL);
 
-    locator->_collection = collection;
+    locator->_album = album;
     locator->_markAttachClassDef = NULL;
     locator->_markGlyphSetsDef = NULL;
     locator->index = SFInvalidIndex;
@@ -62,8 +62,8 @@ SF_INTERNAL void SFLocatorSetLookupFlag(SFLocatorRef locator, SFLookupFlag looku
 }
 
 static SFBoolean _SFIsIgnoredGlyph(SFLocatorRef locator, SFUInteger index, SFLookupFlag lookupFlag) {
-    SFCollectionRef collection = locator->_collection;
-    SFGlyphTrait traits = SFCollectionGetTraits(collection, index);
+    SFAlbumRef album = locator->_album;
+    SFGlyphTrait traits = SFAlbumGetTraits(album, index);
     SFBoolean isMark;
 
     if (traits & SFGlyphTraitRemoved) {
@@ -84,7 +84,7 @@ static SFBoolean _SFIsIgnoredGlyph(SFLocatorRef locator, SFUInteger index, SFLoo
     }
 
     if (lookupFlag & SFLookupFlagMarkAttachmentType) {
-        SFGlyphID glyph = SFCollectionGetGlyph(collection, index);
+        SFGlyphID glyph = SFAlbumGetGlyph(album, index);
         SFUInt16 glyphClass;
 
         if (locator->_markAttachClassDef && isMark
@@ -99,10 +99,10 @@ static SFBoolean _SFIsIgnoredGlyph(SFLocatorRef locator, SFUInteger index, SFLoo
 
 SF_INTERNAL SFBoolean SFLocatorMoveNext(SFLocatorRef locator)
 {
-    SFCollectionRef collection = locator->_collection;
+    SFAlbumRef album = locator->_album;
 
     /* The state of locator must be valid. */
-    SFAssert(locator->_state < collection->elementCount);
+    SFAssert(locator->_state < album->elementCount);
 
     do {
         SFUInteger index = locator->_state++;
@@ -111,7 +111,7 @@ SF_INTERNAL SFBoolean SFLocatorMoveNext(SFLocatorRef locator)
             locator->index = index;
             return SFTrue;
         }
-    } while (locator->_state < collection->elementCount);
+    } while (locator->_state < album->elementCount);
 
     return SFFalse;
 }
@@ -123,12 +123,12 @@ SF_INTERNAL void SFLocatorJumpTo(SFLocatorRef locator, SFUInteger index)
 
 SF_INTERNAL SFUInteger SFLocatorGetAfter(SFLocatorRef locator, SFUInteger index, SFLookupFlag lookupFlag)
 {
-    SFCollectionRef collection = locator->_collection;
+    SFAlbumRef album = locator->_album;
 
     /* The index must be valid. */
-    SFAssert(index < collection->elementCount);
+    SFAssert(index < album->elementCount);
 
-    for (index += 1; index < collection->elementCount; index++) {
+    for (index += 1; index < album->elementCount; index++) {
         if (!_SFIsIgnoredGlyph(locator, index, lookupFlag)) {
             return index;
         }
@@ -139,10 +139,10 @@ SF_INTERNAL SFUInteger SFLocatorGetAfter(SFLocatorRef locator, SFUInteger index,
 
 SF_INTERNAL SFUInteger SFLocatorGetBefore(SFLocatorRef locator, SFUInteger index, SFLookupFlag lookupFlag)
 {
-    SFCollectionRef collection = locator->_collection;
+    SFAlbumRef album = locator->_album;
 
     /* The index must be valid. */
-    SFAssert(index < collection->elementCount);
+    SFAssert(index < album->elementCount);
 
     while (index-- > 0) {
         if (!_SFIsIgnoredGlyph(locator, index, lookupFlag)) {

@@ -91,10 +91,10 @@ SF_PRIVATE SFBoolean _SFApplySubst(SFTextProcessorRef processor, SFLookupType lo
 
 static SFBoolean _SFApplySingleSubst(SFTextProcessorRef processor, SFData singleSubst)
 {
-    SFCollectionRef collection = processor->_collection;
+    SFAlbumRef album = processor->_album;
     SFLocatorRef locator = processor->_locator;
     SFUInteger inputIndex = locator->index;
-    SFGlyphID inputGlyph = SFCollectionGetGlyph(collection, inputIndex);
+    SFGlyphID inputGlyph = SFAlbumGetGlyph(album, inputIndex);
     SFUInt16 format;
 
     format = SF_SINGLE_SUBST_FORMAT(singleSubst);
@@ -114,8 +114,8 @@ static SFBoolean _SFApplySingleSubst(SFTextProcessorRef processor, SFData single
                 SFGlyphTrait traits = _SFGetGlyphTrait(processor, substitute);
 
                 /* Substitute the glyph and set its traits. */
-                SFCollectionSetGlyph(collection, inputIndex, substitute);
-                SFCollectionSetTraits(collection, inputIndex, traits);
+                SFAlbumSetGlyph(album, inputIndex, substitute);
+                SFAlbumSetTraits(album, inputIndex, traits);
 
                 return SFTrue;
             }
@@ -138,8 +138,8 @@ static SFBoolean _SFApplySingleSubst(SFTextProcessorRef processor, SFData single
                     SFGlyphTrait traits = _SFGetGlyphTrait(processor, substitute);
 
                     /* Substitute the glyph and set its traits. */
-                    SFCollectionSetGlyph(collection, inputIndex, substitute);
-                    SFCollectionSetTraits(collection, inputIndex, traits);
+                    SFAlbumSetGlyph(album, inputIndex, substitute);
+                    SFAlbumSetTraits(album, inputIndex, traits);
 
                     return SFTrue;
                 }
@@ -153,10 +153,10 @@ static SFBoolean _SFApplySingleSubst(SFTextProcessorRef processor, SFData single
 
 static SFBoolean _SFApplyMultipleSubst(SFTextProcessorRef processor, SFData multipleSubst)
 {
-    SFCollectionRef collection = processor->_collection;
+    SFAlbumRef album = processor->_album;
     SFLocatorRef locator = processor->_locator;
     SFUInteger inputIndex = locator->index;
-    SFGlyphID inputGlyph = SFCollectionGetGlyph(collection, inputIndex);
+    SFGlyphID inputGlyph = SFAlbumGetGlyph(album, inputIndex);
     SFUInt16 format;
 
     format = SF_MULTIPLE_SUBST_FORMAT(multipleSubst);
@@ -191,7 +191,7 @@ static SFBoolean _SFApplyMultipleSubst(SFTextProcessorRef processor, SFData mult
 
 static SFBoolean _SFApplySequence(SFTextProcessorRef processor, SFData sequence)
 {
-    SFCollectionRef collection = processor->_collection;
+    SFAlbumRef album = processor->_album;
     SFLocatorRef locator = processor->_locator;
     SFUInteger inputIndex = locator->index;
     SFUInt16 glyphCount;
@@ -207,15 +207,15 @@ static SFBoolean _SFApplySequence(SFTextProcessorRef processor, SFData sequence)
         traits = _SFGetGlyphTrait(processor, substitute);
 
         /* Put substitute of first glyph and set its traits. */
-        SFCollectionSetGlyph(collection, inputIndex, substitute);
-        SFCollectionSetTraits(collection, inputIndex, traits);
+        SFAlbumSetGlyph(album, inputIndex, substitute);
+        SFAlbumSetTraits(album, inputIndex, traits);
 
         if (glyphCount != 1) {
-            SFUInteger association = SFCollectionGetAssociation(collection, inputIndex);
+            SFUInteger association = SFAlbumGetAssociation(album, inputIndex);
             SFUInteger subIndex;
 
-            /* Reserve glyphs for remaining substitutes in the collection. */
-            SFCollectionReserveGlyphs(collection, inputIndex + 1, glyphCount - 1);
+            /* Reserve glyphs for remaining substitutes in the album. */
+            SFAlbumReserveGlyphs(album, inputIndex + 1, glyphCount - 1);
 
             /* Initialize reserved glyphs. */
             for (subIndex = 1; subIndex < glyphCount; subIndex++) {
@@ -226,9 +226,9 @@ static SFBoolean _SFApplySequence(SFTextProcessorRef processor, SFData sequence)
                 traits = _SFGetGlyphTrait(processor, substitute);
 
                 /* Initialize the glyph with substitute. */
-                SFCollectionSetGlyph(collection, newIndex, substitute);
-                SFCollectionSetTraits(collection, newIndex, traits);
-                SFCollectionSetAssociation(collection, newIndex, association);
+                SFAlbumSetGlyph(album, newIndex, substitute);
+                SFAlbumSetTraits(album, newIndex, traits);
+                SFAlbumSetAssociation(album, newIndex, association);
             }
 
             /* Skip added elements in the locator. */
@@ -248,10 +248,10 @@ static SFBoolean _SFApplySequence(SFTextProcessorRef processor, SFData sequence)
 
 static SFBoolean _SFApplyLigatureSubst(SFTextProcessorRef processor, SFData ligatureSubst)
 {
-    SFCollectionRef collection = processor->_collection;
+    SFAlbumRef album = processor->_album;
     SFLocatorRef locator = processor->_locator;
     SFUInteger inputIndex = locator->index;
-    SFGlyphID inputGlyph = SFCollectionGetGlyph(collection, inputIndex);
+    SFGlyphID inputGlyph = SFAlbumGetGlyph(album, inputIndex);
     SFUInt16 format;
 
     format = SF_LIGATURE_SUBST_FORMAT(ligatureSubst);
@@ -285,7 +285,7 @@ static SFBoolean _SFApplyLigatureSubst(SFTextProcessorRef processor, SFData liga
 
 static SFBoolean _SFApplyLigatureSet(SFTextProcessorRef processor, SFData ligatureSet)
 {
-    SFCollectionRef collection = processor->_collection;
+    SFAlbumRef album = processor->_album;
     SFLocatorRef locator = processor->_locator;
     SFUInteger inputIndex = locator->index;
     SFUInt16 ligCount;
@@ -310,7 +310,7 @@ static SFBoolean _SFApplyLigatureSet(SFTextProcessorRef processor, SFData ligatu
 
             if (inputIndex != SFInvalidIndex) {
                 SFGlyphID component = SF_LIGATURE__COMPONENT(ligature, compIndex);
-                SFGlyphID glyph = SFCollectionGetGlyph(collection, nextIndex);
+                SFGlyphID glyph = SFAlbumGetGlyph(album, nextIndex);
 
                 if (component != glyph) {
                     break;
@@ -329,19 +329,19 @@ static SFBoolean _SFApplyLigatureSet(SFTextProcessorRef processor, SFData ligatu
             SFUInteger association;
 
             /* Substitute the ligature glyph and set its traits. */
-            SFCollectionSetGlyph(collection, inputIndex, ligGlyph);
-            SFCollectionSetTraits(collection, inputIndex, traits);
+            SFAlbumSetGlyph(album, inputIndex, ligGlyph);
+            SFAlbumSetTraits(album, inputIndex, traits);
 
-            association = SFCollectionGetAssociation(collection, inputIndex);
+            association = SFAlbumGetAssociation(album, inputIndex);
             prevIndex = inputIndex;
 
             /* Initialize component glyphs. */
             for (compIndex = 1; compIndex < compCount; compIndex++) {
                 nextIndex = SFLocatorGetAfter(locator, prevIndex, locator->lookupFlag);
 
-                SFCollectionSetGlyph(collection, nextIndex, 0);
-                SFCollectionSetTraits(collection, nextIndex, SFGlyphTraitRemoved);
-                SFCollectionSetAssociation(collection, nextIndex, association);
+                SFAlbumSetGlyph(album, nextIndex, 0);
+                SFAlbumSetTraits(album, nextIndex, SFGlyphTraitRemoved);
+                SFAlbumSetAssociation(album, nextIndex, association);
 
                 prevIndex = nextIndex;
             }

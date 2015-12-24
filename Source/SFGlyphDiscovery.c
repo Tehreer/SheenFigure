@@ -17,7 +17,7 @@
 #include <SFConfig.h>
 #include <SFTypes.h>
 
-#include "SFCollection.h"
+#include "SFAlbum.h"
 #include "SFFont.h"
 
 #include "SFGlyphDiscovery.h"
@@ -26,13 +26,13 @@
 SF_INTERNAL void _SFDiscoverGlyphs(SFTextProcessorRef processor)
 {
     SFFontRef font = processor->_font;
-    SFCollectionRef collection = processor->_collection;
-    SFUInteger length = collection->codePointCount;
+    SFAlbumRef album = processor->_album;
+    SFUInteger length = album->codePointCount;
     SFUInteger index;
 
     for (index = 0; index < length; index++) {
-        SFCodePoint codePoint = collection->codePointArray[index];
+        SFCodePoint codePoint = album->codePointArray[index];
         SFGlyphID glyph = SFFontGetGlyphIDForCodePoint(font, codePoint);
-        SFCollectionAddGlyph(collection, glyph, index);
+        SFAlbumAddGlyph(album, glyph, index);
     }
 }
