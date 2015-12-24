@@ -29,7 +29,7 @@ static SFBoolean _SFIsIgnoredGlyph(SFLocatorRef locator, SFUInteger index, SFLoo
 
 SF_INTERNAL void SFLocatorInitialize(SFLocatorRef locator, SFAlbumRef album, SFData gdef)
 {
-    /* Collection must NOT be null. */
+    /* Album must NOT be null. */
     SFAssert(album != NULL);
 
     locator->_album = album;

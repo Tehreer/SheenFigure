@@ -84,6 +84,6 @@ SF_INTERNAL SFScriptKnowledgeRef SFShapingKnowledgeSeekScript(SFShapingKnowledge
 SF_INTERNAL SFUInteger SFScriptKnowledgeSeekFeature(SFScriptKnowledgeRef scriptKnowledge, SFFeatureTag featureTag);
 
 SF_INTERNAL void SFShapingEngineInitialize(SFShapingEngineRef shapingEngine, SFFontRef font, SFScriptTag scriptTag, SFLanguageTag languageTag, SFPatternRef pattern);
-SF_INTERNAL void SFShapingEngineProcessCollection(SFShapingEngineRef shapingEngine, SFAlbumRef album);
+SF_INTERNAL void SFShapingEngineProcessAlbum(SFShapingEngineRef shapingEngine, SFAlbumRef album);
 
 #endif

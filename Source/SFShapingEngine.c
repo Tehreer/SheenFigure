@@ -59,11 +59,11 @@ SF_INTERNAL void SFShapingEngineInitialize(SFShapingEngineRef shapingEngine, SFF
     shapingEngine->_languageTag = languageTag;
 }
 
-SF_INTERNAL void SFShapingEngineProcessCollection(SFShapingEngineRef shapingEngine, SFAlbumRef album)
+SF_INTERNAL void SFShapingEngineProcessAlbum(SFShapingEngineRef shapingEngine, SFAlbumRef album)
 {
     SFTextProcessor processor;
 
-    /* Collection must NOT be null. */
+    /* Album must NOT be null. */
     SFAssert(album != NULL);
 
     SFTextProcessorInitialize(&processor, shapingEngine->_font, shapingEngine->_pattern, album);

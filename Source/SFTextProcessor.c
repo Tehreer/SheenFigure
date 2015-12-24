@@ -38,7 +38,7 @@ SF_INTERNAL void SFTextProcessorInitialize(SFTextProcessorRef textProcessor, SFF
 {
     /* Font must NOT be null. */
     SFAssert(font != NULL);
-    /* Collection must NOT be null. */
+    /* Album must NOT be null. */
     SFAssert(album != NULL);
 
     textProcessor->_font = font;

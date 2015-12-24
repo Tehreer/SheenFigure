@@ -71,80 +71,80 @@ SF_INTERNAL void SFAlbumReserveGlyphs(SFAlbumRef album, SFUInteger index, SFUInt
     SFListReserveRange(&album->_details, index, count);
 }
 
-static void SFValidateCollectionIndex(SFAlbumRef album, SFIndex index)
+static void SFValidateAlbumIndex(SFAlbumRef album, SFIndex index)
 {
     SFAssert(index < album->elementCount);
 }
 
 SF_INTERNAL SFGlyphID SFAlbumGetGlyph(SFAlbumRef album, SFIndex index)
 {
-    SFValidateCollectionIndex(album, index);
+    SFValidateAlbumIndex(album, index);
     return SFListGetVal(&album->_glyphs, index);
 }
 
 SF_INTERNAL void SFAlbumSetGlyph(SFAlbumRef album, SFIndex index, SFGlyphID glyph)
 {
-    SFValidateCollectionIndex(album, index);
+    SFValidateAlbumIndex(album, index);
     SFListSetVal(&album->_glyphs, index, glyph);
 }
 
 SF_INTERNAL SFGlyphTrait SFAlbumGetTraits(SFAlbumRef album, SFIndex index)
 {
-    SFValidateCollectionIndex(album, index);
+    SFValidateAlbumIndex(album, index);
     return SFListGetRef(&album->_details, index)->traits;
 }
 
 SF_INTERNAL void SFAlbumSetTraits(SFAlbumRef album, SFIndex index, SFGlyphTrait traits)
 {
-    SFValidateCollectionIndex(album, index);
+    SFValidateAlbumIndex(album, index);
     SFListGetRef(&album->_details, index)->traits = traits;
 }
 
 SF_INTERNAL SFIndex SFAlbumGetAssociation(SFAlbumRef album, SFIndex index)
 {
-    SFValidateCollectionIndex(album, index);
+    SFValidateAlbumIndex(album, index);
     return SFListGetRef(&album->_details, index)->association;
 }
 
 SF_INTERNAL void SFAlbumSetAssociation(SFAlbumRef album, SFIndex index, SFIndex association)
 {
-    SFValidateCollectionIndex(album, index);
+    SFValidateAlbumIndex(album, index);
     SFListGetRef(&album->_details, index)->association = association;
 }
 
 SF_INTERNAL SFPoint SFAlbumGetPosition(SFAlbumRef album, SFIndex index)
 {
-    SFValidateCollectionIndex(album, index);
+    SFValidateAlbumIndex(album, index);
     return SFListGetVal(&album->_positions, index);
 }
 
 SF_INTERNAL void SFAlbumSetPosition(SFAlbumRef album, SFIndex index, SFPoint position)
 {
-    SFValidateCollectionIndex(album, index);
+    SFValidateAlbumIndex(album, index);
     SFListSetVal(&album->_positions, index, position);
 }
 
 SF_INTERNAL SFInteger SFAlbumGetAdvance(SFAlbumRef album, SFIndex index)
 {
-    SFValidateCollectionIndex(album, index);
+    SFValidateAlbumIndex(album, index);
     return SFListGetVal(&album->_advances, index);
 }
 
 SF_INTERNAL void SFAlbumSetAdvance(SFAlbumRef album, SFIndex index, SFInteger advance)
 {
-    SFValidateCollectionIndex(album, index);
+    SFValidateAlbumIndex(album, index);
     SFListSetVal(&album->_advances, index, advance);
 }
 
 SF_INTERNAL SFUInt16 SFAlbumGetOffset(SFAlbumRef album, SFIndex index)
 {
-    SFValidateCollectionIndex(album, index);
+    SFValidateAlbumIndex(album, index);
     return SFListGetRef(&album->_details, index)->offset;
 }
 
 SF_INTERNAL void SFAlbumSetOffset(SFAlbumRef album, SFIndex index, SFUInt16 offset)
 {
-    SFValidateCollectionIndex(album, index);
+    SFValidateAlbumIndex(album, index);
     SFListGetRef(&album->_details, index)->offset = offset;
 }
 
