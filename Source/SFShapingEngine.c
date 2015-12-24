@@ -15,60 +15,23 @@
  */
 
 #include <SFConfig.h>
-#include <SFFeatureTag.h>
-#include <SFScriptTag.h>
-#include <SFTypes.h>
+#include <stddef.h>
 
 #include "SFAssert.h"
-#include "SFCommon.h"
-#include "SFData.h"
-#include "SFTextProcessor.h"
 #include "SFShapingEngine.h"
 
 SF_INTERNAL SFScriptKnowledgeRef SFShapingKnowledgeSeekScript(SFShapingKnowledgeRef shapingKnowledge, SFScriptTag scriptTag)
 {
+    /* The function must be implemented by the concrete instance. */
+    SFAssert(shapingKnowledge->_seekScript != NULL);
+
     return (*shapingKnowledge->_seekScript)(shapingKnowledge, scriptTag);
 }
 
-SF_INTERNAL SFUInteger SFScriptKnowledgeSeekFeature(SFScriptKnowledgeRef scriptKnowledge, SFFeatureTag featureTag)
+SF_INTERNAL void SFShapingEngineProcessAlbum(SFShapingEngineRef shapingEngine, SFPatternRef pattern, SFAlbumRef album)
 {
-    if (!scriptKnowledge->_seekFeature) {
-        SFUInteger index;
+    /* The function must be implemented by the concrete instance. */
+    SFAssert(shapingEngine->_processAlbum != NULL);
 
-        for (index = 0; index < scriptKnowledge->featureTagCount; index++) {
-            if (scriptKnowledge->featureTagArray[index] == featureTag) {
-                return index;
-            }
-        }
-
-        return SFInvalidIndex;
-    }
-
-    /* Invoke overridden implementation. */
-    return (*scriptKnowledge->_seekFeature)(scriptKnowledge, featureTag);
-}
-
-SF_INTERNAL void SFShapingEngineInitialize(SFShapingEngineRef shapingEngine, SFFontRef font, SFScriptTag scriptTag, SFLanguageTag languageTag, SFPatternRef pattern)
-{
-	/* Font must NOT be null. */
-	SFAssert(font != NULL);
-
-    shapingEngine->_font = font;
-    shapingEngine->_pattern = pattern;
-    shapingEngine->_scriptTag = scriptTag;
-    shapingEngine->_languageTag = languageTag;
-}
-
-SF_INTERNAL void SFShapingEngineProcessAlbum(SFShapingEngineRef shapingEngine, SFAlbumRef album)
-{
-    SFTextProcessor processor;
-
-    /* Album must NOT be null. */
-    SFAssert(album != NULL);
-
-    SFTextProcessorInitialize(&processor, shapingEngine->_font, shapingEngine->_pattern, album);
-    SFTextProcessorDiscoverGlyphs(&processor);
-    if (shapingEngine->_pattern != NULL) {
-        SFTextProcessorManipulateGlyphs(&processor);
-    }
+    (*shapingEngine->_processAlbum)(shapingEngine, pattern, album);
 }

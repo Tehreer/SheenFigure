@@ -21,10 +21,11 @@
 #include <SFScheme.h>
 
 #include "SFData.h"
+#include "SFShapingEngine.h"
 
 typedef struct {
     SFSchemeRef scheme;
-    SFKnowledge knowledge;
+    SFScriptKnowledgeRef knowledge;
     SFPatternBuilder builder;
     SFData scriptList;      /**< OpenType script list table. */
     SFData featureList;     /**< OpenType feature list table. */

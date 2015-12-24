@@ -18,72 +18,45 @@
 #define SF_SHAPING_ENGINE_INTERNAL_H
 
 #include <SFConfig.h>
-#include <SFDirection.h>
 #include <SFFeatureTag.h>
-#include <SFScriptTag.h>
 #include <SFTypes.h>
 
 #include "SFAlbum.h"
-#include "SFFont.h"
 #include "SFPattern.h"
+#include "SFFont.h"
 
-/* NOTE:
- *      SFShapingEngine is an abstract class.
+typedef struct _SFScriptKnowledge {
+    /* All features of the script in implementation order; Substitution as well as positioning. */
+    struct {
+        const SFFeatureTag *array;
+        SFUInteger count;
+    } featureTags;
+	/* All ranges of those features which must be applied simultaneously. */
+    struct {
+        const SFRange *array;
+        SFUInteger count;
+    } featureGroups;
+} SFScriptKnowledge, *SFScriptKnowledgeRef;
+
+/**
+ * A common interface for the knowledge of a shaping engine.
  */
-
-struct _SFScriptKnowledge;
-struct _SFShapingKnowledge;
-struct _SFShapingEngine;
-
-typedef struct _SFScriptKnowledge SFScriptKnowledge;
-typedef struct _SFShapingKnowledge SFShapingKnowledge;
-typedef struct _SFShapingEngine SFShapingEngine;
-
-typedef const SFScriptKnowledge *SFScriptKnowledgeRef;
-typedef const SFShapingKnowledge *SFShapingKnowledgeRef;
-typedef SFShapingEngine *SFShapingEngineRef;
-
-struct _SFScriptKnowledge {
-    /* Virtual function. */
-    SFUInteger (*_seekFeature)(const void *, SFFeatureTag);
-	/**
-	 * All features of the script, substitution as well as positioning, in
-	 * implementation order.
-	 */
-    const SFFeatureTag *featureTagArray;
-	/**
-	 * All group ranges covering those features which must be applied
-	 * simultaneously.
-	 */
-    const SFRange *groupArray;
-    SFUInteger featureTagCount;                /**< Total number of features supported by the script. */
-    SFUInteger groupCount;                  /**< Total number of groups. */
-};
-
-struct _SFShapingKnowledge {
-    /* Abstract function. */
+typedef struct _SFShapingKnowledge {
     SFScriptKnowledgeRef (*_seekScript)(const void *, SFScriptTag);
-};
+} SFShapingKnowledge, *SFShapingKnowledgeRef;
 
-struct _SFShapingEngine {
-    SFFontRef _font;
-    SFPatternRef _pattern;
-    SFScriptTag _scriptTag;
-    SFLanguageTag _languageTag;
-    SFDirection _direction;
-};
+/**
+ * A common interface of all shaping engines.
+ */
+typedef struct _SFShapingEngine {
+    void (*_processAlbum)(const void *, SFPatternRef, SFAlbumRef);
+} SFShapingEngine, *SFShapingEngineRef;
 
 /**
  * Returns script knowledge related to given script, or NULL.
  */
 SF_INTERNAL SFScriptKnowledgeRef SFShapingKnowledgeSeekScript(SFShapingKnowledgeRef shapingKnowledge, SFScriptTag scriptTag);
 
-/**
- * Returns feature index in script knowledge, or SFInvalidIndex.
- */
-SF_INTERNAL SFUInteger SFScriptKnowledgeSeekFeature(SFScriptKnowledgeRef scriptKnowledge, SFFeatureTag featureTag);
-
-SF_INTERNAL void SFShapingEngineInitialize(SFShapingEngineRef shapingEngine, SFFontRef font, SFScriptTag scriptTag, SFLanguageTag languageTag, SFPatternRef pattern);
-SF_INTERNAL void SFShapingEngineProcessAlbum(SFShapingEngineRef shapingEngine, SFAlbumRef album);
+SF_INTERNAL void SFShapingEngineProcessAlbum(SFShapingEngineRef shapingEngine, SFPatternRef pattern, SFAlbumRef album);
 
 #endif

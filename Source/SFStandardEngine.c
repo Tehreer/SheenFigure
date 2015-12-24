@@ -21,10 +21,12 @@
 
 #include <stddef.h>
 
+#include "SFAssert.h"
 #include "SFShapingEngine.h"
+#include "SFTextProcessor.h"
 #include "SFStandardEngine.h"
 
-static const SFFeatureTag _SFStandardFeatureArray[] = {
+static const SFFeatureTag _SFStandardFeatureTagArray[] = {
     /* Language based forms. */
     SFFeatureTagCCMP,
     /* Typographical forms */
@@ -36,21 +38,20 @@ static const SFFeatureTag _SFStandardFeatureArray[] = {
     SFFeatureTagMARK,
     SFFeatureTagMKMK
 };
-#define _SF_STANDARD_FEATURE_COUNT (sizeof(_SFStandardFeatureArray) / sizeof(SFFeatureTag))
+static const SFUInteger _SFStandardFeatureTagCount = sizeof(_SFStandardFeatureTagArray) / sizeof(SFFeatureTag);
 
-static const SFScriptKnowledge _SFStandardScriptKnowledge = {
-    NULL,
-    _SFStandardFeatureArray, NULL,
-    _SF_STANDARD_FEATURE_COUNT, 0
+static SFScriptKnowledge _SFStandardScriptKnowledge = {
+    { _SFStandardFeatureTagArray, _SFStandardFeatureTagCount },
+    { NULL, 0 }
 };
 
-static SFScriptKnowledgeRef _SFStandardKnowledgeSeekScript(const void *obj, SFScriptTag scriptTag);
+static SFScriptKnowledgeRef _SFStandardKnowledgeSeekScript(const void *object, SFScriptTag scriptTag);
 
-const SFShapingKnowledge SFStandardKnowledgeInstance = {
+SFShapingKnowledge SFStandardKnowledgeInstance = {
     &_SFStandardKnowledgeSeekScript
 };
 
-static SFScriptKnowledgeRef _SFStandardKnowledgeSeekScript(const void *obj, SFScriptTag scriptTag)
+static SFScriptKnowledgeRef _SFStandardKnowledgeSeekScript(const void *object, SFScriptTag scriptTag)
 {
     switch (scriptTag) {
     case SFScriptTagARMN:
@@ -64,4 +65,28 @@ static SFScriptKnowledgeRef _SFStandardKnowledgeSeekScript(const void *obj, SFSc
     }
 
     return NULL;
+}
+
+
+static void _SFStandardEngineProcessAlbum(const void *object, SFPatternRef pattern, SFAlbumRef album);
+
+static SFShapingEngine _SFStandardEngineBase = {
+    &_SFStandardEngineProcessAlbum
+};
+
+SF_INTERNAL void SFStandardEngineInitialize(SFStandardEngineRef standardEngine)
+{
+    standardEngine->_base = &_SFStandardEngineBase;
+}
+
+static void _SFStandardEngineProcessAlbum(const void *object, SFPatternRef pattern, SFAlbumRef album)
+{
+    SFTextProcessor processor;
+
+    /* Album must NOT be null. */
+    SFAssert(album != NULL);
+
+    SFTextProcessorInitialize(&processor, pattern, album);
+    SFTextProcessorDiscoverGlyphs(&processor);
+    SFTextProcessorManipulateGlyphs(&processor);
 }

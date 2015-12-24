@@ -90,7 +90,7 @@ typedef uintptr_t       SFUInteger;
 /**
  * A type to represent a code point of unicode code space.
  */
-typedef SFUInt32        SFCodePoint;
+typedef SFUInt32        SFCodepoint;
 
 /**
  * A type to represent a glyph identifier.

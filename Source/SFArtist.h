@@ -14,25 +14,15 @@
  * limitations under the License.
  */
 
+#ifndef SF_ARTIST_INTERNAL_H
+#define SF_ARTIST_INTERNAL_H
+
+#include <SFArtist.h>
 #include <SFConfig.h>
 #include <SFTypes.h>
 
-#include "SFAlbum.h"
-#include "SFFont.h"
+struct _SFArtist {
+    SFUInteger _retainCount;
+};
 
-#include "SFGlyphDiscovery.h"
-#include "SFTextProcessor.h"
-
-SF_INTERNAL void _SFDiscoverGlyphs(SFTextProcessorRef processor)
-{
-    SFFontRef font = processor->_font;
-    SFAlbumRef album = processor->_album;
-    SFUInteger length = album->codePointCount;
-    SFUInteger index;
-
-    for (index = 0; index < length; index++) {
-        SFCodepoint codePoint = album->codePointArray[index];
-        SFGlyphID glyph = SFFontGetGlyphIDForCodepoint(font, codePoint);
-        SFAlbumAddGlyph(album, glyph, index);
-    }
-}
+#endif

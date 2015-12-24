@@ -34,14 +34,14 @@ static void _SFApplyAllFeatures(SFTextProcessorRef processor);
 static void _SFApplyFeatureGroup(SFTextProcessorRef processor, SFFeatureGroupRef featureGroup);
 static void _SFApplyLookup(SFTextProcessorRef processor, SFUInt16 lookupIndex, SFHeaderKind headerKind);
 
-SF_INTERNAL void SFTextProcessorInitialize(SFTextProcessorRef textProcessor, SFFontRef font, SFPatternRef pattern, SFAlbumRef album)
+SF_INTERNAL void SFTextProcessorInitialize(SFTextProcessorRef textProcessor, SFPatternRef pattern, SFAlbumRef album)
 {
-    /* Font must NOT be null. */
-    SFAssert(font != NULL);
+    /* Pattern must NOT be null. */
+    SFAssert(pattern != NULL);
     /* Album must NOT be null. */
     SFAssert(album != NULL);
 
-    textProcessor->_font = font;
+    textProcessor->_font = pattern->font;
     textProcessor->_pattern = pattern;
     textProcessor->_album = album;
 }

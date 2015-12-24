@@ -19,6 +19,7 @@
 
 #include <SFConfig.h>
 #include <SFFeatureTag.h>
+#include <SFFont.h>
 #include <SFLanguageTag.h>
 #include <SFPattern.h>
 #include <SFScriptTag.h>
@@ -56,6 +57,7 @@ struct _SFFeatureGroup {
  * Keeps details of a script from both 'GSUB' and 'GPOS' tables.
  */
 struct _SFPattern {
+    SFFontRef font;
     SFFeatureTag *featureTagArray;     /**< Tags of features. */
     SFFeatureGroup *featureGroupArray; /**<  Array of feature groups in implementation order. Substitution features will be followed by positioning features. */
     struct {

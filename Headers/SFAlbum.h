@@ -28,6 +28,8 @@ typedef SFAlbum *SFAlbumRef;
 
 SFAlbumRef SFAlbumCreate(void);
 
+void SFAlbumClear(SFAlbumRef album);
+
 /**
  * Provides the range of analysed text.
  * @param album
@@ -76,8 +78,8 @@ SFInteger *SFAlbumGetGlyphAdvances(SFAlbumRef album);
 
 /**
  * Provides an array, mapping each character to corresponding range of glyph/s.
- * @param glyphSet
- *      The glyph set whose charater to glyph map you want to obtain.
+ * @param album
+ *      The album whose charater to glyph map you want to obtain.
  * @return
  *      An array of ranges mapping characters to glyphs.
  */

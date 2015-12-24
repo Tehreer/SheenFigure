@@ -38,7 +38,6 @@ SF_INTERNAL void SFKnowledgeInitialize(SFKnowledgeRef knowledge);
 SF_INTERNAL SFBoolean SFKnowledgeSeekScript(SFKnowledgeRef knowledge, SFScriptTag scriptTag);
 
 SF_INTERNAL SFUInteger SFKnowledgeCountFeatures(SFKnowledgeRef knowledge);
-SF_INTERNAL SFUInteger SFKnowledgeSeekFeature(SFKnowledgeRef knowledge, SFFeatureTag featureTag);
 SF_INTERNAL SFFeatureTag SFKnowledgeGetFeatureAt(SFKnowledgeRef knowledge, SFUInteger index);
 
 SF_INTERNAL SFUInteger SFKnowledgeCountGroups(SFKnowledgeRef knowledge);

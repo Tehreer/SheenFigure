@@ -57,31 +57,26 @@ SF_INTERNAL SFBoolean SFKnowledgeSeekScript(SFKnowledgeRef knowledge, SFScriptTa
 
 SF_INTERNAL SFUInteger SFKnowledgeCountFeatures(SFKnowledgeRef knowledge)
 {
-    return knowledge->_seek->featureTagCount;
-}
-
-SF_INTERNAL SFUInteger SFKnowledgeSeekFeature(SFKnowledgeRef knowledge, SFFeatureTag featureTag)
-{
-    return SFScriptKnowledgeSeekFeature(knowledge->_seek, featureTag);
+    return knowledge->_seek->featureTags.count;
 }
 
 SF_INTERNAL SFFeatureTag SFKnowledgeGetFeatureAt(SFKnowledgeRef knowledge, SFUInteger index)
 {
     /* The index must be valid. */
-    SFAssert(index < knowledge->_seek->featureTagCount);
+    SFAssert(index < knowledge->_seek->featureTags.count);
 
-    return knowledge->_seek->featureTagArray[index];
+    return knowledge->_seek->featureTags.array[index];
 }
 
 SF_INTERNAL SFUInteger SFKnowledgeCountGroups(SFKnowledgeRef knowledge)
 {
-    return knowledge->_seek->groupCount;
+    return knowledge->_seek->featureGroups.count;
 }
 
 SF_INTERNAL SFRange SFKnowledgeGetGroupAt(SFKnowledgeRef knowledge, SFUInteger index)
 {
     /* The index must be valid. */
-    SFAssert(index < knowledge->_seek->groupCount);
+    SFAssert(index < knowledge->_seek->featureGroups.count);
 
-    return knowledge->_seek->groupArray[index];
+    return knowledge->_seek->featureGroups.array[index];
 }

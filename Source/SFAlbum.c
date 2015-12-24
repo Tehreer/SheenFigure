@@ -17,13 +17,63 @@
 #include <SFConfig.h>
 #include <SFTypes.h>
 
+#include <stddef.h>
 #include <stdlib.h>
 #include <string.h>
 
 #include "SFAssert.h"
 #include "SFAlbum.h"
 
-SF_INTERNAL void SFAlbumInitialize(SFAlbumRef album, SFCodePoint *codePointArray, SFUInteger codePointCount)
+SFAlbumRef SFAlbumCreate(void)
+{
+    SFAlbumRef album = malloc(sizeof(SFAlbum));
+    album->codePointArray = NULL;
+    album->mapArray = NULL;
+    album->codePointCount = 0;
+    album->elementCount = 0;
+
+    SFListInitialize(&album->_glyphs, sizeof(SFGlyphID));
+    SFListInitialize(&album->_details, sizeof(SFGlyphDetail));
+    SFListInitialize(&album->_positions, sizeof(SFPoint));
+    SFListInitialize(&album->_advances, sizeof(SFInteger));
+
+    return album;
+}
+
+void SFAlbumClear(SFAlbumRef album)
+{
+    SFListClear(&album->_glyphs);
+    SFListClear(&album->_details);
+    SFListClear(&album->_positions);
+    SFListClear(&album->_advances);
+}
+/*
+SFRange SFAlbumGetTextRange(SFAlbumRef album)
+{
+
+}
+*/
+SFUInteger SFAlbumGetGlyphCount(SFAlbumRef album)
+{
+    return album->elementCount;
+}
+
+SFGlyphID *SFAlbumGetGlyphs(SFAlbumRef album)
+{
+    return album->_glyphs.items.at;
+}
+
+SFPoint *SFAlbumGetGlyphPositions(SFAlbumRef album)
+{
+    return album->_positions.items.at;
+}
+
+SFInteger *SFAlbumGetGlyphAdvances(SFAlbumRef album)
+{
+    return album->_advances.items.at;
+}
+
+SF_INTERNAL void SFAlbumInitialize(SFAlbumRef album, SFCodepoint *codePointArray, SFUInteger codePointCount)
 {
 	/* There must be some code points. */
 	SFAssert(codePointArray != NULL && codePointCount > 0);

@@ -21,12 +21,14 @@
 
 #include <stddef.h>
 
+#include "SFAssert.h"
 #include "SFShapingEngine.h"
+#include "SFTextProcessor.h"
 #include "SFArabicEngine.h"
 
-static SFScriptKnowledgeRef _SFArabicKnowledgeSeekScript(const void *obj, SFScriptTag scriptTag);
+static SFScriptKnowledgeRef _SFArabicKnowledgeSeekScript(const void *object, SFScriptTag scriptTag);
 
-static const SFFeatureTag _SFArabicFeatureArray[] = {
+static const SFFeatureTag _SFArabicFeatureTagArray[] = {
     /* Language based forms */
     SFFeatureTagCCMP,
     SFFeatureTagISOL,
@@ -46,19 +48,18 @@ static const SFFeatureTag _SFArabicFeatureArray[] = {
     SFFeatureTagMARK,
     SFFeatureTagMKMK
 };
-#define _SF_ARABIC_FEATURE_COUNT (sizeof(_SFArabicFeatureArray) / sizeof(SFFeatureTag))
+static const SFUInteger _SFArabicFeatureTagCount = sizeof(_SFArabicFeatureTagArray) / sizeof(SFFeatureTag);
 
 static SFScriptKnowledge _SFArabicScriptKnowledge = {
-    NULL,
-    _SFArabicFeatureArray, NULL,
-    _SF_ARABIC_FEATURE_COUNT, 0
+    { _SFArabicFeatureTagArray, _SFArabicFeatureTagCount },
+    { NULL, 0 }
 };
 
-const SFShapingKnowledge SFArabicKnowledgeInstance = {
+SFShapingKnowledge SFArabicKnowledgeInstance = {
     &_SFArabicKnowledgeSeekScript
 };
 
-static SFScriptKnowledgeRef _SFArabicKnowledgeSeekScript(const void *obj, SFScriptTag scriptTag)
+static SFScriptKnowledgeRef _SFArabicKnowledgeSeekScript(const void *object, SFScriptTag scriptTag)
 {
     switch (scriptTag) {
     case SFScriptTagARAB:
@@ -66,4 +67,28 @@ static SFScriptKnowledgeRef _SFArabicKnowledgeSeekScript(const void *obj, SFScri
     }
 
     return NULL;
+}
+
+
+static void SFArabicEngineProcessAlbum(const void *object, SFPatternRef pattern, SFAlbumRef album);
+
+static SFShapingEngine _SFArabicEngineBase = {
+    &SFArabicEngineProcessAlbum
+};
+
+SF_INTERNAL void SFArabicEngineInitialize(SFArabicEngineRef arabicEngine)
+{
+    arabicEngine->_base = &_SFArabicEngineBase;
+}
+
+static void SFArabicEngineProcessAlbum(const void *object, SFPatternRef pattern, SFAlbumRef album)
+{
+    SFTextProcessor processor;
+
+    /* Album must NOT be null. */
+    SFAssert(album != NULL);
+
+    SFTextProcessorInitialize(&processor, pattern, album);
+    SFTextProcessorDiscoverGlyphs(&processor);
+    SFTextProcessorManipulateGlyphs(&processor);
 }

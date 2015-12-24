@@ -17,22 +17,30 @@
 #include <SFConfig.h>
 #include <SFTypes.h>
 
-#include "SFAlbum.h"
-#include "SFFont.h"
+#include <stdlib.h>
 
-#include "SFGlyphDiscovery.h"
-#include "SFTextProcessor.h"
+#include "SFArtist.h"
 
-SF_INTERNAL void _SFDiscoverGlyphs(SFTextProcessorRef processor)
+SFArtistRef SFArtistCreate(void)
 {
-    SFFontRef font = processor->_font;
-    SFAlbumRef album = processor->_album;
-    SFUInteger length = album->codePointCount;
-    SFUInteger index;
+    SFArtistRef artist = malloc(sizeof(SFArtist));
+    artist->_retainCount = 1;
 
-    for (index = 0; index < length; index++) {
-        SFCodepoint codePoint = album->codePointArray[index];
-        SFGlyphID glyph = SFFontGetGlyphIDForCodepoint(font, codePoint);
-        SFAlbumAddGlyph(album, glyph, index);
+    return artist;
+}
+
+SFArtistRef SFArtistRetain(SFArtistRef artist)
+{
+    if (artist) {
+        artist->_retainCount++;
+    }
+
+    return artist;
+}
+
+void SFArtistRelease(SFArtistRef artist)
+{
+    if (artist && --artist->_retainCount == 0) {
+        free(artist);
     }
 }

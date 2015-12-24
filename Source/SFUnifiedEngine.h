@@ -14,25 +14,22 @@
  * limitations under the License.
  */
 
+#ifndef SF_UNIFIED_ENGINE_INTERNAL_H
+#define SF_UNIFIED_ENGINE_INTERNAL_H
+
 #include <SFConfig.h>
-#include <SFTypes.h>
+#include <SFScriptTag.h>
 
-#include "SFAlbum.h"
-#include "SFFont.h"
+#include "SFArabicEngine.h"
+#include "SFStandardEngine.h"
 
-#include "SFGlyphDiscovery.h"
-#include "SFTextProcessor.h"
+typedef union _SFUnifiedEngine {
+    SFArabicEngine _arabicEngine;
+    SFStandardEngine _standardEngine;
+} SFUnifiedEngine, *SFUnifiedEngineRef;
 
-SF_INTERNAL void _SFDiscoverGlyphs(SFTextProcessorRef processor)
-{
-    SFFontRef font = processor->_font;
-    SFAlbumRef album = processor->_album;
-    SFUInteger length = album->codePointCount;
-    SFUInteger index;
+extern SFShapingKnowledge SFUnifiedKnowledgeInstance;
 
-    for (index = 0; index < length; index++) {
-        SFCodepoint codePoint = album->codePointArray[index];
-        SFGlyphID glyph = SFFontGetGlyphIDForCodepoint(font, codePoint);
-        SFAlbumAddGlyph(album, glyph, index);
-    }
-}
+SF_INTERNAL void SFUnifiedEngineInitialize(SFUnifiedEngineRef unifiedEngine, SFScriptTag scriptTag);
+
+#endif

@@ -23,9 +23,10 @@
 #include <stdlib.h>
 
 #include "SFCommon.h"
-#include "SFKnowledge.h"
 #include "SFPatternBuilder.h"
 #include "SFPattern.h"
+#include "SFShapingEngine.h"
+#include "SFUnifiedEngine.h"
 #include "SFScheme.h"
 
 static SFData _SFSearchScriptInList(SFData scriptList, SFScriptTag scriptTag)
@@ -100,7 +101,7 @@ static void _SFAddFeatureGroup(_SFSchemeStateRef state, SFUInteger index, SFUInt
     SFUInteger limit = index + count;
 
     for (; index < limit; index++) {
-        SFFeatureTag featureTag = SFKnowledgeGetFeatureAt(&state->knowledge, index);
+        SFFeatureTag featureTag = state->knowledge->featureTags.array[index];
         SFData feature = _SFSearchFeatureInLangSys(state->langSys, state->featureList, featureTag);
 
         if (feature) {
@@ -120,13 +121,13 @@ static void _SFAddFeatureGroup(_SFSchemeStateRef state, SFUInteger index, SFUInt
 
 static void _SFAddFeatures(_SFSchemeStateRef state)
 {
-    SFUInteger featureCount = SFKnowledgeCountFeatures(&state->knowledge);
-    SFUInteger groupCount = SFKnowledgeCountGroups(&state->knowledge);
+    SFUInteger featureCount = state->knowledge->featureTags.count;
+    SFUInteger groupCount = state->knowledge->featureGroups.count;
     SFUInteger featureIndex = 0;
     SFUInteger groupIndex;
 
     for (groupIndex = 0; groupIndex < groupCount; groupIndex++) {
-        SFRange groupRange = SFKnowledgeGetGroupAt(&state->knowledge, groupIndex);
+        SFRange groupRange = state->knowledge->featureGroups.array[groupIndex];
 
         if (groupRange.start > featureIndex) {
             _SFAddFeatureGroup(state, featureIndex, groupRange.start - featureIndex, SFFalse);
@@ -196,11 +197,10 @@ SFPatternRef SFSchemeBuildPattern(SFSchemeRef scheme)
 {
     _SFSchemeState state;
     state.scheme = scheme;
-
-    SFKnowledgeInitialize(&state.knowledge);
+    state.knowledge = SFShapingKnowledgeSeekScript(&SFUnifiedKnowledgeInstance, scheme->_scriptTag);
 
     /* Check whether Sheen Figure has knowledge about this script. */
-    if (SFKnowledgeSeekScript(&state.knowledge, scheme->_scriptTag)) {
+    if (state.knowledge) {
         SFData gsub = scheme->_font->tables.gsub;
         SFData gpos = scheme->_font->tables.gpos;
 

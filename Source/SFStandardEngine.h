@@ -20,20 +20,15 @@
 #include <SFConfig.h>
 #include <SFTypes.h>
 
+#include "SFPattern.h"
 #include "SFShapingEngine.h"
 
-/* ArabicShaper inherits from Shaper. */
+typedef struct _SFStandardEngine {
+    SFShapingEngineRef _base;
+} SFStandardEngine, *SFStandardEngineRef;
 
-struct _SFStandardEngine;
-typedef struct _SFStandardEngine SFStandardEngine;
-typedef SFStandardEngine *SFStandardEngineRef;
+extern SFShapingKnowledge SFStandardKnowledgeInstance;
 
-struct _SFStandardEngine {
-    SFShapingEngine _engine;
-};
-
-extern const SFShapingKnowledge SFStandardKnowledgeInstance;
-
-SF_INTERNAL void SFStandardEngineInitialize(SFStandardEngineRef engine);
+SF_INTERNAL void SFStandardEngineInitialize(SFStandardEngineRef standardEngine);
 
 #endif

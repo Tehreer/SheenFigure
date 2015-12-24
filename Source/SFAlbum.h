@@ -17,19 +17,15 @@
 #ifndef SF_COLLECTION_INTERNAL_H
 #define SF_COLLECTION_INTERNAL_H
 
+#include <SFAlbum.h>
 #include <SFConfig.h>
 #include <SFTypes.h>
 
 #include "SFList.h"
 
 struct _SFGlyphDetail;
-struct _SFAlbum;
-
 typedef struct _SFGlyphDetail SFGlyphDetail;
-typedef struct _SFAlbum SFAlbum;
-
 typedef SFGlyphDetail *SFGlyphDetailRef;
-typedef SFAlbum *SFAlbumRef;
 
 enum {
     SFGlyphTraitNone = 0,
@@ -61,7 +57,7 @@ struct _SFGlyphDetail {
 };
 
 struct _SFAlbum {
-    const SFCodePoint *codePointArray; /**< The array of codepoints which are to be shaped. */
+    const SFCodepoint *codePointArray; /**< The array of codepoints which are to be shaped. */
     SFUInteger *mapArray;
     SFUInteger codePointCount;
     SFUInteger elementCount;
@@ -70,12 +66,14 @@ struct _SFAlbum {
     SF_LIST(SFGlyphDetail) _details;
     SF_LIST(SFPoint) _positions;
     SF_LIST(SFInteger) _advances;
+
+    SFUInteger _retainCount;
 };
 
 /**
  * Initializes the album for given code points.
  */
-SF_INTERNAL void SFAlbumInitialize(SFAlbumRef album, SFCodePoint *codePointArray, SFUInteger codePointCount);
+SF_INTERNAL void SFAlbumInitialize(SFAlbumRef album, SFCodepoint *codePointArray, SFUInteger codePointCount);
 
 SF_INTERNAL void SFAlbumAllocateGlyphs(SFAlbumRef album);
 SF_INTERNAL void SFAlbumAllocatePositions(SFAlbumRef album);
