@@ -96,23 +96,23 @@ SF_INTERNAL void SFAlbumReserveGlyphs(SFAlbumRef album, SFUInteger index, SFUInt
  */
 SF_INTERNAL void SFAlbumAllocateMap(SFAlbumRef album);
 
-SF_INTERNAL SFGlyphID SFAlbumGetGlyph(SFAlbumRef album, SFIndex index);
-SF_INTERNAL void SFAlbumSetGlyph(SFAlbumRef album, SFIndex index, SFGlyphID glyph);
+SF_INTERNAL SFGlyphID SFAlbumGetGlyph(SFAlbumRef album, SFUInteger index);
+SF_INTERNAL void SFAlbumSetGlyph(SFAlbumRef album, SFUInteger index, SFGlyphID glyph);
 
-SF_INTERNAL SFGlyphTrait SFAlbumGetTraits(SFAlbumRef album, SFIndex index);
-SF_INTERNAL void SFAlbumSetTraits(SFAlbumRef album, SFIndex index, SFGlyphTrait trait);
+SF_INTERNAL SFGlyphTrait SFAlbumGetTraits(SFAlbumRef album, SFUInteger index);
+SF_INTERNAL void SFAlbumSetTraits(SFAlbumRef album, SFUInteger index, SFGlyphTrait trait);
 
-SF_INTERNAL SFIndex SFAlbumGetAssociation(SFAlbumRef album, SFIndex index);
-SF_INTERNAL void SFAlbumSetAssociation(SFAlbumRef album, SFIndex index, SFIndex association);
+SF_INTERNAL SFUInteger SFAlbumGetAssociation(SFAlbumRef album, SFUInteger index);
+SF_INTERNAL void SFAlbumSetAssociation(SFAlbumRef album, SFUInteger index, SFUInteger association);
 
-SF_INTERNAL SFPoint SFAlbumGetPosition(SFAlbumRef album, SFIndex index);
-SF_INTERNAL void SFAlbumSetPosition(SFAlbumRef album, SFIndex index, SFPoint position);
+SF_INTERNAL SFPoint SFAlbumGetPosition(SFAlbumRef album, SFUInteger index);
+SF_INTERNAL void SFAlbumSetPosition(SFAlbumRef album, SFUInteger index, SFPoint position);
 
-SF_INTERNAL SFInteger SFAlbumGetAdvance(SFAlbumRef album, SFIndex index);
-SF_INTERNAL void SFAlbumSetAdvance(SFAlbumRef album, SFIndex index, SFInteger advance);
+SF_INTERNAL SFInteger SFAlbumGetAdvance(SFAlbumRef album, SFUInteger index);
+SF_INTERNAL void SFAlbumSetAdvance(SFAlbumRef album, SFUInteger index, SFInteger advance);
 
-SF_INTERNAL SFUInt16 SFAlbumGetOffset(SFAlbumRef album, SFIndex index);
-SF_INTERNAL void SFAlbumSetOffset(SFAlbumRef album, SFIndex index, SFUInt16 offset);
+SF_INTERNAL SFUInt16 SFAlbumGetOffset(SFAlbumRef album, SFUInteger index);
+SF_INTERNAL void SFAlbumSetOffset(SFAlbumRef album, SFUInteger index, SFUInt16 offset);
 
 /**
  * Finalizes the album.

@@ -45,7 +45,7 @@ typedef int(*SFComparison)(const void *item1, const void *item2);
 
 SF_PRIVATE void _SFListInitialize(_SFListRef list, SFUInteger itemSize);
 SF_PRIVATE void _SFListFinalize(_SFListRef list);
-SF_PRIVATE void _SFListFinalizeKeepingArray(_SFListRef list, void **outArray, SFIndex *outCount);
+SF_PRIVATE void _SFListFinalizeKeepingArray(_SFListRef list, void **outArray, SFUInteger *outCount);
 
 SF_PRIVATE void _SFListSetCapacity(_SFListRef list, SFUInteger capacity);
 SF_PRIVATE void _SFListReserveRange(_SFListRef list, SFUInteger index, SFUInteger count);
