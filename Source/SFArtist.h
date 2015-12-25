@@ -21,7 +21,12 @@
 #include <SFConfig.h>
 #include <SFTypes.h>
 
+#include "SFPattern.h"
+
 struct _SFArtist {
+    SFCodepoint *_codepointArray;
+    SFPatternRef _pattern;
+    SFUInteger _codepointCount;
     SFUInteger _retainCount;
 };
 

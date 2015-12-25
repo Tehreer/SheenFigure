@@ -21,9 +21,11 @@
 #include <SFScriptTag.h>
 
 #include "SFArabicEngine.h"
+#include "SFShapingEngine.h"
 #include "SFStandardEngine.h"
 
 typedef union _SFUnifiedEngine {
+    SFShapingEngine _base;
     SFArabicEngine _arabicEngine;
     SFStandardEngine _standardEngine;
 } SFUnifiedEngine, *SFUnifiedEngineRef;

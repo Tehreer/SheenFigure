@@ -19,6 +19,7 @@
 
 #include <stdlib.h>
 
+#include "SFUnifiedEngine.h"
 #include "SFArtist.h"
 
 SFArtistRef SFArtistCreate(void)
@@ -27,6 +28,28 @@ SFArtistRef SFArtistCreate(void)
     artist->_retainCount = 1;
 
     return artist;
+}
+
+void SFArtistSetTextAsCodepoints(SFArtistRef artist, SFCodepoint *codepoints, SFUInteger length)
+{
+    artist->_codepointArray = codepoints;
+    artist->_codepointCount = length;
+}
+
+void SFArtistSetPattern(SFArtistRef artist, SFPatternRef pattern)
+{
+    artist->_pattern = pattern;
+}
+
+void SFArtistFillAlbum(SFArtistRef artist, SFAlbumRef album, SFUInteger index, SFUInteger count)
+{
+    SFUnifiedEngine unifiedEngine;
+    SFShapingEngineRef shapingEngine;
+
+    SFUnifiedEngineInitialize(&unifiedEngine, artist->_pattern->scriptTag);
+
+    shapingEngine = (SFShapingEngineRef)&unifiedEngine;
+    SFShapingEngineProcessAlbum(shapingEngine, artist->_pattern, album);
 }
 
 SFArtistRef SFArtistRetain(SFArtistRef artist)
