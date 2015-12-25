@@ -42,6 +42,6 @@ enum {
     SFFeatureTagMSET = SFTagMake('m', 's', 'e', 't'),
     SFFeatureTagRLIG = SFTagMake('r', 'l', 'i', 'g')
 };
-typedef SF_TAG SFFeatureTag;
+typedef SFTag SFFeatureTag;
 
 #endif

@@ -24,8 +24,8 @@
  */
 
 enum {
-    SFLanguageTagDFLT = SF_TAG__MAKE('d', 'f', 'l', 't')
+    SFLanguageTagDFLT = SFTagMake('d', 'f', 'l', 't')
 };
-typedef SF_TAG SFLanguageTag;
+typedef SFTag SFLanguageTag;
 
 #endif

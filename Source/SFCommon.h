@@ -61,7 +61,6 @@ typedef SFUInt16 SFLookupFlag;
 
 #define SF_SCRIPT_LIST__SCRIPT_COUNT(d)             SF_DATA__READ_UINT16(d, 0)
 #define SF_SCRIPT_LIST__SCRIPT_RECORD(d, i)         SF_DATA__SUBDATA(d, 2 + ((i) * SF_TAG_RECORD__SIZE()))
-#define SF_SCRIPT_LIST__TAG_RECORD_ARRAY(d)         SF_SCRIPT_LIST__SCRIPT_RECORD(d, 0)
 
 #define SF_SCRIPT_RECORD__SCRIPT_TAG(d)             SF_TAG_RECORD__TAG(d)
 #define SF_SCRIPT_RECORD__SCRIPT(d)                 SF_TAG_RECORD__OFFSET(d)
@@ -73,7 +72,6 @@ typedef SFUInt16 SFLookupFlag;
 #define SF_SCRIPT__DEFAULT_LANG_SYS(d)              SF_DATA__READ_UINT16(d, 0)
 #define SF_SCRIPT__LANG_SYS_COUNT(d)                SF_DATA__READ_UINT16(d, 2)
 #define SF_SCRIPT__LANG_SYS_RECORD(d, i)            SF_DATA__SUBDATA(d, 4 + ((i) * SF_TAG_RECORD__SIZE()))
-#define SF_SCRIPT__TAG_RECORD_ARRAY(d)              SF_SCRIPT__LANG_SYS_RECORD(d, 0)
 
 #define SF_LANG_SYS_RECORD__LANG_SYS_TAG(d)         SF_TAG_RECORD__TAG(d)
 #define SF_LANG_SYS_RECORD__LANG_SYS(d)             SF_TAG_RECORD__OFFSET(d)
@@ -93,7 +91,6 @@ typedef SFUInt16 SFLookupFlag;
 
 #define SF_FEATURE_LIST__FEATURE_COUNT(d)           SF_DATA__READ_UINT16(d, 0)
 #define SF_FEATURE_LIST__FEATURE_RECORD(d, i)       SF_DATA__SUBDATA(d, 2 + ((i) * SF_TAG_RECORD__SIZE()))
-#define SF_FEATURE_LIST__TAG_RECORD_ARRAY(d)        SF_FEATURE_LIST__FEATURE_RECORD(d, 0);
 
 #define SF_FEATURE_RECORD__FEATURE_TAG(d)           SF_TAG_RECORD__TAG(d)
 #define SF_FEATURE_RECORD__FEATURE(d)               SF_TAG_RECORD__OFFSET(d)

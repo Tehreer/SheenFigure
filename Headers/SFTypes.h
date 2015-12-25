@@ -100,21 +100,15 @@ typedef SFUInt16        SFGlyphID;
 /**
  * A type to represent a tag of 4 characters.
  */
-#define SF_TAG          SFUInt32
+typedef SFUInt32        SFTag;
 
 #define SFTagMake(a, b, c, d)   \
-(SF_TAG)                        \
+(SFTag)                         \
 (                               \
    ((SFUInt8)a << 24)           \
  | ((SFUInt8)b << 16)           \
  | ((SFUInt8)c <<  8)           \
  | ((SFUInt8)d <<  0)           \
-)
-
-#define SF_TAG__MAKE(a, b, c, d) \
-(SF_TAG)                         \
-(                                \
- ((((SFUInt8)a << 24) | (SFUInt8)b << 16) | (SFUInt8)c << 8) | (SFUInt8)d \
 )
 
 /**
