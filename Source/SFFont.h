@@ -28,7 +28,7 @@
 
 struct _SFFont {
     SFFontCache cache;
-    FT_Face _ftFace;
+    FT_Face _FTFace;
 
     SFInteger unitsPerEm;
     SFInteger ascender;

@@ -31,7 +31,7 @@ typedef struct _SFFont SFFont;
  */
 typedef SFFont *SFFontRef;
 
-SFFontRef SFFontCreateWithFTFace(FT_Face ftFace);
+SFFontRef SFFontCreateWithFTFace(FT_Face FTFace);
 
 SFInteger SFFontGetUnitsPerEm(SFFontRef font);
 SFInteger SFFontGetAscender(SFFontRef font);

@@ -28,18 +28,18 @@
 #include "SFData.h"
 #include "SFFont.h"
 
-SFFontRef SFFontCreateWithFTFace(FT_Face ftFace)
+SFFontRef SFFontCreateWithFTFace(FT_Face FTFace)
 {
-    if (ftFace) {
+    if (FTFace) {
         SFFontRef font = malloc(sizeof(SFFont));
 
-        FT_Reference_Face(ftFace);
-        SFFontCacheInitialize(&font->cache, ftFace);
+        FT_Reference_Face(FTFace);
+        SFFontCacheInitialize(&font->cache, FTFace);
 
-        font->_ftFace = ftFace;
-        font->unitsPerEm = ftFace->units_per_EM;
-        font->ascender = ftFace->ascender;
-        font->descender = ftFace->descender;
+        font->_FTFace = FTFace;
+        font->unitsPerEm = FTFace->units_per_EM;
+        font->ascender = FTFace->ascender;
+        font->descender = FTFace->descender;
         font->leading = font->ascender - font->descender;
         font->_retainCount = 1;
 
@@ -72,16 +72,14 @@ SFInteger SFFontGetLeading(SFFontRef font)
 SFGlyphID SFFontGetGlyphIDForCodepoint(SFFontRef font, SFCodepoint codePoint) {
     /*
      * OpenType recommendation for 'cmap' table:
-     *      "The number of glyphs that may be included in one font is limited to
-     *       64k."
+     *      "The number of glyphs that may be included in one font is limited to 64k."
      * Reference:
      *      https://www.microsoft.com/typography/otspec/recom.htm
      * Conclusion:
-     *      It is safe to assume that a font will not contain more than 64k
-     *      glyphs. So, if the glyph id returned by FreeType is greater than
-     *      64k, it is considered invalid.
+     *      It is safe to assume that a font will not contain more than 64k glyphs. So, if the glyph
+     *      ID returned by FreeType is greater than 64k, it is considered invalid.
      */
-    FT_UInt glyphIndex =  FT_Get_Char_Index(font->_ftFace, codePoint);
+    FT_UInt glyphIndex =  FT_Get_Char_Index(font->_FTFace, codePoint);
     if (glyphIndex <= 64000) {
         return (SFGlyphID)glyphIndex;
     }
@@ -92,7 +90,7 @@ SFGlyphID SFFontGetGlyphIDForCodepoint(SFFontRef font, SFCodepoint codePoint) {
 SFInteger SFFontGetGlyphAdvance(SFFontRef font, SFGlyphID glyph)
 {
     FT_Fixed advance;
-    FT_Get_Advance(font->_ftFace, glyph, FT_LOAD_NO_SCALE, &advance);
+    FT_Get_Advance(font->_FTFace, glyph, FT_LOAD_NO_SCALE, &advance);
 
     return advance;
 }
@@ -109,7 +107,7 @@ SFFontRef SFFontRetain(SFFontRef font)
 void SFFontRelease(SFFontRef font)
 {
     if (font && --font->_retainCount == 0) {
-        FT_Done_Face(font->_ftFace);
+        FT_Done_Face(font->_FTFace);
         SFFontCacheFinalize(&font->cache);
         free(font);
     }
