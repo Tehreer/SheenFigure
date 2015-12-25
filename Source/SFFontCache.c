@@ -25,7 +25,7 @@
 #include <stddef.h>
 #include <stdlib.h>
 
-#include "SFTableCache.h"
+#include "SFFontCache.h"
 
 static void _SFLoadTableFromFTFace(FT_Face ftFace, FT_ULong tag, SFData *table) {
     FT_ULong length = 0;
@@ -45,13 +45,13 @@ static void _SFLoadTableFromFTFace(FT_Face ftFace, FT_ULong tag, SFData *table) 
     }
 }
 
-SF_INTERNAL void SFTableCacheInitialize(SFTableCacheRef tableCache, FT_Face ftFace) {
+SF_INTERNAL void SFFontCacheInitialize(SFFontCacheRef tableCache, FT_Face ftFace) {
     _SFLoadTableFromFTFace(ftFace, FT_MAKE_TAG('G', 'D', 'E', 'F'), &tableCache->gdef);
     _SFLoadTableFromFTFace(ftFace, FT_MAKE_TAG('G', 'S', 'U', 'B'), &tableCache->gsub);
     _SFLoadTableFromFTFace(ftFace, FT_MAKE_TAG('G', 'P', 'O', 'S'), &tableCache->gpos);
 }
 
-SF_INTERNAL void SFTableCacheFinalize(SFTableCacheRef tableCache) {
+SF_INTERNAL void SFFontCacheFinalize(SFFontCacheRef tableCache) {
     free((void *)tableCache->gdef);
     free((void *)tableCache->gsub);
     free((void *)tableCache->gpos);

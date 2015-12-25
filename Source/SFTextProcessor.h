@@ -25,7 +25,7 @@
 #include "SFFont.h"
 #include "SFLocator.h"
 #include "SFPattern.h"
-#include "SFTableCache.h"
+#include "SFFontCache.h"
 
 struct _SFTextProcessor;
 typedef struct _SFTextProcessor SFTextProcessor;

@@ -45,7 +45,7 @@ SF_INTERNAL void SFTextProcessorInitialize(SFTextProcessorRef textProcessor, SFP
     textProcessor->_pattern = pattern;
     textProcessor->_album = album;
 
-    SFLocatorInitialize(&textProcessor->_locator, album, textProcessor->_font->tables.gdef);
+    SFLocatorInitialize(&textProcessor->_locator, album, textProcessor->_font->cache.gdef);
 }
 
 SF_INTERNAL void SFTextProcessorDiscoverGlyphs(SFTextProcessorRef textProcessor)
@@ -124,12 +124,12 @@ static void _SFApplyLookup(SFTextProcessorRef processor, SFUInt16 lookupIndex, S
     processor->_headerKind = headerKind;
 
     if (headerKind == SFHeaderKindGSUB) {
-        SFData lookup = _SFGetLookupFromHeader(processor->_font->tables.gsub, lookupIndex);
+        SFData lookup = _SFGetLookupFromHeader(processor->_font->cache.gsub, lookupIndex);
         while (SFLocatorMoveNext(locator)) {
             _SFApplyGSUBLookup(processor, lookup);
         }
     } else if (headerKind == SFHeaderKindGPOS) {
-        SFData lookup = _SFGetLookupFromHeader(processor->_font->tables.gpos, lookupIndex);
+        SFData lookup = _SFGetLookupFromHeader(processor->_font->cache.gpos, lookupIndex);
         while (SFLocatorMoveNext(locator)) {
             _SFApplyGPOSLookup(processor, lookup);
         }

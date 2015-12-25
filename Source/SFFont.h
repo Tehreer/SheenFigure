@@ -24,10 +24,10 @@
 #include <ft2build.h>
 #include FT_FREETYPE_H
 
-#include "SFTableCache.h"
+#include "SFFontCache.h"
 
 struct _SFFont {
-    SFTableCache tables;
+    SFFontCache cache;
     FT_Face _ftFace;
 
     SFInteger unitsPerEm;

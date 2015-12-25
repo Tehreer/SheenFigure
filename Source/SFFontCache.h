@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-#ifndef SF_INTERNAL_TABLE_CACHE_H
-#define SF_INTERNAL_TABLE_CACHE_H
+#ifndef SF_INTERNAL_FONT_CACHE_H
+#define SF_INTERNAL_FONT_CACHE_H
 
 #include <SFConfig.h>
 
@@ -24,17 +24,17 @@
 
 #include "SFData.h"
 
-struct _SFTableCache;
-typedef struct _SFTableCache SFTableCache;
-typedef SFTableCache *SFTableCacheRef;
+struct _SFFontCache;
+typedef struct _SFFontCache SFFontCache;
+typedef SFFontCache *SFFontCacheRef;
 
-struct _SFTableCache {
+struct _SFFontCache {
     SFData gdef;
     SFData gsub;
     SFData gpos;
 };
 
-SF_INTERNAL void SFTableCacheInitialize(SFTableCacheRef tableCache, FT_Face ftFace);
-SF_INTERNAL void SFTableCacheFinalize(SFTableCacheRef tableCache);
+SF_INTERNAL void SFFontCacheInitialize(SFFontCacheRef tableCache, FT_Face ftFace);
+SF_INTERNAL void SFFontCacheFinalize(SFFontCacheRef tableCache);
 
 #endif
