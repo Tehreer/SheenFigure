@@ -1,0 +1,492 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		6E51DA3D1C2DC07A00A95C79 /* SFFontCache.c in Sources */ = {isa = PBXBuildFile; fileRef = 6E51DA3B1C2DC07A00A95C79 /* SFFontCache.c */; };
+		6E51DA461C2DC09000A95C79 /* SFCommon.c in Sources */ = {isa = PBXBuildFile; fileRef = 6E51DA3E1C2DC09000A95C79 /* SFCommon.c */; };
+		6E51DA471C2DC09000A95C79 /* SFOpenType.c in Sources */ = {isa = PBXBuildFile; fileRef = 6E51DA441C2DC09000A95C79 /* SFOpenType.c */; };
+		6E51DA511C2DC0AD00A95C79 /* SFArabicEngine.c in Sources */ = {isa = PBXBuildFile; fileRef = 6E51DA481C2DC0AD00A95C79 /* SFArabicEngine.c */; };
+		6E51DA521C2DC0AD00A95C79 /* SFShapingEngine.c in Sources */ = {isa = PBXBuildFile; fileRef = 6E51DA4B1C2DC0AD00A95C79 /* SFShapingEngine.c */; };
+		6E51DA531C2DC0AD00A95C79 /* SFStandardEngine.c in Sources */ = {isa = PBXBuildFile; fileRef = 6E51DA4D1C2DC0AD00A95C79 /* SFStandardEngine.c */; };
+		6E51DA541C2DC0AD00A95C79 /* SFUnifiedEngine.c in Sources */ = {isa = PBXBuildFile; fileRef = 6E51DA4F1C2DC0AD00A95C79 /* SFUnifiedEngine.c */; };
+		6E51DA5F1C2DC0CD00A95C79 /* SFGlyphDiscovery.c in Sources */ = {isa = PBXBuildFile; fileRef = 6E51DA551C2DC0CD00A95C79 /* SFGlyphDiscovery.c */; };
+		6E51DA601C2DC0CD00A95C79 /* SFGlyphManipulation.c in Sources */ = {isa = PBXBuildFile; fileRef = 6E51DA571C2DC0CD00A95C79 /* SFGlyphManipulation.c */; };
+		6E51DA611C2DC0CD00A95C79 /* SFGlyphPositioning.c in Sources */ = {isa = PBXBuildFile; fileRef = 6E51DA591C2DC0CD00A95C79 /* SFGlyphPositioning.c */; };
+		6E51DA621C2DC0CD00A95C79 /* SFGlyphSubstitution.c in Sources */ = {isa = PBXBuildFile; fileRef = 6E51DA5B1C2DC0CD00A95C79 /* SFGlyphSubstitution.c */; };
+		6E51DA631C2DC0CD00A95C79 /* SFTextProcessor.c in Sources */ = {isa = PBXBuildFile; fileRef = 6E51DA5D1C2DC0CD00A95C79 /* SFTextProcessor.c */; };
+		6E51DA741C2DC0E000A95C79 /* SFAlbum.c in Sources */ = {isa = PBXBuildFile; fileRef = 6E51DA641C2DC0E000A95C79 /* SFAlbum.c */; };
+		6E51DA751C2DC0E000A95C79 /* SFArtist.c in Sources */ = {isa = PBXBuildFile; fileRef = 6E51DA661C2DC0E000A95C79 /* SFArtist.c */; };
+		6E51DA761C2DC0E000A95C79 /* SFFont.c in Sources */ = {isa = PBXBuildFile; fileRef = 6E51DA681C2DC0E000A95C79 /* SFFont.c */; };
+		6E51DA771C2DC0E000A95C79 /* SFList.c in Sources */ = {isa = PBXBuildFile; fileRef = 6E51DA6A1C2DC0E000A95C79 /* SFList.c */; };
+		6E51DA781C2DC0E000A95C79 /* SFLocator.c in Sources */ = {isa = PBXBuildFile; fileRef = 6E51DA6C1C2DC0E000A95C79 /* SFLocator.c */; };
+		6E51DA791C2DC0E000A95C79 /* SFPattern.c in Sources */ = {isa = PBXBuildFile; fileRef = 6E51DA6E1C2DC0E000A95C79 /* SFPattern.c */; };
+		6E51DA7A1C2DC0E000A95C79 /* SFPatternBuilder.c in Sources */ = {isa = PBXBuildFile; fileRef = 6E51DA701C2DC0E000A95C79 /* SFPatternBuilder.c */; };
+		6E51DA7B1C2DC0E000A95C79 /* SFScheme.c in Sources */ = {isa = PBXBuildFile; fileRef = 6E51DA721C2DC0E000A95C79 /* SFScheme.c */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		6E9C29A11B99DB0E007FC446 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "include/$(PRODUCT_NAME)";
+			dstSubfolderSpec = 16;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		6E51DA2F1C2DC06B00A95C79 /* SFAlbum.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SFAlbum.h; path = Headers/SFAlbum.h; sourceTree = "<group>"; };
+		6E51DA301C2DC06B00A95C79 /* SFArtist.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SFArtist.h; path = Headers/SFArtist.h; sourceTree = "<group>"; };
+		6E51DA311C2DC06B00A95C79 /* SFConfig.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SFConfig.h; path = Headers/SFConfig.h; sourceTree = "<group>"; };
+		6E51DA321C2DC06B00A95C79 /* SFDirection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SFDirection.h; path = Headers/SFDirection.h; sourceTree = "<group>"; };
+		6E51DA331C2DC06B00A95C79 /* SFFeatureTag.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SFFeatureTag.h; path = Headers/SFFeatureTag.h; sourceTree = "<group>"; };
+		6E51DA341C2DC06B00A95C79 /* SFFont.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SFFont.h; path = Headers/SFFont.h; sourceTree = "<group>"; };
+		6E51DA351C2DC06B00A95C79 /* SFLanguageTag.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SFLanguageTag.h; path = Headers/SFLanguageTag.h; sourceTree = "<group>"; };
+		6E51DA361C2DC06B00A95C79 /* SFPattern.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SFPattern.h; path = Headers/SFPattern.h; sourceTree = "<group>"; };
+		6E51DA371C2DC06B00A95C79 /* SFScheme.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SFScheme.h; path = Headers/SFScheme.h; sourceTree = "<group>"; };
+		6E51DA381C2DC06B00A95C79 /* SFScriptTag.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SFScriptTag.h; path = Headers/SFScriptTag.h; sourceTree = "<group>"; };
+		6E51DA391C2DC06B00A95C79 /* SFTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SFTypes.h; path = Headers/SFTypes.h; sourceTree = "<group>"; };
+		6E51DA3A1C2DC06B00A95C79 /* SheenFigure.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SheenFigure.h; path = Headers/SheenFigure.h; sourceTree = "<group>"; };
+		6E51DA3B1C2DC07A00A95C79 /* SFFontCache.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = SFFontCache.c; path = Source/SFFontCache.c; sourceTree = "<group>"; };
+		6E51DA3C1C2DC07A00A95C79 /* SFFontCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SFFontCache.h; path = Source/SFFontCache.h; sourceTree = "<group>"; };
+		6E51DA3E1C2DC09000A95C79 /* SFCommon.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = SFCommon.c; path = Source/SFCommon.c; sourceTree = "<group>"; };
+		6E51DA3F1C2DC09000A95C79 /* SFCommon.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SFCommon.h; path = Source/SFCommon.h; sourceTree = "<group>"; };
+		6E51DA401C2DC09000A95C79 /* SFData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SFData.h; path = Source/SFData.h; sourceTree = "<group>"; };
+		6E51DA411C2DC09000A95C79 /* SFGDEF.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SFGDEF.h; path = Source/SFGDEF.h; sourceTree = "<group>"; };
+		6E51DA421C2DC09000A95C79 /* SFGPOS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SFGPOS.h; path = Source/SFGPOS.h; sourceTree = "<group>"; };
+		6E51DA431C2DC09000A95C79 /* SFGSUB.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SFGSUB.h; path = Source/SFGSUB.h; sourceTree = "<group>"; };
+		6E51DA441C2DC09000A95C79 /* SFOpenType.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = SFOpenType.c; path = Source/SFOpenType.c; sourceTree = "<group>"; };
+		6E51DA451C2DC09000A95C79 /* SFOpenType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SFOpenType.h; path = Source/SFOpenType.h; sourceTree = "<group>"; };
+		6E51DA481C2DC0AD00A95C79 /* SFArabicEngine.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = SFArabicEngine.c; path = Source/SFArabicEngine.c; sourceTree = "<group>"; };
+		6E51DA491C2DC0AD00A95C79 /* SFArabicEngine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SFArabicEngine.h; path = Source/SFArabicEngine.h; sourceTree = "<group>"; };
+		6E51DA4A1C2DC0AD00A95C79 /* SFAssert.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SFAssert.h; path = Source/SFAssert.h; sourceTree = "<group>"; };
+		6E51DA4B1C2DC0AD00A95C79 /* SFShapingEngine.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = SFShapingEngine.c; path = Source/SFShapingEngine.c; sourceTree = "<group>"; };
+		6E51DA4C1C2DC0AD00A95C79 /* SFShapingEngine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SFShapingEngine.h; path = Source/SFShapingEngine.h; sourceTree = "<group>"; };
+		6E51DA4D1C2DC0AD00A95C79 /* SFStandardEngine.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = SFStandardEngine.c; path = Source/SFStandardEngine.c; sourceTree = "<group>"; };
+		6E51DA4E1C2DC0AD00A95C79 /* SFStandardEngine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SFStandardEngine.h; path = Source/SFStandardEngine.h; sourceTree = "<group>"; };
+		6E51DA4F1C2DC0AD00A95C79 /* SFUnifiedEngine.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = SFUnifiedEngine.c; path = Source/SFUnifiedEngine.c; sourceTree = "<group>"; };
+		6E51DA501C2DC0AD00A95C79 /* SFUnifiedEngine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SFUnifiedEngine.h; path = Source/SFUnifiedEngine.h; sourceTree = "<group>"; };
+		6E51DA551C2DC0CD00A95C79 /* SFGlyphDiscovery.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = SFGlyphDiscovery.c; path = Source/SFGlyphDiscovery.c; sourceTree = "<group>"; };
+		6E51DA561C2DC0CD00A95C79 /* SFGlyphDiscovery.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SFGlyphDiscovery.h; path = Source/SFGlyphDiscovery.h; sourceTree = "<group>"; };
+		6E51DA571C2DC0CD00A95C79 /* SFGlyphManipulation.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = SFGlyphManipulation.c; path = Source/SFGlyphManipulation.c; sourceTree = "<group>"; };
+		6E51DA581C2DC0CD00A95C79 /* SFGlyphManipulation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SFGlyphManipulation.h; path = Source/SFGlyphManipulation.h; sourceTree = "<group>"; };
+		6E51DA591C2DC0CD00A95C79 /* SFGlyphPositioning.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = SFGlyphPositioning.c; path = Source/SFGlyphPositioning.c; sourceTree = "<group>"; };
+		6E51DA5A1C2DC0CD00A95C79 /* SFGlyphPositioning.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SFGlyphPositioning.h; path = Source/SFGlyphPositioning.h; sourceTree = "<group>"; };
+		6E51DA5B1C2DC0CD00A95C79 /* SFGlyphSubstitution.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = SFGlyphSubstitution.c; path = Source/SFGlyphSubstitution.c; sourceTree = "<group>"; };
+		6E51DA5C1C2DC0CD00A95C79 /* SFGlyphSubstitution.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SFGlyphSubstitution.h; path = Source/SFGlyphSubstitution.h; sourceTree = "<group>"; };
+		6E51DA5D1C2DC0CD00A95C79 /* SFTextProcessor.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = SFTextProcessor.c; path = Source/SFTextProcessor.c; sourceTree = "<group>"; };
+		6E51DA5E1C2DC0CD00A95C79 /* SFTextProcessor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SFTextProcessor.h; path = Source/SFTextProcessor.h; sourceTree = "<group>"; };
+		6E51DA641C2DC0E000A95C79 /* SFAlbum.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = SFAlbum.c; path = Source/SFAlbum.c; sourceTree = "<group>"; };
+		6E51DA651C2DC0E000A95C79 /* SFAlbum.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SFAlbum.h; path = Source/SFAlbum.h; sourceTree = "<group>"; };
+		6E51DA661C2DC0E000A95C79 /* SFArtist.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = SFArtist.c; path = Source/SFArtist.c; sourceTree = "<group>"; };
+		6E51DA671C2DC0E000A95C79 /* SFArtist.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SFArtist.h; path = Source/SFArtist.h; sourceTree = "<group>"; };
+		6E51DA681C2DC0E000A95C79 /* SFFont.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = SFFont.c; path = Source/SFFont.c; sourceTree = "<group>"; };
+		6E51DA691C2DC0E000A95C79 /* SFFont.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SFFont.h; path = Source/SFFont.h; sourceTree = "<group>"; };
+		6E51DA6A1C2DC0E000A95C79 /* SFList.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = SFList.c; path = Source/SFList.c; sourceTree = "<group>"; };
+		6E51DA6B1C2DC0E000A95C79 /* SFList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SFList.h; path = Source/SFList.h; sourceTree = "<group>"; };
+		6E51DA6C1C2DC0E000A95C79 /* SFLocator.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = SFLocator.c; path = Source/SFLocator.c; sourceTree = "<group>"; };
+		6E51DA6D1C2DC0E000A95C79 /* SFLocator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SFLocator.h; path = Source/SFLocator.h; sourceTree = "<group>"; };
+		6E51DA6E1C2DC0E000A95C79 /* SFPattern.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = SFPattern.c; path = Source/SFPattern.c; sourceTree = "<group>"; };
+		6E51DA6F1C2DC0E000A95C79 /* SFPattern.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SFPattern.h; path = Source/SFPattern.h; sourceTree = "<group>"; };
+		6E51DA701C2DC0E000A95C79 /* SFPatternBuilder.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = SFPatternBuilder.c; path = Source/SFPatternBuilder.c; sourceTree = "<group>"; };
+		6E51DA711C2DC0E000A95C79 /* SFPatternBuilder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SFPatternBuilder.h; path = Source/SFPatternBuilder.h; sourceTree = "<group>"; };
+		6E51DA721C2DC0E000A95C79 /* SFScheme.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = SFScheme.c; path = Source/SFScheme.c; sourceTree = "<group>"; };
+		6E51DA731C2DC0E000A95C79 /* SFScheme.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SFScheme.h; path = Source/SFScheme.h; sourceTree = "<group>"; };
+		6E9C29A31B99DB0E007FC446 /* libSheenFigure.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libSheenFigure.a; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		6E9C29A01B99DB0E007FC446 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		6E0FB5051C267D0E00933766 /* TextProcessor */ = {
+			isa = PBXGroup;
+			children = (
+				6E51DA551C2DC0CD00A95C79 /* SFGlyphDiscovery.c */,
+				6E51DA561C2DC0CD00A95C79 /* SFGlyphDiscovery.h */,
+				6E51DA571C2DC0CD00A95C79 /* SFGlyphManipulation.c */,
+				6E51DA581C2DC0CD00A95C79 /* SFGlyphManipulation.h */,
+				6E51DA591C2DC0CD00A95C79 /* SFGlyphPositioning.c */,
+				6E51DA5A1C2DC0CD00A95C79 /* SFGlyphPositioning.h */,
+				6E51DA5B1C2DC0CD00A95C79 /* SFGlyphSubstitution.c */,
+				6E51DA5C1C2DC0CD00A95C79 /* SFGlyphSubstitution.h */,
+				6E51DA5D1C2DC0CD00A95C79 /* SFTextProcessor.c */,
+				6E51DA5E1C2DC0CD00A95C79 /* SFTextProcessor.h */,
+			);
+			name = TextProcessor;
+			sourceTree = "<group>";
+		};
+		6E9C299A1B99DB0E007FC446 = {
+			isa = PBXGroup;
+			children = (
+				6E9C29A51B99DB0E007FC446 /* SheenFigure */,
+				6E9C29B21B99DB0E007FC446 /* SheenFigureTests */,
+				6E9C29A41B99DB0E007FC446 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		6E9C29A41B99DB0E007FC446 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				6E9C29A31B99DB0E007FC446 /* libSheenFigure.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		6E9C29A51B99DB0E007FC446 /* SheenFigure */ = {
+			isa = PBXGroup;
+			children = (
+				6E9C2A2A1B99DC5D007FC446 /* Headers */,
+				6E9C2A291B99DC4D007FC446 /* Source */,
+			);
+			path = SheenFigure;
+			sourceTree = "<group>";
+		};
+		6E9C29B21B99DB0E007FC446 /* SheenFigureTests */ = {
+			isa = PBXGroup;
+			children = (
+				6E9C29B31B99DB0E007FC446 /* Supporting Files */,
+			);
+			path = SheenFigureTests;
+			sourceTree = "<group>";
+		};
+		6E9C29B31B99DB0E007FC446 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		6E9C2A261B99DB86007FC446 /* OpenType */ = {
+			isa = PBXGroup;
+			children = (
+				6E51DA3E1C2DC09000A95C79 /* SFCommon.c */,
+				6E51DA3F1C2DC09000A95C79 /* SFCommon.h */,
+				6E51DA401C2DC09000A95C79 /* SFData.h */,
+				6E51DA411C2DC09000A95C79 /* SFGDEF.h */,
+				6E51DA421C2DC09000A95C79 /* SFGPOS.h */,
+				6E51DA431C2DC09000A95C79 /* SFGSUB.h */,
+				6E51DA441C2DC09000A95C79 /* SFOpenType.c */,
+				6E51DA451C2DC09000A95C79 /* SFOpenType.h */,
+			);
+			name = OpenType;
+			sourceTree = "<group>";
+		};
+		6E9C2A271B99DBB3007FC446 /* ShapingEngine */ = {
+			isa = PBXGroup;
+			children = (
+				6E51DA481C2DC0AD00A95C79 /* SFArabicEngine.c */,
+				6E51DA491C2DC0AD00A95C79 /* SFArabicEngine.h */,
+				6E51DA4A1C2DC0AD00A95C79 /* SFAssert.h */,
+				6E51DA4B1C2DC0AD00A95C79 /* SFShapingEngine.c */,
+				6E51DA4C1C2DC0AD00A95C79 /* SFShapingEngine.h */,
+				6E51DA4D1C2DC0AD00A95C79 /* SFStandardEngine.c */,
+				6E51DA4E1C2DC0AD00A95C79 /* SFStandardEngine.h */,
+				6E51DA4F1C2DC0AD00A95C79 /* SFUnifiedEngine.c */,
+				6E51DA501C2DC0AD00A95C79 /* SFUnifiedEngine.h */,
+			);
+			name = ShapingEngine;
+			sourceTree = "<group>";
+		};
+		6E9C2A281B99DC01007FC446 /* FontCache */ = {
+			isa = PBXGroup;
+			children = (
+				6E51DA3B1C2DC07A00A95C79 /* SFFontCache.c */,
+				6E51DA3C1C2DC07A00A95C79 /* SFFontCache.h */,
+			);
+			name = FontCache;
+			sourceTree = "<group>";
+		};
+		6E9C2A291B99DC4D007FC446 /* Source */ = {
+			isa = PBXGroup;
+			children = (
+				6E9C2A281B99DC01007FC446 /* FontCache */,
+				6E9C2A261B99DB86007FC446 /* OpenType */,
+				6E9C2A271B99DBB3007FC446 /* ShapingEngine */,
+				6E0FB5051C267D0E00933766 /* TextProcessor */,
+				6E51DA641C2DC0E000A95C79 /* SFAlbum.c */,
+				6E51DA651C2DC0E000A95C79 /* SFAlbum.h */,
+				6E51DA661C2DC0E000A95C79 /* SFArtist.c */,
+				6E51DA671C2DC0E000A95C79 /* SFArtist.h */,
+				6E51DA681C2DC0E000A95C79 /* SFFont.c */,
+				6E51DA691C2DC0E000A95C79 /* SFFont.h */,
+				6E51DA6A1C2DC0E000A95C79 /* SFList.c */,
+				6E51DA6B1C2DC0E000A95C79 /* SFList.h */,
+				6E51DA6C1C2DC0E000A95C79 /* SFLocator.c */,
+				6E51DA6D1C2DC0E000A95C79 /* SFLocator.h */,
+				6E51DA6E1C2DC0E000A95C79 /* SFPattern.c */,
+				6E51DA6F1C2DC0E000A95C79 /* SFPattern.h */,
+				6E51DA701C2DC0E000A95C79 /* SFPatternBuilder.c */,
+				6E51DA711C2DC0E000A95C79 /* SFPatternBuilder.h */,
+				6E51DA721C2DC0E000A95C79 /* SFScheme.c */,
+				6E51DA731C2DC0E000A95C79 /* SFScheme.h */,
+			);
+			name = Source;
+			sourceTree = "<group>";
+		};
+		6E9C2A2A1B99DC5D007FC446 /* Headers */ = {
+			isa = PBXGroup;
+			children = (
+				6E51DA2F1C2DC06B00A95C79 /* SFAlbum.h */,
+				6E51DA301C2DC06B00A95C79 /* SFArtist.h */,
+				6E51DA311C2DC06B00A95C79 /* SFConfig.h */,
+				6E51DA321C2DC06B00A95C79 /* SFDirection.h */,
+				6E51DA331C2DC06B00A95C79 /* SFFeatureTag.h */,
+				6E51DA341C2DC06B00A95C79 /* SFFont.h */,
+				6E51DA351C2DC06B00A95C79 /* SFLanguageTag.h */,
+				6E51DA361C2DC06B00A95C79 /* SFPattern.h */,
+				6E51DA371C2DC06B00A95C79 /* SFScheme.h */,
+				6E51DA381C2DC06B00A95C79 /* SFScriptTag.h */,
+				6E51DA391C2DC06B00A95C79 /* SFTypes.h */,
+				6E51DA3A1C2DC06B00A95C79 /* SheenFigure.h */,
+			);
+			name = Headers;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		6E9C29A21B99DB0E007FC446 /* SheenFigure */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 6E9C29B71B99DB0E007FC446 /* Build configuration list for PBXNativeTarget "SheenFigure" */;
+			buildPhases = (
+				6E9C299F1B99DB0E007FC446 /* Sources */,
+				6E9C29A01B99DB0E007FC446 /* Frameworks */,
+				6E9C29A11B99DB0E007FC446 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = SheenFigure;
+			productName = SheenFigure;
+			productReference = 6E9C29A31B99DB0E007FC446 /* libSheenFigure.a */;
+			productType = "com.apple.product-type.library.static";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		6E9C299B1B99DB0E007FC446 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0610;
+				ORGANIZATIONNAME = "Muhammad Tayyab";
+				TargetAttributes = {
+					6E9C29A21B99DB0E007FC446 = {
+						CreatedOnToolsVersion = 6.1;
+					};
+				};
+			};
+			buildConfigurationList = 6E9C299E1B99DB0E007FC446 /* Build configuration list for PBXProject "SheenFigure" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = 6E9C299A1B99DB0E007FC446;
+			productRefGroup = 6E9C29A41B99DB0E007FC446 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				6E9C29A21B99DB0E007FC446 /* SheenFigure */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		6E9C299F1B99DB0E007FC446 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				6E51DA621C2DC0CD00A95C79 /* SFGlyphSubstitution.c in Sources */,
+				6E51DA7B1C2DC0E000A95C79 /* SFScheme.c in Sources */,
+				6E51DA3D1C2DC07A00A95C79 /* SFFontCache.c in Sources */,
+				6E51DA541C2DC0AD00A95C79 /* SFUnifiedEngine.c in Sources */,
+				6E51DA601C2DC0CD00A95C79 /* SFGlyphManipulation.c in Sources */,
+				6E51DA471C2DC09000A95C79 /* SFOpenType.c in Sources */,
+				6E51DA781C2DC0E000A95C79 /* SFLocator.c in Sources */,
+				6E51DA741C2DC0E000A95C79 /* SFAlbum.c in Sources */,
+				6E51DA5F1C2DC0CD00A95C79 /* SFGlyphDiscovery.c in Sources */,
+				6E51DA751C2DC0E000A95C79 /* SFArtist.c in Sources */,
+				6E51DA7A1C2DC0E000A95C79 /* SFPatternBuilder.c in Sources */,
+				6E51DA791C2DC0E000A95C79 /* SFPattern.c in Sources */,
+				6E51DA531C2DC0AD00A95C79 /* SFStandardEngine.c in Sources */,
+				6E51DA761C2DC0E000A95C79 /* SFFont.c in Sources */,
+				6E51DA631C2DC0CD00A95C79 /* SFTextProcessor.c in Sources */,
+				6E51DA511C2DC0AD00A95C79 /* SFArabicEngine.c in Sources */,
+				6E51DA521C2DC0AD00A95C79 /* SFShapingEngine.c in Sources */,
+				6E51DA461C2DC09000A95C79 /* SFCommon.c in Sources */,
+				6E51DA771C2DC0E000A95C79 /* SFList.c in Sources */,
+				6E51DA611C2DC0CD00A95C79 /* SFGlyphPositioning.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		6E9C29B51B99DB0E007FC446 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.1;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+			};
+			name = Debug;
+		};
+		6E9C29B61B99DB0E007FC446 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = YES;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.1;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = iphoneos;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		6E9C29B81B99DB0E007FC446 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_WARN_ASSIGN_ENUM = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_IMPLICIT_SIGN_CONVERSION = YES;
+				CLANG_WARN_SUSPICIOUS_IMPLICIT_CONVERSION = YES;
+				GCC_C_LANGUAGE_STANDARD = ansi;
+				GCC_WARN_ABOUT_MISSING_NEWLINE = YES;
+				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
+				GCC_WARN_FOUR_CHARACTER_CONSTANTS = YES;
+				GCC_WARN_SHADOW = YES;
+				GCC_WARN_SIGN_COMPARE = YES;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					./Headers,
+					./../FreeType/include,
+				);
+				OTHER_CFLAGS = "-pedantic";
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+			};
+			name = Debug;
+		};
+		6E9C29B91B99DB0E007FC446 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_WARN_ASSIGN_ENUM = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_IMPLICIT_SIGN_CONVERSION = YES;
+				CLANG_WARN_SUSPICIOUS_IMPLICIT_CONVERSION = YES;
+				GCC_C_LANGUAGE_STANDARD = ansi;
+				GCC_WARN_ABOUT_MISSING_NEWLINE = YES;
+				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
+				GCC_WARN_FOUR_CHARACTER_CONSTANTS = YES;
+				GCC_WARN_SHADOW = YES;
+				GCC_WARN_SIGN_COMPARE = YES;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					./Headers,
+					./../FreeType/include,
+				);
+				OTHER_CFLAGS = "-pedantic";
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		6E9C299E1B99DB0E007FC446 /* Build configuration list for PBXProject "SheenFigure" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				6E9C29B51B99DB0E007FC446 /* Debug */,
+				6E9C29B61B99DB0E007FC446 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		6E9C29B71B99DB0E007FC446 /* Build configuration list for PBXNativeTarget "SheenFigure" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				6E9C29B81B99DB0E007FC446 /* Debug */,
+				6E9C29B91B99DB0E007FC446 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 6E9C299B1B99DB0E007FC446 /* Project object */;
+}
