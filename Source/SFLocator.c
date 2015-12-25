@@ -102,18 +102,18 @@ SF_INTERNAL SFBoolean SFLocatorMoveNext(SFLocatorRef locator)
     SFAlbumRef album = locator->_album;
 
     /* The state of locator must be valid. */
-    SFAssert(locator->_state < album->elementCount);
+    SFAssert(locator->_state < album->glyphCount);
 
     do {
         SFUInteger index = locator->_state++;
 
         if (!_SFIsIgnoredGlyph(locator, index, locator->lookupFlag)) {
             locator->index = index;
-            return SFTrue;
+            break;
         }
-    } while (locator->_state < album->elementCount);
+    } while (locator->_state < album->glyphCount);
 
-    return SFFalse;
+    return (locator->_state < album->glyphCount);
 }
 
 SF_INTERNAL void SFLocatorJumpTo(SFLocatorRef locator, SFUInteger index)
@@ -126,9 +126,9 @@ SF_INTERNAL SFUInteger SFLocatorGetAfter(SFLocatorRef locator, SFUInteger index,
     SFAlbumRef album = locator->_album;
 
     /* The index must be valid. */
-    SFAssert(index < album->elementCount);
+    SFAssert(index < album->glyphCount);
 
-    for (index += 1; index < album->elementCount; index++) {
+    for (index += 1; index < album->glyphCount; index++) {
         if (!_SFIsIgnoredGlyph(locator, index, lookupFlag)) {
             return index;
         }
@@ -142,7 +142,7 @@ SF_INTERNAL SFUInteger SFLocatorGetBefore(SFLocatorRef locator, SFUInteger index
     SFAlbumRef album = locator->_album;
 
     /* The index must be valid. */
-    SFAssert(index < album->elementCount);
+    SFAssert(index < album->glyphCount);
 
     while (index-- > 0) {
         if (!_SFIsIgnoredGlyph(locator, index, lookupFlag)) {

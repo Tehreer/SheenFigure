@@ -41,7 +41,7 @@ SF_PRIVATE void _SFApplyGSUBLookup(SFTextProcessorRef processor, SFData lookup)
     SFUInt16 subtableCount = SF_LOOKUP__SUB_TABLE_COUNT(lookup);
     SFUInt16 subtableIndex;
 
-    SFLocatorSetLookupFlag(processor->_locator, lookupFlag);
+    SFLocatorSetLookupFlag(&processor->_locator, lookupFlag);
 
     /* Apply subtables in order until one of them performs substitution. */
     for (subtableIndex = 0; subtableIndex < subtableCount; subtableIndex++) {
@@ -92,7 +92,7 @@ SF_PRIVATE SFBoolean _SFApplySubst(SFTextProcessorRef processor, SFLookupType lo
 static SFBoolean _SFApplySingleSubst(SFTextProcessorRef processor, SFData singleSubst)
 {
     SFAlbumRef album = processor->_album;
-    SFLocatorRef locator = processor->_locator;
+    SFLocatorRef locator = &processor->_locator;
     SFUInteger inputIndex = locator->index;
     SFGlyphID inputGlyph = SFAlbumGetGlyph(album, inputIndex);
     SFUInt16 format;
@@ -154,7 +154,7 @@ static SFBoolean _SFApplySingleSubst(SFTextProcessorRef processor, SFData single
 static SFBoolean _SFApplyMultipleSubst(SFTextProcessorRef processor, SFData multipleSubst)
 {
     SFAlbumRef album = processor->_album;
-    SFLocatorRef locator = processor->_locator;
+    SFLocatorRef locator = &processor->_locator;
     SFUInteger inputIndex = locator->index;
     SFGlyphID inputGlyph = SFAlbumGetGlyph(album, inputIndex);
     SFUInt16 format;
@@ -192,7 +192,7 @@ static SFBoolean _SFApplyMultipleSubst(SFTextProcessorRef processor, SFData mult
 static SFBoolean _SFApplySequence(SFTextProcessorRef processor, SFData sequence)
 {
     SFAlbumRef album = processor->_album;
-    SFLocatorRef locator = processor->_locator;
+    SFLocatorRef locator = &processor->_locator;
     SFUInteger inputIndex = locator->index;
     SFUInt16 glyphCount;
 
@@ -249,7 +249,7 @@ static SFBoolean _SFApplySequence(SFTextProcessorRef processor, SFData sequence)
 static SFBoolean _SFApplyLigatureSubst(SFTextProcessorRef processor, SFData ligatureSubst)
 {
     SFAlbumRef album = processor->_album;
-    SFLocatorRef locator = processor->_locator;
+    SFLocatorRef locator = &processor->_locator;
     SFUInteger inputIndex = locator->index;
     SFGlyphID inputGlyph = SFAlbumGetGlyph(album, inputIndex);
     SFUInt16 format;
@@ -286,7 +286,7 @@ static SFBoolean _SFApplyLigatureSubst(SFTextProcessorRef processor, SFData liga
 static SFBoolean _SFApplyLigatureSet(SFTextProcessorRef processor, SFData ligatureSet)
 {
     SFAlbumRef album = processor->_album;
-    SFLocatorRef locator = processor->_locator;
+    SFLocatorRef locator = &processor->_locator;
     SFUInteger inputIndex = locator->index;
     SFUInt16 ligCount;
     SFUInteger ligIndex;

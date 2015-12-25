@@ -70,8 +70,7 @@ typedef SFUInt16 SFLookupFlag;
 
 /*********************************SCRIPT TABLE*********************************/
 
-#define SF_SCRIPT__DEFAULT_LANG_SYS_OFFSET(d)       SF_DATA__READ_UINT16(d, 0)
-#define SF_SCRIPT__DEFAULT_LANG_SYS_TABLE(d)        SF_DATA__SUBDATA(t, SF_SCRIPT__DEFAULT_LANG_SYS_OFFSET(t))
+#define SF_SCRIPT__DEFAULT_LANG_SYS(d)              SF_DATA__READ_UINT16(d, 0)
 #define SF_SCRIPT__LANG_SYS_COUNT(d)                SF_DATA__READ_UINT16(d, 2)
 #define SF_SCRIPT__LANG_SYS_RECORD(d, i)            SF_DATA__SUBDATA(d, 4 + ((i) * SF_TAG_RECORD__SIZE()))
 #define SF_SCRIPT__TAG_RECORD_ARRAY(d)              SF_SCRIPT__LANG_SYS_RECORD(d, 0)

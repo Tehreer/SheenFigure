@@ -46,6 +46,11 @@ SF_INTERNAL void SFPatternBuilderInitialize(SFPatternBuilderRef builder)
     SFListSetCapacity(&builder->_lookupIndexes, 32);
 }
 
+SF_INTERNAL void SFPatternBuilderSetFont(SFPatternBuilderRef builder, SFFontRef font)
+{
+    builder->_font = font;
+}
+
 SF_INTERNAL void SFPatternBuilderSetScript(SFPatternBuilderRef builder, SFScriptTag scriptTag)
 {
     builder->_scriptTag = scriptTag;
@@ -112,6 +117,9 @@ SF_INTERNAL void SFPatternBuilderMakeGroup(SFPatternBuilderRef builder)
         break;
     }
 
+    /* Increase feature index. */
+    builder->_featureIndex += featureGroup.featureCount;
+
     /* Initialize lookup indexes array. */
     SFListInitialize(&builder->_lookupIndexes, sizeof(SFUInt16));
     SFListSetCapacity(&builder->_lookupIndexes, 32);
@@ -122,6 +130,7 @@ SF_INTERNAL void SFPatternBuilderBuild(SFPatternBuilderRef builder, SFPatternRef
     SFUInteger groupCount;
 
     /* Initialize pattern. */
+    pattern->font = builder->_font;
     pattern->groupCount.gsub = builder->_gsubGroupCount;
     pattern->groupCount.gpos = builder->_gposGroupCount;
     pattern->scriptTag = builder->_scriptTag;

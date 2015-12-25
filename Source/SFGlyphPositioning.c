@@ -62,7 +62,7 @@ SF_PRIVATE void _SFApplyGPOSLookup(SFTextProcessorRef processor, SFData lookup)
     SFUInt16 subtableCount = SF_LOOKUP__SUB_TABLE_COUNT(lookup);
     SFUInteger subtableIndex;
 
-    SFLocatorSetLookupFlag(processor->_locator, lookupFlag);
+    SFLocatorSetLookupFlag(&processor->_locator, lookupFlag);
 
     /* Apply subtables in order until one of them performs positioning. */
     for (subtableIndex = 0; subtableIndex < subtableCount; subtableIndex++) {
@@ -116,7 +116,7 @@ SF_PRIVATE SFBoolean _SFApplyPos(SFTextProcessorRef processor, SFLookupType look
 static SFBoolean _SFApplySinglePos(SFTextProcessorRef processor, SFData singlePos)
 {
     SFAlbumRef album = processor->_album;
-    SFLocatorRef locator = processor->_locator;
+    SFLocatorRef locator = &processor->_locator;
     SFUInteger inputIndex = locator->index;
     SFGlyphID inputGlyph = SFAlbumGetGlyph(album, inputIndex);
     SFUInt16 format;
@@ -170,7 +170,7 @@ static SFBoolean _SFApplySinglePos(SFTextProcessorRef processor, SFData singlePo
 
 static SFBoolean _SFApplyPairPos(SFTextProcessorRef processor, SFData pairPos)
 {
-    SFLocatorRef locator = processor->_locator;
+    SFLocatorRef locator = &processor->_locator;
     SFBoolean didPosition = SFFalse;
     SFBoolean shouldSkip = SFFalse;
     SFUInteger firstIndex;
@@ -325,7 +325,7 @@ static SFData _SFSearchPairRecord(SFData pairSet, SFUInteger recordSize, SFGlyph
         SFUInteger min = 0;
         SFUInteger max = valueCount - 1;
 
-        while (min <= max) {
+        while (min < max) {
             SFUInteger mid = (min + max) >> 1;
             SFData valueRecord = SF_PAIR_SET__PAIR_VALUE_RECORD(recordArray, mid, recordSize);
             SFGlyphID secondGlyph = SF_PAIR_VALUE_RECORD__SECOND_GLYPH(valueRecord);
@@ -333,7 +333,7 @@ static SFData _SFSearchPairRecord(SFData pairSet, SFUInteger recordSize, SFGlyph
             if (secondGlyph < glyph) {
                 min = mid + 1;
             } else if (secondGlyph > glyph) {
-                max = mid - 1;
+                max = mid;
             } else {
                 return valueRecord;
             }
@@ -454,7 +454,7 @@ static SFBoolean _SFApplyCursivePos(SFTextProcessorRef processor, SFData cursive
 static SFBoolean _SFApplyCursivePosF1(SFTextProcessorRef processor, SFData cursivePos)
 {
     SFAlbumRef album = processor->_album;
-    SFLocatorRef locator = processor->_locator;
+    SFLocatorRef locator = &processor->_locator;
     SFUInteger firstIndex = locator->index;
     SFGlyphID firstGlyph = SFAlbumGetGlyph(album, firstIndex);
     SFData firstExitAnchor;
@@ -530,7 +530,7 @@ static SFBoolean _SFApplyCursivePosF1(SFTextProcessorRef processor, SFData cursi
 
 static SFUInteger _SFGetPreviousBaseGlyphIndex(SFTextProcessorRef processor)
 {
-    SFLocatorRef locator = processor->_locator;
+    SFLocatorRef locator = &processor->_locator;
     SFLookupFlag lookupFlag = locator->lookupFlag | SFLookupFlagIgnoreMarks;
 
     /*
@@ -544,7 +544,7 @@ static SFUInteger _SFGetPreviousBaseGlyphIndex(SFTextProcessorRef processor)
 static SFBoolean _SFApplyMarkToBasePos(SFTextProcessorRef processor, SFData markBasePos)
 {
     SFAlbumRef album = processor->_album;
-    SFUInteger inputIndex = processor->_locator->index;
+    SFUInteger inputIndex = processor->_locator.index;
     SFGlyphID inputGlyph = SFAlbumGetGlyph(album, inputIndex);
     SFUInt16 format;
 
@@ -640,7 +640,7 @@ static SFBoolean _SFApplyMarkToBaseArrays(SFTextProcessorRef processor, SFData m
 static SFUInteger _SFGetPreviousLigatureGlyphIndex(SFTextProcessorRef processor, SFUInteger *outComponent)
 {
     SFAlbumRef album = processor->_album;
-    SFLocatorRef locator = processor->_locator;
+    SFLocatorRef locator = &processor->_locator;
     SFLookupFlag lookupFlag = locator->lookupFlag | SFLookupFlagIgnoreMarks;
     SFUInteger inputIndex = locator->index;
     SFUInteger prevIndex;
@@ -687,7 +687,7 @@ static SFUInteger _SFGetPreviousLigatureGlyphIndex(SFTextProcessorRef processor,
 static SFBoolean _SFApplyMarkToLigPos(SFTextProcessorRef processor, SFData markLigPos)
 {
     SFAlbumRef album = processor->_album;
-    SFUInteger inputIndex = processor->_locator->index;
+    SFUInteger inputIndex = processor->_locator.index;
     SFGlyphID inputGlyph = SFAlbumGetGlyph(album, inputIndex);
     SFUInt16 format;
 
@@ -796,7 +796,7 @@ static SFBoolean _SFApplyMarkToLigArrays(SFTextProcessorRef processor, SFData ma
 
 static SFUInteger _SFGetPreviousMarkGlyphIndex(SFTextProcessorRef processor)
 {
-    SFLocatorRef locator = processor->_locator;
+    SFLocatorRef locator = &processor->_locator;
     SFLookupFlag ignoreFlag = SFLookupFlagIgnoreBaseGlyphs
                             | SFLookupFlagIgnoreMarks
                             | SFLookupFlagIgnoreLigatures;
@@ -813,7 +813,7 @@ static SFUInteger _SFGetPreviousMarkGlyphIndex(SFTextProcessorRef processor)
 static SFBoolean _SFApplyMarkToMarkPos(SFTextProcessorRef processor, SFData markMarkPos)
 {
     SFAlbumRef album = processor->_album;
-    SFUInteger inputIndex = processor->_locator->index;
+    SFUInteger inputIndex = processor->_locator.index;
     SFGlyphID inputGlyph = SFAlbumGetGlyph(album, inputIndex);
     SFUInt16 format;
 

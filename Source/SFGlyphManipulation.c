@@ -31,7 +31,7 @@
 #include "SFGlyphSubstitution.h"
 #include "SFShapingEngine.h"
 
-SF_INTERNAL SFUInteger SFBinarySearchUInt16(SFData uint16Array, SFUInteger length, SFUInt16 value)
+static SFUInteger SFBinarySearchUInt16(SFData uint16Array, SFUInteger length, SFUInt16 value)
 {
     SFUInteger min = 0;
     SFUInteger max = length - 1;
@@ -39,14 +39,14 @@ SF_INTERNAL SFUInteger SFBinarySearchUInt16(SFData uint16Array, SFUInteger lengt
     /* The length of array must be greater than zero. */
     SFAssert(length > 0);
 
-    while (min <= max) {
+    while (min < max) {
         SFUInteger mid = (min + max) >> 1;
         SFUInt16 element = SF_UINT16_ARRAY__VALUE(uint16Array, mid);
 
         if (element < value) {
             min = mid + 1;
         } else if (element > value) {
-            max = mid - 1;
+            max = mid;
         } else {
             return mid;
         }
@@ -63,16 +63,16 @@ static SFUInteger _SFBinarySearchGlyphRange(SFData rangeArray, SFUInteger length
     /* The length of array must be greater than zero. */
     SFAssert(length > 0);
 
-    while (min <= max) {
+    while (min < max) {
         SFUInteger mid = (min + max) >> 1;
         SFData range = SF_DATA__SUBDATA(rangeArray, mid * _SF_GLYPH_RANGE__SIZE());
         SFUInt16 start = _SF_GLYPH_RANGE__START(range);
         SFUInt16 end = _SF_GLYPH_RANGE__END(range);
 
-        if (start < value) {
+        if (value < start) {
+            max = mid;
+        } else if (value > end) {
             min = mid + 1;
-        } else if (end > value) {
-            max = mid - 1;
         } else {
             return mid;
         }

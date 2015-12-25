@@ -34,19 +34,15 @@ void SFArtistSetTextAsCodepoints(SFArtistRef artist, SFCodepoint *codepoints, SF
 void SFArtistSetPattern(SFArtistRef artist, SFPatternRef pattern);
 
 /**
- * Shapes the provided text range with appropriate shaping engine and fills the album with shaping
+ * Shapes the provided text with appropriate shaping engine and fills the album with shaping
  * results such as glyph ids, positions and advances.
  * @param artist
  *      The artist to be used for shaping the text.
  * @param album
  *      The album that should be filled with shaping results. If the album is not empty, it will be
  *      cleared first.
- * @param index
- *      The index of the text from where shaping should be started.
- * @param count
- *      The number of text elements that are intended to be shaped.
  */
-void SFArtistFillAlbum(SFArtistRef artist, SFAlbumRef album, SFUInteger index, SFUInteger count);
+void SFArtistFillAlbum(SFArtistRef artist, SFAlbumRef album);
 
 SFArtistRef SFArtistRetain(SFArtistRef artist);
 void SFArtistRelease(SFArtistRef artists);

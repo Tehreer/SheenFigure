@@ -39,6 +39,7 @@ typedef SFPatternBuilder *SFPatternBuilderRef;
  * Provides a way to cache scripts, languages, features and lookups.
  */
 struct _SFPatternBuilder {
+    SFFontRef _font;
     SFHeaderKind _currentHeader;        /**< The kind of table whose features are being added. */
     SFUInteger _gsubGroupCount;
     SFUInteger _gposGroupCount;
@@ -56,6 +57,7 @@ struct _SFPatternBuilder {
  */
 SF_INTERNAL void SFPatternBuilderInitialize(SFPatternBuilderRef builder);
 
+SF_INTERNAL void SFPatternBuilderSetFont(SFPatternBuilderRef builder, SFFontRef font);
 SF_INTERNAL void SFPatternBuilderSetScript(SFPatternBuilderRef builder, SFScriptTag scriptTag);
 SF_INTERNAL void SFPatternBuilderSetLanguage(SFPatternBuilderRef builder, SFLanguageTag languageTag);
 

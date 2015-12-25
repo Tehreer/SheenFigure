@@ -24,7 +24,7 @@
 #include "SFShapingEngine.h"
 
 typedef struct _SFStandardEngine {
-    SFShapingEngineRef _base;
+    SFShapingEngine _base;
 } SFStandardEngine, *SFStandardEngineRef;
 
 extern SFShapingKnowledge SFStandardKnowledgeInstance;

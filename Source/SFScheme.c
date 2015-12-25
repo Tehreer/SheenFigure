@@ -49,17 +49,24 @@ static SFData _SFSearchScriptInList(SFData scriptList, SFScriptTag scriptTag)
 
 static SFData _SFSearchLangSysInScript(SFData script, SFLanguageTag languageTag)
 {
-    SFUInt16 langSysCount = SF_SCRIPT__LANG_SYS_COUNT(script);
-    SFUInt16 index;
-
-    for (index = 0; index < langSysCount; index++) {
-        SFData langSysRecord = SF_SCRIPT__LANG_SYS_RECORD(script, index);
-        SFTag langSysTag = SF_LANG_SYS_RECORD__LANG_SYS_TAG(langSysRecord);
-        SFUInt16 offset;
-
-        if (langSysTag == languageTag) {
-            offset = SF_LANG_SYS_RECORD__LANG_SYS(langSysRecord);
+    if (languageTag == SFLanguageTagDFLT) {
+        SFOffset offset = SF_SCRIPT__DEFAULT_LANG_SYS(script);
+        if (offset) {
             return SF_DATA__SUBDATA(script, offset);
+        }
+    } else {
+        SFUInt16 langSysCount = SF_SCRIPT__LANG_SYS_COUNT(script);
+        SFUInt16 index;
+
+        for (index = 0; index < langSysCount; index++) {
+            SFData langSysRecord = SF_SCRIPT__LANG_SYS_RECORD(script, index);
+            SFTag langSysTag = SF_LANG_SYS_RECORD__LANG_SYS_TAG(langSysRecord);
+            SFUInt16 offset;
+
+            if (langSysTag == languageTag) {
+                offset = SF_LANG_SYS_RECORD__LANG_SYS(langSysRecord);
+                return SF_DATA__SUBDATA(script, offset);
+            }
         }
     }
 
@@ -161,7 +168,6 @@ static void _SFAddHeader(_SFSchemeStateRef state, SFData header)
         state->langSys = _SFSearchLangSysInScript(state->script, scheme->_languageTag);
 
         if (state->langSys) {
-            SFPatternBuilderBeginHeader(&state->builder, SFHeaderKindGSUB);
             _SFAddFeatures(state);
         }
     }
@@ -208,17 +214,22 @@ SFPatternRef SFSchemeBuildPattern(SFSchemeRef scheme)
             SFPatternRef pattern = SFPatternCreate();
 
             SFPatternBuilderInitialize(&state.builder);
+            SFPatternBuilderSetFont(&state.builder, scheme->_font);
             SFPatternBuilderSetScript(&state.builder, scheme->_scriptTag);
             SFPatternBuilderSetLanguage(&state.builder, scheme->_languageTag);
 
             if (gsub) {
+                SFPatternBuilderBeginHeader(&state.builder, SFHeaderKindGSUB);
                 _SFAddHeader(&state, gsub);
             }
             if (gpos) {
+                SFPatternBuilderBeginHeader(&state.builder, SFHeaderKindGPOS);
                 _SFAddHeader(&state, gpos);
             }
 
             SFPatternBuilderBuild(&state.builder, pattern);
+
+            return pattern;
         }
     }
 

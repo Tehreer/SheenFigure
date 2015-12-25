@@ -78,17 +78,15 @@ static SFShapingEngine _SFArabicEngineBase = {
 
 SF_INTERNAL void SFArabicEngineInitialize(SFArabicEngineRef arabicEngine)
 {
-    arabicEngine->_base = &_SFArabicEngineBase;
+    arabicEngine->_base = _SFArabicEngineBase;
 }
 
 static void SFArabicEngineProcessAlbum(const void *object, SFPatternRef pattern, SFAlbumRef album)
 {
     SFTextProcessor processor;
 
-    /* Album must NOT be null. */
-    SFAssert(album != NULL);
-
     SFTextProcessorInitialize(&processor, pattern, album);
     SFTextProcessorDiscoverGlyphs(&processor);
-    SFTextProcessorManipulateGlyphs(&processor);
+    SFTextProcessorSubstituteGlyphs(&processor);
+    SFTextProcessorPositionGlyphs(&processor);
 }

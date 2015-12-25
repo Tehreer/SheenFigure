@@ -35,7 +35,7 @@ struct _SFTextProcessor {
     SFFontRef _font;
     SFPatternRef _pattern;
     SFAlbumRef _album;
-    SFLocatorRef _locator;
+    SFLocator _locator;
     SFData _glyphClassDef;
     SFDirection _direction;
     /* State values. */
@@ -46,6 +46,7 @@ struct _SFTextProcessor {
 SF_INTERNAL void SFTextProcessorInitialize(SFTextProcessorRef textProcessor, SFPatternRef pattern, SFAlbumRef album);
 
 SF_INTERNAL void SFTextProcessorDiscoverGlyphs(SFTextProcessorRef textProcessor);
-SF_INTERNAL void SFTextProcessorManipulateGlyphs(SFTextProcessorRef textProcessor);
+SF_INTERNAL void SFTextProcessorSubstituteGlyphs(SFTextProcessorRef textProcessor);
+SF_INTERNAL void SFTextProcessorPositionGlyphs(SFTextProcessorRef textProcessor);
 
 #endif

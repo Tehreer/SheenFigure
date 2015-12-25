@@ -41,11 +41,12 @@ void SFArtistSetPattern(SFArtistRef artist, SFPatternRef pattern)
     artist->_pattern = pattern;
 }
 
-void SFArtistFillAlbum(SFArtistRef artist, SFAlbumRef album, SFUInteger index, SFUInteger count)
+void SFArtistFillAlbum(SFArtistRef artist, SFAlbumRef album)
 {
     SFUnifiedEngine unifiedEngine;
     SFShapingEngineRef shapingEngine;
 
+    SFAlbumReset(album, artist->_codepointArray, artist->_codepointCount);
     SFUnifiedEngineInitialize(&unifiedEngine, artist->_pattern->scriptTag);
 
     shapingEngine = (SFShapingEngineRef)&unifiedEngine;

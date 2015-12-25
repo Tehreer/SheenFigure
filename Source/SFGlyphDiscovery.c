@@ -30,6 +30,8 @@ SF_INTERNAL void _SFDiscoverGlyphs(SFTextProcessorRef processor)
     SFUInteger length = album->codePointCount;
     SFUInteger index;
 
+    SFAlbumAllocateGlyphs(album);
+
     for (index = 0; index < length; index++) {
         SFCodepoint codePoint = album->codePointArray[index];
         SFGlyphID glyph = SFFontGetGlyphIDForCodepoint(font, codePoint);

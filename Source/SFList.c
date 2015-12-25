@@ -43,7 +43,7 @@ SF_PRIVATE void _SFListFinalize(_SFListRef list)
     free(list->_data);
 }
 
-SF_PRIVATE void _SFListFinalizeKeepingArray(_SFListRef list, void **outArray, SFIndex *outCount)
+SF_PRIVATE void _SFListFinalizeKeepingArray(_SFListRef list, void **outArray, SFUInteger *outCount)
 {
     if (list->count > 0) {
         _SFListSetCapacity(list, list->count);
@@ -133,12 +133,12 @@ SF_PRIVATE void _SFListTrimExcess(_SFListRef list)
 SF_PRIVATE SFUInteger _SFListIndexOfItem(_SFListRef list, const void *itemPtr, SFUInteger index, SFUInteger count)
 {
     /* The range must be valid and there should be no integer overflow. */
-    SFAssert((list->count > 0 ? (index + count) < list->count : (index + count) == 0)
+    SFAssert((list->count > 0 ? (index + count) <= list->count : (index + count) == 0)
              && index <= (index + count));
 
     for (; index < count; index++) {
         void *currentPtr = _SFListGetItemPtr(list, index);
-        if (memcmp(currentPtr, itemPtr, list->_itemSize)) {
+        if (memcmp(currentPtr, itemPtr, list->_itemSize) == 0) {
             return index;
         }
     }
@@ -149,7 +149,7 @@ SF_PRIVATE SFUInteger _SFListIndexOfItem(_SFListRef list, const void *itemPtr, S
 SF_PRIVATE void _SFListSort(_SFListRef list, SFUInteger index, SFUInteger count, SFComparison comparison)
 {
     /* The range must be valid and there should be no integer overflow. */
-    SFAssert((list->count > 0 ? (index + count) < list->count : (index + count) == 0)
+    SFAssert((list->count > 0 ? (index + count) <= list->count : (index + count) == 0)
              && index <= (index + count));
 
     qsort(list->_data, list->count, list->_itemSize, comparison);

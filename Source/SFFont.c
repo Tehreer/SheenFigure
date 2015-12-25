@@ -34,6 +34,7 @@ SFFontRef SFFontCreateWithFTFace(FT_Face ftFace)
         SFFontRef font = malloc(sizeof(SFFont));
 
         FT_Reference_Face(ftFace);
+        SFTableCacheInitialize(&font->tables, ftFace);
 
         font->_ftFace = ftFace;
         font->unitsPerEm = ftFace->units_per_EM;

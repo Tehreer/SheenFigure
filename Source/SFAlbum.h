@@ -60,7 +60,7 @@ struct _SFAlbum {
     const SFCodepoint *codePointArray; /**< The array of codepoints which are to be shaped. */
     SFUInteger *mapArray;
     SFUInteger codePointCount;
-    SFUInteger elementCount;
+    SFUInteger glyphCount;
 
     SF_LIST(SFGlyphID) _glyphs;
     SF_LIST(SFGlyphDetail) _details;
@@ -73,7 +73,7 @@ struct _SFAlbum {
 /**
  * Initializes the album for given code points.
  */
-SF_INTERNAL void SFAlbumInitialize(SFAlbumRef album, SFCodepoint *codePointArray, SFUInteger codePointCount);
+SF_INTERNAL void SFAlbumReset(SFAlbumRef album, SFCodepoint *codePointArray, SFUInteger codePointCount);
 
 SF_INTERNAL void SFAlbumAllocateGlyphs(SFAlbumRef album);
 SF_INTERNAL void SFAlbumAllocatePositions(SFAlbumRef album);

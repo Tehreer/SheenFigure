@@ -76,17 +76,15 @@ static SFShapingEngine _SFStandardEngineBase = {
 
 SF_INTERNAL void SFStandardEngineInitialize(SFStandardEngineRef standardEngine)
 {
-    standardEngine->_base = &_SFStandardEngineBase;
+    standardEngine->_base = _SFStandardEngineBase;
 }
 
 static void _SFStandardEngineProcessAlbum(const void *object, SFPatternRef pattern, SFAlbumRef album)
 {
     SFTextProcessor processor;
 
-    /* Album must NOT be null. */
-    SFAssert(album != NULL);
-
     SFTextProcessorInitialize(&processor, pattern, album);
     SFTextProcessorDiscoverGlyphs(&processor);
-    SFTextProcessorManipulateGlyphs(&processor);
+    SFTextProcessorSubstituteGlyphs(&processor);
+    SFTextProcessorPositionGlyphs(&processor);
 }

@@ -55,7 +55,7 @@ SFUInteger SFAlbumGetGlyphCount(SFAlbumRef album);
  * @return
  *      An array of glyphs produced as part of shaping process.
  */
-SFGlyphID *SFAlbumGetGlyphs(SFAlbumRef album);
+SFGlyphID *SFAlbumGetGlyphIDs(SFAlbumRef album);
 
 /**
  * Provides an array of glyph positions in font units where each glyph is positioned with respect to

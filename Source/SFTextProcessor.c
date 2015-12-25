@@ -30,7 +30,7 @@
 
 static SFData _SFGetLookupFromHeader(SFData header, SFUInt16 lookupIndex);
 
-static void _SFApplyAllFeatures(SFTextProcessorRef processor);
+static void _SFApplyGroupRange(SFTextProcessorRef processor, SFUInteger index, SFUInteger count);
 static void _SFApplyFeatureGroup(SFTextProcessorRef processor, SFFeatureGroupRef featureGroup);
 static void _SFApplyLookup(SFTextProcessorRef processor, SFUInt16 lookupIndex, SFHeaderKind headerKind);
 
@@ -44,6 +44,8 @@ SF_INTERNAL void SFTextProcessorInitialize(SFTextProcessorRef textProcessor, SFP
     textProcessor->_font = pattern->font;
     textProcessor->_pattern = pattern;
     textProcessor->_album = album;
+
+    SFLocatorInitialize(&textProcessor->_locator, album, textProcessor->_font->tables.gdef);
 }
 
 SF_INTERNAL void SFTextProcessorDiscoverGlyphs(SFTextProcessorRef textProcessor)
@@ -51,12 +53,34 @@ SF_INTERNAL void SFTextProcessorDiscoverGlyphs(SFTextProcessorRef textProcessor)
     _SFDiscoverGlyphs(textProcessor);
 }
 
-SF_INTERNAL void SFTextProcessorManipulateGlyphs(SFTextProcessorRef textProcessor)
+SF_INTERNAL void SFTextProcessorSubstituteGlyphs(SFTextProcessorRef textProcessor)
 {
-    /* Pattern must NOT be null. */
-    SFAssert(textProcessor->_pattern != NULL);
+    SFPatternRef pattern = textProcessor->_pattern;
 
-    _SFApplyAllFeatures(textProcessor);
+    _SFApplyGroupRange(textProcessor, 0, pattern->groupCount.gsub);
+}
+
+SF_INTERNAL void SFTextProcessorPositionGlyphs(SFTextProcessorRef textProcessor)
+{
+    SFPatternRef pattern = textProcessor->_pattern;
+    SFFontRef font = pattern->font;
+    SFAlbumRef album = textProcessor->_album;
+    SFUInteger glyphCount = album->glyphCount;
+    SFUInteger index;
+
+    SFAlbumAllocatePositions(album);
+
+    /* Set positions and advances of all glyphs. */
+    for (index = 0; index < glyphCount; index++) {
+        SFGlyphID glyphID = SFAlbumGetGlyph(album, index);
+        SFPoint position = { 0, 0 };
+        SFInteger advance = SFFontGetGlyphAdvance(font, glyphID);
+
+        SFAlbumSetPosition(album, 0, position);
+        SFAlbumSetAdvance(album, index, advance);
+    }
+
+    _SFApplyGroupRange(textProcessor, pattern->groupCount.gsub, pattern->groupCount.gpos);
 }
 
 static SFData _SFGetLookupFromHeader(SFData header, SFUInt16 lookupIndex)
@@ -69,24 +93,13 @@ static SFData _SFGetLookupFromHeader(SFData header, SFUInt16 lookupIndex)
     return lookup;
 }
 
-static void _SFApplyAllFeatures(SFTextProcessorRef processor)
+static void _SFApplyGroupRange(SFTextProcessorRef processor, SFUInteger index, SFUInteger count)
 {
     SFPatternRef pattern = processor->_pattern;
-    SFUInteger groupCount = pattern->groupCount.gsub + pattern->groupCount.gpos;
-    SFUInteger nextIndex = 0;
-    SFUInteger groupIndex;
 
-    for (groupIndex = 0; groupIndex < groupCount; groupIndex++) {
-        SFFeatureGroupRef featureGroup = &pattern->featureGroupArray[groupIndex];
-        SFUInteger startIndex = featureGroup->featureIndex;
-
-        /* Group ranges must be continuous. */
-        SFAssert(nextIndex == startIndex);
-
-        /* Apply the group. */
-        _SFApplyFeatureGroup(processor, featureGroup);
-
-        nextIndex = startIndex + featureGroup->featureCount;
+    for (; index < count; index++) {
+        /* Apply the feature group. */
+        _SFApplyFeatureGroup(processor, &pattern->featureGroupArray[index]);
     }
 }
 
@@ -105,7 +118,7 @@ static void _SFApplyFeatureGroup(SFTextProcessorRef processor, SFFeatureGroupRef
 
 static void _SFApplyLookup(SFTextProcessorRef processor, SFUInt16 lookupIndex, SFHeaderKind headerKind)
 {
-    SFLocatorRef locator = processor->_locator;
+    SFLocatorRef locator = &processor->_locator;
     SFLocatorReset(locator);
 
     processor->_headerKind = headerKind;

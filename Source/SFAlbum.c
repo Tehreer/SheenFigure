@@ -30,7 +30,7 @@ SFAlbumRef SFAlbumCreate(void)
     album->codePointArray = NULL;
     album->mapArray = NULL;
     album->codePointCount = 0;
-    album->elementCount = 0;
+    album->glyphCount = 0;
 
     SFListInitialize(&album->_glyphs, sizeof(SFGlyphID));
     SFListInitialize(&album->_details, sizeof(SFGlyphDetail));
@@ -40,13 +40,6 @@ SFAlbumRef SFAlbumCreate(void)
     return album;
 }
 
-void SFAlbumClear(SFAlbumRef album)
-{
-    SFListClear(&album->_glyphs);
-    SFListClear(&album->_details);
-    SFListClear(&album->_positions);
-    SFListClear(&album->_advances);
-}
 /*
 SFRange SFAlbumGetTextRange(SFAlbumRef album)
 {
@@ -55,10 +48,10 @@ SFRange SFAlbumGetTextRange(SFAlbumRef album)
 */
 SFUInteger SFAlbumGetGlyphCount(SFAlbumRef album)
 {
-    return album->elementCount;
+    return album->glyphCount;
 }
 
-SFGlyphID *SFAlbumGetGlyphs(SFAlbumRef album)
+SFGlyphID *SFAlbumGetGlyphIDs(SFAlbumRef album)
 {
     return album->_glyphs.items.at;
 }
@@ -73,7 +66,23 @@ SFInteger *SFAlbumGetGlyphAdvances(SFAlbumRef album)
     return album->_advances.items.at;
 }
 
-SF_INTERNAL void SFAlbumInitialize(SFAlbumRef album, SFCodepoint *codePointArray, SFUInteger codePointCount)
+SFAlbumRef SFAlbumRetain(SFAlbumRef album)
+{
+    if (album) {
+        album->_retainCount++;
+    }
+
+    return album;
+}
+
+void SFAlbumRelease(SFAlbumRef album)
+{
+    if (album && --album->_retainCount == 0) {
+        SFAlbumFinalize(album);
+    }
+}
+
+SF_INTERNAL void SFAlbumReset(SFAlbumRef album, SFCodepoint *codePointArray, SFUInteger codePointCount)
 {
 	/* There must be some code points. */
 	SFAssert(codePointArray != NULL && codePointCount > 0);
@@ -81,12 +90,12 @@ SF_INTERNAL void SFAlbumInitialize(SFAlbumRef album, SFCodepoint *codePointArray
     album->codePointArray = codePointArray;
 	album->mapArray = NULL;
     album->codePointCount = codePointCount;
-    album->elementCount = 0;
+    album->glyphCount = 0;
 
-    SFListInitialize(&album->_glyphs, sizeof(SFGlyphID));
-    SFListInitialize(&album->_details, sizeof(SFGlyphDetail));
-    SFListInitialize(&album->_positions, sizeof(SFPoint));
-    SFListInitialize(&album->_advances, sizeof(SFInteger));
+    SFListClear(&album->_glyphs);
+    SFListClear(&album->_details);
+    SFListClear(&album->_positions);
+    SFListClear(&album->_advances);
 }
 
 SF_INTERNAL void SFAlbumAllocateGlyphs(SFAlbumRef album)
@@ -96,34 +105,36 @@ SF_INTERNAL void SFAlbumAllocateGlyphs(SFAlbumRef album)
     SFListReserveRange(&album->_glyphs, 0, capacity);
     SFListReserveRange(&album->_details, 0, capacity);
 
-	album->elementCount = album->codePointCount;
+	album->glyphCount = 0;
 }
 
 SF_INTERNAL void SFAlbumAllocatePositions(SFAlbumRef album)
 {
-    SFListReserveRange(&album->_positions, 0, album->elementCount);
-    SFListReserveRange(&album->_advances, 0, album->elementCount);
+    SFListReserveRange(&album->_positions, 0, album->glyphCount);
+    SFListReserveRange(&album->_advances, 0, album->glyphCount);
 }
 
 SF_INTERNAL void SFAlbumAddGlyph(SFAlbumRef album, SFGlyphID glyph, SFUInteger association) {
-    /* Initialize glyph along with its details. */
-    SFAlbumSetGlyph(album, album->elementCount, glyph);
-    SFAlbumSetTraits(album, album->elementCount, SFGlyphTraitNone);
-    SFAlbumSetAssociation(album, album->elementCount, association);
+    /* Increment glyph count. */
+    SFUInteger index = album->glyphCount++;
 
-    /* Increment element count. */
-    album->elementCount++;
+    /* Initialize glyph along with its details. */
+    SFAlbumSetGlyph(album, index, glyph);
+    SFAlbumSetTraits(album, index, SFGlyphTraitNone);
+    SFAlbumSetAssociation(album, index, association);
 }
 
 SF_INTERNAL void SFAlbumReserveGlyphs(SFAlbumRef album, SFUInteger index, SFUInteger count)
 {
     SFListReserveRange(&album->_glyphs, index, count);
     SFListReserveRange(&album->_details, index, count);
+
+    album->glyphCount += count;
 }
 
 static void SFValidateAlbumIndex(SFAlbumRef album, SFUInteger index)
 {
-    SFAssert(index < album->elementCount);
+    SFAssert(index < album->glyphCount);
 }
 
 SF_INTERNAL SFGlyphID SFAlbumGetGlyph(SFAlbumRef album, SFUInteger index)

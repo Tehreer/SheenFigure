@@ -14,21 +14,17 @@
  * limitations under the License.
  */
 
-#ifndef SF_ARABIC_ENGINE_INTERNAL_H
-#define SF_ARABIC_ENGINE_INTERNAL_H
+#ifndef SHEEN_FIGURE_H
+#define SHEEN_FIGURE_H
 
-#include <SFConfig.h>
+#include <SFAlbum.h>
+#include <SFArtist.h>
+#include <SFFeatureTag.h>
+#include <SFFont.h>
+#include <SFLanguageTag.h>
+#include <SFPattern.h>
+#include <SFScheme.h>
+#include <SFScriptTag.h>
 #include <SFTypes.h>
-
-#include "SFPattern.h"
-#include "SFShapingEngine.h"
-
-typedef struct _SFArabicEngine {
-    SFShapingEngine _base;
-} SFArabicEngine, *SFArabicEngineRef;
-
-extern SFShapingKnowledge SFArabicKnowledgeInstance;
-
-SF_INTERNAL void SFArabicEngineInitialize(SFArabicEngineRef arabicEngine);
 
 #endif
