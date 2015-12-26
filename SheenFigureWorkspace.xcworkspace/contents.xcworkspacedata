@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Workspace
+   version = "1.0">
+   <FileRef
+      location = "group:../FreeType/FreeType.xcodeproj">
+   </FileRef>
+   <FileRef
+      location = "group:SheenFigure.xcodeproj">
+   </FileRef>
+   <FileRef
+      location = "group:SheenFigureParser.xcodeproj">
+   </FileRef>
+   <FileRef
+      location = "group:SheenFigureTester.xcodeproj">
+   </FileRef>
+</Workspace>
