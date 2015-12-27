@@ -6,8 +6,15 @@
 	objectVersion = 46;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		6E5346701C2E81B100C23837 /* ArabicShaping.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6E5346661C2E81B100C23837 /* ArabicShaping.cpp */; };
+		6E5346CF1C2EA46D00C23837 /* ArabicShaping.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E5346671C2E81B100C23837 /* ArabicShaping.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		6E5346D51C2EADFB00C23837 /* UnicodeData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6E5346D11C2EADFB00C23837 /* UnicodeData.cpp */; };
+		6E5346D61C2EADFB00C23837 /* UnicodeData.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E5346D21C2EADFB00C23837 /* UnicodeData.h */; settings = {ATTRIBUTES = (Public, ); }; };
+/* End PBXBuildFile section */
+
 /* Begin PBXCopyFilesBuildPhase section */
-		6E9C29A11B99DB0E007FC446 /* CopyFiles */ = {
+		6E5346D01C2EA48D00C23837 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = "include/$(PRODUCT_NAME)";
@@ -19,6 +26,10 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		6E5346661C2E81B100C23837 /* ArabicShaping.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ArabicShaping.cpp; sourceTree = "<group>"; };
+		6E5346671C2E81B100C23837 /* ArabicShaping.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArabicShaping.h; sourceTree = "<group>"; };
+		6E5346D11C2EADFB00C23837 /* UnicodeData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UnicodeData.cpp; sourceTree = "<group>"; };
+		6E5346D21C2EADFB00C23837 /* UnicodeData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UnicodeData.h; sourceTree = "<group>"; };
 		6E9C29A31B99DB0E007FC446 /* libSheenFigureParser.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libSheenFigureParser.a; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -33,10 +44,22 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		6E5346651C2E81B100C23837 /* Parser */ = {
+			isa = PBXGroup;
+			children = (
+				6E5346661C2E81B100C23837 /* ArabicShaping.cpp */,
+				6E5346671C2E81B100C23837 /* ArabicShaping.h */,
+				6E5346D11C2EADFB00C23837 /* UnicodeData.cpp */,
+				6E5346D21C2EADFB00C23837 /* UnicodeData.h */,
+			);
+			name = Parser;
+			path = Tools/Parser;
+			sourceTree = "<group>";
+		};
 		6E9C299A1B99DB0E007FC446 = {
 			isa = PBXGroup;
 			children = (
-				6E9C29A51B99DB0E007FC446 /* Parser */,
+				6E5346651C2E81B100C23837 /* Parser */,
 				6E9C29A41B99DB0E007FC446 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -49,15 +72,19 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		6E9C29A51B99DB0E007FC446 /* Parser */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			name = Parser;
-			path = SheenFigureParser;
-			sourceTree = "<group>";
-		};
 /* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		6E5346CE1C2EA46800C23837 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				6E5346CF1C2EA46D00C23837 /* ArabicShaping.h in Headers */,
+				6E5346D61C2EADFB00C23837 /* UnicodeData.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
 		6E9C29A21B99DB0E007FC446 /* SheenFigureParser */ = {
@@ -66,7 +93,8 @@
 			buildPhases = (
 				6E9C299F1B99DB0E007FC446 /* Sources */,
 				6E9C29A01B99DB0E007FC446 /* Frameworks */,
-				6E9C29A11B99DB0E007FC446 /* CopyFiles */,
+				6E5346D01C2EA48D00C23837 /* CopyFiles */,
+				6E5346CE1C2EA46800C23837 /* Headers */,
 			);
 			buildRules = (
 			);
@@ -113,6 +141,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6E5346701C2E81B100C23837 /* ArabicShaping.cpp in Sources */,
+				6E5346D51C2EADFB00C23837 /* UnicodeData.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -168,7 +198,8 @@
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				ONLY_ACTIVE_ARCH = YES;
-				SDKROOT = iphoneos;
+				PUBLIC_HEADERS_FOLDER_PATH = Parser;
+				SDKROOT = macosx;
 			};
 			name = Debug;
 		};
@@ -214,7 +245,8 @@
 					"\"${PROJECT_DIR}/../FreeType/include\"",
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
-				SDKROOT = iphoneos;
+				PUBLIC_HEADERS_FOLDER_PATH = Parser;
+				SDKROOT = macosx;
 				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;

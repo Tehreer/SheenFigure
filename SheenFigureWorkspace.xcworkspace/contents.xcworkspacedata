@@ -11,6 +11,9 @@
       location = "group:SheenFigureParser.xcodeproj">
    </FileRef>
    <FileRef
+      location = "group:SheenFigureGenerator.xcodeproj">
+   </FileRef>
+   <FileRef
       location = "group:SheenFigureTester.xcodeproj">
    </FileRef>
 </Workspace>
