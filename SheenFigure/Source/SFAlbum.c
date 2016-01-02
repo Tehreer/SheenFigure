@@ -53,17 +53,17 @@ SFUInteger SFAlbumGetGlyphCount(SFAlbumRef album)
 
 SFGlyphID *SFAlbumGetGlyphIDs(SFAlbumRef album)
 {
-    return album->_glyphs.items.at;
+    return album->_glyphs.items;
 }
 
 SFPoint *SFAlbumGetGlyphPositions(SFAlbumRef album)
 {
-    return album->_positions.items.at;
+    return album->_positions.items;
 }
 
 SFInteger *SFAlbumGetGlyphAdvances(SFAlbumRef album)
 {
-    return album->_advances.items.at;
+    return album->_advances.items;
 }
 
 SFAlbumRef SFAlbumRetain(SFAlbumRef album)

@@ -31,14 +31,12 @@ struct _SFList {
     SFUInteger _itemSize;
 };
 
-#define SF_LIST(type)           \
-union {                         \
-    _SFList _base;              \
-    struct {                    \
-        type *at;               \
-        SFUInteger count;       \
-        SFUInteger capacity;    \
-    } items;                    \
+#define SF_LIST(type)       \
+struct {                    \
+    type *items;            \
+    SFUInteger count;       \
+    SFUInteger capacity;    \
+    SFUInteger _itemSize;   \
 }
 
 typedef int(*SFComparison)(const void *item1, const void *item2);
@@ -59,48 +57,56 @@ SF_PRIVATE void _SFListSort(_SFListRef list, SFUInteger index, SFUInteger count,
 
 #define _SFListValidateIndex(list_, index_)             \
 (                                                       \
-    SFAssert(index_ < (list_)->items.count)             \
+    SFAssert(index_ < (list_)->count)                   \
 )
 
 #define _SFListGetRef(list_, index_)                    \
 (                                                       \
     _SFListValidateIndex(list_, index_),                \
-    &(list_)->items.at[index_]                          \
+    &(list_)->items[index_]                             \
 )
 
 #define _SFListGetVal(list_, index_)                    \
 (                                                       \
     _SFListValidateIndex(list_, index_),                \
-    (list_)->items.at[index_]                           \
+    (list_)->items[index_]                              \
 )
 
 #define _SFListSetVal(list_, index_, item_)             \
 do {                                                    \
     _SFListValidateIndex(list_, index_),                \
-    (list_)->items.at[index_] = item_;                  \
+    (list_)->items[index_] = item_;                     \
 } while (0)
 
 #define _SFListInsert(list_, index_, item_)             \
 do {                                                    \
     SFUInteger __insertIndex = index_;                  \
-    _SFListReserveRange(&(list_)->_base, __insertIndex, 1); \
+    _SFListReserveRange((_SFListRef)(list_), __insertIndex, 1); \
     _SFListSetVal(list_, __insertIndex, item_);         \
 } while (0)
 
 #define _SFListAdd(list_, item_)                        \
-        _SFListInsert(list_, (list_)->items.count, item_)
+        _SFListInsert(list_, (list_)->count, item_)
 
-#define SFListInitialize(list, itemSize)            _SFListInitialize(&(list)->_base, itemSize)
-#define SFListFinalize(list)                        _SFListFinalize(&(list)->_base)
+#define _SFListIndexOf(list_, index_, item_)            \
+do {                                                    \
+    SFUInteger __safeIndex = index_;                    \
+    _SFListReserveRange((_SFListRef)(list_), __safeIndex, 1);   \
+    _SFListSetVal(list_, __safeIndex, item_);           \
+} while (0)
+
+
+#define SFListInitialize(list, itemSize)            _SFListInitialize((_SFListRef)(list), itemSize)
+#define SFListFinalize(list)                        _SFListFinalize((_SFListRef)(list))
 #define SFListFinalizeKeepingArray(list, outArray, outCount) \
-                                    _SFListFinalizeKeepingArray(&(list)->_base, (void **)outArray, outCount)
+                                    _SFListFinalizeKeepingArray((_SFListRef)(list), (void **)outArray, outCount)
 
-#define SFListSetCapacity(list, capacity)           _SFListSetCapacity(&(list)->_base, capacity)
-#define SFListReserveRange(list, index, count)      _SFListReserveRange(&(list)->_base, index, count)
-#define SFListRemoveRange(list, index, count)       _SFListRemoveRange(&(list)->_base, index, count)
+#define SFListSetCapacity(list, capacity)           _SFListSetCapacity((_SFListRef)(list), capacity)
+#define SFListReserveRange(list, index, count)      _SFListReserveRange((_SFListRef)(list), index, count)
+#define SFListRemoveRange(list, index, count)       _SFListRemoveRange((_SFListRef)(list), index, count)
 
-#define SFListClear(list)                           _SFListClear(&(list)->_base)
-#define SFListTrimExcess(list)                      _SFListTrimExcess(&(list)->_base)
+#define SFListClear(list)                           _SFListClear((_SFListRef)(list))
+#define SFListTrimExcess(list)                      _SFListTrimExcess((_SFListRef)(list))
 
 #define SFListGetRef(list, index)                   _SFListGetRef(list, index)
 #define SFListGetVal(list, index)                   _SFListGetVal(list, index)
@@ -108,11 +114,11 @@ do {                                                    \
 
 #define SFListAdd(list, item)                       _SFListAdd(list, item)
 #define SFListInsert(list, index, item)             _SFListInsert(list, index, item)
-#define SFListRemoveAt(list, index)                 SFListRemoveRange(list, index, 1)
+#define SFListRemoveAt(list, index)                 _SFListRemoveRange((_SFListRef)(list), index, 1)
 
-#define SFListIndexOfItem(list, item, index, count) _SFListIndexOfItem(&(list)->_base, item, index, count)
-#define SFListContainsItem(list, item)              (SFListIndexOfItem(list, item, 0, (list)->items.count) != SFInvalidIndex)
+#define SFListIndexOfItem(list, item, index, count) _SFListIndexOfItem((_SFListRef)(list), item, index, count)
+#define SFListContainsItem(list, item)             (_SFListIndexOfItem((_SFListRef)(list), item, 0, (list)->count) != SFInvalidIndex)
 
-#define SFListSort(list, index, count, comparison)  _SFListSort(&(list)->_base, index, count, comparison);
+#define SFListSort(list, index, count, comparison)  _SFListSort((_SFListRef)(list), index, count, comparison);
 
 #endif

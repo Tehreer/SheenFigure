@@ -96,11 +96,11 @@ SF_INTERNAL void SFPatternBuilderMakeGroup(SFPatternBuilderRef builder)
     featureGroup.lookupIndexes = NULL;
     featureGroup.lookupCount = 0;
     featureGroup.featureIndex = builder->_featureIndex;
-    featureGroup.featureCount = builder->_featureTags.items.count - featureGroup.featureIndex;
+    featureGroup.featureCount = builder->_featureTags.count - featureGroup.featureIndex;
     featureGroup.headerKind = builder->_currentHeader;
 
     /* Sort all lookup indexes. */
-    SFListSort(&builder->_lookupIndexes, 0, builder->_lookupIndexes.items.count, _SFLookupIndexComparison);
+    SFListSort(&builder->_lookupIndexes, 0, builder->_lookupIndexes.count, _SFLookupIndexComparison);
     /* Set lookup indexes in current feature group. */
     SFListFinalizeKeepingArray(&builder->_lookupIndexes, &featureGroup.lookupIndexes, &featureGroup.lookupCount);
 
