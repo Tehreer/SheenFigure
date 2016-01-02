@@ -24,17 +24,13 @@
 
 #include "SFData.h"
 
-struct _SFFontCache;
-typedef struct _SFFontCache SFFontCache;
-typedef SFFontCache *SFFontCacheRef;
-
-struct _SFFontCache {
+typedef struct _SFFontCache {
     SFData gdef;
     SFData gsub;
     SFData gpos;
-};
+} SFFontCache, *SFFontCacheRef;
 
-SF_INTERNAL void SFFontCacheInitialize(SFFontCacheRef tableCache, FT_Face ftFace);
-SF_INTERNAL void SFFontCacheFinalize(SFFontCacheRef tableCache);
+SF_INTERNAL void SFFontCacheInitialize(SFFontCacheRef fontCache, FT_Face ftFace);
+SF_INTERNAL void SFFontCacheFinalize(SFFontCacheRef fontCache);
 
 #endif

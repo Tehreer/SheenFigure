@@ -19,8 +19,7 @@
 
 /*
  * NOTE:
- *      This file is part of SFTextProcessor class whose purpose is to discover
- *      character glyphs.
+ *      This file is part of SFTextProcessor class whose purpose is to discover character glyphs.
  */
 
 #include <SFConfig.h>

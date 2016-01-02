@@ -17,11 +17,10 @@
 #ifndef _SF_GLYPH_POSITIONING_INTERNAL_H
 #define _SF_GLYPH_POSITIONING_INTERNAL_H
 
- /*
-  * NOTE:
-  *     This file is part of SFTextProcessor class which handles positioning
-  *     aspects of glyphs.
-  */
+/*
+ * NOTE:
+ *     This file is part of SFTextProcessor class which handles positioning aspects of glyphs.
+ */
 
 #include <SFConfig.h>
 

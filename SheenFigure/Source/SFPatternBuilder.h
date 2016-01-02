@@ -31,14 +31,10 @@
  * SFPattern.
  */
 
-struct _SFPatternBuilder;
-typedef struct _SFPatternBuilder SFPatternBuilder;
-typedef SFPatternBuilder *SFPatternBuilderRef;
-
 /**
  * Provides a way to cache scripts, languages, features and lookups.
  */
-struct _SFPatternBuilder {
+typedef struct _SFPatternBuilder {
     SFFontRef _font;
     SFHeaderKind _currentHeader;        /**< The kind of table whose features are being added. */
     SFUInteger _gsubGroupCount;
@@ -50,7 +46,7 @@ struct _SFPatternBuilder {
     SF_LIST(SFFeatureTag) _featureTags;
     SF_LIST(SFFeatureGroup) _featureGroups;
     SF_LIST(SFUInt16) _lookupIndexes;
-};
+} SFPatternBuilder, *SFPatternBuilderRef;
 
 /**
  * Initializes builder for a script cache.

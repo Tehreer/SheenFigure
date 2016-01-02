@@ -19,8 +19,8 @@
 
 /*
  * NOTE:
- *      This file is part of SFTextProcessor class. It handles common aspects of
- *      substitution and positioning of glyphs.
+ *      This file is part of SFTextProcessor class. It handles common aspects of substitution and
+ *      positioning of glyphs.
  */
 
 #include <SFConfig.h>

@@ -45,14 +45,14 @@ static void _SFLoadTableFromFTFace(FT_Face ftFace, FT_ULong tag, SFData *table) 
     }
 }
 
-SF_INTERNAL void SFFontCacheInitialize(SFFontCacheRef tableCache, FT_Face ftFace) {
-    _SFLoadTableFromFTFace(ftFace, FT_MAKE_TAG('G', 'D', 'E', 'F'), &tableCache->gdef);
-    _SFLoadTableFromFTFace(ftFace, FT_MAKE_TAG('G', 'S', 'U', 'B'), &tableCache->gsub);
-    _SFLoadTableFromFTFace(ftFace, FT_MAKE_TAG('G', 'P', 'O', 'S'), &tableCache->gpos);
+SF_INTERNAL void SFFontCacheInitialize(SFFontCacheRef fontCache, FT_Face ftFace) {
+    _SFLoadTableFromFTFace(ftFace, FT_MAKE_TAG('G', 'D', 'E', 'F'), &fontCache->gdef);
+    _SFLoadTableFromFTFace(ftFace, FT_MAKE_TAG('G', 'S', 'U', 'B'), &fontCache->gsub);
+    _SFLoadTableFromFTFace(ftFace, FT_MAKE_TAG('G', 'P', 'O', 'S'), &fontCache->gpos);
 }
 
-SF_INTERNAL void SFFontCacheFinalize(SFFontCacheRef tableCache) {
-    free((void *)tableCache->gdef);
-    free((void *)tableCache->gsub);
-    free((void *)tableCache->gpos);
+SF_INTERNAL void SFFontCacheFinalize(SFFontCacheRef fontCache) {
+    free((void *)fontCache->gdef);
+    free((void *)fontCache->gsub);
+    free((void *)fontCache->gpos);
 }

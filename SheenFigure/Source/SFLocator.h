@@ -23,15 +23,14 @@
 #include "SFData.h"
 #include "SFAlbum.h"
 
-typedef struct {
+typedef struct _SFLocator {
     SFAlbumRef _album;
     SFData _markAttachClassDef;
     SFData _markGlyphSetsDef;
     SFUInteger index;
     SFUInteger _state;
     SFLookupFlag lookupFlag;
-} SFLocator;
-typedef SFLocator *SFLocatorRef;
+} SFLocator, *SFLocatorRef;
 
 SF_INTERNAL void SFLocatorInitialize(SFLocatorRef locator, SFAlbumRef album, SFData gdef);
 

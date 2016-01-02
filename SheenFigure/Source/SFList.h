@@ -20,16 +20,12 @@
 #include <SFConfig.h>
 #include <SFTypes.h>
 
-struct _SFList;
-typedef struct _SFList _SFList;
-typedef _SFList *_SFListRef;
-
-struct _SFList {
+typedef struct _SFList {
     SFUInt8 *_data;
     SFUInteger count;
     SFUInteger capacity;
     SFUInteger _itemSize;
-};
+} _SFList, *_SFListRef;
 
 #define SF_LIST(type)       \
 struct {                    \

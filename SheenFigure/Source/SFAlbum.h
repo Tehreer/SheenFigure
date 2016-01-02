@@ -23,10 +23,6 @@
 
 #include "SFList.h"
 
-struct _SFGlyphDetail;
-typedef struct _SFGlyphDetail SFGlyphDetail;
-typedef SFGlyphDetail *SFGlyphDetailRef;
-
 enum {
     SFGlyphTraitNone = 0,
     SFGlyphTraitBase = 1,
@@ -47,14 +43,14 @@ enum {
 };
 typedef SFUInt32 SFGlyphTrait;
 
-struct _SFGlyphDetail {
+typedef struct _SFGlyphDetail {
     SFUInteger association;    /**< Index of the code point to which the glyph maps. */
     SFGlyphTrait traits;       /**< Traits of the glyph. */
     /**
      * Offset to the next right-to-left cursively connected element.
      */
     SFUInt16 offset;
-};
+} SFGlyphDetail, *SFGlyphDetailRef;
 
 struct _SFAlbum {
     const SFCodepoint *codePointArray; /**< The array of codepoints which are to be shaped. */

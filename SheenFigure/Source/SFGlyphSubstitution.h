@@ -19,8 +19,7 @@
 
 /*
  * NOTE:
- *      This file is part of SFTextProcessor class which handles substitution
- *      aspects of glyphs.
+ *      This file is part of SFTextProcessor class which handles substitution aspects of glyphs.
  */
 
 #include <SFConfig.h>

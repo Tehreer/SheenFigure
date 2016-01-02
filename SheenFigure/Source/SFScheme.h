@@ -23,7 +23,7 @@
 #include "SFData.h"
 #include "SFShapingEngine.h"
 
-typedef struct {
+typedef struct _SFSchemeState {
     SFSchemeRef scheme;
     SFScriptKnowledgeRef knowledge;
     SFPatternBuilder builder;
@@ -31,8 +31,7 @@ typedef struct {
     SFData featureList;     /**< OpenType feature list table. */
     SFData script;
     SFData langSys;
-} _SFSchemeState;
-typedef _SFSchemeState *_SFSchemeStateRef;
+} _SFSchemeState, *_SFSchemeStateRef;
 
 struct _SFScheme {
     SFFontRef _font;            /**< Font, whose scheme is being built. */

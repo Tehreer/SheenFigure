@@ -27,11 +27,7 @@
 #include "SFPattern.h"
 #include "SFFontCache.h"
 
-struct _SFTextProcessor;
-typedef struct _SFTextProcessor SFTextProcessor;
-typedef SFTextProcessor *SFTextProcessorRef;
-
-struct _SFTextProcessor {
+typedef struct _SFTextProcessor {
     SFFontRef _font;
     SFPatternRef _pattern;
     SFAlbumRef _album;
@@ -41,7 +37,7 @@ struct _SFTextProcessor {
     /* State values. */
     SFFeatureTag _featureTag;
     SFHeaderKind _headerKind;
-};
+} SFTextProcessor, *SFTextProcessorRef;
 
 SF_INTERNAL void SFTextProcessorInitialize(SFTextProcessorRef textProcessor, SFPatternRef pattern, SFAlbumRef album);
 

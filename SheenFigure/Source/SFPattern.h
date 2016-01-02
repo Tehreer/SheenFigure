@@ -25,15 +25,6 @@
 #include <SFScriptTag.h>
 #include <SFTypes.h>
 
-struct _SFPattern;
-struct _SFFeatureGroup;
-
-typedef struct _SFPattern SFPattern;
-typedef struct _SFFeatureGroup SFFeatureGroup;
-
-typedef SFPattern *SFPatternRef;
-typedef SFFeatureGroup *SFFeatureGroupRef;
-
 /**
  * A type to represent the kind of an OpenType feature.
  */
@@ -45,13 +36,13 @@ typedef enum {
 /**
  * Keeps details of a group having multiple features which must be applied simultaneously.
  */
-struct _SFFeatureGroup {
+typedef struct _SFFeatureGroup {
     SFUInt16 *lookupIndexes;    /**< Unique lookup indexes of all features of the group in ascending order. */
     SFUInteger lookupCount;     /**< Total number of lookups in the group. */
     SFUInteger featureIndex;    /**< Starting index of feature covered in the group. */
     SFUInteger featureCount;    /**< Total number of features belonging to the group. */
     SFHeaderKind headerKind;    /**< Kind of feature's header table. */
-};
+} SFFeatureGroup, *SFFeatureGroupRef;
 
 /**
  * Keeps details of a script from both 'GSUB' and 'GPOS' tables.
