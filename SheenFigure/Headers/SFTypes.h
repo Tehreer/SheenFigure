@@ -20,14 +20,6 @@
 #include <stdint.h>
 
 /**
- * A type to represent a boolean value.
- */
-typedef enum {
-    SFFalse = 0, /**< A value representing the false state. */
-    SFTrue  = 1  /**< A value representing the true state. */
-} SFBoolean;
-
-/**
  * A type to represent an 8-bit signed integer.
  */
 typedef int8_t          SFInt8;
@@ -86,6 +78,15 @@ typedef uintptr_t       SFUInteger;
  * A value that indicates an invalid unsigned index.
  */
 #define SFInvalidIndex  (SFUInteger)(-1)
+
+/**
+ * A type to represent a boolean value.
+ */
+enum {
+    SFFalse = 0, /**< A value representing the false state. */
+    SFTrue  = 1  /**< A value representing the true state. */
+};
+typedef SFUInt8         SFBoolean;
 
 /**
  * A type to represent a code point of unicode code space.
