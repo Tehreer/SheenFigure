@@ -159,7 +159,7 @@ SF_PRIVATE SFUInt16 _SFSearchGlyphClass(SFData classDef, SFGlyphID glyph)
     return 0;
 }
 
-static SFGlyphTrait _SFGlyphClassToGlyphTrait(SFUInt16 glyphClass)
+static SFGlyphTraits _SFGlyphClassToGlyphTrait(SFUInt16 glyphClass)
 {
     switch (glyphClass) {
     case SFGlyphClassValueBase:
@@ -175,17 +175,17 @@ static SFGlyphTrait _SFGlyphClassToGlyphTrait(SFUInt16 glyphClass)
         return SFGlyphTraitComponent;
     }
 
-    return SFGlyphTraitNone;
+    return 0;
 }
 
-SF_PRIVATE SFGlyphTrait _SFGetGlyphTrait(SFTextProcessorRef processor, SFGlyphID glyph)
+SF_PRIVATE SFGlyphTraits _SFGetGlyphTraits(SFTextProcessorRef processor, SFGlyphID glyph)
 {
     if (processor->_glyphClassDef) {
         SFUInt16 glyphClass = _SFSearchGlyphClass(processor->_glyphClassDef, glyph);
         return _SFGlyphClassToGlyphTrait(glyphClass);
     }
 
-    return SFGlyphTraitNone;
+    return 0;
 }
 
 SF_PRIVATE SFBoolean _SFApplyExtensionSubtable(SFTextProcessorRef processor, SFData extensionSubtable)

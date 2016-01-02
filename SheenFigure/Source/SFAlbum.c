@@ -120,7 +120,7 @@ SF_INTERNAL void SFAlbumAddGlyph(SFAlbumRef album, SFGlyphID glyph, SFUInteger a
 
     /* Initialize glyph along with its details. */
     SFAlbumSetGlyph(album, index, glyph);
-    SFAlbumSetTraits(album, index, SFGlyphTraitNone);
+    SFAlbumSetTraits(album, index, 0);
     SFAlbumSetAssociation(album, index, association);
 }
 

@@ -63,7 +63,7 @@ SF_INTERNAL void SFLocatorSetLookupFlag(SFLocatorRef locator, SFLookupFlag looku
 
 static SFBoolean _SFIsIgnoredGlyph(SFLocatorRef locator, SFUInteger index, SFLookupFlag lookupFlag) {
     SFAlbumRef album = locator->_album;
-    SFGlyphTrait traits = SFAlbumGetTraits(album, index);
+    SFGlyphTraits traits = SFAlbumGetTraits(album, index);
     SFBoolean isMark;
 
     if (traits & SFGlyphTraitRemoved) {

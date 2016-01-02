@@ -21,31 +21,12 @@
 #include <SFConfig.h>
 #include <SFTypes.h>
 
+#include "SFGlyphTraits.h"
 #include "SFList.h"
 
-enum {
-    SFGlyphTraitNone = 0,
-    SFGlyphTraitBase = 1,
-    SFGlyphTraitLigature = 2,
-    SFGlyphTraitMark = 3,
-    SFGlyphTraitComponent = 4,
-    SFGlyphTraitMaster = 8,
-    /**
-     * Indicates that the glyph has been removed during substitution process;
-     * possibly due to ligature substitution.
-     */
-    SFGlyphTraitRemoved = 16,
-    /**
-     * Indicates that the glyph is to be treated as right-to-left for cursive
-     * attachments.
-     */
-    SFGlyphTraitRightToLeft = 32
-};
-typedef SFUInt32 SFGlyphTrait;
-
 typedef struct _SFGlyphDetail {
-    SFUInteger association;    /**< Index of the code point to which the glyph maps. */
-    SFGlyphTrait traits;       /**< Traits of the glyph. */
+    SFUInteger association;     /**< Index of the code point to which the glyph maps. */
+    SFGlyphTraits traits;       /**< Traits of the glyph. */
     /**
      * Offset to the next right-to-left cursively connected element.
      */
@@ -93,8 +74,8 @@ SF_INTERNAL void SFAlbumAllocateMap(SFAlbumRef album);
 SF_INTERNAL SFGlyphID SFAlbumGetGlyph(SFAlbumRef album, SFUInteger index);
 SF_INTERNAL void SFAlbumSetGlyph(SFAlbumRef album, SFUInteger index, SFGlyphID glyph);
 
-SF_INTERNAL SFGlyphTrait SFAlbumGetTraits(SFAlbumRef album, SFUInteger index);
-SF_INTERNAL void SFAlbumSetTraits(SFAlbumRef album, SFUInteger index, SFGlyphTrait trait);
+SF_INTERNAL SFGlyphTraits SFAlbumGetTraits(SFAlbumRef album, SFUInteger index);
+SF_INTERNAL void SFAlbumSetTraits(SFAlbumRef album, SFUInteger index, SFGlyphTraits traits);
 
 SF_INTERNAL SFUInteger SFAlbumGetAssociation(SFAlbumRef album, SFUInteger index);
 SF_INTERNAL void SFAlbumSetAssociation(SFAlbumRef album, SFUInteger index, SFUInteger association);

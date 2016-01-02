@@ -24,18 +24,24 @@
 #include "SFAlbum.h"
 #include "SFPattern.h"
 #include "SFFont.h"
+#include "SFGlyphTraits.h"
+
+typedef struct _SFFeatureKnowledge {
+    SFFeatureTag tag;
+    SFGlyphTraits traits;
+} SFFeatureKnowledge, *SFFeatureKnowledgeRef;
 
 typedef struct _SFScriptKnowledge {
-    /* All features of the script in implementation order; Substitution as well as positioning. */
+    /* All features of a script in implementation order; Substitution as well as positioning. */
     struct {
-        const SFFeatureTag *array;
+        const SFFeatureKnowledge *items;
         SFUInteger count;
-    } featureTags;
-	/* All ranges of those features which must be applied simultaneously. */
+    } features;
+	/* Groups of features which must be applied simultaneously in a script. */
     struct {
-        const SFRange *array;
+        const SFRange *items;
         SFUInteger count;
-    } featureGroups;
+    } groups;
 } SFScriptKnowledge, *SFScriptKnowledgeRef;
 
 /**

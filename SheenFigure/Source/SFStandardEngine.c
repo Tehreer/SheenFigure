@@ -26,26 +26,27 @@
 #include "SFTextProcessor.h"
 #include "SFStandardEngine.h"
 
-static const SFFeatureTag _SFStandardFeatureTagArray[] = {
+static SFScriptKnowledgeRef _SFStandardKnowledgeSeekScript(const void *object, SFScriptTag scriptTag);
+static void _SFStandardEngineProcessAlbum(const void *object, SFPatternRef pattern, SFAlbumRef album);
+
+static const SFFeatureKnowledge _SFStandardFeatureArray[] = {
     /* Language based forms. */
-    SFFeatureTagCCMP,
+    { SFFeatureTagCCMP, 0 },
     /* Typographical forms */
-    SFFeatureTagLIGA,
-    SFFeatureTagCLIG,
+    { SFFeatureTagLIGA, 0 },
+    { SFFeatureTagCLIG, 0 },
     /* Positioning features. */
-    SFFeatureTagDIST,
-    SFFeatureTagKERN,
-    SFFeatureTagMARK,
-    SFFeatureTagMKMK
+    { SFFeatureTagDIST, 0 },
+    { SFFeatureTagKERN, 0 },
+    { SFFeatureTagMARK, 0 },
+    { SFFeatureTagMKMK, 0 }
 };
-static const SFUInteger _SFStandardFeatureTagCount = sizeof(_SFStandardFeatureTagArray) / sizeof(SFFeatureTag);
+static const SFUInteger _SFStandardFeatureCount = sizeof(_SFStandardFeatureArray) / sizeof(SFFeatureKnowledge);
 
 static SFScriptKnowledge _SFStandardScriptKnowledge = {
-    { _SFStandardFeatureTagArray, _SFStandardFeatureTagCount },
+    { _SFStandardFeatureArray, _SFStandardFeatureCount },
     { NULL, 0 }
 };
-
-static SFScriptKnowledgeRef _SFStandardKnowledgeSeekScript(const void *object, SFScriptTag scriptTag);
 
 SFShapingKnowledge SFStandardKnowledgeInstance = {
     &_SFStandardKnowledgeSeekScript
@@ -67,9 +68,6 @@ static SFScriptKnowledgeRef _SFStandardKnowledgeSeekScript(const void *object, S
     return NULL;
 }
 
-
-static void _SFStandardEngineProcessAlbum(const void *object, SFPatternRef pattern, SFAlbumRef album);
-
 static SFShapingEngine _SFStandardEngineBase = {
     &_SFStandardEngineProcessAlbum
 };
@@ -82,7 +80,6 @@ SF_INTERNAL void SFStandardEngineInitialize(SFStandardEngineRef standardEngine)
 static void _SFStandardEngineProcessAlbum(const void *object, SFPatternRef pattern, SFAlbumRef album)
 {
     SFTextProcessor processor;
-
     SFTextProcessorInitialize(&processor, pattern, album);
     SFTextProcessorDiscoverGlyphs(&processor);
     SFTextProcessorSubstituteGlyphs(&processor);

@@ -108,7 +108,7 @@ static void _SFAddFeatureGroup(_SFSchemeStateRef state, SFUInteger index, SFUInt
     SFUInteger limit = index + count;
 
     for (; index < limit; index++) {
-        SFFeatureTag featureTag = state->knowledge->featureTags.array[index];
+        SFFeatureTag featureTag = state->knowledge->features.items[index].tag;
         SFData feature = _SFSearchFeatureInLangSys(state->langSys, state->featureList, featureTag);
 
         if (feature) {
@@ -128,13 +128,13 @@ static void _SFAddFeatureGroup(_SFSchemeStateRef state, SFUInteger index, SFUInt
 
 static void _SFAddFeatures(_SFSchemeStateRef state)
 {
-    SFUInteger featureCount = state->knowledge->featureTags.count;
-    SFUInteger groupCount = state->knowledge->featureGroups.count;
+    SFUInteger featureCount = state->knowledge->features.count;
+    SFUInteger groupCount = state->knowledge->groups.count;
     SFUInteger featureIndex = 0;
     SFUInteger groupIndex;
 
     for (groupIndex = 0; groupIndex < groupCount; groupIndex++) {
-        SFRange groupRange = state->knowledge->featureGroups.array[groupIndex];
+        SFRange groupRange = state->knowledge->groups.items[groupIndex];
 
         if (groupRange.start > featureIndex) {
             _SFAddFeatureGroup(state, featureIndex, groupRange.start - featureIndex, SFFalse);

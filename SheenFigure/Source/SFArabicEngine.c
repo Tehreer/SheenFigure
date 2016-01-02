@@ -27,31 +27,39 @@
 #include "SFArabicEngine.h"
 
 static SFScriptKnowledgeRef _SFArabicKnowledgeSeekScript(const void *object, SFScriptTag scriptTag);
+static void SFArabicEngineProcessAlbum(const void *object, SFPatternRef pattern, SFAlbumRef album);
 
-static const SFFeatureTag _SFArabicFeatureTagArray[] = {
-    /* Language based forms */
-    SFFeatureTagCCMP,
-    SFFeatureTagISOL,
-    SFFeatureTagFINA,
-    SFFeatureTagMEDI,
-    SFFeatureTagINIT,
-    SFFeatureTagRLIG,
-    SFFeatureTagCALT,
-    /* Typographical forms */
-    SFFeatureTagLIGA,
-    SFFeatureTagDLIG,
-    SFFeatureTagCSWH,
-    SFFeatureTagMSET,
-    /* Positioning features */
-    SFFeatureTagCURS,
-    SFFeatureTagKERN,
-    SFFeatureTagMARK,
-    SFFeatureTagMKMK
+enum {
+    _SFGlyphTraitIsolated = SFGlyphTraitMakeSpecial(0),
+    _SFGlyphTraitInitial  = SFGlyphTraitMakeSpecial(1),
+    _SFGlyphTraitMedial   = SFGlyphTraitMakeSpecial(2),
+    _SFGlyphTraitFinal    = SFGlyphTraitMakeSpecial(3)
 };
-static const SFUInteger _SFArabicFeatureTagCount = sizeof(_SFArabicFeatureTagArray) / sizeof(SFFeatureTag);
+
+static const SFFeatureKnowledge _SFArabicFeatureArray[] = {
+    /* Language based forms */
+    { SFFeatureTagCCMP, 0 },
+    { SFFeatureTagISOL, _SFGlyphTraitIsolated },
+    { SFFeatureTagFINA, _SFGlyphTraitFinal    },
+    { SFFeatureTagMEDI, _SFGlyphTraitMedial   },
+    { SFFeatureTagINIT, _SFGlyphTraitInitial  },
+    { SFFeatureTagRLIG, 0 },
+    { SFFeatureTagCALT, 0 },
+    /* Typographical forms */
+    { SFFeatureTagLIGA, 0 },
+    { SFFeatureTagDLIG, 0 },
+    { SFFeatureTagCSWH, 0 },
+    { SFFeatureTagMSET, 0 },
+    /* Positioning features */
+    { SFFeatureTagCURS, 0 },
+    { SFFeatureTagKERN, 0 },
+    { SFFeatureTagMARK, 0 },
+    { SFFeatureTagMKMK, 0 }
+};
+static const SFUInteger _SFArabicFeatureCount = sizeof(_SFArabicFeatureArray) / sizeof(SFFeatureKnowledge);
 
 static SFScriptKnowledge _SFArabicScriptKnowledge = {
-    { _SFArabicFeatureTagArray, _SFArabicFeatureTagCount },
+    { _SFArabicFeatureArray, _SFArabicFeatureCount },
     { NULL, 0 }
 };
 
@@ -69,9 +77,6 @@ static SFScriptKnowledgeRef _SFArabicKnowledgeSeekScript(const void *object, SFS
     return NULL;
 }
 
-
-static void SFArabicEngineProcessAlbum(const void *object, SFPatternRef pattern, SFAlbumRef album);
-
 static SFShapingEngine _SFArabicEngineBase = {
     &SFArabicEngineProcessAlbum
 };
@@ -84,7 +89,6 @@ SF_INTERNAL void SFArabicEngineInitialize(SFArabicEngineRef arabicEngine)
 static void SFArabicEngineProcessAlbum(const void *object, SFPatternRef pattern, SFAlbumRef album)
 {
     SFTextProcessor processor;
-
     SFTextProcessorInitialize(&processor, pattern, album);
     SFTextProcessorDiscoverGlyphs(&processor);
     SFTextProcessorSubstituteGlyphs(&processor);
