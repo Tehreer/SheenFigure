@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Muhammad Tayyab Akram
+ * Copyright (C) 2016 Muhammad Tayyab Akram
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,7 +27,7 @@ enum {
     SFJoiningTypeC   = 0x04, /**< Join Causing */
     SFJoiningTypeU   = 0x05, /**< Non Joining */
     SFJoiningTypeT   = 0x06, /**< Transparent */
-    SFJoiningTypeF   = 0x07 /**< Unavailable */
+    SFJoiningTypeF   = 0x07  /**< Unavailable */
 };
 typedef SFUInt8 SFJoiningType;
 

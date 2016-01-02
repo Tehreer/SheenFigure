@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Muhammad Tayyab Akram
+ * Copyright (C) 2016 Muhammad Tayyab Akram
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-#ifndef SF_SCHEME_INTERNAL_H
-#define SF_SCHEME_INTERNAL_H
+#ifndef _SF_SCHEME_INTERNAL_H
+#define _SF_SCHEME_INTERNAL_H
 
 #include <SFFont.h>
 #include <SFScheme.h>

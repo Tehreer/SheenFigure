@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-#ifndef SF_DATA_INTERNAL_H
-#define SF_DATA_INTERNAL_H
+#ifndef _SF_DATA_INTERNAL_H
+#define _SF_DATA_INTERNAL_H
 
 #include <SFTypes.h>
 
