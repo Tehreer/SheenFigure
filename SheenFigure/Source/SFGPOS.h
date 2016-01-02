@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Muhammad Tayyab Akram
+ * Copyright (C) 2016 Muhammad Tayyab Akram
  *
  * Licensed under the Apache License, Version 2.0 (dhe "License");
  * you may not use this file except in compliance with the License.
@@ -31,186 +31,200 @@ enum {
     SFLookupTypeExtensionPositioning = 9
 };
 
-/*********************************GPOS HEADER*********************************/
+/*******************************************GPOS HEADER********************************************/
 
-#define SF_GPOS_VERSION(t)                          SF_DATA__READ_UINT32(t, 0)
-#define SF_GPOS_SCRIPT_LIST(t)                      SF_DATA__READ_UINT16(t, 4)
-#define SF_GPOS_FEATURE_LIST(t)                     SF_DATA__READ_UINT16(t, 6)
-#define SF_GPOS_LOOKUP_LIST(t)                      SF_DATA__READ_UINT16(t, 8)
+#define SFGPOS_Version(data)                        SFData_UInt32(data, 0)
+#define SFGPOS_ScriptListOffset(data)               SFData_UInt16(data, 4)
+#define SFGPOS_FeatureListOffset(data)              SFData_UInt16(data, 6)
+#define SFGPOS_LookupListOffset(data)               SFData_UInt16(data, 8)
 
-/*****************************************************************************/
+/**************************************************************************************************/
 
-/********************************VALUE RECORD*********************************/
+/*******************************************VALUE RECORD*******************************************/
 
-#define SF_VALUE_FORMAT__X_PLACEMENT(f)             ((f) & 0x0001 ? 1 : 0)
-#define SF_VALUE_FORMAT__Y_PLACEMENT(f)             ((f) & 0x0002 ? 1 : 0)
-#define SF_VALUE_FORMAT__X_ADVANCE(f)               ((f) & 0x0004 ? 1 : 0)
-#define SF_VALUE_FORMAT__Y_ADVANCE(f)               ((f) & 0x0010 ? 1 : 0)
-#define SF_VALUE_FORMAT__X_PLA_DEVICE(f)            ((f) & 0x0020 ? 1 : 0)
-#define SF_VALUE_FORMAT__Y_PLA_DEVICE(f)            ((f) & 0x0040 ? 1 : 0)
-#define SF_VALUE_FORMAT__X_ADV_DEVICE(f)            ((f) & 0x0080 ? 1 : 0)
-#define SF_VALUE_FORMAT__Y_ADV_DEVICE(f)            ((f) & 0xF000 ? 1 : 0)
-#define SF_VALUE_FORMAT__VALUE_COUNT(f)             \
+#define SFValueFormat_XPlacement(format)            ((format) & 0x0001 ? 1 : 0)
+#define SFValueFormat_YPlacement(format)            ((format) & 0x0002 ? 1 : 0)
+#define SFValueFormat_XAdvance(format)              ((format) & 0x0004 ? 1 : 0)
+#define SFValueFormat_YAdvance(format)              ((format) & 0x0010 ? 1 : 0)
+#define SFValueFormat_XPlaDevice(format)            ((format) & 0x0020 ? 1 : 0)
+#define SFValueFormat_YPlaDevice(format)            ((format) & 0x0040 ? 1 : 0)
+#define SFValueFormat_XAdvDevice(format)            ((format) & 0x0080 ? 1 : 0)
+#define SFValueFormat_YAdvDevice(format)            ((format) & 0xF000 ? 1 : 0)
+#define SFValueFormat_ValueCount(format)            \
 (                                                   \
-   SF_VALUE_FORMAT__X_PLACEMENT(f)                  \
- + SF_VALUE_FORMAT__Y_PLACEMENT(f)                  \
- + SF_VALUE_FORMAT__X_ADVANCE(f)                    \
- + SF_VALUE_FORMAT__Y_ADVANCE(f)                    \
- + SF_VALUE_FORMAT__X_PLA_DEVICE(f)                 \
- + SF_VALUE_FORMAT__Y_PLA_DEVICE(f)                 \
- + SF_VALUE_FORMAT__X_ADV_DEVICE(f)                 \
- + SF_VALUE_FORMAT__Y_ADV_DEVICE(f)                 \
+   SFValueFormat_XPlacement(format)                 \
+ + SFValueFormat_YPlacement(format)                 \
+ + SFValueFormat_XAdvance(format)                   \
+ + SFValueFormat_YAdvance(format)                   \
+ + SFValueFormat_XPlaDevice(format)                 \
+ + SFValueFormat_YPlaDevice(format)                 \
+ + SFValueFormat_XAdvDevice(format)                 \
+ + SFValueFormat_YAdvDevice(format)                 \
 )
 
-#define SF_VALUE_RECORD__NEXT_VALUE(d, o)           SF_DATA__READ_UINT16(d, o), (o += 2)
-#define SF_VALUE_RECORD__SIZE(f)                    \
+#define SFValueRecord_NextValue(data, offset)       SFData_UInt16(data, offset), (offset += 2)
+#define SFValueRecord_Size(format)                  \
 (                                                   \
-   (f) ? 2 * SF_VALUE_FORMAT__VALUE_COUNT(f) : 0    \
+   (format)                                         \
+ ? (2 * SFValueFormat_ValueCount(format))           \
+ : (0)                                              \
 )
 
-/*****************************************************************************/
+/**************************************************************************************************/
 
-/*******************SINGLE ADJUSTMENT POSITIONING SUBTABLE********************/
+/******************************SINGLE ADJUSTMENT POSITIONING SUBTABLE******************************/
 
-#define SF_SINGLE_POS_FORMAT(d)                     SF_DATA__READ_UINT16(d, 0)
-#define SF_SINGLE_POS_F1__COVERAGE(d)               SF_DATA__READ_UINT16(d, 2)
-#define SF_SINGLE_POS_F1__VALUE_FORMAT(d)           SF_DATA__READ_UINT16(d, 4)
-#define SF_SINGLE_POS_F1__VALUE_RECORD(d)           SF_DATA__SUBDATA(d, 6)
+#define SFSinglePos_Format(data)                    SFData_UInt16(data, 0)
 
-#define SF_SINGLE_POS_F2__COVERAGE(d)               SF_DATA__READ_UINT16(d, 2)
-#define SF_SINGLE_POS_F2__VALUE_FORMAT(d)           SF_DATA__READ_UINT16(d, 4)
-#define SF_SINGLE_POS_F2__VALUE_COUNT(d)            SF_DATA__READ_UINT16(d, 6)
-#define SF_SINGLE_POS_F2__VALUE_RECORD(d, i, s)     SF_DATA__SUBDATA(d, 8 + ((i) * (s)))
+#define SFSinglePosF1_Coverage(data)                SFData_UInt16(data, 2)
+#define SFSinglePosF1_ValueFormat(data)             SFData_UInt16(data, 4)
+#define SFSinglePosF1_ValueRecord(data)             SFData_Subdata(data, 6)
 
-#define SF_PAIR_SET__PAIR_VALUE_COUNT(d)            SF_DATA__READ_UINT16(d, 0)
-#define SF_PAIR_SET__PAIR_VALUE_RECORD(d, i, s)     SF_DATA__SUBDATA(d, 2 + ((i) * (s)))
-#define SF_PAIR_SET__PAIR_VALUE_RECORD_ARRAY(d)     SF_PAIR_SET__PAIR_VALUE_RECORD(d, 0, 0)
+#define SFSinglePosF2_CoverageOffset(data)          SFData_UInt16(data, 2)
+#define SFSinglePosF2_ValueFormat(data)             SFData_UInt16(data, 4)
+#define SFSinglePosF2_ValueCount(data)              SFData_UInt16(data, 6)
+#define SFSinglePosF2_ValueRecord(data, index, recordSize)  \
+                                                    SFData_Subdata(data, 8 + ((index) * (recordSize)))
 
-#define SF_PAIR_VALUE_RECORD__SIZE(s1, s2)          (2 + s1 + s2)
-#define SF_PAIR_VALUE_RECORD__SECOND_GLYPH(d)       SF_DATA__READ_UINT16(d, 0)
-#define SF_PAIR_VALUE_RECORD__VALUE1(d)             SF_DATA__SUBDATA(d, 2)
-#define SF_PAIR_VALUE_RECORD__VALUE2(d, s1)         SF_DATA__SUBDATA(d, 2 + (s1))
+#define SFPairSet_PairValueCount(data)              SFData_UInt16(data, 0)
+#define SFPairSet_PairValueRecord(data, index, recordSize)  \
+                                                    SFData_Subdata(data, 2 + ((index) * (recordSize)))
+#define SFPairSet_PairValueRecordArray(data)        SFPairSet_PairValueRecord(data, 0, 0)
 
-/*****************************************************************************/
+#define SFPairValueRecord_Size(value1Size, value2Size)      \
+                                                    (2 + (value1Size) + (value2Size))
+#define SFPairValueRecord_SecondGlyph(data)         SFData_UInt16(data, 0)
+#define SFPairValueRecord_Value1(data)              SFData_Subdata(data, 2)
+#define SFPairValueRecord_Value2(data, value1Size)  SFData_Subdata(data, 2 + (value1Size))
 
-/********************PAIR ADJUSTMENT POSITIONING SUBTABLE*********************/
+/**************************************************************************************************/
 
-#define SF_PAIR_POS_FORMAT(d)                       SF_DATA__READ_UINT16(d, 0)
-#define SF_PAIR_POS_F1__COVERAGE(d)                 SF_DATA__READ_UINT16(d, 2)
-#define SF_PAIR_POS_F1__VALUE_FORMAT1(d)            SF_DATA__READ_UINT16(d, 4)
-#define SF_PAIR_POS_F1__VALUE_FORMAT2(d)            SF_DATA__READ_UINT16(d, 6)
-#define SF_PAIR_POS_F1__PAIR_SET_COUNT(d)           SF_DATA__READ_UINT16(d, 8)
-#define SF_PAIR_POS_F1__PAIR_SET(d, i)              SF_DATA__READ_UINT16(d, 10 + ((i) * 2))
+/*******************************PAIR ADJUSTMENT POSITIONING SUBTABLE*******************************/
 
-#define SF_PAIR_POS_F2__COVERAGE(d)                 SF_DATA__READ_UINT16(d, 2)
-#define SF_PAIR_POS_F2__VALUE_FORMAT1(d)            SF_DATA__READ_UINT16(d, 4)
-#define SF_PAIR_POS_F2__VALUE_FORMAT2(d)            SF_DATA__READ_UINT16(d, 6)
-#define SF_PAIR_POS_F2__CLASS_DEF1(d)               SF_DATA__READ_UINT16(d, 8)
-#define SF_PAIR_POS_F2__CLASS_DEF2(d)               SF_DATA__READ_UINT16(d, 10)
-#define SF_PAIR_POS_F2__CLASS1_COUNT(d)             SF_DATA__READ_UINT16(d, 12)
-#define SF_PAIR_POS_F2__CLASS2_COUNT(d)             SF_DATA__READ_UINT16(d, 14)
-#define SF_PAIR_POS_F2__CLASS1_RECORD(d, i, c1s)    SF_DATA__SUBDATA(d, 16 + ((i) * (c1s)))
+#define SFPairPos_Format(data)                      SFData_UInt16(data, 0)
 
-#define SF_CLASS1_RECORD__SIZE(c2c, c2s)            (c2c * c2s)
-#define SF_CLASS1_RECORD__CLASS2_RECORD(d, i, c2s)  SF_DATA__SUBDATA(d, (i) * (c2s))
+#define SFPairPosF1_CoverageOffset(data)            SFData_UInt16(data, 2)
+#define SFPairPosF1_ValueFormat1(data)              SFData_UInt16(data, 4)
+#define SFPairPosF1_ValueFormat2(data)              SFData_UInt16(data, 6)
+#define SFPairPosF1_PairSetCount(data)              SFData_UInt16(data, 8)
+#define SFPairPosF1_PairSetOffset(data, index)      SFData_UInt16(data, 10 + ((index) * 2))
 
-#define SF_CLASS2_RECORD__SIZE(s1, s2)              (s1 + s2)
-#define SF_CLASS2_RECORD__VALUE1(d)                 SF_DATA__SUBDATA(d, 0)
-#define SF_CLASS2_RECORD__VALUE2(d, s1)             SF_DATA__SUBDATA(d, s1)
+#define SFPairPosF2_CoverageOffset(data)            SFData_UInt16(data, 2)
+#define SFPairPosF2_ValueFormat1(data)              SFData_UInt16(data, 4)
+#define SFPairPosF2_ValueFormat2(data)              SFData_UInt16(data, 6)
+#define SFPairPosF2_ClassDef1Offset(data)           SFData_UInt16(data, 8)
+#define SFPairPosF2_ClassDef2Offset(data)           SFData_UInt16(data, 10)
+#define SFPairPosF2_Class1Count(data)               SFData_UInt16(data, 12)
+#define SFPairPosF2_Class2Count(data)               SFData_UInt16(data, 14)
+#define SFPairPosF2_Class1Record(data, index, c1Size)   \
+                                                    SFData_Subdata(data, 16 + ((index) * (c1Size)))
 
-/*****************************************************************************/
+#define SFClass1Record_Size(c2Count, c2Size)        ((c2Count) * (c2Size))
+#define SFClass1Record_Class2Record(data, index, c2Size)\
+                                                    SFData_Subdata(data, (index) * (c2Size))
 
-/*******************CURSIVE ATTACHMENT POSITIONING SUBTABLE*******************/
+#define SFClass2Record_Value(v1Size, v2Size)        ((v1Size) + (v2Size))
+#define SFClass2Record_Value1(data)                 SFData_Subdata(data, 0)
+#define SFClass2Record_Value2(data, v1Size)         SFData_Subdata(data, v1Size)
 
-#define SF_CURSIVE_POS__FORMAT(d)                   SF_DATA__READ_UINT16(d, 0)
-#define SF_CURSIVE_POS__COVERAGE(d)                 SF_DATA__READ_UINT16(d, 2)
-#define SF_CURSIVE_POS__ENTRY_EXIT_COUNT(d)         SF_DATA__READ_UINT16(d, 4)
-#define SF_CURSIVE_POS__ENTRY_EXIT_RECORD(d, i)     SF_DATA__SUBDATA(d, 6 + ((i) * 4))
+/**************************************************************************************************/
 
-#define SF_ENTRY_EXIT_RECORD__ENTRY_ANCHOR(d)       SF_DATA__READ_UINT16(d, 0)
-#define SF_ENTRY_EXIT_RECORD__EXIT_ANCHOR(d)        SF_DATA__READ_UINT16(d, 2)
+/*****************************CURSIVE ATTACHMENT POSITIONING SUBTABLE******************************/
 
-/*****************************************************************************/
+#define SFCursivePos_Format(data)                   SFData_UInt16(data, 0)
+#define SFCursivePos_CoverageOffset(data)           SFData_UInt16(data, 2)
+#define SFCursivePos_EntryExitCount(data)           SFData_UInt16(data, 4)
+#define SFCursivePos_EntryExitRecord(data, index)   SFData_Subdata(data, 6 + ((index) * 4))
 
-/****************MARK TO BASE ATTACHMENT POSITIONING SUBTABLE*****************/
+#define SFEntryExitRecord_EntryAnchorOffset(data)   SFData_UInt16(data, 0)
+#define SFEntryExitRecord_ExitAnchorOffset(data)    SFData_UInt16(data, 2)
 
-#define SF_MARK_BASE_POS__FORMAT(d)                 SF_DATA__READ_UINT16(d, 0)
-#define SF_MARK_BASE_POS__MARK_COVERAGE(d)          SF_DATA__READ_UINT16(d, 2)
-#define SF_MARK_BASE_POS__BASE_COVERAGE(d)          SF_DATA__READ_UINT16(d, 4)
-#define SF_MARK_BASE_POS__CLASS_COUNT(d)            SF_DATA__READ_UINT16(d, 6)
-#define SF_MARK_BASE_POS__MARK_ARRAY(d)             SF_DATA__READ_UINT16(d, 8)
-#define SF_MARK_BASE_POS__BASE_ARRAY(d)             SF_DATA__READ_UINT16(d, 10)
+/**************************************************************************************************/
 
-#define SF_BASE_ARRAY__BASE_COUNT(d)                SF_DATA__READ_UINT16(d, 0)
-#define SF_BASE_ARRAY__BASE_RECORD(d, i, cc)        SF_DATA__SUBDATA(d, 2 + ((i) * (2 * (cc))))
+/***************************MARK TO BASE ATTACHMENT POSITIONING SUBTABLE***************************/
 
-#define SF_BASE_RECORD__BASE_ANCHOR(d, i)           SF_DATA__READ_UINT16(d, 0 + ((i) * 2))
+#define SFMarkBasePos_Format(data)                  SFData_UInt16(data, 0)
+#define SFMarkBasePos_MarkCoverageOffset(data)      SFData_UInt16(data, 2)
+#define SFMarkBasePos_BaseCoverageOffset(data)      SFData_UInt16(data, 4)
+#define SFMarkBasePos_ClassCount(data)              SFData_UInt16(data, 6)
+#define SFMarkBasePos_MarkArrayOffset(data)         SFData_UInt16(data, 8)
+#define SFMarkBasePos_BaseArrayOffset(data)         SFData_UInt16(data, 10)
 
-/*****************************************************************************/
+#define SFBaseArray_BaseCount(data)                 SFData_UInt16(data, 0)
+#define SFBaseArray_BaseRecord(data, index, classCount) \
+                                                    SFData_Subdata(data, 2 + ((index) * (2 * (classCount))))
 
-/**************MARK TO LIGATURE ATTACHMENT POSITIONING SUBTABLE***************/
+#define SFBaseArray_BaseAnchorOffset(data, index)   SFData_UInt16(data, 0 + ((index) * 2))
 
-#define SF_MARK_LIG_POS__FORMAT(d)                  SF_DATA__READ_UINT16(d, 0)
-#define SF_MARK_LIG_POS__MARK_COVERAGE(d)           SF_DATA__READ_UINT16(d, 2)
-#define SF_MARK_LIG_POS__LIGATURE_COVERAGE(d)       SF_DATA__READ_UINT16(d, 4)
-#define SF_MARK_LIG_POS__CLASS_COUNT(d)             SF_DATA__READ_UINT16(d, 6)
-#define SF_MARK_LIG_POS__MARK_ARRAY(d)              SF_DATA__READ_UINT16(d, 8)
-#define SF_MARK_LIG_POS__LIGATURE_ARRAY(d)          SF_DATA__READ_UINT16(d, 10)
+/**************************************************************************************************/
 
-#define SF_LIGATURE_ARRAY__LIGATURE_COUNT(d)        SF_DATA__READ_UINT16(d, 0)
-#define SF_LIGATURE_ARRAY__LIGATURE_ATTACH(d, i)    SF_DATA__READ_UINT16(d, 2 + ((i) * 2))
+/*************************MARK TO LIGATURE ATTACHMENT POSITIONING SUBTABLE*************************/
 
-#define SF_LIGATURE_ATTACH__COMPONENT_COUNT(d)      SF_DATA__READ_UINT16(d, 0)
-#define SF_LIGATURE_ATTACH__COMPONENT_RECORD(d, i, cc) \
-                                                    SF_DATA__SUBDATA(d, 2 + ((i) * (2 * (cc))))
+#define SFMarkLigPos_Format(data)                   SFData_UInt16(data, 0)
+#define SFMarkLigPos_MarkCoverageOffset(data)       SFData_UInt16(data, 2)
+#define SFMarkLigPos_LigatureCoverageOffset(data)   SFData_UInt16(data, 4)
+#define SFMarkLigPos_ClassCount(data)               SFData_UInt16(data, 6)
+#define SFMarkLigPos_MarkArrayOffset(data)          SFData_UInt16(data, 8)
+#define SFMarkLigPos_LigatureArrayOffset(data)      SFData_UInt16(data, 10)
 
-#define SF_COMPONENT_RECORD__LIGATURE_ANCHOR(d, i)  SF_DATA__READ_UINT16(d, 0 + ((i) * 2))
+#define SFLigatureArray_LigatureCount(data)         SFData_UInt16(data, 0)
+#define SFLigatureArray_LigatureAttachOffset(data, index)   \
+                                                    SFData_UInt16(data, 2 + ((index) * 2))
 
-/*****************************************************************************/
+#define SFLigatureAttach_ComponentCount(data)       SFData_UInt16(data, 0)
+#define SFLigatureAttach_ComponentRecord(data, index, classCount) \
+                                                    SFData_Subdata(data, 2 + ((index) * (2 * (classCount))))
 
-/**************MARK TO LIGATURE ATTACHMENT POSITIONING SUBTABLE***************/
+#define SFComponentRecord_LigatureAnchorOffset(data, index) \
+                                                    SFData_UInt16(data, 0 + ((index) * 2))
 
-#define SF_MARK_MARK_POS__FORMAT(d)                 SF_DATA__READ_UINT16(d, 0)
-#define SF_MARK_MARK_POS__MARK1_COVERAGE(d)         SF_DATA__READ_UINT16(d, 2)
-#define SF_MARK_MARK_POS__MARK2_COVERAGE(d)         SF_DATA__READ_UINT16(d, 4)
-#define SF_MARK_MARK_POS__CLASS_COUNT(d)            SF_DATA__READ_UINT16(d, 6)
-#define SF_MARK_MARK_POS__MARK1_ARRAY(d)            SF_DATA__READ_UINT16(d, 8)
-#define SF_MARK_MARK_POS__MARK2_ARRAY(d)            SF_DATA__READ_UINT16(d, 10)
+/**************************************************************************************************/
 
-#define SF_MARK2_ARRAY__MARK2_COUNT(d)              SF_DATA__READ_UINT16(d, 0)
-#define SF_MARK2_ARRAY__MARK2_RECORD(d, i, cc)      SF_DATA__SUBDATA(d, 2 + ((i) * (2 * (cc))))
+/*************************MARK TO LIGATURE ATTACHMENT POSITIONING SUBTABLE*************************/
 
-#define SF_MARK2_RECORD__MARK2_ANCHOR(d, i)         SF_DATA__READ_UINT16(d, 2 + ((i) * 2))
+#define SFMarkMarkPos_Format(data)                  SFData_UInt16(data, 0)
+#define SFMarkMarkPos_Mark1CoverageOffset(data)     SFData_UInt16(data, 2)
+#define SFMarkMarkPos_Mark2CoverageOffset(data)     SFData_UInt16(data, 4)
+#define SFMarkMarkPos_ClassCount(data)              SFData_UInt16(data, 6)
+#define SFMarkMarkPos_Mark1ArrayOffset(data)        SFData_UInt16(data, 8)
+#define SFMarkMarkPos_Mark2ArrayOffset(data)        SFData_UInt16(data, 10)
 
-/*****************************************************************************/
+#define SFMark2Array_Mark2Count(data)               SFData_UInt16(data, 0)
+#define SFMark2Array_Mark2Record(data, index, classCount)   \
+                                                    SFData_Subdata(data, 2 + ((index) * (2 * (classCount))))
 
-/********************************ANCHOR TABLE*********************************/
+#define SFMark2Record_Mark2AnchorOffset(data, index)        \
+                                                    SFData_UInt16(data, 2 + ((index) * 2))
 
-#define SF_ANCHOR_FORMAT(d)                         SF_DATA__READ_UINT16(d, 0)
+/**************************************************************************************************/
 
-#define SF_ANCHOR_F1__X_COORDINATE(d)               SF_DATA__READ_INT16 (d, 2)
-#define SF_ANCHOR_F1__Y_COORDINATE(d)               SF_DATA__READ_INT16 (d, 4)
+/*******************************************ANCHOR TABLE*******************************************/
 
-#define SF_ANCHOR_F2__X_COORDINATE(d)               SF_DATA__READ_INT16 (d, 2)
-#define SF_ANCHOR_F2__Y_COORDINATE(d)               SF_DATA__READ_INT16 (d, 4)
-#define SF_ANCHOR_F2__ANCHOR_POINT(d)               SF_DATA__READ_UINT16(d, 6)
+#define SFAnchor_Format(data)                       SFData_UInt16(data, 0)
 
-#define SF_ANCHOR_F3__X_COORDINATE(d)               SF_DATA__READ_INT16 (d, 2)
-#define SF_ANCHOR_F3__Y_COORDINATE(d)               SF_DATA__READ_INT16 (d, 4)
-#define SF_ANCHOR_F3__ANCHOR_POINT(d)               SF_DATA__READ_UINT16(d, 6)
-#define SF_ANCHOR_F3__X_DEVICE(d)                   SF_DATA__READ_UINT16(d, 8)
-#define SF_ANCHOR_F3__Y_DEVICE(d)                   SF_DATA__READ_UINT16(d, 10)
+#define SFAnchorF1_XCoordinate(data)                SFData_Int16 (data, 2)
+#define SFAnchorF1_YCoordinate(data)                SFData_Int16 (data, 4)
 
-/*****************************************************************************/
+#define SFAnchorF2_XCoordinate(data)                SFData_Int16 (data, 2)
+#define SFAnchorF2_YCoordinate(data)                SFData_Int16 (data, 4)
+#define SFAnchorF2_AnchorPoint(data)                SFData_UInt16(data, 6)
 
-/*********************************MARK ARRAY**********************************/
+#define SFAnchorF3_XCoordinate(data)                SFData_Int16 (data, 2)
+#define SFAnchorF3_YCoordinate(data)                SFData_Int16 (data, 4)
+#define SFAnchorF3_AnchorPoint(data)                SFData_UInt16(data, 6)
+#define SFAnchorF3_XDeviceOffset(data)              SFData_UInt16(data, 8)
+#define SFAnchorF3_YDeviceOffset(data)              SFData_UInt16(data, 10)
 
-#define SF_MARK_ARRAY__MARK_COUNT(d)                SF_DATA__READ_UINT16(d, 0)
-#define SF_MARK_ARRAY__MARK_RECORD(d, i)            SF_DATA__SUBDATA(d, 2 + ((i) * 4))
+/**************************************************************************************************/
 
-#define SF_MARK_RECORD__CLASS(d)                    SF_DATA__READ_UINT16(d, 0)
-#define SF_MARK_RECORD__MARK_ANCHOR(d)              SF_DATA__READ_UINT16(d, 2)
+/********************************************MARK ARRAY********************************************/
 
-/*****************************************************************************/
+#define SFMarkArray_MarkCount(data)                 SFData_UInt16(data, 0)
+#define SFMarkArray_MarkRecord(data, index)         SFData_Subdata(data, 2 + ((index) * 4))
+
+#define SFMarkRecord_Class(data)                    SFData_UInt16(data, 0)
+#define SFMarkRecord_MarkAnchorOffset(data)         SFData_UInt16(data, 2)
+
+/**************************************************************************************************/
 
 #endif

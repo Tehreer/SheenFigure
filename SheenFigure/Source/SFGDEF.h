@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Muhammad Tayyab Akram
+ * Copyright (C) 2016 Muhammad Tayyab Akram
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,38 +29,54 @@ enum {
 };
 typedef SFUInt16 SFGlyphClassValue;
 
-#define SF_GDEF__VERSION(t)                             SF_DATA__READ_UINT32(t, 0)
-#define SF_GDEF__GLYPH_CLASS_DEF_OFFSET(t)              SF_DATA__READ_UINT16(t, 4)
-#define SF_GDEF__ATTACH_LIST_OFFSET(t)                  SF_DATA__READ_UINT16(t, 6)
-#define SF_GDEF__LIG_CARET_LIST_OFFSET(t)               SF_DATA__READ_UINT16(t, 8)
-#define SF_GDEF__MARK_ATTACH_CLASS_DEF_OFFSET(t)        SF_DATA__READ_UINT16(t, 10)
-#define SF_GDEF__MARK_GLYPH_SETS_DEF_OFFSET(t)          SF_DATA__READ_UINT16(t, 12)
+/*******************************************GSUB HEADER********************************************/
 
-#define SF_ATTACH_LIST__COVERAGE(t)                     SF_DATA__READ_UINT16(t, 0)
-#define SF_ATTACH_LIST__GLYPH_COUNT(t)                  SF_DATA__READ_UINT16(t, 2)
-#define SF_ATTACH_LIST__ATTACH_POINT(t)                 SF_DATA__READ_UINT16(t, 4)
+#define SFGDEF_Version(data)                            SFData_UInt32(data, 0)
+#define SFGDEF_GlyphClassDefOffset(data)                SFData_UInt16(data, 4)
+#define SFGDEF_AttachListOffset(data)                   SFData_UInt16(data, 6)
+#define SFGDEF_LigCarretListOffset(data)                SFData_UInt16(data, 8)
+#define SFGDEF_MarkAttachClassDefOffset(data)           SFData_UInt16(data, 10)
+#define SFGDEF_MarkGlyphSetsDefOffset(data)             SFData_UInt16(data, 12)
 
-#define SF_ATTACH_POINT__POINT_COUNT(t)                 SF_DATA__READ_UINT16(t, 0)
-#define SF_ATTACH_POINT__POINT_INDEX(t, i)              SF_DATA__READ_UINT16(t, 2 + ((i) * 2))
+/**************************************************************************************************/
 
-#define SF_LIG_CARET_LIST__COVERAGE(t)                  SF_DATA__READ_UINT16(t, 0)
-#define SF_LIG_CARET_LIST__LIG_GLYPH_COUNT(t)           SF_DATA__READ_UINT16(t, 2)
-#define SF_LIG_CARET_LIST__LIG_GLYPH(t, i)              SF_DATA__READ_UINT16(t, 4 + ((i) * 2))
+/**************************************ATTACHMENT LIST TABLE***************************************/
 
-#define SF_LIG_GLYPH__CARET_COUNT(t)                    SF_DATA__READ_UINT16(t, 0)
-#define SF_LIG_GLYPH__CARET_VALUE(t, i)                 SF_DATA__READ_UINT16(t, 2 + ((i) * 2))
+#define SFAttachList_CoverageOffset(data)               SFData_UInt16(data, 0)
+#define SFAttachList_GlyphCount(data)                   SFData_UInt16(data, 2)
+#define SFAttachList_AttachPointOffset(data)            SFData_UInt16(data, 4)
 
-#define SF_CARET_VALUE_FORMAT(t)                        SF_DATA__READ_UINT16(t, 0)
+#define SFAttachPoint_PointCount(data)                  SFData_UInt16(data, 0)
+#define SFAttachPoint_PointIndex(data, index)           SFData_UInt16(data, 2 + ((index) * 2))
 
-#define SF_CARET_VALUE_F1__COORDINATE(t) ((SFInt16)SF_DATA__READ_UINT16(t, 2))
+/**************************************************************************************************/
 
-#define SF_CARET_VALUE_F2__CARET_VALUE_POINT(t)    SF_DATA__READ_UINT16(t, 2)
+/************************************LIGATURE CARET LIST TABLE*************************************/
 
-#define SF_CARET_VALUE_F3__COORDINATE(t) ((SFInt16)SF_DATA__READ_UINT16(t, 2))
-#define SF_CARET_VALUE_F3__DEVICE_TABLE(t)         SF_DATA__READ_UINT16(t, 4)
+#define SFLigCarretList_CoverageOffset(data)            SFData_UInt16(data, 0)
+#define SFLigCarretList_LigGlyphCount(data)             SFData_UInt16(data, 2)
+#define SFLigCarretList_LigGlyphOffset(data, index)     SFData_UInt16(data, 4 + ((index) * 2))
 
-#define SF_MARK_GLYPH_SETS__FORMAT(t)                   SF_DATA__READ_UINT16(t, 0)
-#define SF_MARK_GLYPH_SETS__MARK_SET_COUNT(t)           SF_DATA__READ_UINT16(t, 2)
-#define SF_MARK_GLYPH_SETS__COVERAGE(t, i)              SF_DATA__READ_UINT32(t, 4 + ((i) * 4))
+#define SFLigGlyph_CaretCount(data)                     SFData_UInt16(data, 0)
+#define SFLigGlyph_CaretValueOffset(data, index)        SFData_UInt16(data, 2 + ((index) * 2))
+
+#define SFCaretValue_Format(data)                       SFData_UInt16(data, 0)
+
+#define SFCaretValueF1_Coordinate(data)                 SFData_Int16(data, 2)
+
+#define SFCaretValueF2_CaretValuePoint(data)            SFData_UInt16(data, 2)
+
+#define SFCaretValueF3_Coordinate(data)                 SFData_Int16(data, 2)
+#define SFCaretValueF3_DeviceTableOffset(data)          SFData_UInt16(data, 4)
+
+/**************************************************************************************************/
+
+/**************************************MARK GLYPH SETS TABLE***************************************/
+
+#define SFMarkGlyphSets_Format(data)                    SFData_UInt16(data, 0)
+#define SFMarkGlyphSets_MarkSetCount(data)              SFData_UInt16(data, 2)
+#define SFMarkGlyphSets_CoverageOffset(data, index)     SFData_UInt32(data, 4 + ((index) * 4))
+
+/**************************************************************************************************/
 
 #endif

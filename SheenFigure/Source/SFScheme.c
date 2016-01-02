@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Muhammad Tayyab Akram
+ * Copyright (C) 2016 Muhammad Tayyab Akram
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,16 +31,16 @@
 
 static SFData _SFSearchScriptInList(SFData scriptList, SFScriptTag scriptTag)
 {
-    SFUInt16 scriptCount = SF_SCRIPT_LIST__SCRIPT_COUNT(scriptList);
+    SFUInt16 scriptCount = SFScriptList_ScriptCount(scriptList);
     SFUInt16 index;
 
     for (index = 0; index < scriptCount; index++) {
-        SFData scriptRecord = SF_SCRIPT_LIST__SCRIPT_RECORD(scriptList, index);
-        SFTag scriptRecordTag = SF_SCRIPT_RECORD__SCRIPT_TAG(scriptRecord);
+        SFData scriptRecord = SFScriptList_ScriptRecord(scriptList, index);
+        SFTag scriptRecordTag = SFScriptRecord_ScriptTag(scriptRecord);
 
         if (scriptRecordTag == scriptTag) {
-            SFOffset offset = SF_SCRIPT_RECORD__SCRIPT(scriptRecord);
-            return SF_DATA__SUBDATA(scriptList, offset);
+            SFOffset offset = SFScriptRecord_ScriptOffset(scriptRecord);
+            return SFData_Subdata(scriptList, offset);
         }
     }
 
@@ -50,22 +50,22 @@ static SFData _SFSearchScriptInList(SFData scriptList, SFScriptTag scriptTag)
 static SFData _SFSearchLangSysInScript(SFData script, SFLanguageTag languageTag)
 {
     if (languageTag == SFLanguageTagDFLT) {
-        SFOffset offset = SF_SCRIPT__DEFAULT_LANG_SYS(script);
+        SFOffset offset = SFScript_DefaultLangSysOffset(script);
         if (offset) {
-            return SF_DATA__SUBDATA(script, offset);
+            return SFData_Subdata(script, offset);
         }
     } else {
-        SFUInt16 langSysCount = SF_SCRIPT__LANG_SYS_COUNT(script);
+        SFUInt16 langSysCount = SFScript_LangSysCount(script);
         SFUInt16 index;
 
         for (index = 0; index < langSysCount; index++) {
-            SFData langSysRecord = SF_SCRIPT__LANG_SYS_RECORD(script, index);
-            SFTag langSysTag = SF_LANG_SYS_RECORD__LANG_SYS_TAG(langSysRecord);
+            SFData langSysRecord = SFScript_LangSysRecord(script, index);
+            SFTag langSysTag = SFLangSysRecord_LangSysTag(langSysRecord);
             SFUInt16 offset;
 
             if (langSysTag == languageTag) {
-                offset = SF_LANG_SYS_RECORD__LANG_SYS(langSysRecord);
-                return SF_DATA__SUBDATA(script, offset);
+                offset = SFLangSysRecord_LangSysOffset(langSysRecord);
+                return SFData_Subdata(script, offset);
             }
         }
     }
@@ -75,17 +75,17 @@ static SFData _SFSearchLangSysInScript(SFData script, SFLanguageTag languageTag)
 
 static SFData _SFSearchFeatureInLangSys(SFData langSys, SFData featureList, SFFeatureTag featureTag)
 {
-    SFUInt16 featureCount = SF_LANG_SYS__FEATURE_COUNT(langSys);
+    SFUInt16 featureCount = SFLangSys_FeatureCount(langSys);
     SFUInt16 index;
 
     for (index = 0; index < featureCount; index++) {
-        SFUInt16 featureIndex = SF_LANG_SYS__FEATURE_INDEX(langSys, index);
-        SFData featureRecord = SF_FEATURE_LIST__FEATURE_RECORD(featureList, featureIndex);
-        SFTag featureRecordTag = SF_FEATURE_RECORD__FEATURE_TAG(featureRecord);
+        SFUInt16 featureIndex = SFLangSys_FeatureIndex(langSys, index);
+        SFData featureRecord = SFFeatureList_FeatureRecord(featureList, featureIndex);
+        SFTag featureRecordTag = SFFeatureRecord_FeatureTag(featureRecord);
 
         if (featureRecordTag == featureTag) {
-            SFOffset offset = SF_FEATURE_RECORD__FEATURE(featureRecord);
-            return SF_DATA__SUBDATA(featureList, offset);
+            SFOffset offset = SFFeatureRecord_FeatureOffset(featureRecord);
+            return SFData_Subdata(featureList, offset);
         }
     }
 
@@ -94,11 +94,11 @@ static SFData _SFSearchFeatureInLangSys(SFData langSys, SFData featureList, SFFe
 
 static void _SFAddLookups(_SFSchemeStateRef state, SFData feature)
 {
-    SFUInt16 lookupCount = SF_FEATURE__LOOKUP_COUNT(feature);
+    SFUInt16 lookupCount = SFFeature_LookupCount(feature);
     SFUInt16 lookupIndex;
 
     for (lookupIndex = 0; lookupIndex < lookupCount; lookupIndex++) {
-        SFUInt16 lookupListIndex = SF_FEATURE__LOOKUP_LIST_INDEX(feature, lookupIndex);
+        SFUInt16 lookupListIndex = SFFeature_LookupListIndex(feature, lookupIndex);
         SFPatternBuilderAddLookup(&state->builder, lookupListIndex);
     }
 }
@@ -154,11 +154,11 @@ static void _SFAddHeader(_SFSchemeStateRef state, SFData header)
     SFOffset offset;
 
     /* Get script list table. */
-    offset = SF_HEADER__SCRIPT_LIST(header);
-    state->scriptList = SF_DATA__SUBDATA(header, offset);
+    offset = SFHeader_ScriptListOffset(header);
+    state->scriptList = SFData_Subdata(header, offset);
     /* Get feature list table. */
-    offset = SF_HEADER__FEATURE_LIST(header);
-    state->featureList = SF_DATA__SUBDATA(header, offset);
+    offset = SFHeader_FeatureListOffset(header);
+    state->featureList = SFData_Subdata(header, offset);
 
     /* Get script table belonging to desired tag. */
     state->script = _SFSearchScriptInList(state->scriptList, scheme->_scriptTag);

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Muhammad Tayyab Akram
+ * Copyright (C) 2016 Muhammad Tayyab Akram
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -85,10 +85,10 @@ SF_INTERNAL void SFTextProcessorPositionGlyphs(SFTextProcessorRef textProcessor)
 
 static SFData _SFGetLookupFromHeader(SFData header, SFUInt16 lookupIndex)
 {
-    SFOffset listOffset = SF_HEADER__LOOKUP_LIST(header);
-    SFData lookupList = SF_DATA__SUBDATA(header, listOffset);
-    SFOffset lookupOffset = SF_LOOKUP_LIST__LOOKUP(lookupList, lookupIndex);
-    SFData lookup = SF_DATA__SUBDATA(lookupList, lookupOffset);
+    SFOffset listOffset = SFHeader_LookupListOffset(header);
+    SFData lookupList = SFData_Subdata(header, listOffset);
+    SFOffset lookupOffset = SFLookupList_LookupOffset(lookupList, lookupIndex);
+    SFData lookup = SFData_Subdata(lookupList, lookupOffset);
 
     return lookup;
 }

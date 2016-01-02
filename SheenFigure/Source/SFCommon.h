@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Muhammad Tayyab Akram
+ * Copyright (C) 2016 Muhammad Tayyab Akram
  *
  * Licensed under the Apache License, Version 2.0 (dhe "License");
  * you may not use this file except in compliance with the License.
@@ -33,173 +33,176 @@ enum {
 };
 typedef SFUInt16 SFLookupFlag;
 
-#define SF_TAG_RECORD__SIZE()                       (6)
-#define SF_TAG_RECORD__TAG(d)                       SF_DATA__READ_UINT32(d, 0)
-#define SF_TAG_RECORD__OFFSET(d)                    SF_DATA__READ_UINT16(d, 4)
+#define SFTagRecord_Size()                              (6)
+#define SFTagRecord_Tag(data)                           SFData_UInt32(data, 0)
+#define SFTagRecord_Offset(data)                        SFData_UInt16(data, 4)
 
-#define _SF_GLYPH_RANGE__SIZE()                     (6)
-#define _SF_GLYPH_RANGE__START(d)                   SF_DATA__READ_UINT16(d, 0)
-#define _SF_GLYPH_RANGE__END(d)                     SF_DATA__READ_UINT16(d, 2)
-#define _SF_GLYPH_RANGE__VALUE(d)                   SF_DATA__READ_UINT16(d, 4)
+#define _SFGlyphRange_Size()                            (6)
+#define _SFGlyphRange_Start(data)                       SFData_UInt16(data, 0)
+#define _SFGlyphRange_End(data)                         SFData_UInt16(data, 2)
+#define _SFGlyphRange_Value(data)                       SFData_UInt16(data, 4)
 
-/************************************ARRAYS************************************/
+/**********************************************ARRAYS**********************************************/
 
-#define SF_UINT16_ARRAY__VALUE(d, i)                SF_DATA__READ_UINT16(d, (i) * 2)
+#define SFUInt16Array_Value(data, index)                SFData_UInt16(data, (index) * 2)
 
-#define SF_GLYPH_ARRAY__VALUE(d, i)                 SF_UINT16_ARRAY__VALUE(d, i)
+#define SFGlyphArray_Value(data, index)                 SFUInt16Array_Value(data, index)
 
-#define SF_TAG_RECORD_ARRAY__VALUE(d, i)            SF_DATA__SUBDATA(d, (i) * SF_TAG_RECORD__SIZE())
+#define SFTagRecordArray_Value(data, index)             SFData_Subdata(data, (index) * SFTagRecord_Size())
 
-/******************************************************************************/
+/**************************************************************************************************/
 
-#define SF_HEADER__VERSION(t)                       SF_DATA__READ_UINT32(t, 0)
-#define SF_HEADER__SCRIPT_LIST(t)                   SF_DATA__READ_UINT16(t, 4)
-#define SF_HEADER__FEATURE_LIST(t)                  SF_DATA__READ_UINT16(t, 6)
-#define SF_HEADER__LOOKUP_LIST(t)                   SF_DATA__READ_UINT16(t, 8)
+#define SFHeader_Version(data)                          SFData_UInt32(data, 0)
+#define SFHeader_ScriptListOffset(data)                 SFData_UInt16(data, 4)
+#define SFHeader_FeatureListOffset(data)                SFData_UInt16(data, 6)
+#define SFHeader_LookupListOffset(data)                 SFData_UInt16(data, 8)
 
-/******************************SCRIPT LIST TABLE*******************************/
+/****************************************SCRIPT LIST TABLE*****************************************/
 
-#define SF_SCRIPT_LIST__SCRIPT_COUNT(d)             SF_DATA__READ_UINT16(d, 0)
-#define SF_SCRIPT_LIST__SCRIPT_RECORD(d, i)         SF_DATA__SUBDATA(d, 2 + ((i) * SF_TAG_RECORD__SIZE()))
+#define SFScriptList_ScriptCount(data)                  SFData_UInt16(data, 0)
+#define SFScriptList_ScriptRecord(data, index)          SFData_Subdata(data, 2 + ((index) * SFTagRecord_Size()))
 
-#define SF_SCRIPT_RECORD__SCRIPT_TAG(d)             SF_TAG_RECORD__TAG(d)
-#define SF_SCRIPT_RECORD__SCRIPT(d)                 SF_TAG_RECORD__OFFSET(d)
+#define SFScriptRecord_ScriptTag(data)                  SFTagRecord_Tag(data)
+#define SFScriptRecord_ScriptOffset(data)               SFTagRecord_Offset(data)
 
-/******************************************************************************/
+/**************************************************************************************************/
 
-/*********************************SCRIPT TABLE*********************************/
+/*******************************************SCRIPT TABLE*******************************************/
 
-#define SF_SCRIPT__DEFAULT_LANG_SYS(d)              SF_DATA__READ_UINT16(d, 0)
-#define SF_SCRIPT__LANG_SYS_COUNT(d)                SF_DATA__READ_UINT16(d, 2)
-#define SF_SCRIPT__LANG_SYS_RECORD(d, i)            SF_DATA__SUBDATA(d, 4 + ((i) * SF_TAG_RECORD__SIZE()))
+#define SFScript_DefaultLangSysOffset(data)             SFData_UInt16(data, 0)
+#define SFScript_LangSysCount(data)                     SFData_UInt16(data, 2)
+#define SFScript_LangSysRecord(data, index)             SFData_Subdata(data, 4 + ((index) * SFTagRecord_Size()))
 
-#define SF_LANG_SYS_RECORD__LANG_SYS_TAG(d)         SF_TAG_RECORD__TAG(d)
-#define SF_LANG_SYS_RECORD__LANG_SYS(d)             SF_TAG_RECORD__OFFSET(d)
+#define SFLangSysRecord_LangSysTag(data)                SFTagRecord_Tag(data)
+#define SFLangSysRecord_LangSysOffset(data)             SFTagRecord_Offset(data)
 
-/******************************************************************************/
+/**************************************************************************************************/
 
-/****************************LANGUAGE SYSTEM TABLE*****************************/
+/**************************************LANGUAGE SYSTEM TABLE***************************************/
 
-#define SF_LANG_SYS__LOOKUP_ORDER(d)                SF_DATA__READ_UINT16(d, 0)
-#define SF_LANG_SYS__REQ_FEATURE_INDEX(d)           SF_DATA__READ_UINT16(d, 2)
-#define SF_LANG_SYS__FEATURE_COUNT(d)               SF_DATA__READ_UINT16(d, 4)
-#define SF_LANG_SYS__FEATURE_INDEX(d, i)            SF_DATA__READ_UINT16(d, 6 + ((i) * 2))
+#define SFLangSys_LookupOrderOffset(data)               SFData_UInt16(data, 0)
+#define SFLangSys_ReqFeatureIndex(data)                 SFData_UInt16(data, 2)
+#define SFLangSys_FeatureCount(data)                    SFData_UInt16(data, 4)
+#define SFLangSys_FeatureIndex(data, index)             SFData_UInt16(data, 6 + ((index) * 2))
 
-/******************************************************************************/
+/**************************************************************************************************/
 
-/******************************FEATURE LIST TABLE******************************/
+/****************************************FEATURE LIST TABLE****************************************/
 
-#define SF_FEATURE_LIST__FEATURE_COUNT(d)           SF_DATA__READ_UINT16(d, 0)
-#define SF_FEATURE_LIST__FEATURE_RECORD(d, i)       SF_DATA__SUBDATA(d, 2 + ((i) * SF_TAG_RECORD__SIZE()))
+#define SFFeatureList_FeatureCount(data)                SFData_UInt16(data, 0)
+#define SFFeatureList_FeatureRecord(data, index)        SFData_Subdata(data, 2 + ((index) * SFTagRecord_Size()))
 
-#define SF_FEATURE_RECORD__FEATURE_TAG(d)           SF_TAG_RECORD__TAG(d)
-#define SF_FEATURE_RECORD__FEATURE(d)               SF_TAG_RECORD__OFFSET(d)
+#define SFFeatureRecord_FeatureTag(data)                SFTagRecord_Tag(data)
+#define SFFeatureRecord_FeatureOffset(data)             SFTagRecord_Offset(data)
 
-/******************************************************************************/
+/**************************************************************************************************/
 
-/********************************FEATURE TABLE*********************************/
+/******************************************FEATURE TABLE*******************************************/
 
-#define SF_FEATURE__FEATURE_PARAMS(d)               SF_DATA__READ_UINT16(d, 0)
-#define SF_FEATURE__LOOKUP_COUNT(d)                 SF_DATA__READ_UINT16(d, 2)
-#define SF_FEATURE__LOOKUP_LIST_INDEX(d, i)         SF_DATA__READ_UINT16(d, 4 + ((i) * 2))
+#define SFFeature_FeatureParamsOffset(data)             SFData_UInt16(data, 0)
+#define SFFeature_LookupCount(data)                     SFData_UInt16(data, 2)
+#define SFFeature_LookupListIndex(data, index)          SFData_UInt16(data, 4 + ((index) * 2))
 
-/******************************************************************************/
+/**************************************************************************************************/
 
-/******************************LOOKUP LIST TABLE*******************************/
+/****************************************LOOKUP LIST TABLE*****************************************/
 
-#define SF_LOOKUP_LIST__LOOKUP_COUNT(d)             SF_DATA__READ_UINT16(d, 0)
-#define SF_LOOKUP_LIST__LOOKUP(d, i)                SF_DATA__READ_UINT16(d, 2 + ((i) * 2))
+#define SFLookupList_LookupCount(data)                  SFData_UInt16(data, 0)
+#define SFLookupList_LookupOffset(data, index)          SFData_UInt16(data, 2 + ((index) * 2))
 
-/******************************************************************************/
+/**************************************************************************************************/
 
-/*********************************LOOKUP TABLE*********************************/
+/*******************************************LOOKUP TABLE*******************************************/
 
-#define SF_LOOKUP__LOOKUP_TYPE(d)                   SF_DATA__READ_UINT16(d, 0)
-#define SF_LOOKUP__LOOKUP_FLAG(d)                   SF_DATA__READ_UINT16(d, 2)
-#define SF_LOOKUP__SUB_TABLE_COUNT(d)               SF_DATA__READ_UINT16(d, 4)
-#define SF_LOOKUP__SUB_TABLE(d, i)                  SF_DATA__READ_UINT16(d, 6 + ((i) * 2))
-#define SF_LOOKUP__MARK_FILTERING_SET(d, sc)        SF_DATA__READ_UINT16(d, 8 + ((sc) * 2))
+#define SFLookup_LookupType(data)                       SFData_UInt16(data, 0)
+#define SFLookup_LookupFlag(data)                       SFData_UInt16(data, 2)
+#define SFLookup_SubtableCount(data)                    SFData_UInt16(data, 4)
+#define SFLookup_SubtableOffset(data, index)            SFData_UInt16(data, 6 + ((index) * 2))
+#define SFLookup_MarkFilteringSet(data, subtableCount)  SFData_UInt16(data, 8 + ((subtableCount) * 2))
 
-/******************************************************************************/
+/**************************************************************************************************/
 
-/********************************COVERAGE TABLE********************************/
+/******************************************COVERAGE TABLE******************************************/
 
-#define SF_COVERAGE_FORMAT(d)                       SF_DATA__READ_UINT16(d, 0)
+#define SFCoverage_Format(data)                         SFData_UInt16(data, 0)
 
-#define SF_COVERAGE_F1__GLYPH_COUNT(d)              SF_DATA__READ_UINT16(d, 2)
-#define SF_COVERAGE_F1__GLYPH_ARRAY(d)              SF_DATA__SUBDATA(d, 4)
+#define SFCoverageF1_GlyphCount(data)                   SFData_UInt16(data, 2)
+#define SFCoverageF1_GlyphArray(data)                   SFData_Subdata(data, 4)
 
-#define SF_COVERAGE_F2__RANGE_COUNT(d)              SF_DATA__READ_UINT16(d, 2)
-#define SF_COVERAGE_F2__RANGE_RECORD(d, i)          SF_DATA__SUBDATA(d, 4 + ((i) * _SF_GLYPH_RANGE__SIZE()))
+#define SFCoverageF2_RangeCount(data)                   SFData_UInt16(data, 2)
+#define SFCoverageF2_RangeRecord(data, index)           SFData_Subdata(data, 4 + ((index) * _SFGlyphRange_Size()))
 
-#define SF_RANGE_RECORD__START(d)                   _SF_GLYPH_RANGE__START(d)
-#define SF_RANGE_RECORD__END(d)                     _SF_GLYPH_RANGE__END(d)
-#define SF_RANGE_RECORD__START_COVERAGE_INDEX(d)    _SF_GLYPH_RANGE__VALUE(d)
+#define SFRangeRecord_Start(data)                       _SFGlyphRange_Start(data)
+#define SFRangeRecord_End(data)                         _SFGlyphRange_End(data)
+#define SFRangeRecord_StartCoverageIndex(data)          _SFGlyphRange_Value(data)
 
-/******************************************************************************/
+/**************************************************************************************************/
 
-/****************************CLASS DEFINITION TABLE****************************/
+/**************************************CLASS DEFINITION TABLE**************************************/
 
-#define SF_CLASS_DEF_FORMAT(d)                      SF_DATA__READ_UINT16(d, 0)
+#define SFClassDef_Format(data)                         SFData_UInt16(data, 0)
 
-#define SF_CLASS_DEF_F1__START_GLYPH(d)             SF_DATA__READ_UINT16(d, 2)
-#define SF_CLASS_DEF_F1__GLYPH_COUNT(d)             SF_DATA__READ_UINT16(d, 4)
-#define SF_CLASS_DEF_F1__CLASS_VALUE_ARRAY(d)       SF_DATA__SUBDATA(d, 6)
+#define SFClassDefF1_StartGlyph(data)                   SFData_UInt16(data, 2)
+#define SFClassDefF1_GlyphCount(data)                   SFData_UInt16(data, 4)
+#define SFClassDefF1_ClassValueArray(data)              SFData_Subdata(data, 6)
 
-#define SF_CLASS_DEF_F2__CLASS_RANGE_COUNT(d)       SF_DATA__READ_UINT16(d, 2)
-#define SF_CLASS_DEF_F2__CLASS_RANGE_RECORD(d, i)   SF_DATA__SUBDATA(d, 4 + ((i) * _SF_GLYPH_RANGE__SIZE()))
-#define SF_CLASS_DEF_F2__RANGE_RECORD_ARRAY(d)      SF_CLASS_DEF_F2__CLASS_RANGE_RECORD(d, 0)
+#define SFClassDefF2_ClassRangeCount(data)              SFData_UInt16(data, 2)
+#define SFClassDefF2_ClassRangeRecord(data, index)      SFData_Subdata(data, 4 + ((index) * _SFGlyphRange_Size()))
+#define SFClassDefF2_RangeRecordArray(data)             SFClassDefF2_ClassRangeRecord(data, 0)
 
-#define SF_CLASS_RANGE_RECORD__START(d)             _SF_GLYPH_RANGE__START(d)
-#define SF_CLASS_RANGE_RECORD__END(d)               _SF_GLYPH_RANGE__END(d)
-#define SF_CLASS_RANGE_RECORD__CLASS(d)             _SF_GLYPH_RANGE__VALUE(d)
+#define SFClassRangeRecord_Start(data)                  _SFGlyphRange_Start(data)
+#define SFClassRangeRecord_End(data)                    _SFGlyphRange_End(data)
+#define SFClassRangeRecord_Class(data)                  _SFGlyphRange_Value(data)
 
-/******************************************************************************/
+/**************************************************************************************************/
 
-/*********************************DEVICE TABLE*********************************/
+/*******************************************DEVICE TABLE*******************************************/
 
-#define SF_DEVICE__START_SIZE(d)                    SF_DATA__READ_UINT16(d, 0)
-#define SF_DEVICE__END_SIZE(d)                      SF_DATA__READ_UINT16(d, 2)
-#define SF_DEVICE__DELTA_FORMAT(d)                  SF_DATA__READ_UINT16(d, 4)
-#define SF_DEVICE__DELTA_VALUE(d, i)                SF_DATA__READ_UINT16(d, 6 + ((i) * 2))
+#define SFDevice_StartSize(data)                        SFData_UInt16(data, 0)
+#define SFDevice_EndSize(data)                          SFData_UInt16(data, 2)
+#define SFDevice_DeltaFormat(data)                      SFData_UInt16(data, 4)
+#define SFDevice_DeltaValue(data, index)                SFData_UInt16(data, 6 + ((index) * 2))
 
-/******************************************************************************/
+/**************************************************************************************************/
 
-/********************************LOOKUP RECORD*********************************/
+/******************************************LOOKUP RECORD*******************************************/
 
-#define SF_LOOKUP_RECORD__SEQUENCE_INDEX(d)         SF_DATA__READ_UINT16(d, 0)
-#define SF_LOOKUP_RECORD__LOOKUP_LIST_INDEX(d)      SF_DATA__READ_UINT16(d, 2)
+#define SFLookupRecord_SequenceIndex(data)              SFData_UInt16(data, 0)
+#define SFLookupRecord_LookupListIndex(data)            SFData_UInt16(data, 2)
 
-/******************************************************************************/
+/**************************************************************************************************/
 
-/*************************CHAINING CONTEXTUAL SUBTABLE*************************/
+/***********************************CHAINING CONTEXTUAL SUBTABLE***********************************/
 
-#define SF_CHAIN_CONTEXT_FORMAT(d)                  SF_DATA__READ_UINT16(d, 0)
-#define SF_CHAIN_CONTEXT_F3__BACKTRACK_RECORD(d)    SF_DATA__SUBDATA(d, 2)
+#define SFChainContext_Format(data)                     SFData_UInt16(data, 0)
 
-#define SF_BACKTRACK_RECORD__GLYPH_COUNT(d)         SF_DATA__READ_UINT16(d, 0)
-#define SF_BACKTRACK_RECORD__COVERAGE(d, i)         SF_DATA__READ_UINT16(d, 2 + ((i)  * 2))
-#define SF_BACKTRACK_RECORD__INPUT_RECORD(d, gc)    SF_DATA__SUBDATA(d, 2 + ((gc) * 2))
+#define SFChainContextF3_BacktrackRecord(data)          SFData_Subdata(data, 2)
 
-#define SF_INPUT_RECORD__GLYPH_COUNT(d)             SF_DATA__READ_UINT16(d, 0)
-#define SF_INPUT_RECORD__COVERAGE(d, i)             SF_DATA__READ_UINT16(d, 2 + ((i)  * 2))
-#define SF_INPUT_RECORD__LOOKAHEAD_RECORD(d, gc)    SF_DATA__SUBDATA(d, 2 + ((gc) * 2))
+#define SFBacktrackRecord_GlyphCount(data)              SFData_UInt16(data, 0)
+#define SFBacktrackRecord_Coverage(data, index)         SFData_UInt16(data, 2 + ((index)  * 2))
+#define SFBacktrackRecord_InputRecord(data, glyphCount) SFData_Subdata(data, 2 + ((glyphCount) * 2))
 
-#define SF_LOOKAHEAD_RECORD__GLYPH_COUNT(d)         SF_DATA__READ_UINT16(d, 0)
-#define SF_LOOKAHEAD_RECORD__COVERAGE(d, i)         SF_DATA__READ_UINT16(d, 2 + ((i)  * 2))
-#define SF_LOOKAHEAD_RECORD__CONTEXT_RECORD(d, gc)  SF_DATA__SUBDATA(d, 2 + ((gc) * 2))
+#define SFInputRecord_GlyphCount(data)                  SFData_UInt16(data, 0)
+#define SFInputRecord_Coverage(data, index)             SFData_UInt16(data, 2 + ((index)  * 2))
+#define SFInputRecord_LookaheadRecord(data, glyphCount) SFData_Subdata(data, 2 + ((glyphCount) * 2))
 
-#define SF_CONTEXT_RECORD__LOOKUP_COUNT(d)          SF_DATA__READ_UINT16(d, 0)
-#define SF_CONTEXT_RECORD__LOOKUP_RECORD(d, i)      SF_DATA__SUBDATA(d, 2 + ((i) * 4))
+#define SFLookaheadRecord_GlyphCount(data)              SFData_UInt16(data, 0)
+#define SFLookaheadRecord_Coverage(data, index)         SFData_UInt16(data, 2 + ((index)  * 2))
+#define SFLookaheadRecord_ContextRecord(data, glyphCount) \
+                                                        SFData_Subdata(data, 2 + ((glyphCount) * 2))
 
-/******************************************************************************/
+#define SFContextRecord_LookupCount(data)               SFData_UInt16(data, 0)
+#define SFContextRecord_LookupRecord(data, index)       SFData_Subdata(data, 2 + ((index) * 4))
 
-/******************************EXTENSION SUBTABLE******************************/
+/**************************************************************************************************/
 
-#define SF_EXTENSION_FORMAT(d)                      SF_DATA__READ_UINT16(d, 0)
-#define SF_EXTENSION_F1__LOOKUP_TYPE(d)             SF_DATA__READ_UINT16(d, 2)
-#define SF_EXTENSION_F1__SUBTABLE(d)                SF_DATA__READ_UINT32(d, 4)
+/****************************************EXTENSION SUBTABLE****************************************/
 
-/******************************************************************************/
+#define SFExtension_Format(data)                        SFData_UInt16(data, 0)
+
+#define SFExtensionF1_LookupType(data)                  SFData_UInt16(data, 2)
+#define SFExtensionF1_ExtensionOffset(data)             SFData_UInt32(data, 4)
+
+/**************************************************************************************************/
 
 #endif

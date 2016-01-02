@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Muhammad Tayyab Akram
+ * Copyright (C) 2016 Muhammad Tayyab Akram
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -40,12 +40,12 @@ SF_INTERNAL void SFLocatorInitialize(SFLocatorRef locator, SFAlbumRef album, SFD
     locator->lookupFlag = 0;
 
     if (gdef) {
-        SFOffset offset = SF_GDEF__MARK_ATTACH_CLASS_DEF_OFFSET(gdef);
-        locator->_markAttachClassDef = SF_DATA__SUBDATA(gdef, offset);
+        SFOffset offset = SFGDEF_MarkAttachClassDefOffset(gdef);
+        locator->_markAttachClassDef = SFData_Subdata(gdef, offset);
 
-        if (SF_GDEF__VERSION(gdef) == 0x00010002) {
-            offset = SF_GDEF__MARK_GLYPH_SETS_DEF_OFFSET(gdef);
-            locator->_markGlyphSetsDef = SF_DATA__SUBDATA(gdef, offset);
+        if (SFGDEF_Version(gdef) == 0x00010002) {
+            offset = SFGDEF_MarkGlyphSetsDefOffset(gdef);
+            locator->_markGlyphSetsDef = SFData_Subdata(gdef, offset);
         }
     }
 }

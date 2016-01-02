@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Muhammad Tayyab Akram
+ * Copyright (C) 2016 Muhammad Tayyab Akram
  *
  * Licensed under the Apache License, Version 2.0 (dhe "License");
  * you may not use this file except in compliance with the License.
@@ -31,67 +31,68 @@ enum {
     SFLookupTypeReverseChainingContext = 8
 };
 
-/*********************************GSUB HEADER*********************************/
+/*******************************************GSUB HEADER********************************************/
 
-#define SF_GSUB__VERSION(d)                         SF_HEADER__VERSION(d)
-#define SF_GSUB__SCRIPT_LIST(d)                     SF_HEADER__SCRIPT_LIST(d)
-#define SF_GSUB__FEATURE_LIST(d)                    SF_HEADER__FEATURE_LIST(d)
-#define SF_GSUB__LOOKUP_LIST(d)                     SF_HEADER__LOOKUP_LIST(d)
+#define SFGSUB_Version(data)                            SFHeader_Version(data)
+#define SFGSUB_ScriptListOffset(data)                   SFHeader_ScriptListOffset(data)
+#define SFGSUB_FeatureListOffset(data)                  SFHeader_FeatureListOffset(data)
+#define SFGSUB_LookupListOffset(data)                   SFHeader_LookupListOffset(data)
 
-/*****************************************************************************/
+/**************************************************************************************************/
 
-/************************SINGLE SUBSTITUTION SUBTABLE*************************/
+/***********************************SINGLE SUBSTITUTION SUBTABLE***********************************/
 
-#define SF_SINGLE_SUBST_FORMAT(d)                   SF_DATA__READ_UINT16(d, 0)
+#define SFSingleSubst_Format(data)                      SFData_UInt16(data, 0)
 
-#define SF_SINGLE_SUBST_F1__COVERAGE(d)             SF_DATA__READ_UINT16(d, 2)
-#define SF_SINGLE_SUBST_F1__DELTA_GLYPH_ID(d)       SF_DATA__READ_INT16 (d, 4)
+#define SFSingleSubstF1_CoverageOffset(data)            SFData_UInt16(data, 2)
+#define SFSingleSubstF1_DeltaGlyphID(data)              SFData_Int16 (data, 4)
 
-#define SF_SINGLE_SUBST_F2__COVERAGE(d)             SF_DATA__READ_UINT16(d, 2)
-#define SF_SINGLE_SUBST_F2__GLYPH_COUNT(d)          SF_DATA__READ_UINT16(d, 4)
-#define SF_SINGLE_SUBST_F2__SUBSTITUTE(d, i)        SF_DATA__READ_UINT16(d, 6 + ((i) * 2))
+#define SFSingleSubstF2_CoverageOffset(data)            SFData_UInt16(data, 2)
+#define SFSingleSubstF2_GlyphCount(data)                SFData_UInt16(data, 4)
+#define SFSingleSubstF2_Substitute(data, index)         SFData_UInt16(data, 6 + ((index) * 2))
 
-/*****************************************************************************/
+/**************************************************************************************************/
 
-/***********************MULTIPLE SUBSTITUTION SUBTABLE************************/
+/**********************************MULTIPLE SUBSTITUTION SUBTABLE**********************************/
 
-#define SF_MULTIPLE_SUBST_FORMAT(d)                 SF_DATA__READ_UINT16(d, 0)
-#define SF_MULTIPLE_SUBST_F1__COVERAGE(d)           SF_DATA__READ_UINT16(d, 2)
-#define SF_MULTIPLE_SUBST_F1__SEQUENCE_COUNT(d)     SF_DATA__READ_UINT16(d, 4)
-#define SF_MULTIPLE_SUBST_F1__SEQUENCE(d, i)        SF_DATA__READ_UINT16(d, 6 + ((i) * 2))
+#define SFMultipleSubst_Format(data)                    SFData_UInt16(data, 0)
+#define SFMultipleSubstF1_CoverageOffset(data)          SFData_UInt16(data, 2)
+#define SFMultipleSubstF1_SequenceCount(data)           SFData_UInt16(data, 4)
+#define SFMultipleSubstF1_SequenceOffset(data, index)   SFData_UInt16(data, 6 + ((index) * 2))
 
-#define SF_SEQUENCE__GLYPH_COUNT(d)                 SF_DATA__READ_UINT16(d, 0)
-#define SF_SEQUENCE__SUBSTITUTE(d, i)               SF_DATA__READ_UINT16(d, 2 + ((i) * 2))
+#define SFSequence_GlyphCount(data)                     SFData_UInt16(data, 0)
+#define SFSequence_Substitute(data, index)              SFData_UInt16(data, 2 + ((index) * 2))
 
-/*****************************************************************************/
+/**************************************************************************************************/
 
-/***********************ALTERNATE SUBSTITUTION SUBTABLE***********************/
+/*********************************ALTERNATE SUBSTITUTION SUBTABLE**********************************/
 
-#define SF_ALTERNATE_SUBST_FORMAT(d)                SF_DATA__READ_UINT16(d, 0)
-#define SF_ALTERNATE_SUBST_F1__COVERATE(d)          SF_DATA__READ_UINT16(d, 2)
-#define SF_ALTERNATE_SUBST_F1__ALTERNATE_SET_COUNT(d) \
-                                                    SF_DATA__READ_UINT16(d, 4)
-#define SF_ALTERNATE_SUBST_F1__ALTERNATE_SET(d, i)  SF_DATA__READ_UINT16(d, 6 + ((i) * 2))
+#define SFAlternateSubst_Format(data)                   SFData_UInt16(data, 0)
+#define SFAlternateSubstF1_CoverageOffset(data)         SFData_UInt16(data, 2)
+#define SFAlternateSubstF1_AlternateSetCount(data)      SFData_UInt16(data, 4)
+#define SFAlternateSubstF1_AlternateSetOffset(data, index) \
+                                                        SFData_UInt16(data, 6 + ((index) * 2))
 
-#define SF_ALTERNATE_SET__GLYPH_COUNT(d)            SF_DATA__READ_UINT16(d, 0)
-#define SF_ALTERNATE_SET__ALTERNATE(d, i)           SF_DATA__READ_UINT16(d, 2 * ((i) * 2))
+#define SFAlternateSet_GlyphCount(data)                 SFData_UInt16(data, 0)
+#define SFAlternateSet_Alternate(data, index)           SFData_UInt16(data, 2 * ((index) * 2))
 
-/*****************************************************************************/
+/**************************************************************************************************/
 
-/***********************LIGATURE SUBSTITUTION SUBTABLE************************/
+/**********************************LIGATURE SUBSTITUTION SUBTABLE**********************************/
 
-#define SF_LIGATURE_SUBST_FORMAT(d)                 SF_DATA__READ_UINT16(d, 0)
-#define SF_LIGATURE_SUBST_F1__COVERAGE(d)           SF_DATA__READ_UINT16(d, 2)
-#define SF_LIGATURE_SUBST_F1__LIG_SET_COUNT(d)      SF_DATA__READ_UINT16(d, 4)
-#define SF_LIGATURE_SUBST_F1__LIGATURE_SET(d, i)    SF_DATA__READ_UINT16(d, 6 + ((i) * 2))
+#define SFLigatureSubst_Format(data)                    SFData_UInt16(data, 0)
+#define SFLigatureSubstF1_CoverageOffset(data)          SFData_UInt16(data, 2)
+#define SFLigatureSubstF1_LigSetCount(data)             SFData_UInt16(data, 4)
+#define SFLigatureSubstF1_LigatureSetOffset(data, index) \
+                                                        SFData_UInt16(data, 6 + ((index) * 2))
 
-#define SF_LIGATURE_SET__LIGATURE_COUNT(d)          SF_DATA__READ_UINT16(d, 0)
-#define SF_LIGATURE_SET__LIGATURE(d, i)             SF_DATA__READ_UINT16(d, 2 + ((i) * 2))
+#define SFLigatureSet_LigatureCount(data)               SFData_UInt16(data, 0)
+#define SFLigatureSet_LigatureOffset(data, index)       SFData_UInt16(data, 2 + ((index) * 2))
 
-#define SF_LIGATURE__LIG_GLYPH(d)                   SF_DATA__READ_UINT16(d, 0)
-#define SF_LIGATURE__COMP_COUNT(d)                  SF_DATA__READ_UINT16(d, 2)
-#define SF_LIGATURE__COMPONENT(d, i)                SF_DATA__READ_UINT16(d, 4 + ((i) * 2))
+#define SFLigature_LigGlyph(data)                       SFData_UInt16(data, 0)
+#define SFLigature_CompCount(data)                      SFData_UInt16(data, 2)
+#define SFLigature_Component(data, index)               SFData_UInt16(data, 4 + ((index) * 2))
 
-/*****************************************************************************/
+/**************************************************************************************************/
 
 #endif

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Muhammad Tayyab Akram
+ * Copyright (C) 2016 Muhammad Tayyab Akram
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,7 +29,7 @@ SF_INTERNAL SFUInteger SFOpenTypeBinarySearchUInt16(SFData uint16Array, SFUInteg
 
         while (min <= max) {
             SFUInteger mid = (min + max) >> 1;
-            SFUInt16 element = SF_UINT16_ARRAY__VALUE(uint16Array, mid);
+            SFUInt16 element = SFUInt16Array_Value(uint16Array, mid);
 
             if (element < value) {
                 min = mid + 1;
@@ -52,9 +52,9 @@ static SFUInteger _SFBinarySearchGlyphRange(SFData rangeArray, SFUInteger length
 
         while (min <= max) {
             SFUInteger mid = (min + max) >> 1;
-            SFData range = SF_DATA__SUBDATA(rangeArray, mid * _SF_GLYPH_RANGE__SIZE());
-            SFUInt16 start = _SF_GLYPH_RANGE__START(range);
-            SFUInt16 end = _SF_GLYPH_RANGE__END(range);
+            SFData range = SFData_Subdata(rangeArray, mid * _SFGlyphRange_Size());
+            SFUInt16 start = _SFGlyphRange_Start(range);
+            SFUInt16 end = _SFGlyphRange_End(range);
 
             if (start < value) {
                 min = mid + 1;
@@ -71,20 +71,20 @@ static SFUInteger _SFBinarySearchGlyphRange(SFData rangeArray, SFUInteger length
 
 SF_INTERNAL SFUInteger SFOpenTypeSearchGlyphIndex(SFData coverage, SFGlyphID glyph)
 {
-    SFUInt16 format = SF_COVERAGE_FORMAT(coverage);
+    SFUInt16 format = SFCoverage_Format(coverage);
     switch (format) {
     case 1:
         {
-            SFUInt16 glyphCount = SF_COVERAGE_F1__GLYPH_COUNT(coverage);
-            SFData glyphArray = SF_COVERAGE_F1__GLYPH_ARRAY(coverage);
+            SFUInt16 glyphCount = SFCoverageF1_GlyphCount(coverage);
+            SFData glyphArray = SFCoverageF1_GlyphArray(coverage);
 
             return SFOpenTypeBinarySearchUInt16(glyphArray, glyphCount, glyph);
         }
 
     case 2:
         {
-            SFUInt16 rangeCount = SF_COVERAGE_F2__RANGE_COUNT(coverage);
-            SFData rangeRecord = SF_COVERAGE_F2__RANGE_RECORD(coverage, 0);
+            SFUInt16 rangeCount = SFCoverageF2_RangeCount(coverage);
+            SFData rangeRecord = SFCoverageF2_RangeRecord(coverage, 0);
 
             return _SFBinarySearchGlyphRange(rangeRecord, rangeCount, glyph);
         }
@@ -95,17 +95,17 @@ SF_INTERNAL SFUInteger SFOpenTypeSearchGlyphIndex(SFData coverage, SFGlyphID gly
 
 SF_INTERNAL SFBoolean SFOpenTypeSearchGlyphClass(SFData classDef, SFGlyphID glyph, SFUInt16 *glyphClass)
 {
-    SFUInt16 format = SF_CLASS_DEF_FORMAT(classDef);
+    SFUInt16 format = SFClassDef_Format(classDef);
     switch (format) {
     case 1:
         {
-            SFGlyphID startGlyph = SF_CLASS_DEF_F1__START_GLYPH(classDef);
-            SFUInt16 glyphCount = SF_CLASS_DEF_F1__GLYPH_COUNT(classDef);
-            SFData classArray = SF_CLASS_DEF_F1__CLASS_VALUE_ARRAY(classDef);
+            SFGlyphID startGlyph = SFClassDefF1_StartGlyph(classDef);
+            SFUInt16 glyphCount = SFClassDefF1_GlyphCount(classDef);
+            SFData classArray = SFClassDefF1_ClassValueArray(classDef);
 
             if (glyph >= startGlyph && glyph < (glyphCount - startGlyph)) {
                 SFUInteger index = glyph - startGlyph;
-                *glyphClass = SF_UINT16_ARRAY__VALUE(classArray, index);
+                *glyphClass = SFUInt16Array_Value(classArray, index);
 
                 return SFTrue;
             }
@@ -114,13 +114,13 @@ SF_INTERNAL SFBoolean SFOpenTypeSearchGlyphClass(SFData classDef, SFGlyphID glyp
 
     case 2:
         {
-            SFUInt16 rangeCount = SF_CLASS_DEF_F2__CLASS_RANGE_COUNT(classDef);
-            SFData rangeRecord = SF_CLASS_DEF_F2__CLASS_RANGE_RECORD(classDef, 0);
+            SFUInt16 rangeCount = SFClassDefF2_ClassRangeCount(classDef);
+            SFData rangeRecord = SFClassDefF2_ClassRangeRecord(classDef, 0);
             SFUInteger recordIndex = _SFBinarySearchGlyphRange(rangeRecord, rangeCount, glyph);
 
             if (recordIndex != SFInvalidIndex) {
-                rangeRecord = SF_CLASS_DEF_F2__CLASS_RANGE_RECORD(classDef, recordIndex);
-                *glyphClass = SF_CLASS_RANGE_RECORD__CLASS(rangeRecord);
+                rangeRecord = SFClassDefF2_ClassRangeRecord(classDef, recordIndex);
+                *glyphClass = SFClassRangeRecord_Class(rangeRecord);
 
                 return SFTrue;
             }
