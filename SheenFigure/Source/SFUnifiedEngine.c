@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Muhammad Tayyab Akram
+ * Copyright (C) 2016 Muhammad Tayyab Akram
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -40,19 +40,19 @@ static SFScriptKnowledgeRef _SFUnifiedKnowledgeSeekScript(const void *object, SF
     return knowledge;
 }
 
-SF_INTERNAL void SFUnifiedEngineInitialize(SFUnifiedEngineRef unifiedEngine, SFScriptTag scriptTag)
+SF_INTERNAL void SFUnifiedEngineInitialize(SFUnifiedEngineRef unifiedEngine, SFPatternRef pattern)
 {
     SFScriptKnowledgeRef knowledge;
 
-    knowledge = SFShapingKnowledgeSeekScript(&SFArabicKnowledgeInstance, scriptTag);
+    knowledge = SFShapingKnowledgeSeekScript(&SFArabicKnowledgeInstance, pattern->scriptTag);
     if (knowledge) {
-        SFArabicEngineInitialize(&unifiedEngine->_arabicEngine);
+        SFArabicEngineInitialize(&unifiedEngine->_arabicEngine, pattern);
         return;
     }
 
-    knowledge = SFShapingKnowledgeSeekScript(&SFStandardKnowledgeInstance, scriptTag);
+    knowledge = SFShapingKnowledgeSeekScript(&SFStandardKnowledgeInstance, pattern->scriptTag);
     if (knowledge) {
-        SFStandardEngineInitialize(&unifiedEngine->_standardEngine);
+        SFStandardEngineInitialize(&unifiedEngine->_standardEngine, pattern);
         return;
     }
 }

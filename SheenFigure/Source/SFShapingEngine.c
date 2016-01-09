@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Muhammad Tayyab Akram
+ * Copyright (C) 2016 Muhammad Tayyab Akram
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,10 +28,10 @@ SF_INTERNAL SFScriptKnowledgeRef SFShapingKnowledgeSeekScript(SFShapingKnowledge
     return (*shapingKnowledge->_seekScript)(shapingKnowledge, scriptTag);
 }
 
-SF_INTERNAL void SFShapingEngineProcessAlbum(SFShapingEngineRef shapingEngine, SFPatternRef pattern, SFAlbumRef album)
+SF_INTERNAL void SFShapingEngineProcessAlbum(SFShapingEngineRef shapingEngine, SFAlbumRef album)
 {
     /* The function must be implemented by the concrete instance. */
     SFAssert(shapingEngine->_processAlbum != NULL);
 
-    (*shapingEngine->_processAlbum)(shapingEngine, pattern, album);
+    (*shapingEngine->_processAlbum)(shapingEngine, album);
 }

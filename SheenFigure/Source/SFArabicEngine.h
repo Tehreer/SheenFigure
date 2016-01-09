@@ -25,10 +25,11 @@
 
 typedef struct _SFArabicEngine {
     SFShapingEngine _base;
+    SFPatternRef _pattern;
 } SFArabicEngine, *SFArabicEngineRef;
 
 extern SFShapingKnowledge SFArabicKnowledgeInstance;
 
-SF_INTERNAL void SFArabicEngineInitialize(SFArabicEngineRef arabicEngine);
+SF_INTERNAL void SFArabicEngineInitialize(SFArabicEngineRef arabicEngine, SFPatternRef pattern);
 
 #endif

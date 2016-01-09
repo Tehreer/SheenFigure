@@ -23,6 +23,7 @@
 #include "SFArabicEngine.h"
 #include "SFShapingEngine.h"
 #include "SFStandardEngine.h"
+#include "SFPattern.h"
 
 typedef union _SFUnifiedEngine {
     SFShapingEngine _base;
@@ -32,6 +33,6 @@ typedef union _SFUnifiedEngine {
 
 extern SFShapingKnowledge SFUnifiedKnowledgeInstance;
 
-SF_INTERNAL void SFUnifiedEngineInitialize(SFUnifiedEngineRef unifiedEngine, SFScriptTag scriptTag);
+SF_INTERNAL void SFUnifiedEngineInitialize(SFUnifiedEngineRef unifiedEngine, SFPatternRef pattern);
 
 #endif

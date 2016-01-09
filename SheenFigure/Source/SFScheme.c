@@ -29,6 +29,15 @@
 #include "SFUnifiedEngine.h"
 #include "SFScheme.h"
 
+static SFData _SFSearchScriptInList(SFData scriptList, SFScriptTag scriptTag);
+static SFData _SFSearchLangSysInScript(SFData script, SFLanguageTag languageTag);
+static SFData _SFSearchFeatureInLangSys(SFData langSys, SFData featureList, SFFeatureTag featureTag);
+
+static void _SFAddAllLookups(_SFSchemeStateRef state, SFData feature);
+static void _SFAddFeatureRange(_SFSchemeStateRef state, SFUInteger index, SFUInteger count, SFBoolean simultaneous);
+static void _SFAddAllFeatures(_SFSchemeStateRef state);
+static void _SFAddHeader(_SFSchemeStateRef state, SFData header);
+
 static SFData _SFSearchScriptInList(SFData scriptList, SFScriptTag scriptTag)
 {
     SFUInt16 scriptCount = SFScriptList_ScriptCount(scriptList);
@@ -92,7 +101,7 @@ static SFData _SFSearchFeatureInLangSys(SFData langSys, SFData featureList, SFFe
     return NULL;
 }
 
-static void _SFAddLookups(_SFSchemeStateRef state, SFData feature)
+static void _SFAddAllLookups(_SFSchemeStateRef state, SFData feature)
 {
     SFUInt16 lookupCount = SFFeature_LookupCount(feature);
     SFUInt16 lookupIndex;
@@ -103,17 +112,17 @@ static void _SFAddLookups(_SFSchemeStateRef state, SFData feature)
     }
 }
 
-static void _SFAddFeatureGroup(_SFSchemeStateRef state, SFUInteger index, SFUInteger count, SFBoolean simultaneous)
+static void _SFAddFeatureRange(_SFSchemeStateRef state, SFUInteger index, SFUInteger count, SFBoolean simultaneous)
 {
     SFUInteger limit = index + count;
 
     for (; index < limit; index++) {
-        SFFeatureTag featureTag = state->knowledge->features.items[index].tag;
-        SFData feature = _SFSearchFeatureInLangSys(state->langSys, state->featureList, featureTag);
+        SFFeatureInfoRef featureInfo = &state->knowledge->featureInfos.items[index];
+        SFData feature = _SFSearchFeatureInLangSys(state->langSys, state->featureList, featureInfo->featureTag);
 
         if (feature) {
-            SFPatternBuilderAddFeature(&state->builder, featureTag);
-            _SFAddLookups(state, feature);
+            SFPatternBuilderAddFeature(&state->builder, featureInfo->featureTag, featureInfo->requiredTraits);
+            _SFAddAllLookups(state, feature);
 
             if (!simultaneous) {
                 SFPatternBuilderMakeGroup(&state->builder);
@@ -126,26 +135,26 @@ static void _SFAddFeatureGroup(_SFSchemeStateRef state, SFUInteger index, SFUInt
     }
 }
 
-static void _SFAddFeatures(_SFSchemeStateRef state)
+static void _SFAddAllFeatures(_SFSchemeStateRef state)
 {
-    SFUInteger featureCount = state->knowledge->features.count;
-    SFUInteger groupCount = state->knowledge->groups.count;
+    SFUInteger featureCount = state->knowledge->featureInfos.count;
+    SFUInteger unitCount = state->knowledge->featureUnits.count;
     SFUInteger featureIndex = 0;
-    SFUInteger groupIndex;
+    SFUInteger unitIndex;
 
-    for (groupIndex = 0; groupIndex < groupCount; groupIndex++) {
-        SFRange groupRange = state->knowledge->groups.items[groupIndex];
+    for (unitIndex = 0; unitIndex < unitCount; unitIndex++) {
+        SFRange groupRange = state->knowledge->featureUnits.items[unitIndex];
 
         if (groupRange.start > featureIndex) {
-            _SFAddFeatureGroup(state, featureIndex, groupRange.start - featureIndex, SFFalse);
+            _SFAddFeatureRange(state, featureIndex, groupRange.start - featureIndex, SFFalse);
             featureIndex = groupRange.start;
         } else {
-            _SFAddFeatureGroup(state, groupRange.start, groupRange.length, SFTrue);
+            _SFAddFeatureRange(state, groupRange.start, groupRange.length, SFTrue);
             featureIndex += groupRange.length;
         }
     }
 
-    _SFAddFeatureGroup(state, featureIndex, featureCount - featureIndex, SFFalse);
+    _SFAddFeatureRange(state, featureIndex, featureCount - featureIndex, SFFalse);
 }
 
 static void _SFAddHeader(_SFSchemeStateRef state, SFData header)
@@ -168,7 +177,7 @@ static void _SFAddHeader(_SFSchemeStateRef state, SFData header)
         state->langSys = _SFSearchLangSysInScript(state->script, scheme->_languageTag);
 
         if (state->langSys) {
-            _SFAddFeatures(state);
+            _SFAddAllFeatures(state);
         }
     }
 }
@@ -213,21 +222,21 @@ SFPatternRef SFSchemeBuildPattern(SFSchemeRef scheme)
         if (gsub || gpos) {
             SFPatternRef pattern = SFPatternCreate();
 
-            SFPatternBuilderInitialize(&state.builder);
+            SFPatternBuilderInitialize(&state.builder, pattern);
             SFPatternBuilderSetFont(&state.builder, scheme->_font);
             SFPatternBuilderSetScript(&state.builder, scheme->_scriptTag);
             SFPatternBuilderSetLanguage(&state.builder, scheme->_languageTag);
 
             if (gsub) {
-                SFPatternBuilderBeginHeader(&state.builder, SFHeaderKindGSUB);
+                SFPatternBuilderBeginFeatures(&state.builder, SFFeatureKindSubstitution);
                 _SFAddHeader(&state, gsub);
             }
             if (gpos) {
-                SFPatternBuilderBeginHeader(&state.builder, SFHeaderKindGPOS);
+                SFPatternBuilderBeginFeatures(&state.builder, SFFeatureKindPositioning);
                 _SFAddHeader(&state, gpos);
             }
 
-            SFPatternBuilderBuild(&state.builder, pattern);
+            SFPatternBuilderBuild(&state.builder);
 
             return pattern;
         }

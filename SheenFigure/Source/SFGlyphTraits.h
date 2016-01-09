@@ -20,6 +20,7 @@
 #include <SFTypes.h>
 
 enum {
+    SFGlyphTraitNone        = 0 << 0,
     SFGlyphTraitRightToLeft = 1 << 0,
     SFGlyphTraitBase        = 1 << 1,
     SFGlyphTraitLigature    = 1 << 2,

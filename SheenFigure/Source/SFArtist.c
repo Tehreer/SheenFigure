@@ -47,10 +47,10 @@ void SFArtistFillAlbum(SFArtistRef artist, SFAlbumRef album)
     SFShapingEngineRef shapingEngine;
 
     SFAlbumReset(album, artist->_codepointArray, artist->_codepointCount);
-    SFUnifiedEngineInitialize(&unifiedEngine, artist->_pattern->scriptTag);
+    SFUnifiedEngineInitialize(&unifiedEngine, artist->_pattern);
 
     shapingEngine = (SFShapingEngineRef)&unifiedEngine;
-    SFShapingEngineProcessAlbum(shapingEngine, artist->_pattern, album);
+    SFShapingEngineProcessAlbum(shapingEngine, album);
 }
 
 SFArtistRef SFArtistRetain(SFArtistRef artist)

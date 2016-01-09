@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Muhammad Tayyab Akram
+ * Copyright (C) 2016 Muhammad Tayyab Akram
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,7 +27,7 @@
 #include "SFArabicEngine.h"
 
 static SFScriptKnowledgeRef _SFArabicKnowledgeSeekScript(const void *object, SFScriptTag scriptTag);
-static void SFArabicEngineProcessAlbum(const void *object, SFPatternRef pattern, SFAlbumRef album);
+static void SFArabicEngineProcessAlbum(const void *object, SFAlbumRef album);
 
 enum {
     _SFGlyphTraitIsolated = SFGlyphTraitMakeSpecial(0),
@@ -36,30 +36,30 @@ enum {
     _SFGlyphTraitFinal    = SFGlyphTraitMakeSpecial(3)
 };
 
-static const SFFeatureKnowledge _SFArabicFeatureArray[] = {
+static SFFeatureInfo _SFArabicFeatureInfoArray[] = {
     /* Language based forms */
-    { SFFeatureTagCCMP, 0 },
+    { SFFeatureTagCCMP, SFGlyphTraitNone },
     { SFFeatureTagISOL, _SFGlyphTraitIsolated },
-    { SFFeatureTagFINA, _SFGlyphTraitFinal    },
-    { SFFeatureTagMEDI, _SFGlyphTraitMedial   },
-    { SFFeatureTagINIT, _SFGlyphTraitInitial  },
-    { SFFeatureTagRLIG, 0 },
-    { SFFeatureTagCALT, 0 },
+    { SFFeatureTagFINA, _SFGlyphTraitFinal },
+    { SFFeatureTagMEDI, _SFGlyphTraitMedial },
+    { SFFeatureTagINIT, _SFGlyphTraitInitial },
+    { SFFeatureTagRLIG, SFGlyphTraitNone },
+    { SFFeatureTagCALT, SFGlyphTraitNone },
     /* Typographical forms */
-    { SFFeatureTagLIGA, 0 },
-    { SFFeatureTagDLIG, 0 },
-    { SFFeatureTagCSWH, 0 },
-    { SFFeatureTagMSET, 0 },
+    { SFFeatureTagLIGA, SFGlyphTraitNone },
+    { SFFeatureTagDLIG, SFGlyphTraitNone },
+    { SFFeatureTagCSWH, SFGlyphTraitNone },
+    { SFFeatureTagMSET, SFGlyphTraitNone },
     /* Positioning features */
-    { SFFeatureTagCURS, 0 },
-    { SFFeatureTagKERN, 0 },
-    { SFFeatureTagMARK, 0 },
-    { SFFeatureTagMKMK, 0 }
+    { SFFeatureTagCURS, SFGlyphTraitNone },
+    { SFFeatureTagKERN, SFGlyphTraitNone },
+    { SFFeatureTagMARK, SFGlyphTraitNone },
+    { SFFeatureTagMKMK, SFGlyphTraitNone }
 };
-static const SFUInteger _SFArabicFeatureCount = sizeof(_SFArabicFeatureArray) / sizeof(SFFeatureKnowledge);
+static const SFUInteger _SFArabicFeatureInfoCount = sizeof(_SFArabicFeatureInfoArray) / sizeof(SFFeatureInfo);
 
 static SFScriptKnowledge _SFArabicScriptKnowledge = {
-    { _SFArabicFeatureArray, _SFArabicFeatureCount },
+    { _SFArabicFeatureInfoArray, _SFArabicFeatureInfoCount },
     { NULL, 0 }
 };
 
@@ -81,15 +81,18 @@ static SFShapingEngine _SFArabicEngineBase = {
     &SFArabicEngineProcessAlbum
 };
 
-SF_INTERNAL void SFArabicEngineInitialize(SFArabicEngineRef arabicEngine)
+SF_INTERNAL void SFArabicEngineInitialize(SFArabicEngineRef arabicEngine, SFPatternRef pattern)
 {
     arabicEngine->_base = _SFArabicEngineBase;
+    arabicEngine->_pattern = pattern;
 }
 
-static void SFArabicEngineProcessAlbum(const void *object, SFPatternRef pattern, SFAlbumRef album)
+static void SFArabicEngineProcessAlbum(const void *object, SFAlbumRef album)
 {
+    SFArabicEngineRef arabicEngine = (SFArabicEngineRef)object;
     SFTextProcessor processor;
-    SFTextProcessorInitialize(&processor, pattern, album);
+
+    SFTextProcessorInitialize(&processor, arabicEngine->_pattern, album);
     SFTextProcessorDiscoverGlyphs(&processor);
     SFTextProcessorSubstituteGlyphs(&processor);
     SFTextProcessorPositionGlyphs(&processor);

@@ -30,9 +30,9 @@
 
 static SFData _SFGetLookupFromHeader(SFData header, SFUInt16 lookupIndex);
 
-static void _SFApplyGroupRange(SFTextProcessorRef processor, SFUInteger index, SFUInteger count);
-static void _SFApplyFeatureGroup(SFTextProcessorRef processor, SFFeatureGroupRef featureGroup);
-static void _SFApplyLookup(SFTextProcessorRef processor, SFUInt16 lookupIndex, SFHeaderKind headerKind);
+static void _SFApplyFeatureRange(SFTextProcessorRef processor, SFUInteger index, SFUInteger count, SFFeatureKind featureKind);
+static void _SFApplyFeatureUnit(SFTextProcessorRef processor, SFFeatureUnitRef featureUnit, SFFeatureKind featureKind);
+static void _SFApplyLookup(SFTextProcessorRef processor, SFUInt16 lookupIndex, SFFeatureKind featureKind);
 
 SF_INTERNAL void SFTextProcessorInitialize(SFTextProcessorRef textProcessor, SFPatternRef pattern, SFAlbumRef album)
 {
@@ -57,7 +57,7 @@ SF_INTERNAL void SFTextProcessorSubstituteGlyphs(SFTextProcessorRef textProcesso
 {
     SFPatternRef pattern = textProcessor->_pattern;
 
-    _SFApplyGroupRange(textProcessor, 0, pattern->groupCount.gsub);
+    _SFApplyFeatureRange(textProcessor, 0, pattern->featureUnits.gsub, SFFeatureKindSubstitution);
 }
 
 SF_INTERNAL void SFTextProcessorPositionGlyphs(SFTextProcessorRef textProcessor)
@@ -80,7 +80,7 @@ SF_INTERNAL void SFTextProcessorPositionGlyphs(SFTextProcessorRef textProcessor)
         SFAlbumSetAdvance(album, index, advance);
     }
 
-    _SFApplyGroupRange(textProcessor, pattern->groupCount.gsub, pattern->groupCount.gpos);
+    _SFApplyFeatureRange(textProcessor, pattern->featureUnits.gsub, pattern->featureUnits.gpos, SFFeatureKindPositioning);
 }
 
 static SFData _SFGetLookupFromHeader(SFData header, SFUInt16 lookupIndex)
@@ -93,42 +93,41 @@ static SFData _SFGetLookupFromHeader(SFData header, SFUInt16 lookupIndex)
     return lookup;
 }
 
-static void _SFApplyGroupRange(SFTextProcessorRef processor, SFUInteger index, SFUInteger count)
+static void _SFApplyFeatureRange(SFTextProcessorRef processor, SFUInteger index, SFUInteger count, SFFeatureKind featureKind)
 {
     SFPatternRef pattern = processor->_pattern;
 
     for (; index < count; index++) {
         /* Apply the feature group. */
-        _SFApplyFeatureGroup(processor, &pattern->featureGroupArray[index]);
+        _SFApplyFeatureUnit(processor, &pattern->featureUnits.items[index], featureKind);
     }
 }
 
-static void _SFApplyFeatureGroup(SFTextProcessorRef processor, SFFeatureGroupRef featureGroup)
+static void _SFApplyFeatureUnit(SFTextProcessorRef processor, SFFeatureUnitRef featureUnit, SFFeatureKind featureKind)
 {
-    SFHeaderKind headerKind = featureGroup->headerKind;
-    SFUInt16 *lookupArray = featureGroup->lookupIndexes;
-    SFUInteger lookupCount = featureGroup->lookupCount;
+    SFUInt16 *lookupArray = featureUnit->lookupIndexes.items;
+    SFUInteger lookupCount = featureUnit->lookupIndexes.count;
     SFUInteger lookupIndex;
 
     /* Apply all lookups of the group. */
     for (lookupIndex = 0; lookupIndex < lookupCount; lookupIndex++) {
-        _SFApplyLookup(processor, lookupArray[lookupIndex], headerKind);
+        _SFApplyLookup(processor, lookupArray[lookupIndex], featureKind);
     }
 }
 
-static void _SFApplyLookup(SFTextProcessorRef processor, SFUInt16 lookupIndex, SFHeaderKind headerKind)
+static void _SFApplyLookup(SFTextProcessorRef processor, SFUInt16 lookupIndex, SFFeatureKind featureKind)
 {
     SFLocatorRef locator = &processor->_locator;
     SFLocatorReset(locator);
 
-    processor->_headerKind = headerKind;
+    processor->_featureKind = featureKind;
 
-    if (headerKind == SFHeaderKindGSUB) {
+    if (featureKind == SFFeatureKindSubstitution) {
         SFData lookup = _SFGetLookupFromHeader(processor->_font->cache.gsub, lookupIndex);
         while (SFLocatorMoveNext(locator)) {
             _SFApplyGSUBLookup(processor, lookup);
         }
-    } else if (headerKind == SFHeaderKindGPOS) {
+    } else if (featureKind == SFFeatureKindPositioning) {
         SFData lookup = _SFGetLookupFromHeader(processor->_font->cache.gpos, lookupIndex);
         while (SFLocatorMoveNext(locator)) {
             _SFApplyGPOSLookup(processor, lookup);

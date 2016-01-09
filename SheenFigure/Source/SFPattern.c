@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Muhammad Tayyab Akram
+ * Copyright (C) 2016 Muhammad Tayyab Akram
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,11 +25,12 @@
 SF_INTERNAL SFPatternRef SFPatternCreate(void)
 {
     SFPatternRef pattern = malloc(sizeof(SFPattern));
-    pattern->featureTagArray = NULL;
-    pattern->featureGroupArray = NULL;
-    pattern->groupCount.gsub = 0;
-    pattern->groupCount.gpos = 0;
-    pattern->featureCount = 0;
+    pattern->font = NULL;
+    pattern->featureTags.items = NULL;
+    pattern->featureTags.count = 0;
+    pattern->featureUnits.items = NULL;
+    pattern->featureUnits.gsub = 0;
+    pattern->featureUnits.gpos = 0;
     pattern->scriptTag = 0;
     pattern->languageTag = 0;
     pattern->_retainCount = 1;
@@ -37,23 +38,22 @@ SF_INTERNAL SFPatternRef SFPatternCreate(void)
     return pattern;
 }
 
-static void _SFFinalizeGroup(SFFeatureGroupRef featureGroup)
+static void _SFFinalizeFeatureInfo(SFFeatureUnitRef featureUnit)
 {
-    free(featureGroup->lookupIndexes);
+    free(featureUnit->lookupIndexes.items);
 }
 
 static void _SFPatternFinalize(SFPatternRef pattern)
 {
-    SFUInteger groupCount = pattern->groupCount.gsub + pattern->groupCount.gpos;
+    SFUInteger featureCount = pattern->featureUnits.gsub + pattern->featureUnits.gpos;
     SFUInteger index;
 
     /* Finalize all groups. */
-    for (index = 0; index < groupCount; index++) {
-        _SFFinalizeGroup(&pattern->featureGroupArray[index]);
+    for (index = 0; index < featureCount; index++) {
+        _SFFinalizeFeatureInfo((SFFeatureUnitRef)&pattern->featureUnits.items[index]);
     }
 
-    free(pattern->featureTagArray);
-    free(pattern->featureGroupArray);
+    free(pattern->featureUnits.items);
 }
 
 SFPatternRef SFPatternRetain(SFPatternRef pattern)

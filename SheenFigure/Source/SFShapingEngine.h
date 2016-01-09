@@ -22,26 +22,24 @@
 #include <SFTypes.h>
 
 #include "SFAlbum.h"
-#include "SFPattern.h"
 #include "SFFont.h"
 #include "SFGlyphTraits.h"
 
-typedef struct _SFFeatureKnowledge {
-    SFFeatureTag tag;
-    SFGlyphTraits traits;
-} SFFeatureKnowledge, *SFFeatureKnowledgeRef;
+typedef struct _SFFeatureInfo {
+    SFFeatureTag featureTag;
+    SFGlyphTraits requiredTraits;
+} SFFeatureInfo, *SFFeatureInfoRef;
 
 typedef struct _SFScriptKnowledge {
-    /* All features of a script in implementation order; Substitution as well as positioning. */
     struct {
-        const SFFeatureKnowledge *items;
+        SFFeatureInfo *items;
         SFUInteger count;
-    } features;
-	/* Groups of features which must be applied simultaneously in a script. */
+    } featureInfos;
+	/* Groups of features in implementation order; Substitution as well as positioning. */
     struct {
-        const SFRange *items;
+        SFRange *items;
         SFUInteger count;
-    } groups;
+    } featureUnits;
 } SFScriptKnowledge, *SFScriptKnowledgeRef;
 
 /**
@@ -55,7 +53,7 @@ typedef struct _SFShapingKnowledge {
  * A common interface of all shaping engines.
  */
 typedef struct _SFShapingEngine {
-    void (*_processAlbum)(const void *, SFPatternRef, SFAlbumRef);
+    void (*_processAlbum)(const void *, SFAlbumRef);
 } SFShapingEngine, *SFShapingEngineRef;
 
 /**
@@ -63,6 +61,6 @@ typedef struct _SFShapingEngine {
  */
 SF_INTERNAL SFScriptKnowledgeRef SFShapingKnowledgeSeekScript(SFShapingKnowledgeRef shapingKnowledge, SFScriptTag scriptTag);
 
-SF_INTERNAL void SFShapingEngineProcessAlbum(SFShapingEngineRef shapingEngine, SFPatternRef pattern, SFAlbumRef album);
+SF_INTERNAL void SFShapingEngineProcessAlbum(SFShapingEngineRef shapingEngine, SFAlbumRef album);
 
 #endif

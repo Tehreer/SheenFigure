@@ -36,7 +36,7 @@ typedef struct _SFTextProcessor {
     SFDirection _direction;
     /* State values. */
     SFFeatureTag _featureTag;
-    SFHeaderKind _headerKind;
+    SFFeatureKind _featureKind;
 } SFTextProcessor, *SFTextProcessorRef;
 
 SF_INTERNAL void SFTextProcessorInitialize(SFTextProcessorRef textProcessor, SFPatternRef pattern, SFAlbumRef album);

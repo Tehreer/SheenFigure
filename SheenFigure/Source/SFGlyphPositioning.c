@@ -505,7 +505,7 @@ static SFBoolean _SFApplyCursivePosF1(SFTextProcessorRef processor, SFData cursi
 
                 /* Set traits of both elements. */
                 if (locator->lookupFlag & SFLookupFlagRightToLeft) {
-                    SFGlyphTrait traits;
+                    SFGlyphTraits traits;
 
                     traits = SFAlbumGetTraits(album, firstIndex) | SFGlyphTraitRightToLeft;
                     SFAlbumSetTraits(album, firstIndex, traits);

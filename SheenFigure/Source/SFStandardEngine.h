@@ -25,10 +25,11 @@
 
 typedef struct _SFStandardEngine {
     SFShapingEngine _base;
+    SFPatternRef _pattern;
 } SFStandardEngine, *SFStandardEngineRef;
 
 extern SFShapingKnowledge SFStandardKnowledgeInstance;
 
-SF_INTERNAL void SFStandardEngineInitialize(SFStandardEngineRef standardEngine);
+SF_INTERNAL void SFStandardEngineInitialize(SFStandardEngineRef standardEngine, SFPatternRef pattern);
 
 #endif

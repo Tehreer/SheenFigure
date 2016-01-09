@@ -1,5 +1,5 @@
 /*
-* Copyright (C) 2015 Muhammad Tayyab Akram
+* Copyright (C) 2016 Muhammad Tayyab Akram
 *
 * Licensed under the Apache License, Version 2.0 (the "License");
 * you may not use this file except in compliance with the License.
@@ -27,24 +27,24 @@
 #include "SFStandardEngine.h"
 
 static SFScriptKnowledgeRef _SFStandardKnowledgeSeekScript(const void *object, SFScriptTag scriptTag);
-static void _SFStandardEngineProcessAlbum(const void *object, SFPatternRef pattern, SFAlbumRef album);
+static void _SFStandardEngineProcessAlbum(const void *object, SFAlbumRef album);
 
-static const SFFeatureKnowledge _SFStandardFeatureArray[] = {
+static SFFeatureInfo _SFStandardFeatureInfoArray[] = {
     /* Language based forms. */
-    { SFFeatureTagCCMP, 0 },
+    { SFFeatureTagCCMP, SFGlyphTraitNone },
     /* Typographical forms */
-    { SFFeatureTagLIGA, 0 },
-    { SFFeatureTagCLIG, 0 },
+    { SFFeatureTagLIGA, SFGlyphTraitNone },
+    { SFFeatureTagCLIG, SFGlyphTraitNone },
     /* Positioning features. */
-    { SFFeatureTagDIST, 0 },
-    { SFFeatureTagKERN, 0 },
-    { SFFeatureTagMARK, 0 },
-    { SFFeatureTagMKMK, 0 }
+    { SFFeatureTagDIST, SFGlyphTraitNone },
+    { SFFeatureTagKERN, SFGlyphTraitNone },
+    { SFFeatureTagMARK, SFGlyphTraitNone },
+    { SFFeatureTagMKMK, SFGlyphTraitNone }
 };
-static const SFUInteger _SFStandardFeatureCount = sizeof(_SFStandardFeatureArray) / sizeof(SFFeatureKnowledge);
+static const SFUInteger _SFStandardFeatureInfoCount = sizeof(_SFStandardFeatureInfoArray) / sizeof(SFFeatureInfo);
 
 static SFScriptKnowledge _SFStandardScriptKnowledge = {
-    { _SFStandardFeatureArray, _SFStandardFeatureCount },
+    { _SFStandardFeatureInfoArray, _SFStandardFeatureInfoCount },
     { NULL, 0 }
 };
 
@@ -72,15 +72,18 @@ static SFShapingEngine _SFStandardEngineBase = {
     &_SFStandardEngineProcessAlbum
 };
 
-SF_INTERNAL void SFStandardEngineInitialize(SFStandardEngineRef standardEngine)
+SF_INTERNAL void SFStandardEngineInitialize(SFStandardEngineRef standardEngine, SFPatternRef pattern)
 {
     standardEngine->_base = _SFStandardEngineBase;
+    standardEngine->_pattern = pattern;
 }
 
-static void _SFStandardEngineProcessAlbum(const void *object, SFPatternRef pattern, SFAlbumRef album)
+static void _SFStandardEngineProcessAlbum(const void *object, SFAlbumRef album)
 {
+    SFStandardEngineRef standardEngine = (SFStandardEngineRef)object;
     SFTextProcessor processor;
-    SFTextProcessorInitialize(&processor, pattern, album);
+    
+    SFTextProcessorInitialize(&processor, standardEngine->_pattern, album);
     SFTextProcessorDiscoverGlyphs(&processor);
     SFTextProcessorSubstituteGlyphs(&processor);
     SFTextProcessorPositionGlyphs(&processor);

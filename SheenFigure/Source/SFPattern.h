@@ -25,40 +25,45 @@
 #include <SFScriptTag.h>
 #include <SFTypes.h>
 
-/**
- * A type to represent the kind of an OpenType feature.
- */
-typedef enum {
-    SFHeaderKindGSUB = 0x01, /**< A value indicating that the feature belongs to 'GSUB' table. */
-    SFHeaderKindGPOS = 0x02  /**< A value indicating that the feature belongs to 'GPOS' table. */
-} SFHeaderKind;
+#include "SFShapingEngine.h"
+
+enum {
+    SFFeatureKindSubstitution = 0x01, /**< A value indicating that the feature belongs to 'GSUB' table. */
+    SFFeatureKindPositioning = 0x02   /**< A value indicating that the feature belongs to 'GPOS' table. */
+};
+typedef SFUInt8 SFFeatureKind;
 
 /**
  * Keeps details of a group having multiple features which must be applied simultaneously.
  */
-typedef struct _SFFeatureGroup {
-    SFUInt16 *lookupIndexes;    /**< Unique lookup indexes of all features of the group in ascending order. */
-    SFUInteger lookupCount;     /**< Total number of lookups in the group. */
-    SFUInteger featureIndex;    /**< Starting index of feature covered in the group. */
-    SFUInteger featureCount;    /**< Total number of features belonging to the group. */
-    SFHeaderKind headerKind;    /**< Kind of feature's header table. */
-} SFFeatureGroup, *SFFeatureGroupRef;
+typedef struct _SFFeatureUnit {
+    /**
+     * Unique lookup indexes of all features belonging to the unit in ascending order.
+     */
+    struct {
+        SFUInt16 *items;
+        SFUInteger count;
+    } lookupIndexes;
+    SFRange coveredRange;
+    SFGlyphTraits requiredTraits;
+} SFFeatureUnit, *SFFeatureUnitRef;
 
 /**
  * Keeps details of a script from both 'GSUB' and 'GPOS' tables.
  */
 struct _SFPattern {
     SFFontRef font;
-    SFFeatureTag *featureTagArray;     /**< Tags of features. */
-    SFFeatureGroup *featureGroupArray; /**<  Array of feature groups in implementation order. Substitution features will be followed by positioning features. */
     struct {
-        SFUInteger gsub;           /**< Total number of gsub feature groups.*/
-        SFUInteger gpos;	       /**< Total number of gpos feature groups.*/
-    } groupCount;
-    SFUInteger featureCount;       /**< Total number of features. */
-    SFScriptTag scriptTag;         /**< Tag of the script. */
-    SFLanguageTag languageTag;     /**< Tag of the language. */
-
+        SFFeatureTag *items;
+        SFUInteger count;           /**< Total number of features.*/
+    } featureTags;
+    struct {
+        SFFeatureUnit *items;
+        SFUInteger gsub;            /**< Total number of gsub feature groups.*/
+        SFUInteger gpos;            /**< Total number of gpos feature groups.*/
+    } featureUnits;
+    SFScriptTag scriptTag;          /**< Tag of the script. */
+    SFLanguageTag languageTag;      /**< Tag of the language. */
     SFUInteger _retainCount;
 };
 

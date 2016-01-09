@@ -185,7 +185,7 @@ SF_PRIVATE SFGlyphTraits _SFGetGlyphTraits(SFTextProcessorRef processor, SFGlyph
         return _SFGlyphClassToGlyphTrait(glyphClass);
     }
 
-    return 0;
+    return SFGlyphTraitNone;
 }
 
 SF_PRIVATE SFBoolean _SFApplyExtensionSubtable(SFTextProcessorRef processor, SFData extensionSubtable)
@@ -199,11 +199,11 @@ SF_PRIVATE SFBoolean _SFApplyExtensionSubtable(SFTextProcessorRef processor, SFD
             SFUInt32 offset = SFExtensionF1_ExtensionOffset(extensionSubtable);
             SFData innerSubtable = SFData_Subdata(extensionSubtable, offset);
 
-            switch (processor->_headerKind) {
-            case SFHeaderKindGSUB:
+            switch (processor->_featureKind) {
+            case SFFeatureKindSubstitution:
                 return _SFApplySubst(processor, lookupType, innerSubtable);
 
-            case SFHeaderKindGPOS:
+            case SFFeatureKindPositioning:
                 return _SFApplyPos(processor, lookupType, innerSubtable);
             }
         }

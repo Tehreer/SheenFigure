@@ -149,13 +149,13 @@ SF_INTERNAL void SFAlbumSetGlyph(SFAlbumRef album, SFUInteger index, SFGlyphID g
     SFListSetVal(&album->_glyphs, index, glyph);
 }
 
-SF_INTERNAL SFGlyphTrait SFAlbumGetTraits(SFAlbumRef album, SFUInteger index)
+SF_INTERNAL SFGlyphTraits SFAlbumGetTraits(SFAlbumRef album, SFUInteger index)
 {
     SFValidateAlbumIndex(album, index);
     return SFListGetRef(&album->_details, index)->traits;
 }
 
-SF_INTERNAL void SFAlbumSetTraits(SFAlbumRef album, SFUInteger index, SFGlyphTrait traits)
+SF_INTERNAL void SFAlbumSetTraits(SFAlbumRef album, SFUInteger index, SFGlyphTraits traits)
 {
     SFValidateAlbumIndex(album, index);
     SFListGetRef(&album->_details, index)->traits = traits;

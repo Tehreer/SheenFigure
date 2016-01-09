@@ -111,7 +111,7 @@ static SFBoolean _SFApplySingleSubst(SFTextProcessorRef processor, SFData single
             if (coverageIndex != SFInvalidIndex) {
                 SFInt16 delta = SFSingleSubstF1_DeltaGlyphID(singleSubst);
                 SFGlyphID substitute = (SFGlyphID)(inputGlyph + delta);
-                SFGlyphTrait traits = _SFGetGlyphTrait(processor, substitute);
+                SFGlyphTraits traits = _SFGetGlyphTraits(processor, substitute);
 
                 /* Substitute the glyph and set its traits. */
                 SFAlbumSetGlyph(album, inputIndex, substitute);
@@ -135,7 +135,7 @@ static SFBoolean _SFApplySingleSubst(SFTextProcessorRef processor, SFData single
 
                 if (coverageIndex < glyphCount) {
                     SFGlyphID substitute = SFSingleSubstF2_Substitute(singleSubst, coverageIndex);
-                    SFGlyphTrait traits = _SFGetGlyphTrait(processor, substitute);
+                    SFGlyphTraits traits = _SFGetGlyphTraits(processor, substitute);
 
                     /* Substitute the glyph and set its traits. */
                     SFAlbumSetGlyph(album, inputIndex, substitute);
@@ -200,11 +200,11 @@ static SFBoolean _SFApplySequence(SFTextProcessorRef processor, SFData sequence)
 
     if (glyphCount > 0) {
         SFGlyphID substitute;
-        SFGlyphTrait traits;
+        SFGlyphTraits traits;
 
         /* Get first substitute and its traits. */
         substitute = SFSequence_Substitute(sequence, 0);
-        traits = _SFGetGlyphTrait(processor, substitute);
+        traits = _SFGetGlyphTraits(processor, substitute);
 
         /* Put substitute of first glyph and set its traits. */
         SFAlbumSetGlyph(album, inputIndex, substitute);
@@ -223,7 +223,7 @@ static SFBoolean _SFApplySequence(SFTextProcessorRef processor, SFData sequence)
 
                 /* Get substitute along with traits at current index. */
                 substitute = SFSequence_Substitute(sequence, subIndex);
-                traits = _SFGetGlyphTrait(processor, substitute);
+                traits = _SFGetGlyphTraits(processor, substitute);
 
                 /* Initialize the glyph with substitute. */
                 SFAlbumSetGlyph(album, newIndex, substitute);
@@ -325,7 +325,7 @@ static SFBoolean _SFApplyLigatureSet(SFTextProcessorRef processor, SFData ligatu
         /* Do the substitution, if all components are matched. */
         if (compIndex == compCount) {
             SFGlyphID ligGlyph = SFLigature_LigGlyph(ligature);
-            SFGlyphTrait traits = _SFGetGlyphTrait(processor, ligGlyph);
+            SFGlyphTraits traits = _SFGetGlyphTraits(processor, ligGlyph);
             SFUInteger association;
 
             /* Substitute the ligature glyph and set its traits. */
