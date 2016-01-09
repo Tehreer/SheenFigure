@@ -57,11 +57,13 @@ StreamBuilder &StreamBuilder::appendTab() {
 }
 
 StreamBuilder &StreamBuilder::appendTabs(size_t tabCount) {
-    size_t tabLength = tabCount * TAB_LENGTH;
-    size_t oldLength = lineLength();
-    size_t newLength = oldLength + tabLength;
-    size_t spaces = tabLength - (newLength % tabCount);
-    *m_streamPtr << setfill(' ') << setw((int)spaces) << ' ';
+    if (tabCount > 0) {
+        size_t tabLength = tabCount * TAB_LENGTH;
+        size_t oldLength = lineLength();
+        size_t newLength = oldLength + tabLength;
+        size_t spaces = tabLength - (newLength % tabCount);
+        *m_streamPtr << setfill(' ') << setw((int)spaces) << ' ';
+    }
 
     return *this;
 }

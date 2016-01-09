@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Muhammad Tayyab Akram
+ * Copyright (C) 2016 Muhammad Tayyab Akram
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,26 +14,25 @@
  * limitations under the License.
  */
 
-#include <sstream>
-#include <iostream>
+#ifndef __SHEENFIGURE_TESTER__JOINING_TYPE_LOOKUP_TESTER_H
+#define __SHEENFIGURE_TESTER__JOINING_TYPE_LOOKUP_TESTER_H
 
-#include "TextBuilder.h"
+#include <Parser/ArabicShaping.h>
 
-using namespace std;
-using namespace SheenFigure::Generator::Utilities;
+namespace SheenFigure {
+namespace Tester {
 
-TextBuilder::TextBuilder() {
-    initialize(&m_stream);
+class JoiningTypeLookupTester {
+public:
+    JoiningTypeLookupTester(const Parser::ArabicShaping &arabicShaping);
+
+    void test();
+
+private:
+    const Parser::ArabicShaping &m_arabicShaping;
+};
+
+}
 }
 
-void TextBuilder::appendOnStream(ostream &stream) const {
-    stream << m_stream.rdbuf();
-}
-
-void TextBuilder::print() {
-    cout << m_stream.str();
-}
-
-string TextBuilder::toString() {
-    return m_stream.str();
-}
+#endif

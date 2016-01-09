@@ -24,51 +24,52 @@
 #define U     SFJoiningTypeU
 
 static const SFUInt8 _SFJoiningTypeData[] = {
-    BYTE(U, U), BYTE(U, U), BYTE(U, F), BYTE(F, U), BYTE(F, F), BYTE(U, F), BYTE(F, F), BYTE(F, F),
-    BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, D),
-    BYTE(U, R), BYTE(R, R), BYTE(R, D), BYTE(R, D), BYTE(R, D), BYTE(D, D), BYTE(D, D), BYTE(R, R),
-    BYTE(R, R), BYTE(D, D), BYTE(D, D), BYTE(D, D), BYTE(D, D), BYTE(D, D), BYTE(D, D), BYTE(D, C),
-    BYTE(D, D), BYTE(D, D), BYTE(D, D), BYTE(D, R), BYTE(D, D), BYTE(F, F), BYTE(F, F), BYTE(F, F),
+#define _SFJoiningTypeData_0000 0x0000
+    BYTE(U, U), BYTE(U, U), BYTE(U, U), BYTE(F, F), BYTE(U, F), BYTE(F, U), BYTE(F, F), BYTE(F, F),
     BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, F),
-    BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, D), BYTE(D, F),
-    BYTE(R, R), BYTE(R, U), BYTE(R, R), BYTE(R, D), BYTE(D, D), BYTE(D, D), BYTE(D, D), BYTE(D, D),
-    BYTE(D, D), BYTE(D, D), BYTE(D, D), BYTE(D, R), BYTE(R, R), BYTE(R, R), BYTE(R, R), BYTE(R, R),
-    BYTE(R, R), BYTE(R, R), BYTE(R, R), BYTE(R, R), BYTE(R, D), BYTE(D, D), BYTE(D, D), BYTE(D, D),
+    BYTE(D, U), BYTE(R, R), BYTE(R, R), BYTE(D, R), BYTE(D, R), BYTE(D, D), BYTE(D, D), BYTE(D, R),
+    BYTE(R, R), BYTE(R, D), BYTE(D, D), BYTE(D, D), BYTE(D, D), BYTE(D, D), BYTE(D, D), BYTE(D, D),
+    BYTE(C, D), BYTE(D, D), BYTE(D, D), BYTE(D, D), BYTE(R, D), BYTE(D, F), BYTE(F, F), BYTE(F, F),
+    BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, F),
+    BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(D, D),
+    BYTE(F, R), BYTE(R, R), BYTE(U, R), BYTE(R, R), BYTE(D, D), BYTE(D, D), BYTE(D, D), BYTE(D, D),
+    BYTE(D, D), BYTE(D, D), BYTE(D, D), BYTE(D, D), BYTE(R, R), BYTE(R, R), BYTE(R, R), BYTE(R, R),
+    BYTE(R, R), BYTE(R, R), BYTE(R, R), BYTE(R, R), BYTE(R, R), BYTE(D, D), BYTE(D, D), BYTE(D, D),
     BYTE(D, D), BYTE(D, D), BYTE(D, D), BYTE(D, D), BYTE(D, D), BYTE(D, D), BYTE(D, D), BYTE(D, D),
-    BYTE(D, D), BYTE(D, D), BYTE(D, D), BYTE(D, D), BYTE(D, D), BYTE(D, D), BYTE(D, D), BYTE(D, R),
-    BYTE(D, D), BYTE(R, R), BYTE(R, R), BYTE(R, R), BYTE(R, R), BYTE(R, D), BYTE(R, D), BYTE(R, D),
-    BYTE(D, R), BYTE(R, F), BYTE(R, F), BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(U, F), BYTE(F, F),
-    BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, R), BYTE(R, F),
-    BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, D), BYTE(D, D), BYTE(F, F), BYTE(D, F),
-    BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, R),
-    BYTE(F, D), BYTE(D, D), BYTE(R, R), BYTE(R, R), BYTE(R, D), BYTE(D, D), BYTE(D, R), BYTE(D, D),
-    BYTE(D, D), BYTE(D, D), BYTE(D, D), BYTE(D, R), BYTE(D, R), BYTE(D, R), BYTE(D, D), BYTE(R, F),
-    BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, F),
-    BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(R, D), BYTE(D, D),
-    BYTE(D, D), BYTE(D, D), BYTE(D, D), BYTE(D, D), BYTE(R, R), BYTE(R, D), BYTE(D, D), BYTE(D, D),
-    BYTE(D, D), BYTE(D, D), BYTE(D, D), BYTE(D, D), BYTE(D, D), BYTE(R, R), BYTE(D, D), BYTE(D, D),
-    BYTE(R, D), BYTE(R, R), BYTE(D, D), BYTE(D, R), BYTE(R, D), BYTE(D, D), BYTE(D, D), BYTE(D, F),
-    BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, F),
-    BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, F),
-    BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, F),
-    BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, F),
-    BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, D), BYTE(D, D), BYTE(D, D), BYTE(D, D),
     BYTE(D, D), BYTE(D, D), BYTE(D, D), BYTE(D, D), BYTE(D, D), BYTE(D, D), BYTE(D, D), BYTE(D, D),
-    BYTE(D, D), BYTE(D, D), BYTE(D, D), BYTE(D, D), BYTE(D, D), BYTE(F, F), BYTE(F, F), BYTE(F, F),
-    BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, C), BYTE(F, F), BYTE(F, F), BYTE(F, F),
+    BYTE(R, D), BYTE(D, R), BYTE(R, R), BYTE(R, R), BYTE(R, R), BYTE(R, R), BYTE(D, R), BYTE(D, R),
+    BYTE(D, D), BYTE(R, R), BYTE(F, R), BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, U), BYTE(F, F),
+    BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(R, R),
+    BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(D, D), BYTE(D, F), BYTE(F, D),
+    BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, F),
+    BYTE(R, F), BYTE(D, D), BYTE(D, R), BYTE(R, R), BYTE(R, R), BYTE(D, D), BYTE(D, D), BYTE(R, D),
+    BYTE(D, D), BYTE(D, D), BYTE(D, D), BYTE(D, D), BYTE(R, D), BYTE(R, D), BYTE(R, D), BYTE(D, R),
+    BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, F),
+    BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, R), BYTE(D, D),
+    BYTE(D, D), BYTE(D, D), BYTE(D, D), BYTE(D, D), BYTE(D, R), BYTE(R, R), BYTE(D, D), BYTE(D, D),
+    BYTE(D, D), BYTE(D, D), BYTE(D, D), BYTE(D, D), BYTE(D, D), BYTE(D, R), BYTE(R, D), BYTE(D, D),
+    BYTE(D, R), BYTE(D, R), BYTE(R, D), BYTE(D, D), BYTE(R, R), BYTE(D, D), BYTE(D, D), BYTE(D, D),
     BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, F),
     BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, F),
     BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, F),
-    BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, R),
-    BYTE(D, D), BYTE(D, D), BYTE(D, R), BYTE(R, D), BYTE(R, D), BYTE(D, D), BYTE(D, D), BYTE(D, D),
-    BYTE(D, D), BYTE(D, R), BYTE(D, U), BYTE(U, U), BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, F),
+    BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, F),
+    BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(D, D), BYTE(D, D), BYTE(D, D),
+    BYTE(D, D), BYTE(D, D), BYTE(D, D), BYTE(D, D), BYTE(D, D), BYTE(D, D), BYTE(D, D), BYTE(D, D),
+    BYTE(D, D), BYTE(D, D), BYTE(D, D), BYTE(D, D), BYTE(D, D), BYTE(D, F), BYTE(F, F), BYTE(F, F),
+    BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(C, F), BYTE(F, F), BYTE(F, F),
     BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, F),
     BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, F),
     BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, F),
-    BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, D),
-    BYTE(D, D), BYTE(D, D), BYTE(D, D), BYTE(D, D), BYTE(D, R), BYTE(R, R), BYTE(U, R), BYTE(D, D),
-    BYTE(R, R), BYTE(D, D),
-#define _SFJoiningTypeData_015A
+    BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, F),
+    BYTE(R, D), BYTE(D, D), BYTE(D, D), BYTE(R, R), BYTE(D, R), BYTE(D, D), BYTE(D, D), BYTE(D, D),
+    BYTE(D, D), BYTE(D, D), BYTE(R, D), BYTE(U, U), BYTE(U, F), BYTE(F, F), BYTE(F, F), BYTE(F, F),
+    BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, F),
+    BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, F),
+    BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, F),
+    BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, F),
+    BYTE(D, D), BYTE(D, D), BYTE(D, D), BYTE(D, D), BYTE(D, D), BYTE(R, R), BYTE(R, U), BYTE(R, D),
+    BYTE(D, R), BYTE(R, D), BYTE(D, F),
+#define _SFJoiningTypeData_015B 0x015B
     BYTE(U, D), BYTE(F, F), BYTE(C, F), BYTE(F, F), BYTE(U, F), BYTE(F, F), BYTE(F, F), BYTE(F, F),
     BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(D, D), BYTE(D, D), BYTE(D, D),
     BYTE(D, D), BYTE(D, D), BYTE(D, D), BYTE(D, D), BYTE(D, D), BYTE(D, D), BYTE(D, D), BYTE(D, D),
@@ -80,26 +81,26 @@ static const SFUInt8 _SFJoiningTypeData[] = {
     BYTE(U, D), BYTE(D, D), BYTE(D, D), BYTE(D, D), BYTE(D, D), BYTE(D, D), BYTE(D, D), BYTE(D, D),
     BYTE(D, D), BYTE(D, D), BYTE(D, D), BYTE(D, D), BYTE(D, D), BYTE(D, D), BYTE(D, D), BYTE(D, D),
     BYTE(D, D), BYTE(D, F), BYTE(D, F),
-#define _SFJoiningTypeData_01AD
+#define _SFJoiningTypeData_01AE 0x01AE
     BYTE(U, C), BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, F),
     BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, F),
     BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, F),
     BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, F),
     BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, F),
     BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(U, U), BYTE(U, U),
-#define _SFJoiningTypeData_01DC
+#define _SFJoiningTypeData_01DD 0x01DD
     BYTE(D, D), BYTE(D, D), BYTE(D, D), BYTE(D, D), BYTE(D, D), BYTE(D, D), BYTE(D, D), BYTE(D, D),
     BYTE(D, D), BYTE(D, D), BYTE(D, D), BYTE(D, D), BYTE(D, D), BYTE(D, D), BYTE(D, D), BYTE(D, D),
     BYTE(D, D), BYTE(D, D), BYTE(D, D), BYTE(D, D), BYTE(D, D), BYTE(D, D), BYTE(D, D), BYTE(D, D),
     BYTE(D, D), BYTE(L, U),
-#define _SFJoiningTypeData_01F6
+#define _SFJoiningTypeData_01F7 0x01F7
     BYTE(D, D), BYTE(D, D), BYTE(D, R), BYTE(U, R), BYTE(U, R), BYTE(R, U), BYTE(U, L), BYTE(R, R),
     BYTE(R, R), BYTE(R, D), BYTE(D, D), BYTE(D, L), BYTE(D, D), BYTE(D, D), BYTE(D, R), BYTE(D, D),
     BYTE(D, R), BYTE(U, U), BYTE(R, F), BYTE(F, F), BYTE(F, F), BYTE(F, D), BYTE(D, D), BYTE(D, R),
-#define _SFJoiningTypeData_020E
+#define _SFJoiningTypeData_020F 0x020F
     BYTE(D, R), BYTE(D, R), BYTE(R, R), BYTE(D, D), BYTE(D, R), BYTE(D, D), BYTE(R, D), BYTE(R, R),
     BYTE(D, R), BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, F),
-    BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, R), BYTE(R, R), BYTE(R, D), BYTE(D, F)
+    BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, R), BYTE(R, R), BYTE(R, D), BYTE(D, U)
 };
 
 SF_INTERNAL SFJoiningType SFJoiningTypeDetermine(SFCodepoint codepoint) {
@@ -107,41 +108,60 @@ SF_INTERNAL SFJoiningType SFJoiningTypeDetermine(SFCodepoint codepoint) {
     SFUInteger block;
     SFUInt8 value;
 
-    if (codepoint <= 0x2069) {
-        if (codepoint <= 0x08B4) {
-            diff = 0x08B4 - codepoint;
-            block = 0x015A;
-        } else {
-            if (codepoint <= 0x18AA) {
-                diff = 0x18AA - codepoint;
-                block = 0x01AD;
+    if (codepoint < 0xA840) {
+        if (codepoint < 0x1806) {
+            if (codepoint < 0x0600) {
+                goto NotFound;
+            } else if (codepoint > 0x08B4) {
+                goto NotFound;
             } else {
-                diff = 0x18AA - codepoint;
-                block = 0x01DC;
+                diff = codepoint - 0x0600;
+                block = _SFJoiningTypeData_0000 * 2;
             }
+        } else if (codepoint > 0x18AA) {
+            if (codepoint < 0x200C) {
+                goto NotFound;
+            } else if (codepoint > 0x2069) {
+                goto NotFound;
+            } else {
+                diff = codepoint - 0x200C;
+                block = _SFJoiningTypeData_01AE * 2;
+            }
+        } else {
+            diff = codepoint - 0x1806;
+            block = _SFJoiningTypeData_015B * 2;
+        }
+    } else if (codepoint > 0xA873) {
+        if (codepoint < 0x10B80) {
+            if (codepoint < 0x10AC0) {
+                goto NotFound;
+            } else if (codepoint > 0x10AEF) {
+                goto NotFound;
+            } else {
+                diff = codepoint - 0x10AC0;
+                block = _SFJoiningTypeData_01F7 * 2;
+            }
+        } else if (codepoint > 0x10BAF) {
+            goto NotFound;
+        } else {
+            diff = codepoint - 0x10B80;
+            block = _SFJoiningTypeData_020F * 2;
         }
     } else {
-        if (codepoint <= 0xA873) {
-            diff = 0xA873 - codepoint;
-            block = 0x01F6;
-        } else {
-            if (codepoint <= 0x10AEF) {
-                diff = 0x10AEF - codepoint;
-                block = 0x020E;
-            } else {
-                diff = 0x10AEF - codepoint;
-                block = 0x0226;
-            }
-        }
+        diff = codepoint - 0xA840;
+        block = _SFJoiningTypeData_01DD * 2;
     }
 
-    value = _SFJoiningTypeData[block - (diff >> 1)];
+    value = _SFJoiningTypeData[(block + diff) >> 1];
 
     if (diff & 1) {
         return (SFJoiningType)(value & 0xF);
     }
 
     return (SFJoiningType)(value >> 4);
+
+NotFound:
+    return SFJoiningTypeF;
 }
 
 #undef BYTE

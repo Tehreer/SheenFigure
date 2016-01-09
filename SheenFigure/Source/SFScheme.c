@@ -125,13 +125,13 @@ static void _SFAddFeatureRange(_SFSchemeStateRef state, SFUInteger index, SFUInt
             _SFAddAllLookups(state, feature);
 
             if (!simultaneous) {
-                SFPatternBuilderMakeGroup(&state->builder);
+                SFPatternBuilderMakeFeatureUnit(&state->builder);
             }
         }
     }
 
     if (simultaneous) {
-        SFPatternBuilderMakeGroup(&state->builder);
+        SFPatternBuilderMakeFeatureUnit(&state->builder);
     }
 }
 
@@ -230,10 +230,12 @@ SFPatternRef SFSchemeBuildPattern(SFSchemeRef scheme)
             if (gsub) {
                 SFPatternBuilderBeginFeatures(&state.builder, SFFeatureKindSubstitution);
                 _SFAddHeader(&state, gsub);
+                SFPatternBuilderEndFeatures(&state.builder);
             }
             if (gpos) {
                 SFPatternBuilderBeginFeatures(&state.builder, SFFeatureKindPositioning);
                 _SFAddHeader(&state, gpos);
+                SFPatternBuilderEndFeatures(&state.builder);
             }
 
             SFPatternBuilderBuild(&state.builder);

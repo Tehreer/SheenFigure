@@ -31,6 +31,7 @@ public:
     TextBuilder();
 
     void print();
+    std::string toString();
 
 protected:
     std::stringstream m_stream;

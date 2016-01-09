@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Muhammad Tayyab Akram
+ * Copyright (C) 2016 Muhammad Tayyab Akram
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,26 +14,35 @@
  * limitations under the License.
  */
 
-#include <sstream>
-#include <iostream>
-
-#include "TextBuilder.h"
-
-using namespace std;
-using namespace SheenFigure::Generator::Utilities;
-
-TextBuilder::TextBuilder() {
-    initialize(&m_stream);
+extern "C" {
+#include <SFJoiningType.h>
 }
 
-void TextBuilder::appendOnStream(ostream &stream) const {
-    stream << m_stream.rdbuf();
-}
+#include "Convert.h"
 
-void TextBuilder::print() {
-    cout << m_stream.str();
-}
+using namespace SheenFigure::Tester::Utilities;
 
-string TextBuilder::toString() {
-    return m_stream.str();
+char Convert::toChar(SFJoiningType joiningType)
+{
+    switch (joiningType) {
+    case SFJoiningTypeU:
+        return 'U';
+
+    case SFJoiningTypeL:
+        return 'L';
+
+    case SFJoiningTypeR:
+        return 'R';
+
+    case SFJoiningTypeD:
+        return 'D';
+
+    case SFJoiningTypeC:
+        return 'C';
+
+    case SFJoiningTypeT:
+        return 'T';
+    }
+
+    return '\0';
 }

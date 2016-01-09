@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Muhammad Tayyab Akram
+ * Copyright (C) 2016 Muhammad Tayyab Akram
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,26 +14,22 @@
  * limitations under the License.
  */
 
-#include <sstream>
-#include <iostream>
+#ifndef __SHEEN_FIGURE__TESTER__UTILITIES__UNICODE_H
+#define __SHEEN_FIGURE__TESTER__UTILITIES__UNICODE_H
 
-#include "TextBuilder.h"
+#include <cstdint>
 
-using namespace std;
-using namespace SheenFigure::Generator::Utilities;
+namespace SheenFigure {
+namespace Tester {
+namespace Utilities {
 
-TextBuilder::TextBuilder() {
-    initialize(&m_stream);
+class Unicode {
+public:
+    static const uint32_t MaxCodepoint;
+};
+
+}
+}
 }
 
-void TextBuilder::appendOnStream(ostream &stream) const {
-    stream << m_stream.rdbuf();
-}
-
-void TextBuilder::print() {
-    cout << m_stream.str();
-}
-
-string TextBuilder::toString() {
-    return m_stream.str();
-}
+#endif

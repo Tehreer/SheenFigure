@@ -16,15 +16,24 @@
 
 #include <cstdio>
 
+#include <Parser/ArabicShaping.h>
+
+#include "JoiningTypeLookupTester.h"
 #include "ListTester.h"
 
 using namespace std;
+using namespace SheenFigure::Parser;
 using namespace SheenFigure::Tester;
 
 int main(int argc, const char * argv[])
 {
-    ListTester tester;
+    ArabicShaping arabicShaping("/Users/mta/Desktop");
+    
+    JoiningTypeLookupTester tester(arabicShaping);
     tester.test();
+
+    //ListTester tester;
+    //tester.test();
 
     getchar();
 
