@@ -19,9 +19,10 @@
 
 #include <SFConfig.h>
 
+#include "SFAlbum.h"
 #include "SFCommon.h"
 #include "SFData.h"
-#include "SFAlbum.h"
+#include "SFGlyphTraits.h"
 
 typedef struct _SFLocator {
     SFAlbumRef _album;
@@ -29,12 +30,15 @@ typedef struct _SFLocator {
     SFData _markGlyphSetsDef;
     SFUInteger index;
     SFUInteger _state;
+    SFGlyphTraits _requiredTraits;
     SFLookupFlag lookupFlag;
 } SFLocator, *SFLocatorRef;
 
 SF_INTERNAL void SFLocatorInitialize(SFLocatorRef locator, SFAlbumRef album, SFData gdef);
 
 SF_INTERNAL void SFLocatorReset(SFLocatorRef locator);
+
+SF_INTERNAL void SFLocatorSetRequiredTraits(SFLocatorRef locator, SFGlyphTraits requiredTraits);
 
 SF_INTERNAL void SFLocatorSetLookupFlag(SFLocatorRef locator, SFLookupFlag lookupFlag);
 

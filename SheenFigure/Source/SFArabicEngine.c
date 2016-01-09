@@ -22,6 +22,8 @@
 #include <stddef.h>
 
 #include "SFAssert.h"
+#include "SFJoiningType.h"
+#include "SFJoiningTypeLookup.h"
 #include "SFShapingEngine.h"
 #include "SFTextProcessor.h"
 #include "SFArabicEngine.h"
@@ -87,6 +89,101 @@ SF_INTERNAL void SFArabicEngineInitialize(SFArabicEngineRef arabicEngine, SFPatt
     arabicEngine->_pattern = pattern;
 }
 
+static void _SFPutArabicFeatureTraits(SFAlbumRef album)
+{
+    const SFCodepoint *codepoints = album->codePointArray;
+    SFUInteger length = album->codePointCount;
+    SFJoiningType priorJoiningType = SFJoiningTypeU;
+    SFJoiningType joiningType = SFJoiningTypeDetermine(codepoints[0]);
+    SFUInteger index = 0;
+
+    while (joiningType != SFJoiningTypeNil) {
+        SFGlyphTraits traits = SFGlyphTraitNone;
+        SFJoiningType nextJoiningType = SFJoiningTypeNil;
+        SFUInteger nextIndex = index;
+
+        /* Find the joining type of next character. */
+        while (++nextIndex < length) {
+            nextJoiningType = SFJoiningTypeDetermine(codepoints[nextIndex]);
+
+            /* Normalize the joining type of next character. */
+            switch (nextJoiningType) {
+            case SFJoiningTypeT:
+                break;
+
+            case SFJoiningTypeC:
+                nextJoiningType = SFJoiningTypeD;
+                goto Process;
+
+            default:
+                goto Process;
+            }
+        }
+
+    Process:
+        switch (joiningType) {
+        case SFJoiningTypeR:
+            switch (priorJoiningType) {
+            case SFJoiningTypeD:
+                traits |= _SFGlyphTraitFinal;
+                break;
+
+            default:
+                traits |= _SFGlyphTraitIsolated;
+                break;
+            }
+            break;
+
+        case SFJoiningTypeD:
+            switch (priorJoiningType) {
+            case SFJoiningTypeD:
+                switch (nextJoiningType) {
+                case SFJoiningTypeD:
+                    traits |= _SFGlyphTraitMedial;
+                    break;
+
+                default:
+                    traits |= _SFGlyphTraitFinal;
+                    break;
+                }
+                break;
+
+            default:
+                switch (nextJoiningType) {
+                case SFJoiningTypeD:
+                    traits |= _SFGlyphTraitInitial;
+                    break;
+                    
+                default:
+                    traits |= _SFGlyphTraitIsolated;
+                    break;
+                }
+                break;
+            }
+            break;
+
+        /* Can only occur for first character. Should be treated same as dual joining. */
+        case SFJoiningTypeC:
+            joiningType = SFJoiningTypeD;
+            goto Process;
+
+        /* Can only occur for first character. Should be treated as if there was no character. */
+        case SFJoiningTypeT:
+            joiningType = SFJoiningTypeU;
+            break;
+        }
+
+        /* Save the traits of current character. */
+        traits |= SFAlbumGetTraits(album, index);
+        SFAlbumSetTraits(album, index, traits);
+
+        /* Move to the next character. */
+        index = nextIndex;
+        joiningType = nextJoiningType;
+        priorJoiningType = joiningType;
+    }
+}
+
 static void SFArabicEngineProcessAlbum(const void *object, SFAlbumRef album)
 {
     SFArabicEngineRef arabicEngine = (SFArabicEngineRef)object;
@@ -94,6 +191,7 @@ static void SFArabicEngineProcessAlbum(const void *object, SFAlbumRef album)
 
     SFTextProcessorInitialize(&processor, arabicEngine->_pattern, album);
     SFTextProcessorDiscoverGlyphs(&processor);
+    _SFPutArabicFeatureTraits(album);
     SFTextProcessorSubstituteGlyphs(&processor);
     SFTextProcessorPositionGlyphs(&processor);
 }

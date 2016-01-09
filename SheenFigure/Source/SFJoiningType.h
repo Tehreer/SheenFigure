@@ -21,11 +21,11 @@
 
 enum {
     SFJoiningTypeNil = 0x00,
-    SFJoiningTypeR   = 0x01, /**< Right Joining */
+    SFJoiningTypeU   = 0x01, /**< Non Joining */
     SFJoiningTypeL   = 0x02, /**< Left Joining */
-    SFJoiningTypeD   = 0x03, /**< Dual Joining */
-    SFJoiningTypeC   = 0x04, /**< Join Causing */
-    SFJoiningTypeU   = 0x05, /**< Non Joining */
+    SFJoiningTypeR   = 0x03, /**< Right Joining */
+    SFJoiningTypeD   = 0x04, /**< Dual Joining */
+    SFJoiningTypeC   = 0x05, /**< Join Causing */
     SFJoiningTypeT   = 0x06, /**< Transparent */
     SFJoiningTypeF   = 0x07  /**< Unavailable */
 };
