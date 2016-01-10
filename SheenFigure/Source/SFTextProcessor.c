@@ -126,12 +126,12 @@ static void _SFApplyLookup(SFTextProcessorRef processor, SFFeatureKind featureKi
     if (featureKind == SFFeatureKindSubstitution) {
         SFData lookup = _SFGetLookupFromHeader(processor->_font->cache.gsub, lookupIndex);
         while (SFLocatorMoveNext(locator)) {
-            _SFApplyGSUBLookup(processor, lookup);
+            _SFApplySubstitutionLookup(processor, lookup);
         }
     } else if (featureKind == SFFeatureKindPositioning) {
         SFData lookup = _SFGetLookupFromHeader(processor->_font->cache.gpos, lookupIndex);
         while (SFLocatorMoveNext(locator)) {
-            _SFApplyGPOSLookup(processor, lookup);
+            _SFApplyPositioningLookup(processor, lookup);
         }
     }
 }

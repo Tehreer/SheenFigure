@@ -27,7 +27,7 @@
 #include "SFData.h"
 #include "SFTextProcessor.h"
 
-SF_PRIVATE void _SFApplyGSUBLookup(SFTextProcessorRef processor, SFData lookup);
-SF_PRIVATE SFBoolean _SFApplySubst(SFTextProcessorRef processor, SFLookupType lookupType, SFData subtable);
+SF_PRIVATE void _SFApplySubstitutionLookup(SFTextProcessorRef processor, SFData lookup);
+SF_PRIVATE SFBoolean _SFApplySubstitutionSubtable(SFTextProcessorRef processor, SFLookupType lookupType, SFData subtable);
 
 #endif

@@ -55,7 +55,7 @@ static SFBoolean _SFApplyMarkToMarkArrays(SFTextProcessorRef processor, SFData m
 
 static SFData _SFMarkArrayGetAnchor(SFData markArray, SFUInteger markIndex, SFUInt16 *outClass);
 
-SF_PRIVATE void _SFApplyGPOSLookup(SFTextProcessorRef processor, SFData lookup)
+SF_PRIVATE void _SFApplyPositioningLookup(SFTextProcessorRef processor, SFData lookup)
 {
     SFLookupType lookupType = SFLookup_LookupType(lookup);
     SFLookupFlag lookupFlag = SFLookup_LookupFlag(lookup);
@@ -70,7 +70,7 @@ SF_PRIVATE void _SFApplyGPOSLookup(SFTextProcessorRef processor, SFData lookup)
         SFData subtable = SFData_Subdata(lookup, subtableOffset);
         SFBoolean didPosition;
 
-        didPosition = _SFApplyPos(processor, lookupType, subtable);
+        didPosition = _SFApplyPositioningSubtable(processor, lookupType, subtable);
 
         /* A subtable has performed positioning, so break the loop. */
         if (didPosition) {
@@ -79,7 +79,7 @@ SF_PRIVATE void _SFApplyGPOSLookup(SFTextProcessorRef processor, SFData lookup)
     }
 }
 
-SF_PRIVATE SFBoolean _SFApplyPos(SFTextProcessorRef processor, SFLookupType lookupType, SFData subtable)
+SF_PRIVATE SFBoolean _SFApplyPositioningSubtable(SFTextProcessorRef processor, SFLookupType lookupType, SFData subtable)
 {
     switch (lookupType) {
     case SFLookupTypeSingleAdjustment:

@@ -34,7 +34,7 @@ static SFBoolean _SFApplySequence(SFTextProcessorRef processor, SFData sequence)
 static SFBoolean _SFApplyLigatureSubst(SFTextProcessorRef processor, SFData subtable);
 static SFBoolean _SFApplyLigatureSet(SFTextProcessorRef processor, SFData ligatureSet);
 
-SF_PRIVATE void _SFApplyGSUBLookup(SFTextProcessorRef processor, SFData lookup)
+SF_PRIVATE void _SFApplySubstitutionLookup(SFTextProcessorRef processor, SFData lookup)
 {
     SFLookupType lookupType = SFLookup_LookupType(lookup);
     SFLookupFlag lookupFlag = SFLookup_LookupFlag(lookup);
@@ -49,7 +49,7 @@ SF_PRIVATE void _SFApplyGSUBLookup(SFTextProcessorRef processor, SFData lookup)
         SFData subtable = SFData_Subdata(lookup, offset);
         SFBoolean didSubstitute;
 
-        didSubstitute = _SFApplySubst(processor, lookupType, subtable);
+        didSubstitute = _SFApplySubstitutionSubtable(processor, lookupType, subtable);
 
         /* A subtable has performed substition, so break the loop. */
         if (didSubstitute) {
@@ -58,7 +58,7 @@ SF_PRIVATE void _SFApplyGSUBLookup(SFTextProcessorRef processor, SFData lookup)
     }
 }
 
-SF_PRIVATE SFBoolean _SFApplySubst(SFTextProcessorRef processor, SFLookupType lookupType, SFData subtable)
+SF_PRIVATE SFBoolean _SFApplySubstitutionSubtable(SFTextProcessorRef processor, SFLookupType lookupType, SFData subtable)
 {
     switch (lookupType) {
     case SFLookupTypeSingle:

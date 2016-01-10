@@ -27,7 +27,7 @@
 #include "SFData.h"
 #include "SFShapingEngine.h"
 
-SF_PRIVATE void _SFApplyGPOSLookup(SFTextProcessorRef processor, SFData lookup);
-SF_PRIVATE SFBoolean _SFApplyPos(SFTextProcessorRef processor, SFLookupType lookupType, SFData subtable);
+SF_PRIVATE void _SFApplyPositioningLookup(SFTextProcessorRef processor, SFData lookup);
+SF_PRIVATE SFBoolean _SFApplyPositioningSubtable(SFTextProcessorRef processor, SFLookupType lookupType, SFData subtable);
 
 #endif

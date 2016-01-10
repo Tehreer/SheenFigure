@@ -201,10 +201,10 @@ SF_PRIVATE SFBoolean _SFApplyExtensionSubtable(SFTextProcessorRef processor, SFD
 
             switch (processor->_featureKind) {
             case SFFeatureKindSubstitution:
-                return _SFApplySubst(processor, lookupType, innerSubtable);
+                return _SFApplySubstitutionSubtable(processor, lookupType, innerSubtable);
 
             case SFFeatureKindPositioning:
-                return _SFApplyPos(processor, lookupType, innerSubtable);
+                return _SFApplyPositioningSubtable(processor, lookupType, innerSubtable);
             }
         }
         break;
