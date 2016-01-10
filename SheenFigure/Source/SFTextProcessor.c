@@ -20,6 +20,7 @@
 #include "SFAssert.h"
 #include "SFCommon.h"
 #include "SFData.h"
+#include "SFGDEF.h"
 #include "SFPattern.h"
 
 #include "SFGlyphDiscovery.h"
@@ -36,16 +37,26 @@ static void _SFApplyLookup(SFTextProcessorRef processor, SFFeatureKind featureKi
 
 SF_INTERNAL void SFTextProcessorInitialize(SFTextProcessorRef textProcessor, SFPatternRef pattern, SFAlbumRef album)
 {
+    SFData gdef;
+
     /* Pattern must NOT be null. */
     SFAssert(pattern != NULL);
     /* Album must NOT be null. */
     SFAssert(album != NULL);
 
+    gdef = pattern->font->cache.gdef;
+
     textProcessor->_font = pattern->font;
     textProcessor->_pattern = pattern;
     textProcessor->_album = album;
+    textProcessor->_glyphClassDef = NULL;
 
-    SFLocatorInitialize(&textProcessor->_locator, album, textProcessor->_font->cache.gdef);
+    if (gdef) {
+        SFOffset offset = SFGDEF_GlyphClassDefOffset(gdef);
+        textProcessor->_glyphClassDef = SFData_Subdata(gdef, offset);
+    }
+
+    SFLocatorInitialize(&textProcessor->_locator, album, gdef);
 }
 
 SF_INTERNAL void SFTextProcessorDiscoverGlyphs(SFTextProcessorRef textProcessor)
@@ -76,7 +87,7 @@ SF_INTERNAL void SFTextProcessorPositionGlyphs(SFTextProcessorRef textProcessor)
         SFPoint position = { 0, 0 };
         SFInteger advance = SFFontGetGlyphAdvance(font, glyphID);
 
-        SFAlbumSetPosition(album, 0, position);
+        SFAlbumSetPosition(album, index, position);
         SFAlbumSetAdvance(album, index, advance);
     }
 
@@ -96,11 +107,12 @@ static SFData _SFGetLookupFromHeader(SFData header, SFUInt16 lookupIndex)
 static void _SFApplyFeatureRange(SFTextProcessorRef processor, SFUInteger index, SFUInteger count, SFFeatureKind featureKind)
 {
     SFPatternRef pattern = processor->_pattern;
+    SFUInteger limit = index + count;
 
     processor->_featureKind = featureKind;
 
-    for (; index < count; index++) {
-        /* Apply the feature group. */
+    for (; index < limit; index++) {
+        /* Apply the feature unit. */
         _SFApplyFeatureUnit(processor, &pattern->featureUnits.items[index], featureKind);
     }
 }
@@ -111,7 +123,7 @@ static void _SFApplyFeatureUnit(SFTextProcessorRef processor, SFFeatureUnitRef f
     SFUInteger lookupCount = featureUnit->lookupIndexes.count;
     SFUInteger lookupIndex;
 
-    /* Apply all lookups of the group. */
+    /* Apply all lookups of the unit. */
     for (lookupIndex = 0; lookupIndex < lookupCount; lookupIndex++) {
         _SFApplyLookup(processor, featureKind, featureUnit->requiredTraits, lookupArray[lookupIndex]);
     }

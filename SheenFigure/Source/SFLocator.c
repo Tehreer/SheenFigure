@@ -69,37 +69,38 @@ SF_INTERNAL void SFLocatorSetLookupFlag(SFLocatorRef locator, SFLookupFlag looku
 static SFBoolean _SFIsIgnoredGlyph(SFLocatorRef locator, SFUInteger index, SFLookupFlag lookupFlag) {
     SFAlbumRef album = locator->_album;
     SFGlyphTraits traits = SFAlbumGetTraits(album, index);
+    SFBoolean isMark;
 
-    if (traits & locator->_requiredTraits) {
-        SFBoolean isMark;
+    if (locator->_requiredTraits && !(traits & locator->_requiredTraits)) {
+        return SFTrue;
+    }
 
-        if (traits & SFGlyphTraitRemoved) {
-            return SFTrue;
-        }
+    if (traits & SFGlyphTraitRemoved) {
+        return SFTrue;
+    }
 
-        isMark = (traits & SFGlyphTraitMark);
-        if ((lookupFlag & SFLookupFlagIgnoreMarks) && isMark) {
-            return SFTrue;
-        }
+    isMark = (traits & SFGlyphTraitMark);
+    if ((lookupFlag & SFLookupFlagIgnoreMarks) && isMark) {
+        return SFTrue;
+    }
 
-        if ((lookupFlag & SFLookupFlagIgnoreLigatures) && (traits & SFGlyphTraitLigature)) {
-            return SFTrue;
-        }
+    if ((lookupFlag & SFLookupFlagIgnoreLigatures) && (traits & SFGlyphTraitLigature)) {
+        return SFTrue;
+    }
 
-        if ((lookupFlag & SFLookupFlagIgnoreBaseGlyphs) && (traits & SFGlyphTraitBase)) {
-            return SFTrue;
-        }
+    if ((lookupFlag & SFLookupFlagIgnoreBaseGlyphs) && (traits & SFGlyphTraitBase)) {
+        return SFTrue;
+    }
 
-        if (lookupFlag & SFLookupFlagMarkAttachmentType) {
-            SFGlyphID glyph = SFAlbumGetGlyph(album, index);
-            SFUInt16 glyphClass;
+    if (lookupFlag & SFLookupFlagMarkAttachmentType) {
+        SFGlyphID glyph = SFAlbumGetGlyph(album, index);
+        SFUInt16 glyphClass;
 
-            if (locator->_markAttachClassDef && isMark
-                && !(SFOpenTypeSearchGlyphClass(locator->_markAttachClassDef, glyph, &glyphClass)
-                     && glyphClass == (lookupFlag >> 8))) {
+        if (locator->_markAttachClassDef && isMark
+            && !(SFOpenTypeSearchGlyphClass(locator->_markAttachClassDef, glyph, &glyphClass)
+                 && glyphClass == (lookupFlag >> 8))) {
                 return SFTrue;
             }
-        }
     }
 
     return SFFalse;

@@ -27,16 +27,16 @@ typedef struct _SFSchemeState {
     SFSchemeRef scheme;
     SFScriptKnowledgeRef knowledge;
     SFPatternBuilder builder;
-    SFData scriptList;      /**< OpenType script list table. */
-    SFData featureList;     /**< OpenType feature list table. */
-    SFData script;
-    SFData langSys;
+    SFData scriptList;              /**< OpenType script list table. */
+    SFData featureList;             /**< OpenType feature list table. */
+    SFData script;                  /**< OpenType script table. */
+    SFData langSys;                 /**< OpenType language system table. */
 } _SFSchemeState, *_SFSchemeStateRef;
 
 struct _SFScheme {
-    SFFontRef _font;            /**< Font, whose scheme is being built. */
-    SFScriptTag _scriptTag;     /**< Tag of the script. */
-    SFLanguageTag _languageTag; /**< Tag of the language. */
+    SFFontRef _font;                /**< Font, whose scheme is being built. */
+    SFScriptTag _scriptTag;         /**< Tag of the script. */
+    SFLanguageTag _languageTag;     /**< Tag of the language. */
 
     SFInteger _retainCount;
 };

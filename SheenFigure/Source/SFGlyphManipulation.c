@@ -18,6 +18,7 @@
 #include <SFTypes.h>
 
 #include <stddef.h>
+#include <stdlib.h>
 
 #include "SFAssert.h"
 #include "SFAlbum.h"
@@ -31,54 +32,48 @@
 #include "SFGlyphSubstitution.h"
 #include "SFShapingEngine.h"
 
-static SFUInteger SFBinarySearchUInt16(SFData uint16Array, SFUInteger length, SFUInt16 value)
+static int _SFUInt16Comparison(const void *item1, const void *item2)
 {
-    SFUInteger min = 0;
-    SFUInteger max = length - 1;
+    SFUInt16 *ref1 = (SFUInt16 *)item1;
+    SFUInt16 val1 = *ref1;
+    SFData ref2 = (SFData)item2;
+    SFUInt16 val2 = SFData_UInt16(ref2, 0);
 
-    /* The length of array must be greater than zero. */
-    SFAssert(length > 0);
-
-    while (min < max) {
-        SFUInteger mid = (min + max) >> 1;
-        SFUInt16 element = SFUInt16Array_Value(uint16Array, mid);
-
-        if (element < value) {
-            min = mid + 1;
-        } else if (element > value) {
-            max = mid;
-        } else {
-            return mid;
-        }
-    }
-
-    return SFInvalidIndex;
+    return (int)(val1 - val2);
 }
 
-static SFUInteger _SFBinarySearchGlyphRange(SFData rangeArray, SFUInteger length, SFUInt16 value)
+static SFUInteger SFBinarySearchUInt16(SFData uint16Array, SFUInteger length, SFUInt16 value)
 {
-    SFUInteger min = 0;
-    SFUInteger max = length - 1;
-
-    /* The length of array must be greater than zero. */
-    SFAssert(length > 0);
-
-    while (min < max) {
-        SFUInteger mid = (min + max) >> 1;
-        SFData range = SFData_Subdata(rangeArray, mid * _SFGlyphRange_Size());
-        SFUInt16 start = _SFGlyphRange_Start(range);
-        SFUInt16 end = _SFGlyphRange_End(range);
-
-        if (value < start) {
-            max = mid;
-        } else if (value > end) {
-            min = mid + 1;
-        } else {
-            return mid;
-        }
+    void *item = bsearch(&value, uint16Array, length, sizeof(SFUInt16), _SFUInt16Comparison);
+    if (!item) {
+        return SFInvalidIndex;
     }
 
-    return SFInvalidIndex;
+    return (SFUInteger)((SFData)item - uint16Array) / sizeof(SFUInt16);
+}
+
+static int _SFRangeComparison(const void *item1, const void *item2)
+{
+    SFUInt16 *ref1 = (SFUInt16 *)item1;
+    SFUInt16 val1 = *ref1;
+    SFData ref2 = (SFData)item2;
+    SFUInt16 rangeStart = _SFGlyphRange_Start(ref2);
+    SFUInt16 rangeEnd = _SFGlyphRange_End(ref2);
+
+    if (val1 < rangeStart) {
+        return -1;
+    }
+
+    if (val1 > rangeEnd) {
+        return 1;
+    }
+
+    return 0;
+}
+
+static SFData _SFBinarySearchGlyphRange(SFData rangeArray, SFUInteger length, SFUInt16 value)
+{
+    return bsearch(&value, rangeArray, length, _SFGlyphRange_Size(), _SFRangeComparison);
 }
 
 SF_PRIVATE SFUInteger _SFSearchCoverageIndex(SFData coverage, SFGlyphID glyph)
@@ -104,8 +99,19 @@ SF_PRIVATE SFUInteger _SFSearchCoverageIndex(SFData coverage, SFGlyphID glyph)
         {
             SFUInt16 rangeCount = SFCoverageF2_RangeCount(coverage);
             if (rangeCount) {
-                SFData rangeRecord = SFCoverageF2_RangeRecord(coverage, 0);
-                return _SFBinarySearchGlyphRange(rangeRecord, rangeCount, glyph);
+                SFData rangeArray = SFCoverageF2_RangeRecord(coverage, 0);
+                SFData rangeRecord;
+
+                rangeRecord = _SFBinarySearchGlyphRange(rangeArray, rangeCount, glyph);
+
+                if (rangeRecord) {
+                    SFUInt16 rangeStart = SFRangeRecord_Start(rangeRecord);
+                    SFUInt16 startCoverageIndex = SFRangeRecord_StartCoverageIndex(rangeRecord);
+
+                    return (glyph + startCoverageIndex - rangeStart);
+                }
+
+                return SFInvalidIndex;
             }
         }
         break;
@@ -142,15 +148,13 @@ SF_PRIVATE SFUInt16 _SFSearchGlyphClass(SFData classDef, SFGlyphID glyph)
         {
             SFUInt16 rangeCount = SFClassDefF2_ClassRangeCount(classDef);
             if (rangeCount) {
-                SFData rangeRecord = SFClassDefF2_RangeRecordArray(classDef);
-                SFUInteger recordIndex = _SFBinarySearchGlyphRange(rangeRecord, rangeCount, glyph);
+                SFData rangeArray = SFClassDefF2_RangeRecordArray(classDef);
+                SFData rangeRecord = _SFBinarySearchGlyphRange(rangeArray, rangeCount, glyph);
 
-                if (recordIndex != SFInvalidIndex) {
-                    rangeRecord = SFClassDefF2_ClassRangeRecord(classDef, recordIndex);
+                if (rangeRecord) {
                     return SFClassRangeRecord_Class(rangeRecord);
                 }
             }
-
         }
         break;
     }

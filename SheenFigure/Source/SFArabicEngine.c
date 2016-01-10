@@ -138,6 +138,7 @@ static void _SFPutArabicFeatureTraits(SFAlbumRef album)
             switch (priorJoiningType) {
             case SFJoiningTypeD:
                 switch (nextJoiningType) {
+                case SFJoiningTypeR:
                 case SFJoiningTypeD:
                     traits |= _SFGlyphTraitMedial;
                     break;
@@ -150,6 +151,7 @@ static void _SFPutArabicFeatureTraits(SFAlbumRef album)
 
             default:
                 switch (nextJoiningType) {
+                case SFJoiningTypeR:
                 case SFJoiningTypeD:
                     traits |= _SFGlyphTraitInitial;
                     break;
@@ -178,9 +180,9 @@ static void _SFPutArabicFeatureTraits(SFAlbumRef album)
         SFAlbumSetTraits(album, index, traits);
 
         /* Move to the next character. */
+        priorJoiningType = joiningType;
         index = nextIndex;
         joiningType = nextJoiningType;
-        priorJoiningType = joiningType;
     }
 }
 

@@ -83,8 +83,10 @@ SF_INTERNAL void SFPatternBuilderSetLanguage(SFPatternBuilderRef builder, SFLang
 
 SF_INTERNAL void SFPatternBuilderBeginFeatures(SFPatternBuilderRef builder, SFFeatureKind featureKind)
 {
-    /* One kind of features must be ended before beginning a new one. */
+    /* One kind of features must be ended before beginning new ones. */
     SFAssert(builder->_featureKind == 0);
+    /* Feature kind must be valid. */
+    SFAssert(featureKind == SFFeatureKindSubstitution || featureKind == SFFeatureKindPositioning);
 
     builder->_featureKind = featureKind;
 }
