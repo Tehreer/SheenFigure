@@ -32,8 +32,7 @@
 static SFData _SFGetLookupFromHeader(SFData header, SFUInt16 lookupIndex);
 
 static void _SFApplyFeatureRange(SFTextProcessorRef processor, SFUInteger index, SFUInteger count, SFFeatureKind featureKind);
-static void _SFApplyFeatureUnit(SFTextProcessorRef processor, SFFeatureUnitRef featureUnit, SFFeatureKind featureKind);
-static void _SFApplyLookup(SFTextProcessorRef processor, SFFeatureKind featureKind, SFGlyphTraits requiredTraits, SFUInt16 lookupIndex);
+static void _SFApplyFeatureUnit(SFTextProcessorRef processor, SFFeatureUnitRef featureUnit);
 
 SF_INTERNAL void SFTextProcessorInitialize(SFTextProcessorRef textProcessor, SFPatternRef pattern, SFAlbumRef album)
 {
@@ -113,37 +112,44 @@ static void _SFApplyFeatureRange(SFTextProcessorRef processor, SFUInteger index,
 
     for (; index < limit; index++) {
         /* Apply the feature unit. */
-        _SFApplyFeatureUnit(processor, &pattern->featureUnits.items[index], featureKind);
+        _SFApplyFeatureUnit(processor, &pattern->featureUnits.items[index]);
     }
 }
 
-static void _SFApplyFeatureUnit(SFTextProcessorRef processor, SFFeatureUnitRef featureUnit, SFFeatureKind featureKind)
+static void _SFApplyFeatureUnit(SFTextProcessorRef processor, SFFeatureUnitRef featureUnit)
 {
     SFUInt16 *lookupArray = featureUnit->lookupIndexes.items;
     SFUInteger lookupCount = featureUnit->lookupIndexes.count;
     SFUInteger lookupIndex;
 
-    /* Apply all lookups of the unit. */
+    /* Apply all lookups of the feature unit. */
     for (lookupIndex = 0; lookupIndex < lookupCount; lookupIndex++) {
-        _SFApplyLookup(processor, featureKind, featureUnit->requiredTraits, lookupArray[lookupIndex]);
+        SFLocatorRef locator = &processor->_locator;
+        SFLocatorReset(locator, 0, processor->_album->glyphCount);
+        SFLocatorSetRequiredTraits(locator, featureUnit->requiredTraits);
+
+        _SFApplyLookup(processor, lookupArray[lookupIndex]);
     }
 }
 
-static void _SFApplyLookup(SFTextProcessorRef processor, SFFeatureKind featureKind, SFGlyphTraits requiredTraits, SFUInt16 lookupIndex)
+SF_PRIVATE void _SFApplyLookup(SFTextProcessorRef processor, SFUInt16 lookupIndex)
 {
     SFLocatorRef locator = &processor->_locator;
-    SFLocatorReset(locator);
-    SFLocatorSetRequiredTraits(locator, requiredTraits);
+    SFData lookup;
 
-    if (featureKind == SFFeatureKindSubstitution) {
-        SFData lookup = _SFGetLookupFromHeader(processor->_font->cache.gsub, lookupIndex);
+    switch (processor->_featureKind) {
+    case SFFeatureKindSubstitution:
+        lookup = _SFGetLookupFromHeader(processor->_font->cache.gsub, lookupIndex);
         while (SFLocatorMoveNext(locator)) {
             _SFApplySubstitutionLookup(processor, lookup);
         }
-    } else if (featureKind == SFFeatureKindPositioning) {
-        SFData lookup = _SFGetLookupFromHeader(processor->_font->cache.gpos, lookupIndex);
+        break;
+
+    case SFFeatureKindPositioning:
+        lookup = _SFGetLookupFromHeader(processor->_font->cache.gpos, lookupIndex);
         while (SFLocatorMoveNext(locator)) {
             _SFApplyPositioningLookup(processor, lookup);
         }
+        break;
     }
 }

@@ -45,4 +45,6 @@ SF_INTERNAL void SFTextProcessorDiscoverGlyphs(SFTextProcessorRef textProcessor)
 SF_INTERNAL void SFTextProcessorSubstituteGlyphs(SFTextProcessorRef textProcessor);
 SF_INTERNAL void SFTextProcessorPositionGlyphs(SFTextProcessorRef textProcessor);
 
+SF_PRIVATE void _SFApplyLookup(SFTextProcessorRef processor, SFUInt16 lookupIndex);
+
 #endif

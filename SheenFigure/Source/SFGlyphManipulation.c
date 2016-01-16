@@ -32,6 +32,9 @@
 #include "SFGlyphSubstitution.h"
 #include "SFShapingEngine.h"
 
+static SFBoolean _SFApplyChainContextF3(SFTextProcessorRef processor, SFData chainContext);
+static void _SFApplyContextRecord(SFTextProcessorRef processor, SFData contextRecord, SFUInteger startIndex, SFUInteger endIndex);
+
 static int _SFUInt16Comparison(const void *item1, const void *item2)
 {
     SFUInt16 *ref1 = (SFUInt16 *)item1;
@@ -215,4 +218,121 @@ SF_PRIVATE SFBoolean _SFApplyExtensionSubtable(SFTextProcessorRef processor, SFD
     }
 
     return SFFalse;
+}
+
+SF_PRIVATE SFBoolean _SFApplyChainContextSubtable(SFTextProcessorRef processor, SFData chainContext)
+{
+    SFUInt16 format = SFChainContext_Format(chainContext);
+
+    switch (format) {
+    case 3:
+        return _SFApplyChainContextF3(processor, chainContext);
+    }
+
+    return SFFalse;
+}
+
+static SFBoolean _SFApplyChainContextF3(SFTextProcessorRef processor, SFData chainContext)
+{
+    SFLocatorRef locator = &processor->_locator;
+    SFAlbumRef album = processor->_album;
+    SFData contextRecord;
+    SFUInt16 recordCount;
+    SFUInteger inputIndex;
+    SFUInteger recordIndex;
+    SFUInteger lastInput;
+
+    contextRecord = SFChainContextF3_BacktrackRecord(chainContext);
+    recordCount = SFBacktrackRecord_GlyphCount(contextRecord);
+    inputIndex = locator->index;
+
+    /* Match the backtrack glyphs. */
+    for (recordIndex = 0; recordIndex < recordCount; recordIndex++) {
+        inputIndex = SFLocatorGetBefore(locator, inputIndex, locator->lookupFlag);
+        if (inputIndex != SFInvalidIndex) {
+            SFOffset offset = SFBacktrackRecord_Value(contextRecord, recordIndex);
+            SFData coverage = SFData_Subdata(chainContext, offset);
+            SFGlyphID inputGlyph;
+            SFUInteger coverageIndex;
+
+            inputGlyph = SFAlbumGetGlyph(album, inputIndex);
+            coverageIndex = _SFSearchCoverageIndex(coverage, inputGlyph);
+
+            if (coverageIndex == SFInvalidIndex) {
+                return SFFalse;
+            }
+        }
+    }
+
+    contextRecord = SFBacktrackRecord_InputRecord(contextRecord, recordCount);
+    recordCount = SFInputRecord_GlyphCount(contextRecord);
+    inputIndex = locator->index;
+
+    /* Match the input glyphs. */
+    for (recordIndex = 0; recordIndex < recordCount; recordIndex++) {
+        inputIndex = SFLocatorGetAfter(locator, inputIndex, locator->lookupFlag);
+        if (inputIndex != SFInvalidIndex) {
+            SFOffset offset = SFInputRecord_Value(contextRecord, recordIndex);
+            SFData coverage = SFData_Subdata(chainContext, offset);
+            SFGlyphID inputGlyph;
+            SFUInteger coverageIndex;
+
+            inputGlyph = SFAlbumGetGlyph(album, inputIndex);
+            coverageIndex = _SFSearchCoverageIndex(coverage, inputGlyph);
+
+            if (coverageIndex == SFInvalidIndex) {
+                return SFFalse;
+            }
+        }
+    }
+
+    lastInput = inputIndex;
+    contextRecord = SFInputRecord_LookaheadRecord(contextRecord, recordCount);
+    recordCount = SFInputRecord_GlyphCount(contextRecord);
+
+    /* Match the lookahead glyphs. */
+    for (recordIndex = 0; recordIndex < recordCount; recordIndex++) {
+        inputIndex = SFLocatorGetAfter(locator, inputIndex, locator->lookupFlag);
+        if (inputIndex != SFInvalidIndex) {
+            SFOffset offset = SFLookaheadRecord_Value(contextRecord, recordIndex);
+            SFData coverage = SFData_Subdata(chainContext, offset);
+            SFGlyphID inputGlyph;
+            SFUInteger coverageIndex;
+
+            inputGlyph = SFAlbumGetGlyph(album, inputIndex);
+            coverageIndex = _SFSearchCoverageIndex(coverage, inputGlyph);
+
+            if (coverageIndex == SFInvalidIndex) {
+                return SFFalse;
+            }
+        }
+    }
+
+    contextRecord = SFLookaheadRecord_ContextRecord(contextRecord, recordCount);
+    _SFApplyContextRecord(processor, contextRecord, inputIndex, lastInput);
+
+    return SFTrue;
+}
+
+static void _SFApplyContextRecord(SFTextProcessorRef processor, SFData contextRecord, SFUInteger startIndex, SFUInteger endIndex) {
+    SFLocator previousLocator = processor->_locator;
+    SFLocator contextLocator;
+    SFUInt16 lookupCount;
+    SFUInteger index;
+
+    lookupCount = SFContextRecord_LookupCount(contextRecord);
+
+    for (index = 0; index < lookupCount; index++) {
+        SFData lookupRecord = SFContextRecord_LookupRecord(contextRecord, index);
+        SFUInt16 lookupIndex = SFLookupRecord_SequenceIndex(lookupRecord);
+        SFUInt16 sequenceIndex = SFLookupRecord_LookupListIndex(lookupRecord);
+
+        contextLocator = previousLocator;
+        SFLocatorReset(&contextLocator, startIndex, (endIndex + 1) - startIndex);
+        if (SFLocatorSkip(&contextLocator, sequenceIndex)) {
+            _SFApplyLookup(processor, lookupIndex);
+        }
+    }
+
+    processor->_locator = previousLocator;
 }

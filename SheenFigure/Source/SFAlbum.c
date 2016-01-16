@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Muhammad Tayyab Akram
+ * Copyright (C) 2016 Muhammad Tayyab Akram
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -40,12 +40,6 @@ SFAlbumRef SFAlbumCreate(void)
     return album;
 }
 
-/*
-SFRange SFAlbumGetTextRange(SFAlbumRef album)
-{
-
-}
-*/
 SFUInteger SFAlbumGetGlyphCount(SFAlbumRef album)
 {
     return album->glyphCount;
@@ -129,6 +123,9 @@ SF_INTERNAL void SFAlbumReserveGlyphs(SFAlbumRef album, SFUInteger index, SFUInt
     SFListReserveRange(&album->_glyphs, index, count);
     SFListReserveRange(&album->_details, index, count);
 
+#ifdef SF_SAFE_ALBUM
+    album->_version++;
+#endif
     album->glyphCount += count;
 }
 

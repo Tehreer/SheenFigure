@@ -77,6 +77,7 @@ SF_PRIVATE SFBoolean _SFApplySubstitutionSubtable(SFTextProcessorRef processor, 
         break;
 
     case SFLookupTypeChainingContext:
+        _SFApplyChainContextSubtable(processor, subtable);
         break;
 
     case SFLookupTypeExtension:
@@ -215,7 +216,7 @@ static SFBoolean _SFApplySequence(SFTextProcessorRef processor, SFData sequence)
             SFUInteger subIndex;
 
             /* Reserve glyphs for remaining substitutes in the album. */
-            SFAlbumReserveGlyphs(album, inputIndex + 1, glyphCount - 1);
+            SFLocatorReserveGlyphs(locator, glyphCount - 1);
 
             /* Initialize reserved glyphs. */
             for (subIndex = 1; subIndex < glyphCount; subIndex++) {

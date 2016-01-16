@@ -104,6 +104,7 @@ SF_PRIVATE SFBoolean _SFApplyPositioningSubtable(SFTextProcessorRef processor, S
         break;
 
     case SFLookupTypeChainedContextPositioning:
+        _SFApplyChainContextSubtable(processor, subtable);
         break;
 
     case SFLookupTypeExtensionPositioning:

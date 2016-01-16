@@ -179,15 +179,15 @@ typedef SFUInt16 SFLookupFlag;
 #define SFChainContextF3_BacktrackRecord(data)          SFData_Subdata(data, 2)
 
 #define SFBacktrackRecord_GlyphCount(data)              SFData_UInt16(data, 0)
-#define SFBacktrackRecord_Coverage(data, index)         SFData_UInt16(data, 2 + ((index)  * 2))
+#define SFBacktrackRecord_Value(data, index)            SFData_UInt16(data, 2 + ((index)  * 2))
 #define SFBacktrackRecord_InputRecord(data, glyphCount) SFData_Subdata(data, 2 + ((glyphCount) * 2))
 
 #define SFInputRecord_GlyphCount(data)                  SFData_UInt16(data, 0)
-#define SFInputRecord_Coverage(data, index)             SFData_UInt16(data, 2 + ((index)  * 2))
+#define SFInputRecord_Value(data, index)                SFData_UInt16(data, 2 + ((index)  * 2))
 #define SFInputRecord_LookaheadRecord(data, glyphCount) SFData_Subdata(data, 2 + ((glyphCount) * 2))
 
 #define SFLookaheadRecord_GlyphCount(data)              SFData_UInt16(data, 0)
-#define SFLookaheadRecord_Coverage(data, index)         SFData_UInt16(data, 2 + ((index)  * 2))
+#define SFLookaheadRecord_Value(data, index)            SFData_UInt16(data, 2 + ((index)  * 2))
 #define SFLookaheadRecord_ContextRecord(data, glyphCount) \
                                                         SFData_Subdata(data, 2 + ((glyphCount) * 2))
 

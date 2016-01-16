@@ -151,6 +151,11 @@ SF_INTERNAL void SFPatternBuilderMakeFeatureUnit(SFPatternBuilderRef builder)
     case SFFeatureKindPositioning:
         builder->_gposUnitCount++;
         break;
+
+    default:
+        /* Invalid feature kind. */
+        SFAssert(SFFalse);
+        break;
     }
 
     /* Increase feature index. */

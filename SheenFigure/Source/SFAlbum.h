@@ -21,8 +21,13 @@
 #include <SFConfig.h>
 #include <SFTypes.h>
 
+#include "SFAssert.h"
 #include "SFGlyphTraits.h"
 #include "SFList.h"
+
+#ifndef NDEBUG
+#define SF_SAFE_ALBUM
+#endif
 
 typedef struct _SFGlyphDetail {
     SFUInteger association;     /**< Index of the code point to which the glyph maps. */
@@ -34,6 +39,9 @@ typedef struct _SFGlyphDetail {
 } SFGlyphDetail, *SFGlyphDetailRef;
 
 struct _SFAlbum {
+#ifdef SF_SAFE_ALBUM
+    SFUInteger _version;
+#endif
     const SFCodepoint *codePointArray; /**< The array of codepoints which are to be shaped. */
     SFUInteger *mapArray;
     SFUInteger codePointCount;
