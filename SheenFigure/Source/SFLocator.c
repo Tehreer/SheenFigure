@@ -25,6 +25,7 @@
 #include "SFOpenType.h"
 #include "SFLocator.h"
 
+static void SFLocatorValidateVersion(SFLocatorRef locator);
 static SFBoolean _SFIsIgnoredGlyph(SFLocatorRef locator, SFUInteger index, SFLookupFlag lookupFlag);
 
 SF_INTERNAL void SFLocatorInitialize(SFLocatorRef locator, SFAlbumRef album, SFData gdef)
@@ -57,8 +58,13 @@ SF_INTERNAL void SFLocatorInitialize(SFLocatorRef locator, SFAlbumRef album, SFD
 
 SF_INTERNAL void SFLocatorReserveGlyphs(SFLocatorRef locator, SFUInteger glyphCount)
 {
-    locator->_limitIndex += glyphCount;
+    SFLocatorValidateVersion(locator);
     SFAlbumReserveGlyphs(locator->_album, locator->_stateIndex, glyphCount);
+
+#ifdef SF_SAFE_ALBUM
+    locator->_version = locator->_album->_version;
+#endif
+    locator->_limitIndex += glyphCount;
 }
 
 SF_INTERNAL void SFLocatorSetRequiredTraits(SFLocatorRef locator, SFGlyphTraits requiredTraits)
