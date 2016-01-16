@@ -305,12 +305,18 @@ static SFBoolean _SFApplyLigatureSet(SFTextProcessorRef processor, SFData ligatu
 
         prevIndex = inputIndex;
 
-        /* Match all compononets starting from second one with input glyphs. */
+        /*
+         * Match all compononets starting from second one with input glyphs.
+         *
+         * NOTE:
+         *      The loop is started from 1, rather than 0 so that integer overflow does not occur if
+         *      the component count is zero.
+         */
         for (compIndex = 1; compIndex < compCount; compIndex++) {
             nextIndex = SFLocatorGetAfter(locator, prevIndex, locator->lookupFlag);
 
             if (inputIndex != SFInvalidIndex) {
-                SFGlyphID component = SFLigature_Component(ligature, compIndex);
+                SFGlyphID component = SFLigature_Component(ligature, compIndex - 1);
                 SFGlyphID glyph = SFAlbumGetGlyph(album, nextIndex);
 
                 if (component != glyph) {
