@@ -248,19 +248,21 @@ static SFBoolean _SFApplyChainContextF3(SFTextProcessorRef processor, SFData cha
 
     /* Match the backtrack glyphs. */
     for (recordIndex = 0; recordIndex < recordCount; recordIndex++) {
+        SFUInteger coverageIndex = SFInvalidIndex;
+        SFGlyphID inputGlyph;
+
         inputIndex = SFLocatorGetBefore(locator, inputIndex, locator->lookupFlag);
+
         if (inputIndex != SFInvalidIndex) {
             SFOffset offset = SFBacktrackRecord_Value(contextRecord, recordIndex);
             SFData coverage = SFData_Subdata(chainContext, offset);
-            SFGlyphID inputGlyph;
-            SFUInteger coverageIndex;
 
             inputGlyph = SFAlbumGetGlyph(album, inputIndex);
             coverageIndex = _SFSearchCoverageIndex(coverage, inputGlyph);
+        }
 
-            if (coverageIndex == SFInvalidIndex) {
-                return SFFalse;
-            }
+        if (coverageIndex == SFInvalidIndex) {
+            return SFFalse;
         }
     }
 
@@ -270,19 +272,21 @@ static SFBoolean _SFApplyChainContextF3(SFTextProcessorRef processor, SFData cha
 
     /* Match the input glyphs. */
     for (recordIndex = 0; recordIndex < recordCount; recordIndex++) {
+        SFUInteger coverageIndex = SFInvalidIndex;
+        SFGlyphID inputGlyph;
+
         inputIndex = SFLocatorGetAfter(locator, inputIndex, locator->lookupFlag);
+
         if (inputIndex != SFInvalidIndex) {
             SFOffset offset = SFInputRecord_Value(contextRecord, recordIndex);
             SFData coverage = SFData_Subdata(chainContext, offset);
-            SFGlyphID inputGlyph;
-            SFUInteger coverageIndex;
 
             inputGlyph = SFAlbumGetGlyph(album, inputIndex);
             coverageIndex = _SFSearchCoverageIndex(coverage, inputGlyph);
+        }
 
-            if (coverageIndex == SFInvalidIndex) {
-                return SFFalse;
-            }
+        if (coverageIndex == SFInvalidIndex) {
+            return SFFalse;
         }
     }
 
@@ -292,19 +296,21 @@ static SFBoolean _SFApplyChainContextF3(SFTextProcessorRef processor, SFData cha
 
     /* Match the lookahead glyphs. */
     for (recordIndex = 0; recordIndex < recordCount; recordIndex++) {
+        SFUInteger coverageIndex = SFInvalidIndex;
+        SFGlyphID inputGlyph;
+
         inputIndex = SFLocatorGetAfter(locator, inputIndex, locator->lookupFlag);
+
         if (inputIndex != SFInvalidIndex) {
             SFOffset offset = SFLookaheadRecord_Value(contextRecord, recordIndex);
             SFData coverage = SFData_Subdata(chainContext, offset);
-            SFGlyphID inputGlyph;
-            SFUInteger coverageIndex;
 
             inputGlyph = SFAlbumGetGlyph(album, inputIndex);
             coverageIndex = _SFSearchCoverageIndex(coverage, inputGlyph);
+        }
 
-            if (coverageIndex == SFInvalidIndex) {
-                return SFFalse;
-            }
+        if (coverageIndex == SFInvalidIndex) {
+            return SFFalse;
         }
     }
 
