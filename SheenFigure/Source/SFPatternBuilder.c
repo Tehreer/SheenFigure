@@ -117,8 +117,8 @@ SF_INTERNAL void SFPatternBuilderAddLookup(SFPatternBuilderRef builder, SFUInt16
 
 static int _SFLookupIndexComparison(const void *item1, const void *item2)
 {
-    SFUInteger *ref1 = (SFUInteger *)item1;
-    SFUInteger *ref2 = (SFUInteger *)item2;
+    SFUInt16 *ref1 = (SFUInt16 *)item1;
+    SFUInt16 *ref2 = (SFUInt16 *)item2;
 
     return (int)(*ref1 - *ref2);
 }
