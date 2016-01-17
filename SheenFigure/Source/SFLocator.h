@@ -72,18 +72,18 @@ SF_INTERNAL SFBoolean SFLocatorSkip(SFLocatorRef locator, SFUInteger count);
 SF_INTERNAL void SFLocatorJumpTo(SFLocatorRef locator, SFUInteger index);
 
 /**
- * Gets the index of appropriate glyph after the given index.
+ * Gets the index of legitimate glyph after the given index.
  * @return
- *      The index of next glyph, or SFInvalidIndex if there is no appropriate glyph after the given
- *      index.
+ *      The index of next legitimate glyph if available, or SFInvalidIndex if there was no
+ *      legitimate glyph after the given index.
  */
 SF_INTERNAL SFUInteger SFLocatorGetAfter(SFLocatorRef locator, SFUInteger index, SFLookupFlag lookupFlag);
 
 /**
- * Gets the index of appropriate glyph before the given index.
+ * Gets the index of legitimate glyph before the given index.
  * @return
- *      The index of previous glyph, or SFInvalidIndex if there is no appropriate glyph after the
- *      given index.
+ *      The index of previous legitimate glyph if available, or SFInvalidIndex if there was no
+ *      legitimate glyph after the given index.
  */
 SF_INTERNAL SFUInteger SFLocatorGetBefore(SFLocatorRef locator, SFUInteger index, SFLookupFlag lookupFlag);
 
