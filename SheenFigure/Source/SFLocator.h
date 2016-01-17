@@ -87,4 +87,10 @@ SF_INTERNAL SFUInteger SFLocatorGetAfter(SFLocatorRef locator, SFUInteger index,
  */
 SF_INTERNAL SFUInteger SFLocatorGetBefore(SFLocatorRef locator, SFUInteger index, SFLookupFlag lookupFlag);
 
+/**
+ * Takes the state of other locator provided that it also belong to the same album and is subset of
+ * the input locator.
+ */
+SF_INTERNAL void SFLocatorTakeState(SFLocatorRef locator, SFLocatorRef sibling);
+
 #endif

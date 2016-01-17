@@ -77,8 +77,7 @@ SF_PRIVATE SFBoolean _SFApplySubstitutionSubtable(SFTextProcessorRef processor, 
         break;
 
     case SFLookupTypeChainingContext:
-        _SFApplyChainContextSubtable(processor, subtable);
-        break;
+        return _SFApplyChainContextSubtable(processor, subtable);
 
     case SFLookupTypeExtension:
         return _SFApplyExtensionSubtable(processor, subtable);

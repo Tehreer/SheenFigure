@@ -142,7 +142,6 @@ SF_INTERNAL SFBoolean SFLocatorMoveNext(SFLocatorRef locator)
 {
     /* The state of locator must be valid. */
     SFAssert(locator->_stateIndex <= locator->_limitIndex);
-
     SFLocatorValidateVersion(locator);
 
     while (locator->_stateIndex < locator->_limitIndex) {
@@ -174,8 +173,13 @@ SF_INTERNAL SFBoolean SFLocatorSkip(SFLocatorRef locator, SFUInteger count)
 
 SF_INTERNAL void SFLocatorJumpTo(SFLocatorRef locator, SFUInteger index)
 {
-    /* The index must be valid. */
-    SFAssert(index < locator->_limitIndex);
+    /*
+     * The index must be valid.
+     *
+     * NOTE:
+     *      It is legal to jump to limit index so that MoveNext method returns SFFalse thereafter.
+     */
+    SFAssert(index <= locator->_limitIndex);
     SFLocatorValidateVersion(locator);
 
     locator->_stateIndex = index;
@@ -209,4 +213,13 @@ SF_INTERNAL SFUInteger SFLocatorGetBefore(SFLocatorRef locator, SFUInteger index
     }
 
     return SFInvalidIndex;
+}
+
+SF_INTERNAL void SFLocatorTakeState(SFLocatorRef locator, SFLocatorRef sibling) {
+    /* Both of the locators MUST belong to the same album. */
+    SFAssert(locator->_album == sibling->_album);
+    /* The state of sibling must be valid. */
+    SFAssert(sibling->_stateIndex <= locator->_limitIndex);
+
+    locator->_stateIndex = sibling->_stateIndex;
 }
