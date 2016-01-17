@@ -177,7 +177,7 @@ static SFBoolean _SFApplyMultipleSubst(SFTextProcessorRef processor, SFData mult
                 if (coverageIndex < sequenceCount) {
                     SFData sequence;
 
-                    offset = SFMultipleSubstF1_SequenceOffset(multipleSubst, inputIndex);
+                    offset = SFMultipleSubstF1_SequenceOffset(multipleSubst, coverageIndex);
                     sequence = SFData_Subdata(multipleSubst, offset);
 
                     return _SFApplySequence(processor, sequence);
@@ -309,8 +309,8 @@ static SFBoolean _SFApplyLigatureSet(SFTextProcessorRef processor, SFData ligatu
          * Match all compononets starting from second one with input glyphs.
          *
          * NOTE:
-         *      The loop is started from 1, rather than 0 so that integer overflow does not occur if
-         *      the component count is zero.
+         *      The loop is started from 1..CompCount, rather than 0..(CompCount - 1) so that
+         *      it does not accidently become too large if the component count is zero.
          */
         for (compIndex = 1; compIndex < compCount; compIndex++) {
             nextIndex = SFLocatorGetAfter(locator, prevIndex, locator->lookupFlag);
