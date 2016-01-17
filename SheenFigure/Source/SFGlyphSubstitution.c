@@ -233,7 +233,7 @@ static SFBoolean _SFApplySequence(SFTextProcessorRef processor, SFData sequence)
             }
 
             /* Skip added elements in the locator. */
-            SFLocatorJumpTo(locator, locator->index + glyphCount - 1);
+            SFLocatorJumpTo(locator, locator->index + glyphCount);
         }
 
         return SFTrue;

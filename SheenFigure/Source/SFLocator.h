@@ -60,7 +60,8 @@ SF_INTERNAL SFBoolean SFLocatorMoveNext(SFLocatorRef locator);
 SF_INTERNAL SFBoolean SFLocatorSkip(SFLocatorRef locator, SFUInteger count);
 
 /**
- * Jumps the locator to given index.
+ * Jumps the locator to given index in such a way that next call to MoveNext starts looking from
+ * this index.
  */
 SF_INTERNAL void SFLocatorJumpTo(SFLocatorRef locator, SFUInteger index);
 
