@@ -141,19 +141,20 @@ static SFBoolean _SFIsIgnoredGlyph(SFLocatorRef locator, SFUInteger index, SFLoo
 SF_INTERNAL SFBoolean SFLocatorMoveNext(SFLocatorRef locator)
 {
     /* The state of locator must be valid. */
-    SFAssert(locator->_stateIndex < locator->_limitIndex);
+    SFAssert(locator->_stateIndex <= locator->_limitIndex);
+
     SFLocatorValidateVersion(locator);
 
-    do {
+    while (locator->_stateIndex < locator->_limitIndex) {
         SFUInteger index = locator->_stateIndex++;
 
         if (!_SFIsIgnoredGlyph(locator, index, locator->lookupFlag)) {
             locator->index = index;
-            break;
+            return SFTrue;
         }
-    } while (locator->_stateIndex < locator->_limitIndex);
+    }
 
-    return (locator->_stateIndex < locator->_limitIndex);
+    return SFFalse;
 }
 
 SF_INTERNAL SFBoolean SFLocatorSkip(SFLocatorRef locator, SFUInteger count)
