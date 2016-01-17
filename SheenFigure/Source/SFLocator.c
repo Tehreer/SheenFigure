@@ -159,8 +159,9 @@ SF_INTERNAL SFBoolean SFLocatorMoveNext(SFLocatorRef locator)
 
 SF_INTERNAL SFBoolean SFLocatorSkip(SFLocatorRef locator, SFUInteger count)
 {
-    SFUInteger skipper = count + 1;
-    while (--skipper) {
+    SFUInteger skipper;
+
+    for (skipper = count; skipper; skipper--) {
         if (SFLocatorMoveNext(locator)) {
             continue;
         }

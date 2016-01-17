@@ -51,17 +51,23 @@ SF_INTERNAL void SFLocatorReserveGlyphs(SFLocatorRef locator, SFUInteger glyphCo
 
 /**
  * Advances the locator to next glyph.
+ * @return
+ *      SFTrue if the locator was successfully advanced to the next glyph; SFFalse if the locator
+ *      has passed the end of the album.
  */
 SF_INTERNAL SFBoolean SFLocatorMoveNext(SFLocatorRef locator);
 
 /**
- * Skips the given number of glyphs excluding the ignored ones.
+ * Skips the given number of legitimate glyphs.
+ * @return
+ *      SFTrue if the given number of elements were successfully skipped; SFFalse if the locator has
+ *      passed the end of the album.
  */
 SF_INTERNAL SFBoolean SFLocatorSkip(SFLocatorRef locator, SFUInteger count);
 
 /**
- * Jumps the locator to given index in such a way that next call to MoveNext starts looking from
- * this index.
+ * Jumps the locator to given index in such a way that next call to MoveNext starts looking
+ * legitimate glyphs from this index.
  */
 SF_INTERNAL void SFLocatorJumpTo(SFLocatorRef locator, SFUInteger index);
 
