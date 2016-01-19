@@ -316,31 +316,27 @@ static SFBoolean _SFApplyPairPosF2(SFTextProcessorRef processor, SFData pairPos,
     return SFFalse;
 }
 
+static int _SFPairRecordGlyphComparison(const void *item1, const void *item2)
+{
+    SFGlyphID *ref1 = (SFGlyphID *)item1;
+    SFUInt16 val1 = *ref1;
+    SFData ref2 = (SFData)item2;
+    SFGlyphID secondGlyph = SFPairValueRecord_SecondGlyph(ref2);
+
+    return val1 - secondGlyph;
+}
+
 static SFData _SFSearchPairRecord(SFData pairSet, SFUInteger recordSize, SFGlyphID glyph)
 {
     SFUInt16 valueCount = SFPairSet_PairValueCount(pairSet);
     SFData recordArray = SFPairSet_PairValueRecordArray(pairSet);
 
-    if (valueCount > 0) {
-        SFUInteger min = 0;
-        SFUInteger max = valueCount - 1;
-
-        while (min < max) {
-            SFUInteger mid = (min + max) >> 1;
-            SFData valueRecord = SFPairSet_PairValueRecord(recordArray, mid, recordSize);
-            SFGlyphID secondGlyph = SFPairValueRecord_SecondGlyph(valueRecord);
-
-            if (secondGlyph < glyph) {
-                min = mid + 1;
-            } else if (secondGlyph > glyph) {
-                max = mid;
-            } else {
-                return valueRecord;
-            }
-        }
+    void *item = bsearch(&glyph, recordArray, valueCount, recordSize, _SFPairRecordGlyphComparison);
+    if (!item) {
+        return NULL;
     }
 
-    return NULL;
+    return (SFData)item;
 }
 
 static void _SFApplyValueRecord(SFTextProcessorRef processor, SFData valueRecord, SFUInt16 valueFormat, SFUInteger inputIndex)
@@ -499,7 +495,6 @@ static SFBoolean _SFApplyCursivePosF1(SFTextProcessorRef processor, SFData cursi
 
                     SFAlbumSetPosition(album, secondIndex, secondPosition);
                     SFAlbumSetAdvance(album, secondIndex, secondAdvance);
-
                     break;
                 }
 
@@ -662,7 +657,7 @@ static SFUInteger _SFGetPreviousLigatureGlyphIndex(SFTextProcessorRef processor,
          *
          * PROCESS:
          *      1) Start loop from ligature index to input index.
-         *      2) If association of a glyph matches with the association of igature, it is a
+         *      2) If association of a glyph matches with the association of ligature, it is a
          *         component of the ligature.
          *      3) Increase component counter for each matched association.
          */
@@ -760,7 +755,6 @@ static SFBoolean _SFApplyMarkToLigArrays(SFTextProcessorRef processor, SFData ma
             /* Validate ligature component. */
             if (ligComponent < componentCount) {
                 SFPoint markPosition = SFAlbumGetPosition(album, markIndex);
-
                 SFData compRecord;
                 SFData ligAnchor;
                 SFPoint markPoint;
