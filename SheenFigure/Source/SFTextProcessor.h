@@ -28,7 +28,6 @@
 #include "SFFontCache.h"
 
 typedef struct _SFTextProcessor {
-    SFFontRef _font;
     SFPatternRef _pattern;
     SFAlbumRef _album;
     SFLocator _locator;

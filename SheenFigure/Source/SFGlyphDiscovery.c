@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Muhammad Tayyab Akram
+ * Copyright (C) 2016 Muhammad Tayyab Akram
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,12 +25,10 @@
 
 SF_INTERNAL void _SFDiscoverGlyphs(SFTextProcessorRef processor)
 {
-    SFFontRef font = processor->_font;
+    SFFontRef font = processor->_pattern->font;
     SFAlbumRef album = processor->_album;
     SFUInteger length = album->codePointCount;
     SFUInteger index;
-
-    SFAlbumAllocateGlyphs(album);
 
     for (index = 0; index < length; index++) {
         SFCodepoint codePoint = album->codePointArray[index];

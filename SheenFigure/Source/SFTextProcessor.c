@@ -45,10 +45,10 @@ SF_INTERNAL void SFTextProcessorInitialize(SFTextProcessorRef textProcessor, SFP
 
     gdef = pattern->font->cache.gdef;
 
-    textProcessor->_font = pattern->font;
     textProcessor->_pattern = pattern;
     textProcessor->_album = album;
     textProcessor->_glyphClassDef = NULL;
+    textProcessor->_direction = SFDirectionHorizontal;
 
     if (gdef) {
         SFOffset offset = SFGDEF_GlyphClassDefOffset(gdef);
@@ -60,6 +60,7 @@ SF_INTERNAL void SFTextProcessorInitialize(SFTextProcessorRef textProcessor, SFP
 
 SF_INTERNAL void SFTextProcessorDiscoverGlyphs(SFTextProcessorRef textProcessor)
 {
+    SFAlbumStartFilling(textProcessor->_album);
     _SFDiscoverGlyphs(textProcessor);
 }
 
@@ -68,6 +69,7 @@ SF_INTERNAL void SFTextProcessorSubstituteGlyphs(SFTextProcessorRef textProcesso
     SFPatternRef pattern = textProcessor->_pattern;
 
     _SFApplyFeatureRange(textProcessor, 0, pattern->featureUnits.gsub, SFFeatureKindSubstitution);
+    SFAlbumStopFilling(textProcessor->_album);
 }
 
 SF_INTERNAL void SFTextProcessorPositionGlyphs(SFTextProcessorRef textProcessor)
@@ -78,7 +80,7 @@ SF_INTERNAL void SFTextProcessorPositionGlyphs(SFTextProcessorRef textProcessor)
     SFUInteger glyphCount = album->glyphCount;
     SFUInteger index;
 
-    SFAlbumAllocatePositions(album);
+    SFAlbumStartArranging(album);
 
     /* Set positions and advances of all glyphs. */
     for (index = 0; index < glyphCount; index++) {
@@ -91,6 +93,7 @@ SF_INTERNAL void SFTextProcessorPositionGlyphs(SFTextProcessorRef textProcessor)
     }
 
     _SFApplyFeatureRange(textProcessor, pattern->featureUnits.gsub, pattern->featureUnits.gpos, SFFeatureKindPositioning);
+    SFAlbumStopArranging(album);
 }
 
 static SFData _SFGetLookupFromHeader(SFData header, SFUInt16 lookupIndex)
@@ -134,19 +137,20 @@ static void _SFApplyFeatureUnit(SFTextProcessorRef processor, SFFeatureUnitRef f
 
 SF_PRIVATE void _SFApplyLookup(SFTextProcessorRef processor, SFUInt16 lookupIndex)
 {
+    SFFontRef font = processor->_pattern->font;
     SFLocatorRef locator = &processor->_locator;
     SFData lookup;
 
     switch (processor->_featureKind) {
     case SFFeatureKindSubstitution:
-        lookup = _SFGetLookupFromHeader(processor->_font->cache.gsub, lookupIndex);
+        lookup = _SFGetLookupFromHeader(font->cache.gsub, lookupIndex);
         while (SFLocatorMoveNext(locator)) {
             _SFApplySubstitutionLookup(processor, lookup);
         }
         break;
 
     case SFFeatureKindPositioning:
-        lookup = _SFGetLookupFromHeader(processor->_font->cache.gpos, lookupIndex);
+        lookup = _SFGetLookupFromHeader(font->cache.gpos, lookupIndex);
         while (SFLocatorMoveNext(locator)) {
             _SFApplyPositioningLookup(processor, lookup);
         }
