@@ -177,7 +177,7 @@ static SFBoolean _SFApplyPairPos(SFTextProcessorRef processor, SFData pairPos)
     SFUInteger secondIndex;
 
     firstIndex = locator->index;
-    secondIndex = SFLocatorGetAfter(locator, firstIndex, locator->lookupFlag);
+    secondIndex = SFLocatorGetAfter(locator, firstIndex);
 
     /* Proceed only if pair glyph is available. */
     if (secondIndex != SFInvalidIndex) {
@@ -458,7 +458,7 @@ static SFBoolean _SFApplyCursivePosF1(SFTextProcessorRef processor, SFData cursi
 
     /* Proceed only if exit anchor of first glyph exists. */
     if (firstExitAnchor) {
-        SFUInteger secondIndex = SFLocatorGetAfter(locator, firstIndex, locator->lookupFlag);
+        SFUInteger secondIndex = SFLocatorGetAfter(locator, firstIndex);
 
         if (secondIndex != SFInvalidIndex) {
             SFGlyphID secondGlyph = SFAlbumGetGlyph(album, secondIndex);
@@ -521,14 +521,22 @@ static SFBoolean _SFApplyCursivePosF1(SFTextProcessorRef processor, SFData cursi
 static SFUInteger _SFGetPreviousBaseGlyphIndex(SFTextProcessorRef processor)
 {
     SFLocatorRef locator = &processor->_locator;
-    SFLookupFlag lookupFlag = locator->lookupFlag | SFLookupFlagIgnoreMarks;
+    SFLookupFlag lookupFlag = locator->lookupFlag;
+    SFUInteger baseIndex;
+
+    /* Make locator ignore marks. */
+    SFLocatorSetLookupFlag(locator, lookupFlag | SFLookupFlagIgnoreMarks);
 
     /*
      * NOTE:
-     *      Previous non-mark glyph is assumed as a base glyph. It is not necessary to confirm
-     *      whether that is actually a base glyph or not.
+     *      Previous non-mark glyph is assumed to be a base glyph.
      */
-    return SFLocatorGetBefore(locator, locator->index, lookupFlag);
+    baseIndex = SFLocatorGetBefore(locator, locator->index);
+
+    /* Restore the old lookup flag. */
+    SFLocatorSetLookupFlag(locator, lookupFlag);
+
+    return baseIndex;
 }
 
 static SFBoolean _SFApplyMarkToBasePos(SFTextProcessorRef processor, SFData markBasePos)
@@ -631,22 +639,24 @@ static SFUInteger _SFGetPreviousLigatureGlyphIndex(SFTextProcessorRef processor,
 {
     SFAlbumRef album = processor->_album;
     SFLocatorRef locator = &processor->_locator;
-    SFLookupFlag lookupFlag = locator->lookupFlag | SFLookupFlagIgnoreMarks;
+    SFLookupFlag lookupFlag = locator->lookupFlag;
     SFUInteger inputIndex = locator->index;
-    SFUInteger prevIndex;
+    SFUInteger ligatureIndex;
 
     /* Initialize component counter. */
     *outComponent = 0;
 
+    /* Make locator ignore marks. */
+    SFLocatorSetLookupFlag(locator, lookupFlag | SFLookupFlagIgnoreMarks);
+
     /*
      * NOTE:
-     *      Previous non-mark glyph is assumed to be a ligature glyph. It is not necessary to
-     *      confirm whether that is actually a ligature glyph or not.
+     *      Previous non-mark glyph is assumed to be a ligature glyph.
      */
-    prevIndex = SFLocatorGetBefore(locator, inputIndex, lookupFlag);
+    ligatureIndex = SFLocatorGetBefore(locator, inputIndex);
 
-    if (prevIndex != SFInvalidIndex) {
-        SFUInteger association = SFAlbumGetAssociation(album, prevIndex);
+    if (ligatureIndex != SFInvalidIndex) {
+        SFUInteger association = SFAlbumGetAssociation(album, ligatureIndex);
         SFUInteger nextIndex;
 
         /*
@@ -661,16 +671,17 @@ static SFUInteger _SFGetPreviousLigatureGlyphIndex(SFTextProcessorRef processor,
          *         component of the ligature.
          *      3) Increase component counter for each matched association.
          */
-        for (nextIndex = prevIndex + 1; nextIndex < inputIndex; nextIndex++) {
+        for (nextIndex = ligatureIndex + 1; nextIndex < inputIndex; nextIndex++) {
             if (SFAlbumGetAssociation(album, nextIndex) == association) {
                 (*outComponent)++;
             }
         }
-
-        return SFTrue;
     }
 
-    return SFFalse;
+    /* Restore the old lookup flag. */
+    SFLocatorSetLookupFlag(locator, lookupFlag);
+
+    return ligatureIndex;
 }
 
 static SFBoolean _SFApplyMarkToLigPos(SFTextProcessorRef processor, SFData markLigPos)
@@ -788,14 +799,22 @@ static SFUInteger _SFGetPreviousMarkGlyphIndex(SFTextProcessorRef processor)
     SFLookupFlag ignoreFlag = SFLookupFlagIgnoreBaseGlyphs
                             | SFLookupFlagIgnoreMarks
                             | SFLookupFlagIgnoreLigatures;
-    SFLookupFlag lookupFlag = locator->lookupFlag & ~ignoreFlag;
+    SFLookupFlag lookupFlag = locator->lookupFlag;
+    SFUInteger markIndex;
+
+    /* Make locator ignore nothing. */
+    SFLocatorSetLookupFlag(locator, lookupFlag & ~ignoreFlag);
 
     /*
      * NOTE:
-     *      Previous glyph is assumed to be a mark glyph. It is not necessary to confirm whether
-     *      that is actually a mark glyph or not.
+     *      Previous glyph is assumed to be a mark glyph.
      */
-    return SFLocatorGetBefore(locator, locator->index, lookupFlag);
+    markIndex = SFLocatorGetBefore(locator, locator->index);
+
+    /* Restore the old lookup flag. */
+    SFLocatorSetLookupFlag(locator, lookupFlag);
+
+    return markIndex;
 }
 
 static SFBoolean _SFApplyMarkToMarkPos(SFTextProcessorRef processor, SFData markMarkPos)

@@ -25,8 +25,6 @@
 #include <SFScriptTag.h>
 #include <SFTypes.h>
 
-#include "SFShapingEngine.h"
-
 enum {
     SFFeatureKindSubstitution = 0x01, /**< A value indicating that the feature belongs to 'GSUB' table. */
     SFFeatureKindPositioning = 0x02   /**< A value indicating that the feature belongs to 'GPOS' table. */
@@ -45,7 +43,7 @@ typedef struct _SFFeatureUnit {
         SFUInteger count;
     } lookupIndexes;
     SFRange coveredRange;
-    SFGlyphTraits requiredTraits;
+    SFUInt16 featureMask;
 } SFFeatureUnit, *SFFeatureUnitRef;
 
 /**

@@ -36,13 +36,13 @@ SF_INTERNAL void SFPatternBuilderInitialize(SFPatternBuilderRef builder, SFPatte
     /* Initialize the builder. */
     builder->_pattern = pattern;
     builder->_font = NULL;
-    builder->_featureKind = 0;
     builder->_gsubUnitCount = 0;
     builder->_gposUnitCount = 0;
     builder->_featureIndex = 0;
-    builder->_requiredTraits = 0;
     builder->_scriptTag = 0;
     builder->_languageTag = 0;
+    builder->_featureMask = 0;
+    builder->_featureKind = 0;
     builder->_canBuild = SFTrue;
 
     SFListInitialize(&builder->_featureTags, sizeof(SFFeatureTag));
@@ -91,7 +91,7 @@ SF_INTERNAL void SFPatternBuilderBeginFeatures(SFPatternBuilderRef builder, SFFe
     builder->_featureKind = featureKind;
 }
 
-SF_INTERNAL void SFPatternBuilderAddFeature(SFPatternBuilderRef builder, SFFeatureTag featureTag, SFGlyphTraits requiredTraits)
+SF_INTERNAL void SFPatternBuilderAddFeature(SFPatternBuilderRef builder, SFFeatureTag featureTag, SFUInt16 featureMask)
 {
     /* The kind of features must be specified before adding them. */
     SFAssert(builder->_featureKind != 0);
@@ -100,8 +100,8 @@ SF_INTERNAL void SFPatternBuilderAddFeature(SFPatternBuilderRef builder, SFFeatu
 
     /* Add the feature in the list. */
     SFListAdd(&builder->_featureTags, featureTag);
-    /* Insert the required traits of the feature. */
-    builder->_requiredTraits |= requiredTraits;
+    /* Insert the mask of the feature. */
+    builder->_featureMask |= featureMask;
 }
 
 SF_INTERNAL void SFPatternBuilderAddLookup(SFPatternBuilderRef builder, SFUInt16 lookupIndex)
@@ -137,7 +137,7 @@ SF_INTERNAL void SFPatternBuilderMakeFeatureUnit(SFPatternBuilderRef builder)
     /* Set covered range of feature unit. */
     featureUnit.coveredRange.start = builder->_featureIndex;
     featureUnit.coveredRange.length = builder->_featureTags.count - builder->_featureIndex;
-    featureUnit.requiredTraits = builder->_requiredTraits;
+    featureUnit.featureMask = builder->_featureMask;
 
     /* Add the feature unit in the list. */
     SFListAdd(&builder->_featureUnits, featureUnit);
@@ -164,8 +164,8 @@ SF_INTERNAL void SFPatternBuilderMakeFeatureUnit(SFPatternBuilderRef builder)
     /* Initialize lookup indexes array. */
     SFListInitialize(&builder->_lookupIndexes, sizeof(SFUInt16));
     SFListSetCapacity(&builder->_lookupIndexes, 32);
-    /* Reset required traits. */
-    builder->_requiredTraits = SFGlyphTraitNone;
+    /* Reset feature mask. */
+    builder->_featureMask = 0;
 }
 
 SF_INTERNAL void SFPatternBuilderEndFeatures(SFPatternBuilderRef builder)

@@ -83,7 +83,7 @@ SF_PRIVATE SFUInteger _SFSearchCoverageIndex(SFData coverage, SFGlyphID glyph)
 {
     SFUInt16 format;
 
-    /* The coverage table must not be NULL. */
+    /* The coverage table must NOT be null. */
     SFAssert(coverage != NULL);
 
     format = SFCoverage_Format(coverage);
@@ -97,6 +97,7 @@ SF_PRIVATE SFUInteger _SFSearchCoverageIndex(SFData coverage, SFGlyphID glyph)
                 return SFBinarySearchUInt16(glyphArray, glyphCount, glyph);
             }
         }
+        break;
 
     case 2:
         {
@@ -127,7 +128,7 @@ SF_PRIVATE SFUInt16 _SFSearchGlyphClass(SFData classDef, SFGlyphID glyph)
 {
     SFUInt16 format;
 
-    /* The class definition table must not be NULL. */
+    /* The class definition table must NOT be null. */
     SFAssert(classDef != NULL);
 
     format = SFClassDef_Format(classDef);
@@ -166,7 +167,7 @@ SF_PRIVATE SFUInt16 _SFSearchGlyphClass(SFData classDef, SFGlyphID glyph)
     return 0;
 }
 
-static SFGlyphTraits _SFGlyphClassToGlyphTrait(SFUInt16 glyphClass)
+static SFGlyphTraits _SFGlyphClassToGlyphTraits(SFUInt16 glyphClass)
 {
     switch (glyphClass) {
     case SFGlyphClassValueBase:
@@ -182,14 +183,14 @@ static SFGlyphTraits _SFGlyphClassToGlyphTrait(SFUInt16 glyphClass)
         return SFGlyphTraitComponent;
     }
 
-    return 0;
+    return SFGlyphTraitNone;
 }
 
 SF_PRIVATE SFGlyphTraits _SFGetGlyphTraits(SFTextProcessorRef processor, SFGlyphID glyph)
 {
     if (processor->_glyphClassDef) {
         SFUInt16 glyphClass = _SFSearchGlyphClass(processor->_glyphClassDef, glyph);
-        return _SFGlyphClassToGlyphTrait(glyphClass);
+        return _SFGlyphClassToGlyphTraits(glyphClass);
     }
 
     return SFGlyphTraitNone;
@@ -268,7 +269,7 @@ static SFBoolean _SFApplyChainContextF3(SFTextProcessorRef processor, SFData cha
 
             /* Match the input glyphs. */
             for (recordIndex = 1; recordIndex < inputCount; recordIndex++) {
-                inputIndex = SFLocatorGetAfter(locator, inputIndex, locator->lookupFlag);
+                inputIndex = SFLocatorGetAfter(locator, inputIndex);
 
                 if (inputIndex != SFInvalidIndex) {
                     offset = SFInputRecord_Value(inputRecord, recordIndex);
@@ -289,7 +290,7 @@ static SFBoolean _SFApplyChainContextF3(SFTextProcessorRef processor, SFData cha
 
             /* Match the backtrack glyphs. */
             for (recordIndex = 0; recordIndex < backtrackCount; recordIndex++) {
-                backtrackIndex = SFLocatorGetBefore(locator, backtrackIndex, locator->lookupFlag);
+                backtrackIndex = SFLocatorGetBefore(locator, backtrackIndex);
 
                 if (backtrackIndex != SFInvalidIndex) {
                     offset = SFBacktrackRecord_Value(backtrackRecord, recordIndex);
@@ -310,8 +311,7 @@ static SFBoolean _SFApplyChainContextF3(SFTextProcessorRef processor, SFData cha
 
             /* Match the lookahead glyphs. */
             for (recordIndex = 0; recordIndex < lookaheadCount; recordIndex++) {
-                coverageIndex = SFInvalidIndex;
-                lookaheadIndex = SFLocatorGetAfter(locator, lookaheadIndex, locator->lookupFlag);
+                lookaheadIndex = SFLocatorGetAfter(locator, lookaheadIndex);
 
                 if (lookaheadIndex != SFInvalidIndex) {
                     offset = SFLookaheadRecord_Value(lookaheadRecord, recordIndex);

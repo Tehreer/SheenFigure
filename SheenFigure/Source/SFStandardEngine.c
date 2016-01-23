@@ -29,17 +29,21 @@
 static SFScriptKnowledgeRef _SFStandardKnowledgeSeekScript(const void *object, SFScriptTag scriptTag);
 static void _SFStandardEngineProcessAlbum(const void *object, SFAlbumRef album);
 
+enum {
+    _SFStandardFeatureMaskNone = 0 << 0
+};
+
 static SFFeatureInfo _SFStandardFeatureInfoArray[] = {
     /* Language based forms. */
-    { SFFeatureTagCCMP, SFGlyphTraitNone },
+    { SFFeatureTagCCMP, _SFStandardFeatureMaskNone },
     /* Typographical forms */
-    { SFFeatureTagLIGA, SFGlyphTraitNone },
-    { SFFeatureTagCLIG, SFGlyphTraitNone },
+    { SFFeatureTagLIGA, _SFStandardFeatureMaskNone },
+    { SFFeatureTagCLIG, _SFStandardFeatureMaskNone },
     /* Positioning features. */
-    { SFFeatureTagDIST, SFGlyphTraitNone },
-    { SFFeatureTagKERN, SFGlyphTraitNone },
-    { SFFeatureTagMARK, SFGlyphTraitNone },
-    { SFFeatureTagMKMK, SFGlyphTraitNone }
+    { SFFeatureTagDIST, _SFStandardFeatureMaskNone },
+    { SFFeatureTagKERN, _SFStandardFeatureMaskNone },
+    { SFFeatureTagMARK, _SFStandardFeatureMaskNone },
+    { SFFeatureTagMKMK, _SFStandardFeatureMaskNone }
 };
 static const SFUInteger _SFStandardFeatureInfoCount = sizeof(_SFStandardFeatureInfoArray) / sizeof(SFFeatureInfo);
 

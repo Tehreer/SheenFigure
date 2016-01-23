@@ -22,27 +22,23 @@
 #include "SFAlbum.h"
 #include "SFCommon.h"
 #include "SFData.h"
-#include "SFGlyphTraits.h"
 
 typedef struct _SFLocator {
     SFAlbumRef _album;
     SFData _markAttachClassDef;
     SFData _markGlyphSetsDef;
-#ifdef SF_SAFE_ALBUM
     SFUInteger _version;
-#endif
     SFUInteger _startIndex;
     SFUInteger _limitIndex;
     SFUInteger _stateIndex;
     SFUInteger index;
-    SFGlyphTraits _requiredTraits;
+    SFGlyphMask _ignoreMask;
     SFLookupFlag lookupFlag;
 } SFLocator, *SFLocatorRef;
 
 SF_INTERNAL void SFLocatorInitialize(SFLocatorRef locator, SFAlbumRef album, SFData gdef);
 
-SF_INTERNAL void SFLocatorSetRequiredTraits(SFLocatorRef locator, SFGlyphTraits requiredTraits);
-
+SF_INTERNAL void SFLocatorSetFeatureMask(SFLocatorRef locator, SFUInt16 featureMask);
 SF_INTERNAL void SFLocatorSetLookupFlag(SFLocatorRef locator, SFLookupFlag lookupFlag);
 
 SF_INTERNAL void SFLocatorReset(SFLocatorRef locator, SFUInteger index, SFUInteger count);
@@ -77,7 +73,7 @@ SF_INTERNAL void SFLocatorJumpTo(SFLocatorRef locator, SFUInteger index);
  *      The index of next legitimate glyph if available, or SFInvalidIndex if there was no
  *      legitimate glyph after the given index.
  */
-SF_INTERNAL SFUInteger SFLocatorGetAfter(SFLocatorRef locator, SFUInteger index, SFLookupFlag lookupFlag);
+SF_INTERNAL SFUInteger SFLocatorGetAfter(SFLocatorRef locator, SFUInteger index);
 
 /**
  * Gets the index of legitimate glyph before the given index.
@@ -85,7 +81,7 @@ SF_INTERNAL SFUInteger SFLocatorGetAfter(SFLocatorRef locator, SFUInteger index,
  *      The index of previous legitimate glyph if available, or SFInvalidIndex if there was no
  *      legitimate glyph after the given index.
  */
-SF_INTERNAL SFUInteger SFLocatorGetBefore(SFLocatorRef locator, SFUInteger index, SFLookupFlag lookupFlag);
+SF_INTERNAL SFUInteger SFLocatorGetBefore(SFLocatorRef locator, SFUInteger index);
 
 /**
  * Takes the state of other locator provided that it also belong to the same album and is subset of

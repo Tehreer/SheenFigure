@@ -23,11 +23,10 @@
 
 #include "SFAlbum.h"
 #include "SFFont.h"
-#include "SFGlyphTraits.h"
 
 typedef struct _SFFeatureInfo {
     SFFeatureTag featureTag;
-    SFGlyphTraits requiredTraits;
+    SFUInt16 featureMask;
 } SFFeatureInfo, *SFFeatureInfoRef;
 
 typedef struct _SFScriptKnowledge {

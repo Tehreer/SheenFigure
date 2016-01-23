@@ -22,12 +22,7 @@
 #include <SFTypes.h>
 
 #include "SFAssert.h"
-#include "SFGlyphTraits.h"
 #include "SFList.h"
-
-#ifndef NDEBUG
-#define SF_SAFE_ALBUM
-#endif
 
 typedef enum {
     _SFAlbumStateEmpty,
@@ -37,9 +32,28 @@ typedef enum {
     _SFAlbumStateArranged
 } _SFAlbumState;
 
+enum {
+    SFGlyphTraitNone        = 0 << 0,
+    SFGlyphTraitRightToLeft = 1 << 0,
+    SFGlyphTraitBase        = 1 << 1,
+    SFGlyphTraitLigature    = 1 << 2,
+    SFGlyphTraitMark        = 1 << 3,
+    SFGlyphTraitComponent   = 1 << 4,
+    SFGlyphTraitRemoved     = 1 << 5
+};
+typedef SFUInt16 SFGlyphTraits;
+
+typedef union {
+    struct {
+        SFUInt16 featureMask;
+        SFUInt16 glyphTraits;
+    } section;
+    SFUInt32 full;
+} SFGlyphMask;
+
 typedef struct _SFGlyphDetail {
     SFUInteger association;     /**< Index of the code point to which the glyph maps. */
-    SFGlyphTraits traits;       /**< Traits of the glyph. */
+    SFGlyphMask mask;           /**< Mask of the glyph. */
     /**
      * Offset to the next right-to-left cursively connected element.
      */
@@ -62,6 +76,8 @@ struct _SFAlbum {
 
     SFUInteger _retainCount;
 };
+
+SF_PRIVATE SFUInt16 _SFAlbumGetAntiFeatureMask(SFUInt16 featureMask);
 
 SF_INTERNAL void SFAlbumInitialize(SFAlbumRef album);
 
@@ -97,11 +113,16 @@ SF_INTERNAL void SFAlbumReserveGlyphs(SFAlbumRef album, SFUInteger index, SFUInt
 SF_INTERNAL SFGlyphID SFAlbumGetGlyph(SFAlbumRef album, SFUInteger index);
 SF_INTERNAL void SFAlbumSetGlyph(SFAlbumRef album, SFUInteger index, SFGlyphID glyph);
 
-SF_INTERNAL SFGlyphTraits SFAlbumGetTraits(SFAlbumRef album, SFUInteger index);
-SF_INTERNAL void SFAlbumSetTraits(SFAlbumRef album, SFUInteger index, SFGlyphTraits traits);
-
 SF_INTERNAL SFUInteger SFAlbumGetAssociation(SFAlbumRef album, SFUInteger index);
 SF_INTERNAL void SFAlbumSetAssociation(SFAlbumRef album, SFUInteger index, SFUInteger association);
+
+SF_PRIVATE SFGlyphMask _SFAlbumGetGlyphMask(SFAlbumRef album, SFUInteger index);
+
+SF_INTERNAL SFUInt16 SFAlbumGetFeatureMask(SFAlbumRef album, SFUInteger index);
+SF_INTERNAL void SFAlbumSetFeatureMask(SFAlbumRef album, SFUInteger index, SFUInt16 featureMask);
+
+SF_INTERNAL SFGlyphTraits SFAlbumGetTraits(SFAlbumRef album, SFUInteger index);
+SF_INTERNAL void SFAlbumSetTraits(SFAlbumRef album, SFUInteger index, SFGlyphTraits traits);
 
 /**
  * Sops filling the album with glyphs.

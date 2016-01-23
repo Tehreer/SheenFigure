@@ -25,8 +25,7 @@
 #include "SFOpenType.h"
 #include "SFLocator.h"
 
-static void SFLocatorValidateVersion(SFLocatorRef locator);
-static SFBoolean _SFIsIgnoredGlyph(SFLocatorRef locator, SFUInteger index, SFLookupFlag lookupFlag);
+static SFBoolean _SFIsIgnoredGlyph(SFLocatorRef locator, SFUInteger index);
 
 SF_INTERNAL void SFLocatorInitialize(SFLocatorRef locator, SFAlbumRef album, SFData gdef)
 {
@@ -36,13 +35,12 @@ SF_INTERNAL void SFLocatorInitialize(SFLocatorRef locator, SFAlbumRef album, SFD
     locator->_album = album;
     locator->_markAttachClassDef = NULL;
     locator->_markGlyphSetsDef = NULL;
-#ifdef SF_SAFE_ALBUM
     locator->_version = SFInvalidIndex;
-#endif
     locator->_startIndex = 0;
     locator->_limitIndex = 0;
     locator->_stateIndex = 0;
     locator->index = SFInvalidIndex;
+    locator->_ignoreMask.full = 0;
     locator->lookupFlag = 0;
 
     if (gdef) {
@@ -58,23 +56,40 @@ SF_INTERNAL void SFLocatorInitialize(SFLocatorRef locator, SFAlbumRef album, SFD
 
 SF_INTERNAL void SFLocatorReserveGlyphs(SFLocatorRef locator, SFUInteger glyphCount)
 {
-    SFLocatorValidateVersion(locator);
+    /* The album version MUST be same. */
+    SFAssert(locator->_version == locator->_album->_version);
+
     SFAlbumReserveGlyphs(locator->_album, locator->_stateIndex, glyphCount);
 
-#ifdef SF_SAFE_ALBUM
     locator->_version = locator->_album->_version;
-#endif
     locator->_limitIndex += glyphCount;
 }
 
-SF_INTERNAL void SFLocatorSetRequiredTraits(SFLocatorRef locator, SFGlyphTraits requiredTraits)
+SF_INTERNAL void SFLocatorSetFeatureMask(SFLocatorRef locator, SFUInt16 featureMask)
 {
-    locator->_requiredTraits = requiredTraits;
+    locator->_ignoreMask.section.featureMask = _SFAlbumGetAntiFeatureMask(featureMask);
 }
 
 SF_INTERNAL void SFLocatorSetLookupFlag(SFLocatorRef locator, SFLookupFlag lookupFlag)
 {
+    SFGlyphTraits glyphTraits = SFGlyphTraitNone;
+
+    if (lookupFlag & SFLookupFlagIgnoreBaseGlyphs) {
+        glyphTraits |= SFGlyphTraitBase;
+    }
+
+    if (lookupFlag & SFLookupFlagIgnoreLigatures) {
+        glyphTraits |= SFGlyphTraitLigature;
+    }
+
+    if (lookupFlag & SFLookupFlagIgnoreMarks) {
+        glyphTraits |= SFGlyphTraitMark;
+    }
+
+    glyphTraits |= SFGlyphTraitRemoved;
+
     locator->lookupFlag = lookupFlag;
+    locator->_ignoreMask.section.glyphTraits = glyphTraits;
 }
 
 SF_INTERNAL void SFLocatorReset(SFLocatorRef locator, SFUInteger index, SFUInteger count)
@@ -82,45 +97,19 @@ SF_INTERNAL void SFLocatorReset(SFLocatorRef locator, SFUInteger index, SFUInteg
     /* The index must be valid and there should be no integer overflow. */
     SFAssert(index <= locator->_album->glyphCount && index <= (index + count));
 
-#ifdef SF_SAFE_ALBUM
     locator->_version = locator->_album->_version;
-#endif
     locator->_startIndex = index;
     locator->_limitIndex = index + count;
     locator->_stateIndex = index;
     locator->index = SFInvalidIndex;
 }
 
-static void SFLocatorValidateVersion(SFLocatorRef locator)
-{
-#ifdef SF_SAFE_ALBUM
-    SFAssert(locator->_version == locator->_album->_version);
-#endif
-}
-
-static SFBoolean _SFIsIgnoredGlyph(SFLocatorRef locator, SFUInteger index, SFLookupFlag lookupFlag) {
+static SFBoolean _SFIsIgnoredGlyph(SFLocatorRef locator, SFUInteger index) {
     SFAlbumRef album = locator->_album;
-    SFGlyphTraits traits = SFAlbumGetTraits(album, index);
-    SFBoolean isMark;
+    SFLookupFlag lookupFlag = locator->lookupFlag;
+    SFGlyphMask glyphMask = _SFAlbumGetGlyphMask(album, index);
 
-    if (locator->_requiredTraits && !(traits & locator->_requiredTraits)) {
-        return SFTrue;
-    }
-
-    if (traits & SFGlyphTraitRemoved) {
-        return SFTrue;
-    }
-
-    isMark = (traits & SFGlyphTraitMark);
-    if ((lookupFlag & SFLookupFlagIgnoreMarks) && isMark) {
-        return SFTrue;
-    }
-
-    if ((lookupFlag & SFLookupFlagIgnoreLigatures) && (traits & SFGlyphTraitLigature)) {
-        return SFTrue;
-    }
-
-    if ((lookupFlag & SFLookupFlagIgnoreBaseGlyphs) && (traits & SFGlyphTraitBase)) {
+    if (locator->_ignoreMask.full & glyphMask.full) {
         return SFTrue;
     }
 
@@ -128,7 +117,8 @@ static SFBoolean _SFIsIgnoredGlyph(SFLocatorRef locator, SFUInteger index, SFLoo
         SFGlyphID glyph = SFAlbumGetGlyph(album, index);
         SFUInt16 glyphClass;
 
-        if (locator->_markAttachClassDef && isMark
+        if (locator->_markAttachClassDef
+            && (glyphMask.section.glyphTraits & SFGlyphTraitMark)
             && !(SFOpenTypeSearchGlyphClass(locator->_markAttachClassDef, glyph, &glyphClass)
                  && glyphClass == (lookupFlag >> 8))) {
                 return SFTrue;
@@ -142,12 +132,13 @@ SF_INTERNAL SFBoolean SFLocatorMoveNext(SFLocatorRef locator)
 {
     /* The state of locator must be valid. */
     SFAssert(locator->_stateIndex <= locator->_limitIndex);
-    SFLocatorValidateVersion(locator);
+    /* The album version MUST be same. */
+    SFAssert(locator->_version == locator->_album->_version);
 
     while (locator->_stateIndex < locator->_limitIndex) {
         SFUInteger index = locator->_stateIndex++;
 
-        if (!_SFIsIgnoredGlyph(locator, index, locator->lookupFlag)) {
+        if (!_SFIsIgnoredGlyph(locator, index)) {
             locator->index = index;
             return SFTrue;
         }
@@ -180,19 +171,21 @@ SF_INTERNAL void SFLocatorJumpTo(SFLocatorRef locator, SFUInteger index)
      *      It is legal to jump to limit index so that MoveNext method returns SFFalse thereafter.
      */
     SFAssert(index <= locator->_limitIndex);
-    SFLocatorValidateVersion(locator);
+    /* The album version MUST be same. */
+    SFAssert(locator->_version == locator->_album->_version);
 
     locator->_stateIndex = index;
 }
 
-SF_INTERNAL SFUInteger SFLocatorGetAfter(SFLocatorRef locator, SFUInteger index, SFLookupFlag lookupFlag)
+SF_INTERNAL SFUInteger SFLocatorGetAfter(SFLocatorRef locator, SFUInteger index)
 {
     /* The index must be valid. */
     SFAssert(index < locator->_limitIndex);
-    SFLocatorValidateVersion(locator);
+    /* The album version MUST be same. */
+    SFAssert(locator->_version == locator->_album->_version);
 
     for (index += 1; index < locator->_limitIndex; index++) {
-        if (!_SFIsIgnoredGlyph(locator, index, lookupFlag)) {
+        if (!_SFIsIgnoredGlyph(locator, index)) {
             return index;
         }
     }
@@ -200,14 +193,15 @@ SF_INTERNAL SFUInteger SFLocatorGetAfter(SFLocatorRef locator, SFUInteger index,
     return SFInvalidIndex;
 }
 
-SF_INTERNAL SFUInteger SFLocatorGetBefore(SFLocatorRef locator, SFUInteger index, SFLookupFlag lookupFlag)
+SF_INTERNAL SFUInteger SFLocatorGetBefore(SFLocatorRef locator, SFUInteger index)
 {
     /* The index must be valid. */
     SFAssert(index < locator->_limitIndex);
-    SFLocatorValidateVersion(locator);
+    /* The album version MUST be same. */
+    SFAssert(locator->_version == locator->_album->_version);
 
     while (index-- > locator->_startIndex) {
-        if (!_SFIsIgnoredGlyph(locator, index, lookupFlag)) {
+        if (!_SFIsIgnoredGlyph(locator, index)) {
             return index;
         }
     }

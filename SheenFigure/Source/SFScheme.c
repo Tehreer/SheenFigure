@@ -121,7 +121,7 @@ static void _SFAddFeatureRange(_SFSchemeStateRef state, SFUInteger index, SFUInt
         SFData feature = _SFSearchFeatureInLangSys(state->langSys, state->featureList, featureInfo->featureTag);
 
         if (feature) {
-            SFPatternBuilderAddFeature(&state->builder, featureInfo->featureTag, featureInfo->requiredTraits);
+            SFPatternBuilderAddFeature(&state->builder, featureInfo->featureTag, featureInfo->featureMask);
             _SFAddAllLookups(state, feature);
 
             if (!simultaneous) {

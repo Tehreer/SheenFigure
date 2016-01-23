@@ -312,7 +312,7 @@ static SFBoolean _SFApplyLigatureSet(SFTextProcessorRef processor, SFData ligatu
          *      it does not accidently become too large if the component count is zero.
          */
         for (compIndex = 1; compIndex < compCount; compIndex++) {
-            nextIndex = SFLocatorGetAfter(locator, prevIndex, locator->lookupFlag);
+            nextIndex = SFLocatorGetAfter(locator, prevIndex);
 
             if (inputIndex != SFInvalidIndex) {
                 SFGlyphID component = SFLigature_Component(ligature, compIndex - 1);
@@ -343,7 +343,7 @@ static SFBoolean _SFApplyLigatureSet(SFTextProcessorRef processor, SFData ligatu
 
             /* Initialize component glyphs. */
             for (compIndex = 1; compIndex < compCount; compIndex++) {
-                nextIndex = SFLocatorGetAfter(locator, prevIndex, locator->lookupFlag);
+                nextIndex = SFLocatorGetAfter(locator, prevIndex);
 
                 SFAlbumSetGlyph(album, nextIndex, 0);
                 SFAlbumSetTraits(album, nextIndex, SFGlyphTraitRemoved);

@@ -129,7 +129,7 @@ static void _SFApplyFeatureUnit(SFTextProcessorRef processor, SFFeatureUnitRef f
     for (lookupIndex = 0; lookupIndex < lookupCount; lookupIndex++) {
         SFLocatorRef locator = &processor->_locator;
         SFLocatorReset(locator, 0, processor->_album->glyphCount);
-        SFLocatorSetRequiredTraits(locator, featureUnit->requiredTraits);
+        SFLocatorSetFeatureMask(locator, featureUnit->featureMask);
 
         _SFApplyLookup(processor, lookupArray[lookupIndex]);
     }

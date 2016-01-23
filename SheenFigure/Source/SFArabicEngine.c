@@ -29,34 +29,36 @@
 #include "SFArabicEngine.h"
 
 static SFScriptKnowledgeRef _SFArabicKnowledgeSeekScript(const void *object, SFScriptTag scriptTag);
-static void SFArabicEngineProcessAlbum(const void *object, SFAlbumRef album);
+static void _SFPutArabicFeatureMask(SFAlbumRef album);
+static void _SFArabicEngineProcessAlbum(const void *object, SFAlbumRef album);
 
 enum {
-    _SFGlyphTraitIsolated = SFGlyphTraitMakeSpecial(0),
-    _SFGlyphTraitInitial  = SFGlyphTraitMakeSpecial(1),
-    _SFGlyphTraitMedial   = SFGlyphTraitMakeSpecial(2),
-    _SFGlyphTraitFinal    = SFGlyphTraitMakeSpecial(3)
+    _SFArabicFeatureMaskNone     = 0 << 0,
+    _SFArabicFeatureMaskIsolated = 1 << 0,
+    _SFArabicFeatureMaskInitial  = 1 << 1,
+    _SFArabicFeatureMaskMedial   = 1 << 2,
+    _SFArabicFeatureMaskFinal    = 1 << 3
 };
 
 static SFFeatureInfo _SFArabicFeatureInfoArray[] = {
     /* Language based forms */
-    { SFFeatureTagCCMP, SFGlyphTraitNone },
-    { SFFeatureTagISOL, _SFGlyphTraitIsolated },
-    { SFFeatureTagFINA, _SFGlyphTraitFinal },
-    { SFFeatureTagMEDI, _SFGlyphTraitMedial },
-    { SFFeatureTagINIT, _SFGlyphTraitInitial },
-    { SFFeatureTagRLIG, SFGlyphTraitNone },
-    { SFFeatureTagCALT, SFGlyphTraitNone },
+    { SFFeatureTagCCMP, _SFArabicFeatureMaskNone },
+    { SFFeatureTagISOL, _SFArabicFeatureMaskIsolated },
+    { SFFeatureTagFINA, _SFArabicFeatureMaskFinal },
+    { SFFeatureTagMEDI, _SFArabicFeatureMaskMedial },
+    { SFFeatureTagINIT, _SFArabicFeatureMaskInitial },
+    { SFFeatureTagRLIG, _SFArabicFeatureMaskNone },
+    { SFFeatureTagCALT, _SFArabicFeatureMaskNone },
     /* Typographical forms */
-    { SFFeatureTagLIGA, SFGlyphTraitNone },
-    { SFFeatureTagDLIG, SFGlyphTraitNone },
-    { SFFeatureTagCSWH, SFGlyphTraitNone },
-    { SFFeatureTagMSET, SFGlyphTraitNone },
+    { SFFeatureTagLIGA, _SFArabicFeatureMaskNone },
+    { SFFeatureTagDLIG, _SFArabicFeatureMaskNone },
+    { SFFeatureTagCSWH, _SFArabicFeatureMaskNone },
+    { SFFeatureTagMSET, _SFArabicFeatureMaskNone },
     /* Positioning features */
-    { SFFeatureTagCURS, SFGlyphTraitNone },
-    { SFFeatureTagKERN, SFGlyphTraitNone },
-    { SFFeatureTagMARK, SFGlyphTraitNone },
-    { SFFeatureTagMKMK, SFGlyphTraitNone }
+    { SFFeatureTagCURS, _SFArabicFeatureMaskNone },
+    { SFFeatureTagKERN, _SFArabicFeatureMaskNone },
+    { SFFeatureTagMARK, _SFArabicFeatureMaskNone },
+    { SFFeatureTagMKMK, _SFArabicFeatureMaskNone }
 };
 static const SFUInteger _SFArabicFeatureInfoCount = sizeof(_SFArabicFeatureInfoArray) / sizeof(SFFeatureInfo);
 
@@ -80,7 +82,7 @@ static SFScriptKnowledgeRef _SFArabicKnowledgeSeekScript(const void *object, SFS
 }
 
 static SFShapingEngine _SFArabicEngineBase = {
-    &SFArabicEngineProcessAlbum
+    &_SFArabicEngineProcessAlbum
 };
 
 SF_INTERNAL void SFArabicEngineInitialize(SFArabicEngineRef arabicEngine, SFPatternRef pattern)
@@ -89,7 +91,7 @@ SF_INTERNAL void SFArabicEngineInitialize(SFArabicEngineRef arabicEngine, SFPatt
     arabicEngine->_pattern = pattern;
 }
 
-static void _SFPutArabicFeatureTraits(SFAlbumRef album)
+static void _SFPutArabicFeatureMask(SFAlbumRef album)
 {
     const SFCodepoint *codepoints = album->codePointArray;
     SFUInteger length = album->codePointCount;
@@ -98,7 +100,7 @@ static void _SFPutArabicFeatureTraits(SFAlbumRef album)
     SFUInteger index = 0;
 
     while (joiningType != SFJoiningTypeNil) {
-        SFGlyphTraits traits = SFGlyphTraitNone;
+        SFUInt16 featureMask = _SFArabicFeatureMaskNone;
         SFJoiningType nextJoiningType = SFJoiningTypeNil;
         SFUInteger nextIndex = index;
 
@@ -125,11 +127,11 @@ static void _SFPutArabicFeatureTraits(SFAlbumRef album)
         case SFJoiningTypeR:
             switch (priorJoiningType) {
             case SFJoiningTypeD:
-                traits |= _SFGlyphTraitFinal;
+                featureMask |= _SFArabicFeatureMaskFinal;
                 break;
 
             default:
-                traits |= _SFGlyphTraitIsolated;
+                featureMask |= _SFArabicFeatureMaskIsolated;
                 break;
             }
             break;
@@ -140,11 +142,11 @@ static void _SFPutArabicFeatureTraits(SFAlbumRef album)
                 switch (nextJoiningType) {
                 case SFJoiningTypeR:
                 case SFJoiningTypeD:
-                    traits |= _SFGlyphTraitMedial;
+                    featureMask |= _SFArabicFeatureMaskMedial;
                     break;
 
                 default:
-                    traits |= _SFGlyphTraitFinal;
+                    featureMask |= _SFArabicFeatureMaskFinal;
                     break;
                 }
                 break;
@@ -153,11 +155,11 @@ static void _SFPutArabicFeatureTraits(SFAlbumRef album)
                 switch (nextJoiningType) {
                 case SFJoiningTypeR:
                 case SFJoiningTypeD:
-                    traits |= _SFGlyphTraitInitial;
+                    featureMask |= _SFArabicFeatureMaskInitial;
                     break;
                     
                 default:
-                    traits |= _SFGlyphTraitIsolated;
+                    featureMask |= _SFArabicFeatureMaskIsolated;
                     break;
                 }
                 break;
@@ -175,9 +177,8 @@ static void _SFPutArabicFeatureTraits(SFAlbumRef album)
             break;
         }
 
-        /* Save the traits of current character. */
-        traits |= SFAlbumGetTraits(album, index);
-        SFAlbumSetTraits(album, index, traits);
+        /* Save the mask of current character. */
+        SFAlbumSetFeatureMask(album, index, featureMask);
 
         /* Move to the next character. */
         priorJoiningType = joiningType;
@@ -186,14 +187,14 @@ static void _SFPutArabicFeatureTraits(SFAlbumRef album)
     }
 }
 
-static void SFArabicEngineProcessAlbum(const void *object, SFAlbumRef album)
+static void _SFArabicEngineProcessAlbum(const void *object, SFAlbumRef album)
 {
     SFArabicEngineRef arabicEngine = (SFArabicEngineRef)object;
     SFTextProcessor processor;
 
     SFTextProcessorInitialize(&processor, arabicEngine->_pattern, album);
     SFTextProcessorDiscoverGlyphs(&processor);
-    _SFPutArabicFeatureTraits(album);
+    _SFPutArabicFeatureMask(album);
     SFTextProcessorSubstituteGlyphs(&processor);
     SFTextProcessorPositionGlyphs(&processor);
 }

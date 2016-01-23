@@ -23,7 +23,6 @@
 #include <SFScriptTag.h>
 #include <SFTypes.h>
 
-#include "SFGlyphTraits.h"
 #include "SFList.h"
 #include "SFPattern.h"
 
@@ -43,7 +42,7 @@ typedef struct _SFPatternBuilder {
     SFUInteger _featureIndex;       /**< Starting feature index of the feature unit being built. */
     SFScriptTag _scriptTag;         /**< Tag of the script, whose pattern is being built. */
     SFLanguageTag _languageTag;     /**< Tag of the language, whose pattern is being built. */
-    SFGlyphTraits _requiredTraits;  /**< Required traits of the feature unit being built. */
+    SFUInt16 _featureMask;          /**< Mask of the feature unit being built. */
     SFFeatureKind _featureKind;     /**< Kind of the features being added. */
     SFBoolean _canBuild;
 
@@ -70,7 +69,7 @@ SF_INTERNAL void SFPatternBuilderBeginFeatures(SFPatternBuilderRef builder, SFFe
 /**
  * Adds a new feature having recently specified kind.
  */
-SF_INTERNAL void SFPatternBuilderAddFeature(SFPatternBuilderRef builder, SFFeatureTag featureTag, SFGlyphTraits requiredTraits);
+SF_INTERNAL void SFPatternBuilderAddFeature(SFPatternBuilderRef builder, SFFeatureTag featureTag, SFUInt16 featureMask);
 
 /**
  * Adds a new lookup in recently added feature.
