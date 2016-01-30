@@ -18,6 +18,7 @@
 #include <SFScriptTag.h>
 
 #include "SFArabicEngine.h"
+#include "SFShapingKnowledge.h"
 #include "SFStandardEngine.h"
 #include "SFUnifiedEngine.h"
 

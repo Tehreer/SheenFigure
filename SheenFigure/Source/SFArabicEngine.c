@@ -25,12 +25,13 @@
 #include "SFJoiningType.h"
 #include "SFJoiningTypeLookup.h"
 #include "SFShapingEngine.h"
+#include "SFShapingKnowledge.h"
 #include "SFTextProcessor.h"
 #include "SFArabicEngine.h"
 
 static SFScriptKnowledgeRef _SFArabicKnowledgeSeekScript(const void *object, SFScriptTag scriptTag);
 static void _SFPutArabicFeatureMask(SFAlbumRef album);
-static void _SFArabicEngineProcessAlbum(const void *object, SFAlbumRef album);
+static void _SFArabicEngineProcessAlbum(const void *object, SFAlbumRef album, SFDirection direction);
 
 enum {
     _SFArabicFeatureMaskNone     = 0 << 0,
@@ -63,6 +64,7 @@ static SFFeatureInfo _SFArabicFeatureInfoArray[] = {
 static const SFUInteger _SFArabicFeatureInfoCount = sizeof(_SFArabicFeatureInfoArray) / sizeof(SFFeatureInfo);
 
 static SFScriptKnowledge _SFArabicScriptKnowledge = {
+    SFDirectionRTL,
     { _SFArabicFeatureInfoArray, _SFArabicFeatureInfoCount },
     { NULL, 0 }
 };
@@ -95,8 +97,9 @@ static void _SFPutArabicFeatureMask(SFAlbumRef album)
 {
     const SFCodepoint *codepoints = album->codePointArray;
     SFUInteger length = album->codePointCount;
+    SFUInteger association = SFAlbumGetAssociation(album, 0);
     SFJoiningType priorJoiningType = SFJoiningTypeU;
-    SFJoiningType joiningType = SFJoiningTypeDetermine(codepoints[0]);
+    SFJoiningType joiningType = SFJoiningTypeDetermine(codepoints[association]);
     SFUInteger index = 0;
 
     while (joiningType != SFJoiningTypeNil) {
@@ -106,7 +109,8 @@ static void _SFPutArabicFeatureMask(SFAlbumRef album)
 
         /* Find the joining type of next character. */
         while (++nextIndex < length) {
-            nextJoiningType = SFJoiningTypeDetermine(codepoints[nextIndex]);
+            association = SFAlbumGetAssociation(album, nextIndex);
+            nextJoiningType = SFJoiningTypeDetermine(codepoints[association]);
 
             /* Normalize the joining type of next character. */
             switch (nextJoiningType) {
@@ -187,12 +191,12 @@ static void _SFPutArabicFeatureMask(SFAlbumRef album)
     }
 }
 
-static void _SFArabicEngineProcessAlbum(const void *object, SFAlbumRef album)
+static void _SFArabicEngineProcessAlbum(const void *object, SFAlbumRef album, SFDirection direction)
 {
     SFArabicEngineRef arabicEngine = (SFArabicEngineRef)object;
     SFTextProcessor processor;
 
-    SFTextProcessorInitialize(&processor, arabicEngine->_pattern, album);
+    SFTextProcessorInitialize(&processor, arabicEngine->_pattern, album, direction);
     SFTextProcessorDiscoverGlyphs(&processor);
     _SFPutArabicFeatureMask(album);
     SFTextProcessorSubstituteGlyphs(&processor);

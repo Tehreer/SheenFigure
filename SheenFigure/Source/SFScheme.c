@@ -224,7 +224,7 @@ SFPatternRef SFSchemeBuildPattern(SFSchemeRef scheme)
 
             SFPatternBuilderInitialize(&state.builder, pattern);
             SFPatternBuilderSetFont(&state.builder, scheme->_font);
-            SFPatternBuilderSetScript(&state.builder, scheme->_scriptTag);
+            SFPatternBuilderSetScript(&state.builder, scheme->_scriptTag, state.knowledge->scriptDirection);
             SFPatternBuilderSetLanguage(&state.builder, scheme->_languageTag);
 
             if (gsub) {

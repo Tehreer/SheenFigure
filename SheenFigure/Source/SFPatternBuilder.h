@@ -18,6 +18,7 @@
 #define _SF_PATTERN_BUILDER_INTERNAL_H
 
 #include <SFConfig.h>
+#include <SFDirection.h>
 #include <SFFeatureTag.h>
 #include <SFLanguageTag.h>
 #include <SFScriptTag.h>
@@ -41,6 +42,7 @@ typedef struct _SFPatternBuilder {
     SFUInteger _gposUnitCount;      /**< Total number of GPOS feature units. */
     SFUInteger _featureIndex;       /**< Starting feature index of the feature unit being built. */
     SFScriptTag _scriptTag;         /**< Tag of the script, whose pattern is being built. */
+    SFDirection _scriptDirection;   /**< Direction of the script whose pattern is being built.*/
     SFLanguageTag _languageTag;     /**< Tag of the language, whose pattern is being built. */
     SFUInt16 _featureMask;          /**< Mask of the feature unit being built. */
     SFFeatureKind _featureKind;     /**< Kind of the features being added. */
@@ -58,7 +60,7 @@ SF_INTERNAL void SFPatternBuilderInitialize(SFPatternBuilderRef builder, SFPatte
 SF_INTERNAL void SFPatternBuilderFinalize(SFPatternBuilderRef builder);
 
 SF_INTERNAL void SFPatternBuilderSetFont(SFPatternBuilderRef builder, SFFontRef font);
-SF_INTERNAL void SFPatternBuilderSetScript(SFPatternBuilderRef builder, SFScriptTag scriptTag);
+SF_INTERNAL void SFPatternBuilderSetScript(SFPatternBuilderRef builder, SFScriptTag scriptTag, SFDirection scriptDirection);
 SF_INTERNAL void SFPatternBuilderSetLanguage(SFPatternBuilderRef builder, SFLanguageTag languageTag);
 
 /**

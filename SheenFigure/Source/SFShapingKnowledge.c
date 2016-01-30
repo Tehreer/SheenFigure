@@ -14,24 +14,16 @@
  * limitations under the License.
  */
 
-#ifndef _SF_ARABIC_ENGINE_INTERNAL_H
-#define _SF_ARABIC_ENGINE_INTERNAL_H
-
 #include <SFConfig.h>
-#include <SFDirection.h>
-#include <SFTypes.h>
+#include <stddef.h>
 
-#include "SFPattern.h"
-#include "SFShapingEngine.h"
+#include "SFAssert.h"
 #include "SFShapingKnowledge.h"
 
-typedef struct _SFArabicEngine {
-    SFShapingEngine _base;
-    SFPatternRef _pattern;
-} SFArabicEngine, *SFArabicEngineRef;
+SF_INTERNAL SFScriptKnowledgeRef SFShapingKnowledgeSeekScript(SFShapingKnowledgeRef shapingKnowledge, SFScriptTag scriptTag)
+{
+    /* The function must be implemented by the concrete instance. */
+    SFAssert(shapingKnowledge->_seekScript != NULL);
 
-extern SFShapingKnowledge SFArabicKnowledgeInstance;
-
-SF_INTERNAL void SFArabicEngineInitialize(SFArabicEngineRef arabicEngine, SFPatternRef pattern);
-
-#endif
+    return (*shapingKnowledge->_seekScript)(shapingKnowledge, scriptTag);
+}

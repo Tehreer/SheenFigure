@@ -23,11 +23,12 @@
 
 #include "SFAssert.h"
 #include "SFShapingEngine.h"
+#include "SFShapingKnowledge.h"
 #include "SFTextProcessor.h"
 #include "SFStandardEngine.h"
 
 static SFScriptKnowledgeRef _SFStandardKnowledgeSeekScript(const void *object, SFScriptTag scriptTag);
-static void _SFStandardEngineProcessAlbum(const void *object, SFAlbumRef album);
+static void _SFStandardEngineProcessAlbum(const void *object, SFAlbumRef album, SFDirection direction);
 
 enum {
     _SFStandardFeatureMaskNone = 0 << 0
@@ -48,6 +49,7 @@ static SFFeatureInfo _SFStandardFeatureInfoArray[] = {
 static const SFUInteger _SFStandardFeatureInfoCount = sizeof(_SFStandardFeatureInfoArray) / sizeof(SFFeatureInfo);
 
 static SFScriptKnowledge _SFStandardScriptKnowledge = {
+    SFDirectionLTR,
     { _SFStandardFeatureInfoArray, _SFStandardFeatureInfoCount },
     { NULL, 0 }
 };
@@ -82,12 +84,12 @@ SF_INTERNAL void SFStandardEngineInitialize(SFStandardEngineRef standardEngine, 
     standardEngine->_pattern = pattern;
 }
 
-static void _SFStandardEngineProcessAlbum(const void *object, SFAlbumRef album)
+static void _SFStandardEngineProcessAlbum(const void *object, SFAlbumRef album, SFDirection direction)
 {
     SFStandardEngineRef standardEngine = (SFStandardEngineRef)object;
     SFTextProcessor processor;
     
-    SFTextProcessorInitialize(&processor, standardEngine->_pattern, album);
+    SFTextProcessorInitialize(&processor, standardEngine->_pattern, album, direction);
     SFTextProcessorDiscoverGlyphs(&processor);
     SFTextProcessorSubstituteGlyphs(&processor);
     SFTextProcessorPositionGlyphs(&processor);

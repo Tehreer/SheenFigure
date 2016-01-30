@@ -34,7 +34,7 @@ static SFData _SFGetLookupFromHeader(SFData header, SFUInt16 lookupIndex);
 static void _SFApplyFeatureRange(SFTextProcessorRef processor, SFUInteger index, SFUInteger count, SFFeatureKind featureKind);
 static void _SFApplyFeatureUnit(SFTextProcessorRef processor, SFFeatureUnitRef featureUnit);
 
-SF_INTERNAL void SFTextProcessorInitialize(SFTextProcessorRef textProcessor, SFPatternRef pattern, SFAlbumRef album)
+SF_INTERNAL void SFTextProcessorInitialize(SFTextProcessorRef textProcessor, SFPatternRef pattern, SFAlbumRef album, SFDirection direction)
 {
     SFData gdef;
 
@@ -48,7 +48,8 @@ SF_INTERNAL void SFTextProcessorInitialize(SFTextProcessorRef textProcessor, SFP
     textProcessor->_pattern = pattern;
     textProcessor->_album = album;
     textProcessor->_glyphClassDef = NULL;
-    textProcessor->_direction = SFDirectionHorizontal;
+    textProcessor->_visualDirection = direction;
+    textProcessor->_actualDirection = pattern->scriptDirection;
 
     if (gdef) {
         SFOffset offset = SFGDEF_GlyphClassDefOffset(gdef);
@@ -93,6 +94,8 @@ SF_INTERNAL void SFTextProcessorPositionGlyphs(SFTextProcessorRef textProcessor)
     }
 
     _SFApplyFeatureRange(textProcessor, pattern->featureUnits.gsub, pattern->featureUnits.gpos, SFFeatureKindPositioning);
+    _SFSetupCursiveAttachments(textProcessor);
+
     SFAlbumStopArranging(album);
 }
 

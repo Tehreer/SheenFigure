@@ -32,13 +32,14 @@ typedef struct _SFTextProcessor {
     SFAlbumRef _album;
     SFLocator _locator;
     SFData _glyphClassDef;
-    SFDirection _direction;
+    SFDirection _visualDirection;
+    SFDirection _actualDirection;
     /* State values. */
     SFFeatureTag _featureTag;
     SFFeatureKind _featureKind;
 } SFTextProcessor, *SFTextProcessorRef;
 
-SF_INTERNAL void SFTextProcessorInitialize(SFTextProcessorRef textProcessor, SFPatternRef pattern, SFAlbumRef album);
+SF_INTERNAL void SFTextProcessorInitialize(SFTextProcessorRef textProcessor, SFPatternRef pattern, SFAlbumRef album, SFDirection direction);
 
 SF_INTERNAL void SFTextProcessorDiscoverGlyphs(SFTextProcessorRef textProcessor);
 SF_INTERNAL void SFTextProcessorSubstituteGlyphs(SFTextProcessorRef textProcessor);

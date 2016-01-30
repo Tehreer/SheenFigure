@@ -18,10 +18,12 @@
 #define _SF_STANDARD_ENGINE_INTERNAL_H
 
 #include <SFConfig.h>
+#include <SFDirection.h>
 #include <SFTypes.h>
 
 #include "SFPattern.h"
 #include "SFShapingEngine.h"
+#include "SFShapingKnowledge.h"
 
 typedef struct _SFStandardEngine {
     SFShapingEngine _base;

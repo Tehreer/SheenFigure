@@ -18,6 +18,7 @@
 #define _SF_ARTIST_H
 
 #include "SFAlbum.h"
+#include "SFDirection.h"
 #include "SFPattern.h"
 #include "SFTypes.h"
 
@@ -32,6 +33,7 @@ SFArtistRef SFArtistCreate(void);
 
 void SFArtistSetTextAsCodepoints(SFArtistRef artist, SFCodepoint *codepoints, SFUInteger length);
 void SFArtistSetPattern(SFArtistRef artist, SFPatternRef pattern);
+void SFArtistSetDirection(SFArtistRef artist, SFDirection direction);
 
 /**
  * Shapes the provided text with appropriate shaping engine and fills the album with shaping

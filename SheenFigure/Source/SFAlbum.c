@@ -240,6 +240,26 @@ SF_INTERNAL void SFAlbumSetTraits(SFAlbumRef album, SFUInteger index, SFGlyphTra
     SFListGetRef(&album->_details, index)->mask.section.glyphTraits = (SFUInt16)traits;
 }
 
+SF_INTERNAL void SFAlbumInsertTraits(SFAlbumRef album, SFUInteger index, SFGlyphTraits traits)
+{
+    /* The album must be either in filling state or arranging state. */
+    SFAssert(album->_state == _SFAlbumStateFilling || album->_state == _SFAlbumStateArranging);
+    /* The index must be valid. */
+    SFAssert(index < album->glyphCount);
+
+    SFListGetRef(&album->_details, index)->mask.section.glyphTraits |= (SFUInt16)traits;
+}
+
+SF_INTERNAL void SFAlbumRemoveTraits(SFAlbumRef album, SFUInteger index, SFGlyphTraits traits)
+{
+    /* The album must be either in filling state or arranging state. */
+    SFAssert(album->_state == _SFAlbumStateFilling || album->_state == _SFAlbumStateArranging);
+    /* The index must be valid. */
+    SFAssert(index < album->glyphCount);
+
+    SFListGetRef(&album->_details, index)->mask.section.glyphTraits &= (SFUInt16)~traits;
+}
+
 SF_INTERNAL void SFAlbumStopFilling(SFAlbumRef album)
 {
     /* The album must be in filling state. */

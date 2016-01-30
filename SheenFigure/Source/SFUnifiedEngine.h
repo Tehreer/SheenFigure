@@ -22,6 +22,7 @@
 
 #include "SFArabicEngine.h"
 #include "SFShapingEngine.h"
+#include "SFShapingKnowledge.h"
 #include "SFStandardEngine.h"
 #include "SFPattern.h"
 

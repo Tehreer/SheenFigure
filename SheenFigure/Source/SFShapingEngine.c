@@ -15,23 +15,17 @@
  */
 
 #include <SFConfig.h>
+#include <SFDirection.h>
+
 #include <stddef.h>
 
 #include "SFAssert.h"
 #include "SFShapingEngine.h"
 
-SF_INTERNAL SFScriptKnowledgeRef SFShapingKnowledgeSeekScript(SFShapingKnowledgeRef shapingKnowledge, SFScriptTag scriptTag)
-{
-    /* The function must be implemented by the concrete instance. */
-    SFAssert(shapingKnowledge->_seekScript != NULL);
-
-    return (*shapingKnowledge->_seekScript)(shapingKnowledge, scriptTag);
-}
-
-SF_INTERNAL void SFShapingEngineProcessAlbum(SFShapingEngineRef shapingEngine, SFAlbumRef album)
+SF_INTERNAL void SFShapingEngineProcessAlbum(SFShapingEngineRef shapingEngine, SFAlbumRef album, SFDirection direction)
 {
     /* The function must be implemented by the concrete instance. */
     SFAssert(shapingEngine->_processAlbum != NULL);
 
-    (*shapingEngine->_processAlbum)(shapingEngine, album);
+    (*shapingEngine->_processAlbum)(shapingEngine, album, direction);
 }

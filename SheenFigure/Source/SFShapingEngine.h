@@ -18,48 +18,18 @@
 #define _SF_SHAPING_ENGINE_INTERNAL_H
 
 #include <SFConfig.h>
-#include <SFFeatureTag.h>
-#include <SFTypes.h>
+#include <SFDirection.h>
 
 #include "SFAlbum.h"
-#include "SFFont.h"
-
-typedef struct _SFFeatureInfo {
-    SFFeatureTag featureTag;
-    SFUInt16 featureMask;
-} SFFeatureInfo, *SFFeatureInfoRef;
-
-typedef struct _SFScriptKnowledge {
-    struct {
-        SFFeatureInfo *items;
-        SFUInteger count;
-    } featureInfos;
-	/* Groups of features in implementation order; Substitution as well as positioning. */
-    struct {
-        SFRange *items;
-        SFUInteger count;
-    } featureUnits;
-} SFScriptKnowledge, *SFScriptKnowledgeRef;
-
-/**
- * A common interface for the knowledge of a shaping engine.
- */
-typedef struct _SFShapingKnowledge {
-    SFScriptKnowledgeRef (*_seekScript)(const void *, SFScriptTag);
-} SFShapingKnowledge, *SFShapingKnowledgeRef;
+#include "SFShapingEngine.h"
 
 /**
  * A common interface of all shaping engines.
  */
 typedef struct _SFShapingEngine {
-    void (*_processAlbum)(const void *, SFAlbumRef);
+    void (*_processAlbum)(const void *, SFAlbumRef, SFDirection);
 } SFShapingEngine, *SFShapingEngineRef;
 
-/**
- * Returns script knowledge related to given script, or NULL.
- */
-SF_INTERNAL SFScriptKnowledgeRef SFShapingKnowledgeSeekScript(SFShapingKnowledgeRef shapingKnowledge, SFScriptTag scriptTag);
-
-SF_INTERNAL void SFShapingEngineProcessAlbum(SFShapingEngineRef shapingEngine, SFAlbumRef album);
+SF_INTERNAL void SFShapingEngineProcessAlbum(SFShapingEngineRef shapingEngine, SFAlbumRef album, SFDirection direction);
 
 #endif

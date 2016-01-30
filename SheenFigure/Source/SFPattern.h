@@ -18,6 +18,7 @@
 #define _SF_PATTERN_INTERNAL_H
 
 #include <SFConfig.h>
+#include <SFDirection.h>
 #include <SFFeatureTag.h>
 #include <SFFont.h>
 #include <SFLanguageTag.h>
@@ -61,6 +62,7 @@ struct _SFPattern {
         SFUInteger gpos;            /**< Total number of gpos feature groups.*/
     } featureUnits;
     SFScriptTag scriptTag;          /**< Tag of the script. */
+    SFDirection scriptDirection;    /**< Direction of the script. */
     SFLanguageTag languageTag;      /**< Tag of the language. */
     SFUInteger _retainCount;
 };

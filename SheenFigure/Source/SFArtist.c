@@ -15,8 +15,10 @@
  */
 
 #include <SFConfig.h>
+#include <SFDirection.h>
 #include <SFTypes.h>
 
+#include <stddef.h>
 #include <stdlib.h>
 
 #include "SFUnifiedEngine.h"
@@ -25,6 +27,10 @@
 SFArtistRef SFArtistCreate(void)
 {
     SFArtistRef artist = malloc(sizeof(SFArtist));
+    artist->_codepointArray = NULL;
+    artist->_pattern = NULL;
+    artist->_direction = SFDirectionLTR;
+    artist->_codepointCount = 0;
     artist->_retainCount = 1;
 
     return artist;
@@ -41,6 +47,11 @@ void SFArtistSetPattern(SFArtistRef artist, SFPatternRef pattern)
     artist->_pattern = pattern;
 }
 
+void SFArtistSetDirection(SFArtistRef artist, SFDirection direction)
+{
+    artist->_direction = direction;
+}
+
 void SFArtistFillAlbum(SFArtistRef artist, SFAlbumRef album)
 {
     SFUnifiedEngine unifiedEngine;
@@ -50,7 +61,7 @@ void SFArtistFillAlbum(SFArtistRef artist, SFAlbumRef album)
     SFUnifiedEngineInitialize(&unifiedEngine, artist->_pattern);
 
     shapingEngine = (SFShapingEngineRef)&unifiedEngine;
-    SFShapingEngineProcessAlbum(shapingEngine, album);
+    SFShapingEngineProcessAlbum(shapingEngine, album, artist->_direction);
 }
 
 SFArtistRef SFArtistRetain(SFArtistRef artist)
