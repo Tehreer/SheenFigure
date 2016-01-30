@@ -935,7 +935,7 @@ static SFData _SFMarkArrayGetAnchor(SFData markArray, SFUInteger markIndex, SFUI
         SFData markRecord = SFMarkArray_MarkRecord(markArray, markIndex);
         SFUInt16 classValue = SFMarkRecord_Class(markRecord);
         SFOffset anchorOffset = SFMarkRecord_MarkAnchorOffset(markRecord);
-        SFData markAnchor = SFData_Subdata(markRecord, anchorOffset);
+        SFData markAnchor = SFData_Subdata(markArray, anchorOffset);
 
         *outClass = classValue;
         return markAnchor;
