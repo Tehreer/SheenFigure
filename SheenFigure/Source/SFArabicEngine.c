@@ -57,9 +57,9 @@ static SFFeatureInfo _SFArabicFeatureInfoArray[] = {
     { SFFeatureTagMSET, _SFArabicFeatureMaskNone },
     /* Positioning features */
     { SFFeatureTagCURS, _SFArabicFeatureMaskNone },
-    { SFFeatureTagKERN, _SFArabicFeatureMaskNone },
     { SFFeatureTagMARK, _SFArabicFeatureMaskNone },
-    { SFFeatureTagMKMK, _SFArabicFeatureMaskNone }
+    { SFFeatureTagMKMK, _SFArabicFeatureMaskNone },
+    { SFFeatureTagKERN, _SFArabicFeatureMaskNone }
 };
 static const SFUInteger _SFArabicFeatureInfoCount = sizeof(_SFArabicFeatureInfoArray) / sizeof(SFFeatureInfo);
 

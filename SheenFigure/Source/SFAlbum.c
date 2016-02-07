@@ -315,22 +315,40 @@ SF_INTERNAL void SFAlbumSetAdvance(SFAlbumRef album, SFUInteger index, SFInteger
     SFListSetVal(&album->_advances, index, advance);
 }
 
-SF_INTERNAL SFUInt16 SFAlbumGetOffset(SFAlbumRef album, SFUInteger index)
+SF_INTERNAL SFUInt16 SFAlbumGetCursiveOffset(SFAlbumRef album, SFUInteger index)
 {
     /* The index must be valid. */
     SFAssert(index < album->glyphCount);
 
-    return SFListGetRef(&album->_details, index)->offset;
+    return SFListGetRef(&album->_details, index)->cursiveOffset;
 }
 
-SF_INTERNAL void SFAlbumSetOffset(SFAlbumRef album, SFUInteger index, SFUInt16 offset)
+SF_INTERNAL void SFAlbumSetCursiveOffset(SFAlbumRef album, SFUInteger index, SFUInt16 offset)
 {
     /* The album must be in arranging state. */
     SFAssert(album->_state == _SFAlbumStateArranging);
     /* The index must be valid. */
     SFAssert(index < album->glyphCount);
 
-    SFListGetRef(&album->_details, index)->offset = offset;
+    SFListGetRef(&album->_details, index)->cursiveOffset = offset;
+}
+
+SF_INTERNAL SFUInt16 SFAlbumGetAttachmentOffset(SFAlbumRef album, SFUInteger index)
+{
+    /* The index must be valid. */
+    SFAssert(index < album->glyphCount);
+
+    return SFListGetRef(&album->_details, index)->attachmentOffset;
+}
+
+SF_INTERNAL void SFAlbumSetAttachmentOffset(SFAlbumRef album, SFUInteger index, SFUInt16 offset)
+{
+    /* The album must be in arranging state. */
+    SFAssert(album->_state == _SFAlbumStateArranging);
+    /* The index must be valid. */
+    SFAssert(index < album->glyphCount);
+
+    SFListGetRef(&album->_details, index)->attachmentOffset = offset;
 }
 
 SF_INTERNAL void SFAlbumStopArranging(SFAlbumRef album)

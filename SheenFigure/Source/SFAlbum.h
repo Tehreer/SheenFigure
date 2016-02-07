@@ -39,7 +39,10 @@ enum {
     SFGlyphTraitLigature    = 1 << 2,
     SFGlyphTraitMark        = 1 << 3,
     SFGlyphTraitComponent   = 1 << 4,
-    SFGlyphTraitRemoved     = 1 << 5
+    SFGlyphTraitRemoved     = 1 << 5,
+    SFGlyphTraitAttached    = 1 << 6,
+    SFGlyphTraitCursive     = 1 << 7,
+    SFGlyphTraitResolved    = 1 << 8
 };
 typedef SFUInt16 SFGlyphTraits;
 
@@ -54,10 +57,8 @@ typedef union {
 typedef struct _SFGlyphDetail {
     SFUInteger association;     /**< Index of the code point to which the glyph maps. */
     SFGlyphMask mask;           /**< Mask of the glyph. */
-    /**
-     * Offset to the next right-to-left cursively connected element.
-     */
-    SFUInt16 offset;
+    SFUInt16 cursiveOffset;     /**< Offset to the next cursively connected glyph. */
+    SFUInt16 attachmentOffset;  /**< Offset to the previous glyph attached with this one. */
 } SFGlyphDetail, *SFGlyphDetailRef;
 
 struct _SFAlbum {
@@ -142,8 +143,11 @@ SF_INTERNAL void SFAlbumSetPosition(SFAlbumRef album, SFUInteger index, SFPoint 
 SF_INTERNAL SFInteger SFAlbumGetAdvance(SFAlbumRef album, SFUInteger index);
 SF_INTERNAL void SFAlbumSetAdvance(SFAlbumRef album, SFUInteger index, SFInteger advance);
 
-SF_INTERNAL SFUInt16 SFAlbumGetOffset(SFAlbumRef album, SFUInteger index);
-SF_INTERNAL void SFAlbumSetOffset(SFAlbumRef album, SFUInteger index, SFUInt16 offset);
+SF_INTERNAL SFUInt16 SFAlbumGetCursiveOffset(SFAlbumRef album, SFUInteger index);
+SF_INTERNAL void SFAlbumSetCursiveOffset(SFAlbumRef album, SFUInteger index, SFUInt16 offset);
+
+SF_INTERNAL SFUInt16 SFAlbumGetAttachmentOffset(SFAlbumRef album, SFUInteger index);
+SF_INTERNAL void SFAlbumSetAttachmentOffset(SFAlbumRef album, SFUInteger index, SFUInt16 offset);
 
 /**
  * Stops arranging glyphs in the album.

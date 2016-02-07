@@ -94,7 +94,7 @@ SF_INTERNAL void SFTextProcessorPositionGlyphs(SFTextProcessorRef textProcessor)
     }
 
     _SFApplyFeatureRange(textProcessor, pattern->featureUnits.gsub, pattern->featureUnits.gpos, SFFeatureKindPositioning);
-    _SFSetupCursiveAttachments(textProcessor);
+    _SFResolveAttachments(textProcessor);
 
     SFAlbumStopArranging(album);
 }

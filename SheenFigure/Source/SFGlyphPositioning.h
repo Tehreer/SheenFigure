@@ -30,6 +30,6 @@
 SF_PRIVATE void _SFApplyPositioningLookup(SFTextProcessorRef processor, SFData lookup);
 SF_PRIVATE SFBoolean _SFApplyPositioningSubtable(SFTextProcessorRef processor, SFLookupType lookupType, SFData subtable);
 
-SF_PRIVATE void _SFSetupCursiveAttachments(SFTextProcessorRef processor);
+SF_PRIVATE void _SFResolveAttachments(SFTextProcessorRef processor);
 
 #endif
