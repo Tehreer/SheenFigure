@@ -279,22 +279,40 @@ SF_INTERNAL void SFAlbumStartArranging(SFAlbumRef album)
     album->_state = _SFAlbumStateArranging;
 }
 
-SF_INTERNAL SFPoint SFAlbumGetPosition(SFAlbumRef album, SFUInteger index)
+SF_INTERNAL SFInteger SFAlbumGetX(SFAlbumRef album, SFUInteger index)
 {
     /* The index must be valid. */
     SFAssert(index < album->glyphCount);
 
-    return SFListGetVal(&album->_positions, index);
+    return SFListGetRef(&album->_positions, index)->x;
 }
 
-SF_INTERNAL void SFAlbumSetPosition(SFAlbumRef album, SFUInteger index, SFPoint position)
+SF_INTERNAL void SFAlbumSetX(SFAlbumRef album, SFUInteger index, SFInteger x)
 {
     /* The album must be in arranging state. */
     SFAssert(album->_state == _SFAlbumStateArranging);
     /* The index must be valid. */
     SFAssert(index < album->glyphCount);
 
-    SFListSetVal(&album->_positions, index, position);
+    SFListGetRef(&album->_positions, index)->x = x;
+}
+
+SF_INTERNAL SFInteger SFAlbumGetY(SFAlbumRef album, SFUInteger index)
+{
+    /* The index must be valid. */
+    SFAssert(index < album->glyphCount);
+
+    return SFListGetRef(&album->_positions, index)->y;
+}
+
+SF_INTERNAL void SFAlbumSetY(SFAlbumRef album, SFUInteger index, SFInteger y)
+{
+    /* The album must be in arranging state. */
+    SFAssert(album->_state == _SFAlbumStateArranging);
+    /* The index must be valid. */
+    SFAssert(index < album->glyphCount);
+
+    SFListGetRef(&album->_positions, index)->y = y;
 }
 
 SF_INTERNAL SFInteger SFAlbumGetAdvance(SFAlbumRef album, SFUInteger index)
