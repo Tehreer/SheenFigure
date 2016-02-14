@@ -211,7 +211,7 @@ static SFBoolean _SFApplySequence(SFTextProcessorRef processor, SFData sequence)
         SFAlbumSetTraits(album, inputIndex, traits);
 
         if (glyphCount != 1) {
-            SFUInteger association = SFAlbumGetAssociation(album, inputIndex);
+            SFUInteger association = SFAlbumGetSingleAssociation(album, inputIndex);
             SFUInteger subIndex;
 
             /* Reserve glyphs for remaining substitutes in the album. */
@@ -228,7 +228,7 @@ static SFBoolean _SFApplySequence(SFTextProcessorRef processor, SFData sequence)
                 /* Initialize the glyph with substitute. */
                 SFAlbumSetGlyph(album, newIndex, substitute);
                 SFAlbumSetTraits(album, newIndex, traits);
-                SFAlbumSetAssociation(album, newIndex, association);
+                SFAlbumSetSingleAssociation(album, newIndex, association);
             }
 
             /* Skip added elements in the locator. */
@@ -332,22 +332,33 @@ static SFBoolean _SFApplyLigatureSet(SFTextProcessorRef processor, SFData ligatu
         if (compIndex == compCount) {
             SFGlyphID ligGlyph = SFLigature_LigGlyph(ligature);
             SFGlyphTraits traits = _SFGetGlyphTraits(processor, ligGlyph);
-            SFUInteger association;
+            SFUInteger firstAssociation;
+            SFUInteger *compositeAssociations;
 
             /* Substitute the ligature glyph and set its traits. */
             SFAlbumSetGlyph(album, inputIndex, ligGlyph);
-            SFAlbumSetTraits(album, inputIndex, traits);
+            SFAlbumSetTraits(album, inputIndex, traits | SFGlyphTraitComposite);
 
-            association = SFAlbumGetAssociation(album, inputIndex);
+            firstAssociation = SFAlbumGetSingleAssociation(album, inputIndex);
+            compositeAssociations = SFAlbumMakeCompositeAssociations(album, inputIndex, compCount);
+            compositeAssociations[0] = firstAssociation;
             prevIndex = inputIndex;
 
             /* Initialize component glyphs. */
             for (compIndex = 1; compIndex < compCount; compIndex++) {
+                SFUInteger componentAssociation;
+
+                /* Find the next component. */
                 nextIndex = SFLocatorGetAfter(locator, prevIndex);
 
+                /* Store the association of component. */
+                componentAssociation = SFAlbumGetSingleAssociation(album, nextIndex);
+                compositeAssociations[compIndex] = componentAssociation;
+
+                /* Make the glyph placeholder. */
                 SFAlbumSetGlyph(album, nextIndex, 0);
-                SFAlbumSetTraits(album, nextIndex, SFGlyphTraitRemoved);
-                SFAlbumSetAssociation(album, nextIndex, association);
+                SFAlbumSetTraits(album, nextIndex, SFGlyphTraitPlaceholder);
+                SFAlbumSetSingleAssociation(album, nextIndex, firstAssociation);
 
                 prevIndex = nextIndex;
             }

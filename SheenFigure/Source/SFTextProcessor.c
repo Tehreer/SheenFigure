@@ -97,6 +97,9 @@ SF_INTERNAL void SFTextProcessorPositionGlyphs(SFTextProcessorRef textProcessor)
     _SFResolveAttachments(textProcessor);
 
     SFAlbumStopArranging(album);
+
+    SFAlbumRemovePlaceholders(album);
+    SFAlbumBuildCharToGlyphMap(album);
 }
 
 static SFData _SFGetLookupFromHeader(SFData header, SFUInt16 lookupIndex)

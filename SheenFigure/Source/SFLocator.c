@@ -72,24 +72,24 @@ SF_INTERNAL void SFLocatorSetFeatureMask(SFLocatorRef locator, SFUInt16 featureM
 
 SF_INTERNAL void SFLocatorSetLookupFlag(SFLocatorRef locator, SFLookupFlag lookupFlag)
 {
-    SFGlyphTraits glyphTraits = SFGlyphTraitNone;
+    SFGlyphTraits ignoreTraits = SFGlyphTraitNone;
 
     if (lookupFlag & SFLookupFlagIgnoreBaseGlyphs) {
-        glyphTraits |= SFGlyphTraitBase;
+        ignoreTraits |= SFGlyphTraitBase;
     }
 
     if (lookupFlag & SFLookupFlagIgnoreLigatures) {
-        glyphTraits |= SFGlyphTraitLigature;
+        ignoreTraits |= SFGlyphTraitLigature;
     }
 
     if (lookupFlag & SFLookupFlagIgnoreMarks) {
-        glyphTraits |= SFGlyphTraitMark;
+        ignoreTraits |= SFGlyphTraitMark;
     }
 
-    glyphTraits |= SFGlyphTraitRemoved;
+    ignoreTraits |= SFGlyphTraitPlaceholder;
 
     locator->lookupFlag = lookupFlag;
-    locator->_ignoreMask.section.glyphTraits = glyphTraits;
+    locator->_ignoreMask.section.glyphTraits = ignoreTraits;
 }
 
 SF_INTERNAL void SFLocatorReset(SFLocatorRef locator, SFUInteger index, SFUInteger count)

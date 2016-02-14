@@ -97,7 +97,7 @@ static void _SFPutArabicFeatureMask(SFAlbumRef album)
 {
     const SFCodepoint *codepoints = album->codePointArray;
     SFUInteger length = album->codePointCount;
-    SFUInteger association = SFAlbumGetAssociation(album, 0);
+    SFUInteger association = SFAlbumGetSingleAssociation(album, 0);
     SFJoiningType priorJoiningType = SFJoiningTypeU;
     SFJoiningType joiningType = SFJoiningTypeDetermine(codepoints[association]);
     SFUInteger index = 0;
@@ -109,7 +109,7 @@ static void _SFPutArabicFeatureMask(SFAlbumRef album)
 
         /* Find the joining type of next character. */
         while (++nextIndex < length) {
-            association = SFAlbumGetAssociation(album, nextIndex);
+            association = SFAlbumGetSingleAssociation(album, nextIndex);
             nextJoiningType = SFJoiningTypeDetermine(codepoints[association]);
 
             /* Normalize the joining type of next character. */

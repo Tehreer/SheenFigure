@@ -728,13 +728,13 @@ static SFUInteger _SFGetPreviousLigatureGlyphIndex(SFTextProcessorRef processor,
     ligatureIndex = SFLocatorGetBefore(locator, inputIndex);
 
     if (ligatureIndex != SFInvalidIndex) {
-        SFUInteger association = SFAlbumGetAssociation(album, ligatureIndex);
+        SFUInteger association = SFAlbumGetSingleAssociation(album, ligatureIndex);
         SFUInteger nextIndex;
 
         /*
          * REMARKS:
          *      The glyphs acting as components of a ligature are not removed from the album, but
-         *      their trait is set to SFGlyphTraitRemoved and their association is set to first
+         *      their trait is set to SFGlyphTraitPlaceholder and their association is set to first
          *      character forming the ligature.
          *
          * PROCESS:
@@ -744,7 +744,7 @@ static SFUInteger _SFGetPreviousLigatureGlyphIndex(SFTextProcessorRef processor,
          *      3) Increase component counter for each matched association.
          */
         for (nextIndex = ligatureIndex + 1; nextIndex < inputIndex; nextIndex++) {
-            if (SFAlbumGetAssociation(album, nextIndex) == association) {
+            if (SFAlbumGetSingleAssociation(album, nextIndex) == association) {
                 (*outComponent)++;
             }
         }

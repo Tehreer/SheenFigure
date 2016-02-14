@@ -34,15 +34,16 @@ typedef enum {
 
 enum {
     SFGlyphTraitNone        = 0 << 0,
-    SFGlyphTraitRightToLeft = 1 << 0,
-    SFGlyphTraitBase        = 1 << 1,
-    SFGlyphTraitLigature    = 1 << 2,
-    SFGlyphTraitMark        = 1 << 3,
-    SFGlyphTraitComponent   = 1 << 4,
-    SFGlyphTraitRemoved     = 1 << 5,
-    SFGlyphTraitAttached    = 1 << 6,
-    SFGlyphTraitCursive     = 1 << 7,
-    SFGlyphTraitResolved    = 1 << 8
+    SFGlyphTraitPlaceholder = 1 << 0,   /**< HELPER: Insignificant, placeholder glyph. */
+    SFGlyphTraitBase        = 1 << 1,   /**< STANDARD: Single character, spacing glyph. */
+    SFGlyphTraitLigature    = 1 << 2,   /**< STANDARD: Multiple character, spacing glyph. */
+    SFGlyphTraitMark        = 1 << 3,   /**< STANDARD: Non-spacing combining glyph. */
+    SFGlyphTraitComponent   = 1 << 4,   /**< STANDARD: Part of single character, spacing glyph. */
+    SFGlyphTraitComposite   = 1 << 5,   /**< HELPER: Multipart, associated glyph. */
+    SFGlyphTraitAttached    = 1 << 6,   /**< HELPER: Attached with a previous glyph. */
+    SFGlyphTraitCursive     = 1 << 7,   /**< HELPER: Cursively connected glyph. */
+    SFGlyphTraitRightToLeft = 1 << 8,   /**< HELPER: Right-to-Left cursive glyph. */
+    SFGlyphTraitResolved    = 1 << 9    /**< HELPER: Resolved cursive glyph. */
 };
 typedef SFUInt16 SFGlyphTraits;
 
@@ -67,6 +68,7 @@ struct _SFAlbum {
     SFUInteger codePointCount;
     SFUInteger glyphCount;              /**< Total number of glyphs in the album. */
 
+    SF_LIST(SFUInteger) _indexes;       /**< List of indexes of associate glyphs. */
     SF_LIST(SFGlyphID) _glyphs;         /**< List of ids of all glyphs in the album. */
     SF_LIST(SFGlyphDetail) _details;    /**< List of details of all glyphs in the album. */
     SF_LIST(SFPoint) _positions;        /**< List of positions of all glyphs in the album. */
@@ -114,8 +116,11 @@ SF_INTERNAL void SFAlbumReserveGlyphs(SFAlbumRef album, SFUInteger index, SFUInt
 SF_INTERNAL SFGlyphID SFAlbumGetGlyph(SFAlbumRef album, SFUInteger index);
 SF_INTERNAL void SFAlbumSetGlyph(SFAlbumRef album, SFUInteger index, SFGlyphID glyph);
 
-SF_INTERNAL SFUInteger SFAlbumGetAssociation(SFAlbumRef album, SFUInteger index);
-SF_INTERNAL void SFAlbumSetAssociation(SFAlbumRef album, SFUInteger index, SFUInteger association);
+SF_INTERNAL SFUInteger SFAlbumGetSingleAssociation(SFAlbumRef album, SFUInteger index);
+SF_INTERNAL void SFAlbumSetSingleAssociation(SFAlbumRef album, SFUInteger index, SFUInteger association);
+
+SF_INTERNAL SFUInteger *SFAlbumGetCompositeAssociations(SFAlbumRef album, SFUInteger index, SFUInteger *outCount);
+SF_INTERNAL SFUInteger *SFAlbumMakeCompositeAssociations(SFAlbumRef album, SFUInteger index, SFUInteger count);
 
 SF_PRIVATE SFGlyphMask _SFAlbumGetGlyphMask(SFAlbumRef album, SFUInteger index);
 
@@ -156,6 +161,21 @@ SF_INTERNAL void SFAlbumSetAttachmentOffset(SFAlbumRef album, SFUInteger index, 
  * Stops arranging glyphs in the album.
  */
 SF_INTERNAL void SFAlbumStopArranging(SFAlbumRef album);
+
+/**
+ * Starts refining glyphs in the album at specified positions.
+ */
+SF_INTERNAL void SFAlbumStartRefining(SFAlbumRef album);
+
+SF_INTERNAL void SFAlbumRemoveGlyphs(SFAlbumRef album, SFUInteger index, SFUInteger count);
+SF_INTERNAL void SFAlbumRemovePlaceholders(SFAlbumRef album);
+
+SF_INTERNAL void SFAlbumBuildCharToGlyphMap(SFAlbumRef album);
+
+/**
+ * Stops refining glyphs in the album.
+ */
+SF_INTERNAL void SFAlbumStopRefining(SFAlbumRef album);
 
 /**
  * Finalizes the album.

@@ -81,9 +81,9 @@ SFInteger *SFAlbumGetGlyphAdvances(SFAlbumRef album);
  * @param album
  *      The album whose charater to glyph map you want to obtain.
  * @return
- *      An array of ranges mapping characters to glyphs.
+ *      An array of indexes mapping characters to glyphs.
  */
-SFRange *SFAlbumGetCharacterToGlyphMap(SFAlbumRef album);
+SFUInteger *SFAlbumGetCharacterToGlyphMap(SFAlbumRef album);
 
 SFAlbumRef SFAlbumRetain(SFAlbumRef album);
 void SFAlbumRelease(SFAlbumRef album);
