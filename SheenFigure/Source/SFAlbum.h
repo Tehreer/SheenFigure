@@ -163,19 +163,9 @@ SF_INTERNAL void SFAlbumSetAttachmentOffset(SFAlbumRef album, SFUInteger index, 
 SF_INTERNAL void SFAlbumStopArranging(SFAlbumRef album);
 
 /**
- * Starts refining glyphs in the album at specified positions.
+ * Wraps up the album for client's usage.
  */
-SF_INTERNAL void SFAlbumStartRefining(SFAlbumRef album);
-
-SF_INTERNAL void SFAlbumRemoveGlyphs(SFAlbumRef album, SFUInteger index, SFUInteger count);
-SF_INTERNAL void SFAlbumRemovePlaceholders(SFAlbumRef album);
-
-SF_INTERNAL void SFAlbumBuildCharToGlyphMap(SFAlbumRef album);
-
-/**
- * Stops refining glyphs in the album.
- */
-SF_INTERNAL void SFAlbumStopRefining(SFAlbumRef album);
+SF_INTERNAL void SFAlbumWrapUp(SFAlbumRef album);
 
 /**
  * Finalizes the album.

@@ -201,4 +201,5 @@ static void _SFArabicEngineProcessAlbum(const void *object, SFAlbumRef album, SF
     _SFPutArabicFeatureMask(album);
     SFTextProcessorSubstituteGlyphs(&processor);
     SFTextProcessorPositionGlyphs(&processor);
+    SFTextProcessorWrapUp(&processor);
 }

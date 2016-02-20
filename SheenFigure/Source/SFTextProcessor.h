@@ -35,7 +35,6 @@ typedef struct _SFTextProcessor {
     SFDirection _visualDirection;
     SFDirection _actualDirection;
     /* State values. */
-    SFFeatureTag _featureTag;
     SFFeatureKind _featureKind;
 } SFTextProcessor, *SFTextProcessorRef;
 
@@ -44,6 +43,7 @@ SF_INTERNAL void SFTextProcessorInitialize(SFTextProcessorRef textProcessor, SFP
 SF_INTERNAL void SFTextProcessorDiscoverGlyphs(SFTextProcessorRef textProcessor);
 SF_INTERNAL void SFTextProcessorSubstituteGlyphs(SFTextProcessorRef textProcessor);
 SF_INTERNAL void SFTextProcessorPositionGlyphs(SFTextProcessorRef textProcessor);
+SF_INTERNAL void SFTextProcessorWrapUp(SFTextProcessorRef textProcessor);
 
 SF_PRIVATE void _SFApplyLookup(SFTextProcessorRef processor, SFUInt16 lookupIndex);
 

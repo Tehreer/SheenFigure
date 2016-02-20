@@ -88,9 +88,10 @@ static void _SFStandardEngineProcessAlbum(const void *object, SFAlbumRef album, 
 {
     SFStandardEngineRef standardEngine = (SFStandardEngineRef)object;
     SFTextProcessor processor;
-    
+
     SFTextProcessorInitialize(&processor, standardEngine->_pattern, album, direction);
     SFTextProcessorDiscoverGlyphs(&processor);
     SFTextProcessorSubstituteGlyphs(&processor);
     SFTextProcessorPositionGlyphs(&processor);
+    SFTextProcessorWrapUp(&processor);
 }
