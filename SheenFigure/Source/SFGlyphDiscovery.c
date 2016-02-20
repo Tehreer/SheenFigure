@@ -19,9 +19,40 @@
 
 #include "SFAlbum.h"
 #include "SFFont.h"
+#include "SFGDEF.h"
+#include "SFOpenType.h"
 
 #include "SFGlyphDiscovery.h"
 #include "SFTextProcessor.h"
+
+static SFGlyphTraits _SFGlyphClassToGlyphTraits(SFUInt16 glyphClass)
+{
+    switch (glyphClass) {
+    case SFGlyphClassValueBase:
+        return SFGlyphTraitBase;
+
+    case SFGlyphClassValueLigature:
+        return SFGlyphTraitLigature;
+
+    case SFGlyphClassValueMark:
+        return SFGlyphTraitMark;
+
+    case SFGlyphClassValueComponent:
+        return SFGlyphTraitComponent;
+    }
+
+    return SFGlyphTraitNone;
+}
+
+SF_PRIVATE SFGlyphTraits _SFGetGlyphTraits(SFTextProcessorRef processor, SFGlyphID glyph)
+{
+    if (processor->_glyphClassDef) {
+        SFUInt16 glyphClass = SFOpenTypeSearchGlyphClass(processor->_glyphClassDef, glyph);
+        return _SFGlyphClassToGlyphTraits(glyphClass);
+    }
+    
+    return SFGlyphTraitNone;
+}
 
 SF_INTERNAL void _SFDiscoverGlyphs(SFTextProcessorRef processor)
 {

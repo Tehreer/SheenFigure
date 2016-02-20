@@ -26,6 +26,7 @@
 #include "SFData.h"
 #include "SFGDEF.h"
 #include "SFLocator.h"
+#include "SFOpenType.h"
 
 #include "SFGlyphManipulation.h"
 #include "SFGlyphPositioning.h"
@@ -34,167 +35,6 @@
 
 static SFBoolean _SFApplyChainContextF3(SFTextProcessorRef processor, SFData chainContext);
 static void _SFApplyContextRecord(SFTextProcessorRef processor, SFData contextRecord, SFUInteger startIndex, SFUInteger endIndex);
-
-static int _SFUInt16Comparison(const void *item1, const void *item2)
-{
-    SFUInt16 *ref1 = (SFUInt16 *)item1;
-    SFUInt16 val1 = *ref1;
-    SFData ref2 = (SFData)item2;
-    SFUInt16 val2 = SFData_UInt16(ref2, 0);
-
-    return (int)(val1 - val2);
-}
-
-static SFUInteger SFBinarySearchUInt16(SFData uint16Array, SFUInteger length, SFUInt16 value)
-{
-    void *item = bsearch(&value, uint16Array, length, sizeof(SFUInt16), _SFUInt16Comparison);
-    if (!item) {
-        return SFInvalidIndex;
-    }
-
-    return (SFUInteger)((SFData)item - uint16Array) / sizeof(SFUInt16);
-}
-
-static int _SFRangeComparison(const void *item1, const void *item2)
-{
-    SFUInt16 *ref1 = (SFUInt16 *)item1;
-    SFUInt16 val1 = *ref1;
-    SFData ref2 = (SFData)item2;
-    SFUInt16 rangeStart = _SFGlyphRange_Start(ref2);
-    SFUInt16 rangeEnd = _SFGlyphRange_End(ref2);
-
-    if (val1 < rangeStart) {
-        return -1;
-    }
-
-    if (val1 > rangeEnd) {
-        return 1;
-    }
-
-    return 0;
-}
-
-static SFData _SFBinarySearchGlyphRange(SFData rangeArray, SFUInteger length, SFUInt16 value)
-{
-    return bsearch(&value, rangeArray, length, _SFGlyphRange_Size(), _SFRangeComparison);
-}
-
-SF_PRIVATE SFUInteger _SFSearchCoverageIndex(SFData coverage, SFGlyphID glyph)
-{
-    SFUInt16 format;
-
-    /* The coverage table must NOT be null. */
-    SFAssert(coverage != NULL);
-
-    format = SFCoverage_Format(coverage);
-
-    switch (format) {
-    case 1:
-        {
-            SFUInt16 glyphCount = SFCoverageF1_GlyphCount(coverage);
-            if (glyphCount) {
-                SFData glyphArray = SFCoverageF1_GlyphArray(coverage);
-                return SFBinarySearchUInt16(glyphArray, glyphCount, glyph);
-            }
-        }
-        break;
-
-    case 2:
-        {
-            SFUInt16 rangeCount = SFCoverageF2_RangeCount(coverage);
-            if (rangeCount) {
-                SFData rangeArray = SFCoverageF2_RangeRecord(coverage, 0);
-                SFData rangeRecord;
-
-                rangeRecord = _SFBinarySearchGlyphRange(rangeArray, rangeCount, glyph);
-
-                if (rangeRecord) {
-                    SFUInt16 rangeStart = SFRangeRecord_Start(rangeRecord);
-                    SFUInt16 startCoverageIndex = SFRangeRecord_StartCoverageIndex(rangeRecord);
-
-                    return (glyph + startCoverageIndex - rangeStart);
-                }
-
-                return SFInvalidIndex;
-            }
-        }
-        break;
-    }
-
-    return SFInvalidIndex;
-}
-
-SF_PRIVATE SFUInt16 _SFSearchGlyphClass(SFData classDef, SFGlyphID glyph)
-{
-    SFUInt16 format;
-
-    /* The class definition table must NOT be null. */
-    SFAssert(classDef != NULL);
-
-    format = SFClassDef_Format(classDef);
-
-    switch (format) {
-    case 1:
-        {
-            SFGlyphID startGlyph = SFClassDefF1_StartGlyph(classDef);
-            SFUInt16 glyphCount = SFClassDefF1_GlyphCount(classDef);
-            SFUInteger limit = startGlyph + glyphCount;
-            SFUInteger index = glyph - startGlyph;
-
-            if (index < limit) {
-                SFData classArray = SFClassDefF1_ClassValueArray(classDef);
-                return SFUInt16Array_Value(classArray, index);
-            }
-        }
-        break;
-
-    case 2:
-        {
-            SFUInt16 rangeCount = SFClassDefF2_ClassRangeCount(classDef);
-            if (rangeCount) {
-                SFData rangeArray = SFClassDefF2_RangeRecordArray(classDef);
-                SFData rangeRecord = _SFBinarySearchGlyphRange(rangeArray, rangeCount, glyph);
-
-                if (rangeRecord) {
-                    return SFClassRangeRecord_Class(rangeRecord);
-                }
-            }
-        }
-        break;
-    }
-
-    /* A glyph not assigned a class value falls into Class 0. */
-    return 0;
-}
-
-static SFGlyphTraits _SFGlyphClassToGlyphTraits(SFUInt16 glyphClass)
-{
-    switch (glyphClass) {
-    case SFGlyphClassValueBase:
-        return SFGlyphTraitBase;
-
-    case SFGlyphClassValueLigature:
-        return SFGlyphTraitLigature;
-
-    case SFGlyphClassValueMark:
-        return SFGlyphTraitMark;
-
-    case SFGlyphClassValueComponent:
-        return SFGlyphTraitComponent;
-    }
-
-    return SFGlyphTraitNone;
-}
-
-SF_PRIVATE SFGlyphTraits _SFGetGlyphTraits(SFTextProcessorRef processor, SFGlyphID glyph)
-{
-    if (processor->_glyphClassDef) {
-        SFUInt16 glyphClass = _SFSearchGlyphClass(processor->_glyphClassDef, glyph);
-        return _SFGlyphClassToGlyphTraits(glyphClass);
-    }
-
-    return SFGlyphTraitNone;
-}
 
 SF_PRIVATE SFBoolean _SFApplyExtensionSubtable(SFTextProcessorRef processor, SFData extensionSubtable)
 {
@@ -256,7 +96,7 @@ static SFBoolean _SFApplyChainContextF3(SFTextProcessorRef processor, SFData cha
         coverage = SFData_Subdata(chainContext, offset);
 
         inputGlyph = SFAlbumGetGlyph(album, locator->index);
-        coverageIndex = _SFSearchCoverageIndex(coverage, inputGlyph);
+        coverageIndex = SFOpenTypeSearchCoverageIndex(coverage, inputGlyph);
 
         /* Proceed if first glyph exists in coverage. */
         if (coverageIndex != SFInvalidIndex) {
@@ -276,7 +116,7 @@ static SFBoolean _SFApplyChainContextF3(SFTextProcessorRef processor, SFData cha
                     coverage = SFData_Subdata(chainContext, offset);
 
                     inputGlyph = SFAlbumGetGlyph(album, inputIndex);
-                    coverageIndex = _SFSearchCoverageIndex(coverage, inputGlyph);
+                    coverageIndex = SFOpenTypeSearchCoverageIndex(coverage, inputGlyph);
 
                     if (coverageIndex == SFInvalidIndex) {
                         goto NotMatched;
@@ -297,7 +137,7 @@ static SFBoolean _SFApplyChainContextF3(SFTextProcessorRef processor, SFData cha
                     coverage = SFData_Subdata(chainContext, offset);
 
                     inputGlyph = SFAlbumGetGlyph(album, backtrackIndex);
-                    coverageIndex = _SFSearchCoverageIndex(coverage, inputGlyph);
+                    coverageIndex = SFOpenTypeSearchCoverageIndex(coverage, inputGlyph);
 
                     if (coverageIndex == SFInvalidIndex) {
                         goto NotMatched;
@@ -318,7 +158,7 @@ static SFBoolean _SFApplyChainContextF3(SFTextProcessorRef processor, SFData cha
                     coverage = SFData_Subdata(chainContext, offset);
 
                     inputGlyph = SFAlbumGetGlyph(album, lookaheadIndex);
-                    coverageIndex = _SFSearchCoverageIndex(coverage, inputGlyph);
+                    coverageIndex = SFOpenTypeSearchCoverageIndex(coverage, inputGlyph);
 
                     if (coverageIndex == SFInvalidIndex) {
                         goto NotMatched;

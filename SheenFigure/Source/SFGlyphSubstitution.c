@@ -19,8 +19,8 @@
 
 #include "SFCommon.h"
 #include "SFData.h"
-#include "SFLocator.h"
 #include "SFGSUB.h"
+#include "SFLocator.h"
 
 #include "SFGlyphManipulation.h"
 #include "SFGlyphSubstitution.h"
@@ -106,7 +106,7 @@ static SFBoolean _SFApplySingleSubst(SFTextProcessorRef processor, SFData single
             SFData coverage = SFData_Subdata(singleSubst, offset);
             SFUInteger coverageIndex;
 
-            coverageIndex = _SFSearchCoverageIndex(coverage, inputGlyph);
+            coverageIndex = SFOpenTypeSearchCoverageIndex(coverage, inputGlyph);
 
             if (coverageIndex != SFInvalidIndex) {
                 SFInt16 delta = SFSingleSubstF1_DeltaGlyphID(singleSubst);
@@ -128,7 +128,7 @@ static SFBoolean _SFApplySingleSubst(SFTextProcessorRef processor, SFData single
             SFData coverage = SFData_Subdata(singleSubst, offset);
             SFUInteger coverageIndex;
 
-            coverageIndex = _SFSearchCoverageIndex(coverage, inputGlyph);
+            coverageIndex = SFOpenTypeSearchCoverageIndex(coverage, inputGlyph);
 
             if (coverageIndex != SFInvalidIndex) {
                 SFUInt16 glyphCount = SFSingleSubstF2_GlyphCount(singleSubst);
@@ -168,7 +168,7 @@ static SFBoolean _SFApplyMultipleSubst(SFTextProcessorRef processor, SFData mult
             SFData coverage = SFData_Subdata(multipleSubst, offset);
             SFUInteger coverageIndex;
 
-            coverageIndex = _SFSearchCoverageIndex(coverage, inputGlyph);
+            coverageIndex = SFOpenTypeSearchCoverageIndex(coverage, inputGlyph);
 
             if (coverageIndex != SFInvalidIndex) {
                 SFUInt16 sequenceCount = SFMultipleSubstF1_SequenceCount(multipleSubst);
@@ -263,7 +263,7 @@ static SFBoolean _SFApplyLigatureSubst(SFTextProcessorRef processor, SFData liga
             SFData coverage = SFData_Subdata(ligatureSubst, offset);
             SFUInteger coverageIndex;
 
-            coverageIndex = _SFSearchCoverageIndex(coverage, inputGlyph);
+            coverageIndex = SFOpenTypeSearchCoverageIndex(coverage, inputGlyph);
 
             if (coverageIndex != SFInvalidIndex) {
                 SFUInt16 ligSetCount = SFLigatureSubstF1_LigSetCount(ligatureSubst);

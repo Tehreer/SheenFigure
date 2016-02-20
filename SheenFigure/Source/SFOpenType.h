@@ -22,9 +22,7 @@
 
 #include "SFData.h"
 
-SF_INTERNAL SFUInteger SFOpenTypeBinarySearchUInt16(SFData uint16Array, SFUInteger length, SFUInt16 value);
-
-SF_INTERNAL SFUInteger SFOpenTypeSearchGlyphIndex(SFData coverage, SFGlyphID glyph);
-SF_INTERNAL SFBoolean SFOpenTypeSearchGlyphClass(SFData classDef, SFGlyphID glyph, SFUInt16 *glyphClass);
+SF_INTERNAL SFUInteger SFOpenTypeSearchCoverageIndex(SFData coverage, SFGlyphID glyph);
+SF_INTERNAL SFUInt16 SFOpenTypeSearchGlyphClass(SFData classDef, SFGlyphID glyph);
 
 #endif

@@ -115,12 +115,11 @@ static SFBoolean _SFIsIgnoredGlyph(SFLocatorRef locator, SFUInteger index) {
 
     if (lookupFlag & SFLookupFlagMarkAttachmentType) {
         SFGlyphID glyph = SFAlbumGetGlyph(album, index);
-        SFUInt16 glyphClass;
+        SFUInt16 glyphClass = SFOpenTypeSearchGlyphClass(locator->_markAttachClassDef, glyph);
 
         if (locator->_markAttachClassDef
             && (glyphMask.section.glyphTraits & SFGlyphTraitMark)
-            && !(SFOpenTypeSearchGlyphClass(locator->_markAttachClassDef, glyph, &glyphClass)
-                 && glyphClass == (lookupFlag >> 8))) {
+            && (glyphClass != (lookupFlag >> 8))) {
                 return SFTrue;
             }
     }

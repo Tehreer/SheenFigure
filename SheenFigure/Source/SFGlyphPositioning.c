@@ -20,8 +20,9 @@
 #include "SFAssert.h"
 #include "SFCommon.h"
 #include "SFData.h"
-#include "SFLocator.h"
 #include "SFGPOS.h"
+#include "SFLocator.h"
+#include "SFOpenType.h"
 
 #include "SFGlyphManipulation.h"
 #include "SFGlyphPositioning.h"
@@ -135,7 +136,7 @@ static SFBoolean _SFApplySinglePos(SFTextProcessorRef processor, SFData singlePo
             SFData coverage = SFData_Subdata(singlePos, offset);
             SFUInteger coverageIndex;
 
-            coverageIndex = _SFSearchCoverageIndex(coverage, inputGlyph);
+            coverageIndex = SFOpenTypeSearchCoverageIndex(coverage, inputGlyph);
 
             if (coverageIndex != SFInvalidIndex) {
                 SFUInt16 valueFormat = SFSinglePosF1_ValueFormat(singlePos);
@@ -156,7 +157,7 @@ static SFBoolean _SFApplySinglePos(SFTextProcessorRef processor, SFData singlePo
             SFUInt16 valueCount = SFSinglePosF2_ValueCount(singlePos);
             SFUInteger valueIndex;
 
-            valueIndex = _SFSearchCoverageIndex(coverage, inputGlyph);
+            valueIndex = SFOpenTypeSearchCoverageIndex(coverage, inputGlyph);
 
             if (valueIndex < valueCount) {
                 SFUInteger valueSize = SFValueRecord_Size(valueFormat);
@@ -219,7 +220,7 @@ static SFBoolean _SFApplyPairPosF1(SFTextProcessorRef processor, SFData pairPos,
 
     offset = SFPairPosF1_CoverageOffset(pairPos);
     coverage = SFData_Subdata(pairPos, offset);
-    coverageIndex = _SFSearchCoverageIndex(coverage, firstGlyph);
+    coverageIndex = SFOpenTypeSearchCoverageIndex(coverage, firstGlyph);
 
     if (coverageIndex != SFInvalidIndex) {
         SFUInt16 valueFormat1 = SFPairPosF1_ValueFormat1(pairPos);
@@ -276,7 +277,7 @@ static SFBoolean _SFApplyPairPosF2(SFTextProcessorRef processor, SFData pairPos,
 
     offset = SFPairPosF2_CoverageOffset(pairPos);
     coverage = SFData_Subdata(pairPos, offset);
-    coverageIndex = _SFSearchCoverageIndex(coverage, firstGlyph);
+    coverageIndex = SFOpenTypeSearchCoverageIndex(coverage, firstGlyph);
 
     if (coverageIndex != SFInvalidIndex) {
         SFUInt16 valueFormat1 = SFPairPosF2_ValueFormat1(pairPos);
@@ -287,8 +288,8 @@ static SFBoolean _SFApplyPairPosF2(SFTextProcessorRef processor, SFData pairPos,
         SFUInt16 class2Count = SFPairPosF2_Class2Count(pairPos);
         SFData classDef1 = SFData_Subdata(pairPos, classDef1Offset);
         SFData classDef2 = SFData_Subdata(pairPos, classDef2Offset);
-        SFUInt16 class1Value = _SFSearchGlyphClass(classDef1, firstGlyph);
-        SFUInt16 class2Value = _SFSearchGlyphClass(classDef2, secondGlyph);
+        SFUInt16 class1Value = SFOpenTypeSearchGlyphClass(classDef1, firstGlyph);
+        SFUInt16 class2Value = SFOpenTypeSearchGlyphClass(classDef2, secondGlyph);
 
         if (class1Value < class1Count && class2Value < class2Count) {
             SFUInteger value1Size = SFValueRecord_Size(valueFormat1);
@@ -424,7 +425,7 @@ static void _SFSearchCursiveAnchors(SFData cursivePos, SFGlyphID inputGlyph, SFD
     *outExitAnchor = NULL;
     *outEntryAnchor = NULL;
 
-    entryExitIndex = _SFSearchCoverageIndex(coverage, inputGlyph);
+    entryExitIndex = SFOpenTypeSearchCoverageIndex(coverage, inputGlyph);
 
     if (entryExitIndex < entryExitCount) {
         SFData entryExitRecord = SFCursivePos_EntryExitRecord(cursivePos, entryExitIndex);
@@ -610,7 +611,7 @@ static SFBoolean _SFApplyMarkToBasePos(SFTextProcessorRef processor, SFData mark
             SFData markCoverage = SFData_Subdata(markBasePos, offset);
             SFUInteger markIndex;
 
-            markIndex = _SFSearchCoverageIndex(markCoverage, inputGlyph);
+            markIndex = SFOpenTypeSearchCoverageIndex(markCoverage, inputGlyph);
 
             if (markIndex != SFInvalidIndex) {
                 SFUInteger prevIndex = _SFGetPreviousBaseGlyphIndex(processor);
@@ -623,7 +624,7 @@ static SFBoolean _SFApplyMarkToBasePos(SFTextProcessorRef processor, SFData mark
 
                     offset = SFMarkBasePos_BaseCoverageOffset(markBasePos);
                     baseCoverage = SFData_Subdata(markBasePos, offset);
-                    baseIndex = _SFSearchCoverageIndex(baseCoverage, prevGlyph);
+                    baseIndex = SFOpenTypeSearchCoverageIndex(baseCoverage, prevGlyph);
 
                     if (baseIndex != SFInvalidIndex) {
                         return _SFApplyMarkToBaseArrays(processor, markBasePos, markIndex, baseIndex, prevIndex);
@@ -772,7 +773,7 @@ static SFBoolean _SFApplyMarkToLigPos(SFTextProcessorRef processor, SFData markL
             SFData markCoverage = SFData_Subdata(markLigPos, offset);
             SFUInteger markIndex;
 
-            markIndex = _SFSearchCoverageIndex(markCoverage, inputGlyph);
+            markIndex = SFOpenTypeSearchCoverageIndex(markCoverage, inputGlyph);
 
             if (markIndex != SFInvalidIndex) {
                 SFUInteger prevIndex;
@@ -788,7 +789,7 @@ static SFBoolean _SFApplyMarkToLigPos(SFTextProcessorRef processor, SFData markL
 
                     offset = SFMarkLigPos_LigatureCoverageOffset(markLigPos);
                     ligCoverage = SFData_Subdata(markLigPos, offset);
-                    ligIndex = _SFSearchCoverageIndex(ligCoverage, prevGlyph);
+                    ligIndex = SFOpenTypeSearchCoverageIndex(ligCoverage, prevGlyph);
 
                     if (ligIndex != SFInvalidIndex) {
                         return _SFApplyMarkToLigArrays(processor, markLigPos, markIndex, ligIndex, ligComponent, prevIndex);
@@ -910,7 +911,7 @@ static SFBoolean _SFApplyMarkToMarkPos(SFTextProcessorRef processor, SFData mark
             SFData mark1Coverage = SFData_Subdata(markMarkPos, offset);
             SFUInteger mark1Index;
 
-            mark1Index = _SFSearchCoverageIndex(mark1Coverage, inputGlyph);
+            mark1Index = SFOpenTypeSearchCoverageIndex(mark1Coverage, inputGlyph);
 
             if (mark1Index != SFInvalidIndex) {
                 SFUInteger prevIndex = _SFGetPreviousMarkGlyphIndex(processor);
@@ -923,7 +924,7 @@ static SFBoolean _SFApplyMarkToMarkPos(SFTextProcessorRef processor, SFData mark
 
                     offset = SFMarkMarkPos_Mark2CoverageOffset(markMarkPos);
                     mark2Coverage = SFData_Subdata(markMarkPos, offset);
-                    mark2Index = _SFSearchCoverageIndex(mark2Coverage, prevGlyph);
+                    mark2Index = SFOpenTypeSearchCoverageIndex(mark2Coverage, prevGlyph);
 
                     if (mark2Index != SFInvalidIndex) {
                         return _SFApplyMarkToMarkArrays(processor, markMarkPos, mark1Index, mark2Index, prevIndex);

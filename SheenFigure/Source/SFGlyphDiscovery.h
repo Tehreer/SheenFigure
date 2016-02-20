@@ -23,9 +23,12 @@
  */
 
 #include <SFConfig.h>
+#include <SFTypes.h>
 
+#include "SFAlbum.h"
 #include "SFTextProcessor.h"
 
+SF_PRIVATE SFGlyphTraits _SFGetGlyphTraits(SFTextProcessorRef processor, SFGlyphID glyph);
 SF_PRIVATE void _SFDiscoverGlyphs(SFTextProcessorRef processor);
 
 #endif
