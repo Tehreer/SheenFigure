@@ -31,18 +31,21 @@ typedef SFArtist *SFArtistRef;
 
 SFArtistRef SFArtistCreate(void);
 
-void SFArtistSetTextAsCodepoints(SFArtistRef artist, SFCodepoint *codepoints, SFUInteger length);
+void SFArtistSetCodepoints(SFArtistRef artist, SFCodepoint *codepoints, SFUInteger length);
 void SFArtistSetPattern(SFArtistRef artist, SFPatternRef pattern);
+
+/**
+ * Sets the direction to use while shaping the text.
+ */
 void SFArtistSetDirection(SFArtistRef artist, SFDirection direction);
 
 /**
- * Shapes the provided text with appropriate shaping engine and fills the album with shaping
- * results such as glyph ids, positions and advances.
+ * Shapes the text (code points) with appropriate shaping engine, filling the glyphs at the end of
+ * the album.
  * @param artist
- *      The artist to be used for shaping the text.
+ *      The artist to be used for shaping.
  * @param album
- *      The album that should be filled with shaping results. If the album is not empty, it will be
- *      cleared first.
+ *      The album that should be filled with shaping results.
  */
 void SFArtistFillAlbum(SFArtistRef artist, SFAlbumRef album);
 

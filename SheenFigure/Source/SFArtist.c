@@ -36,7 +36,7 @@ SFArtistRef SFArtistCreate(void)
     return artist;
 }
 
-void SFArtistSetTextAsCodepoints(SFArtistRef artist, SFCodepoint *codepoints, SFUInteger length)
+void SFArtistSetCodepoints(SFArtistRef artist, SFCodepoint *codepoints, SFUInteger length)
 {
     artist->_codepointArray = codepoints;
     artist->_codepointCount = length;

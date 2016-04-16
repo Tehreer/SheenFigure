@@ -77,7 +77,7 @@ SFPoint *SFAlbumGetGlyphPositions(SFAlbumRef album);
 SFInteger *SFAlbumGetGlyphAdvances(SFAlbumRef album);
 
 /**
- * Provides an array, mapping each character to corresponding range of glyph/s.
+ * Provides an array, mapping each character to corresponding glyph index.
  * @param album
  *      The album whose charater to glyph map you want to obtain.
  * @return

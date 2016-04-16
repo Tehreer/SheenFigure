@@ -61,7 +61,7 @@ static SFFeatureInfo _SFArabicFeatureInfoArray[] = {
     { SFFeatureTagMKMK, _SFArabicFeatureMaskNone },
     { SFFeatureTagKERN, _SFArabicFeatureMaskNone }
 };
-static const SFUInteger _SFArabicFeatureInfoCount = sizeof(_SFArabicFeatureInfoArray) / sizeof(SFFeatureInfo);
+#define _SFArabicFeatureInfoCount (sizeof(_SFArabicFeatureInfoArray) / sizeof(SFFeatureInfo))
 
 static SFScriptKnowledge _SFArabicScriptKnowledge = {
     SFDirectionRTL,

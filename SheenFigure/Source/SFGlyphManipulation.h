@@ -25,9 +25,7 @@
 
 #include <SFConfig.h>
 
-#include "SFAlbum.h"
 #include "SFData.h"
-#include "SFLocator.h"
 #include "SFTextProcessor.h"
 
 SF_PRIVATE SFBoolean _SFApplyExtensionSubtable(SFTextProcessorRef processor, SFData extensionSubtable);

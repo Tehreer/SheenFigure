@@ -46,7 +46,7 @@ static SFFeatureInfo _SFStandardFeatureInfoArray[] = {
     { SFFeatureTagMARK, _SFStandardFeatureMaskNone },
     { SFFeatureTagMKMK, _SFStandardFeatureMaskNone }
 };
-static const SFUInteger _SFStandardFeatureInfoCount = sizeof(_SFStandardFeatureInfoArray) / sizeof(SFFeatureInfo);
+#define _SFStandardFeatureInfoCount (sizeof(_SFStandardFeatureInfoArray) / sizeof(SFFeatureInfo))
 
 static SFScriptKnowledge _SFStandardScriptKnowledge = {
     SFDirectionLTR,

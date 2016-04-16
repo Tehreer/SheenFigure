@@ -112,9 +112,7 @@ SF_INTERNAL void SFAlbumReset(SFAlbumRef album, SFCodepoint *codePointArray, SFU
 	/* There must be some code points. */
 	SFAssert(codePointArray != NULL && codePointCount > 0);
 
-    /*
-     * TODO: memory management of map.
-     */
+    free(album->mapArray);
 
     album->codePointArray = codePointArray;
 	album->mapArray = NULL;
