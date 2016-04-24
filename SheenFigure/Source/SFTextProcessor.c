@@ -17,6 +17,8 @@
 #include <SFConfig.h>
 #include <SFTypes.h>
 
+#include "SFAlbum.h"
+#include "SFArtist.h"
 #include "SFAssert.h"
 #include "SFCommon.h"
 #include "SFData.h"
@@ -34,7 +36,7 @@ static SFData _SFGetLookupFromHeader(SFData header, SFUInt16 lookupIndex);
 static void _SFApplyFeatureRange(SFTextProcessorRef processor, SFUInteger index, SFUInteger count, SFFeatureKind featureKind);
 static void _SFApplyFeatureUnit(SFTextProcessorRef processor, SFFeatureUnitRef featureUnit);
 
-SF_INTERNAL void SFTextProcessorInitialize(SFTextProcessorRef textProcessor, SFPatternRef pattern, SFAlbumRef album, SFDirection direction)
+SF_INTERNAL void SFTextProcessorInitialize(SFTextProcessorRef textProcessor, SFPatternRef pattern, SFAlbumRef album, SFTextFlow textFlow, SFTextMode textMode)
 {
     SFData gdef;
 
@@ -48,8 +50,8 @@ SF_INTERNAL void SFTextProcessorInitialize(SFTextProcessorRef textProcessor, SFP
     textProcessor->_pattern = pattern;
     textProcessor->_album = album;
     textProcessor->_glyphClassDef = NULL;
-    textProcessor->_visualDirection = direction;
-    textProcessor->_actualDirection = pattern->scriptDirection;
+    textProcessor->_textFlow = textFlow;
+    textProcessor->_textMode = textMode;
 
     if (gdef) {
         SFOffset offset = SFGDEF_GlyphClassDefOffset(gdef);

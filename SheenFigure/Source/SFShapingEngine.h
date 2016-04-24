@@ -18,18 +18,16 @@
 #define _SF_SHAPING_ENGINE_INTERNAL_H
 
 #include <SFConfig.h>
-#include <SFDirection.h>
 
 #include "SFAlbum.h"
-#include "SFShapingEngine.h"
 
 /**
  * A common interface of all shaping engines.
  */
 typedef struct _SFShapingEngine {
-    void (*_processAlbum)(const void *, SFAlbumRef, SFDirection);
+    void (*_processAlbum)(const void *, SFAlbumRef);
 } SFShapingEngine, *SFShapingEngineRef;
 
-SF_INTERNAL void SFShapingEngineProcessAlbum(SFShapingEngineRef shapingEngine, SFAlbumRef album, SFDirection direction);
+SF_INTERNAL void SFShapingEngineProcessAlbum(SFShapingEngineRef shapingEngine, SFAlbumRef album);
 
 #endif

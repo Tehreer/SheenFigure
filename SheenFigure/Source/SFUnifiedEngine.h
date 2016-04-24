@@ -18,13 +18,12 @@
 #define _SF_UNIFIED_ENGINE_INTERNAL_H
 
 #include <SFConfig.h>
-#include <SFScriptTag.h>
 
 #include "SFArabicEngine.h"
+#include "SFArtist.h"
 #include "SFShapingEngine.h"
 #include "SFShapingKnowledge.h"
 #include "SFStandardEngine.h"
-#include "SFPattern.h"
 
 typedef union _SFUnifiedEngine {
     SFShapingEngine _base;
@@ -34,6 +33,6 @@ typedef union _SFUnifiedEngine {
 
 extern SFShapingKnowledge SFUnifiedKnowledgeInstance;
 
-SF_INTERNAL void SFUnifiedEngineInitialize(SFUnifiedEngineRef unifiedEngine, SFPatternRef pattern);
+SF_INTERNAL void SFUnifiedEngineInitialize(SFUnifiedEngineRef unifiedEngine, SFArtistRef artist);
 
 #endif

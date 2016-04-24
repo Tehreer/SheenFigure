@@ -18,20 +18,18 @@
 #define _SF_STANDARD_ENGINE_INTERNAL_H
 
 #include <SFConfig.h>
-#include <SFDirection.h>
-#include <SFTypes.h>
 
-#include "SFPattern.h"
+#include "SFArtist.h"
 #include "SFShapingEngine.h"
 #include "SFShapingKnowledge.h"
 
 typedef struct _SFStandardEngine {
     SFShapingEngine _base;
-    SFPatternRef _pattern;
+    SFArtistRef _artist;
 } SFStandardEngine, *SFStandardEngineRef;
 
 extern SFShapingKnowledge SFStandardKnowledgeInstance;
 
-SF_INTERNAL void SFStandardEngineInitialize(SFStandardEngineRef standardEngine, SFPatternRef pattern);
+SF_INTERNAL void SFStandardEngineInitialize(SFStandardEngineRef standardEngine, SFArtistRef artist);
 
 #endif

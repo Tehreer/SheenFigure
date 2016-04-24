@@ -18,13 +18,14 @@
 #define _SF_PATTERN_INTERNAL_H
 
 #include <SFConfig.h>
-#include <SFDirection.h>
 #include <SFFeatureTag.h>
-#include <SFFont.h>
 #include <SFLanguageTag.h>
 #include <SFPattern.h>
 #include <SFScriptTag.h>
 #include <SFTypes.h>
+
+#include "SFArtist.h"
+#include "SFFont.h"
 
 enum {
     SFFeatureKindSubstitution = 0x01, /**< A value indicating that the feature belongs to 'GSUB' table. */
@@ -62,7 +63,7 @@ struct _SFPattern {
         SFUInteger gpos;            /**< Total number of gpos feature groups.*/
     } featureUnits;
     SFScriptTag scriptTag;          /**< Tag of the script. */
-    SFDirection scriptDirection;    /**< Direction of the script. */
+    SFTextFlow textFlow;            /**< Natural text flow of the script. */
     SFLanguageTag languageTag;      /**< Tag of the language. */
     SFUInteger _retainCount;
 };

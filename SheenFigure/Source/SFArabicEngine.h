@@ -18,20 +18,18 @@
 #define _SF_ARABIC_ENGINE_INTERNAL_H
 
 #include <SFConfig.h>
-#include <SFDirection.h>
-#include <SFTypes.h>
 
-#include "SFPattern.h"
+#include "SFArtist.h"
 #include "SFShapingEngine.h"
 #include "SFShapingKnowledge.h"
 
 typedef struct _SFArabicEngine {
     SFShapingEngine _base;
-    SFPatternRef _pattern;
+    SFArtistRef _artist;
 } SFArabicEngine, *SFArabicEngineRef;
 
 extern SFShapingKnowledge SFArabicKnowledgeInstance;
 
-SF_INTERNAL void SFArabicEngineInitialize(SFArabicEngineRef arabicEngine, SFPatternRef pattern);
+SF_INTERNAL void SFArabicEngineInitialize(SFArabicEngineRef arabicEngine, SFArtistRef artist);
 
 #endif

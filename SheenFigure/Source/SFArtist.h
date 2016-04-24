@@ -19,16 +19,16 @@
 
 #include <SFArtist.h>
 #include <SFConfig.h>
-#include <SFDirection.h>
 #include <SFTypes.h>
 
 #include "SFPattern.h"
 
 struct _SFArtist {
-    SFCodepoint *_codepointArray;
-    SFPatternRef _pattern;
-    SFDirection _direction;
-    SFUInteger _codepointCount;
+    SFCodepoint *codepointArray;
+    SFPatternRef pattern;
+    SFTextFlow textFlow;
+    SFTextMode textMode;
+    SFUInteger codepointCount;
     SFUInteger _retainCount;
 };
 

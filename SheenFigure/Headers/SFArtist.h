@@ -18,9 +18,20 @@
 #define _SF_ARTIST_H
 
 #include "SFAlbum.h"
-#include "SFDirection.h"
 #include "SFPattern.h"
 #include "SFTypes.h"
+
+enum {
+    SFTextFlowLeftToRight = 0,
+    SFTextFlowRightToLeft = 1
+};
+typedef SFUInt32 SFTextFlow;
+
+enum {
+    SFTextModeForward = 0,
+    SFTextModeBackward = 1
+};
+typedef SFUInt32 SFTextMode;
 
 struct _SFArtist;
 typedef struct _SFArtist SFArtist;
@@ -31,17 +42,44 @@ typedef SFArtist *SFArtistRef;
 
 SFArtistRef SFArtistCreate(void);
 
-void SFArtistSetCodepoints(SFArtistRef artist, SFCodepoint *codepoints, SFUInteger length);
 void SFArtistSetPattern(SFArtistRef artist, SFPatternRef pattern);
 
-/**
- * Sets the direction to use while shaping the text.
- */
-void SFArtistSetDirection(SFArtistRef artist, SFDirection direction);
+void SFArtistSetCodepoints(SFArtistRef artist, SFCodepoint *codepoints, SFUInteger length);
 
 /**
- * Shapes the text (code points) with appropriate shaping engine, filling the glyphs at the end of
- * the album.
+ * Sets the flow of text for glyph positioning.
+ *
+ * The value of textFlow must reflect the script direction of input text so that individual glyphs
+ * are placed at appropriate locations while rendering. It should not be confused with bidi run
+ * direction as that may not reflect the script direction if overridden explicitly.
+ *
+ * @param artist
+ *      The artist to modify.
+ * @param textFlow
+ *      A value of SFTextFlow.
+ *
+ */
+void SFArtistSetTextFlow(SFArtistRef artist, SFTextFlow textFlow);
+
+/**
+ * Sets the mode for text processing.
+ *
+ * This method provides a convinient way of shaping a bidi run whose direction is opposite to that
+ * of script. For example, if the direction of a run, 'car' is explicitly set at right-to-left,
+ * backward mode will automatically treat it as 'rac' without reordering the original text.
+ *
+ * @param artist
+ *      The artist to modify.
+ * @param textMode
+ *      A value of SFTextMode.
+ */
+void SFArtistSetTextMode(SFArtistRef artist, SFTextMode textMode);
+
+/**
+ * Shapes the text with appropriate shaping engine, filling the album with glyph infos.
+ *
+ * The flow output glyphs in the album depends on text mode and text flow.
+ *
  * @param artist
  *      The artist to be used for shaping.
  * @param album

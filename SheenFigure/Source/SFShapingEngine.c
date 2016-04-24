@@ -15,17 +15,17 @@
  */
 
 #include <SFConfig.h>
-#include <SFDirection.h>
 
 #include <stddef.h>
 
+#include "SFAlbum.h"
 #include "SFAssert.h"
 #include "SFShapingEngine.h"
 
-SF_INTERNAL void SFShapingEngineProcessAlbum(SFShapingEngineRef shapingEngine, SFAlbumRef album, SFDirection direction)
+SF_INTERNAL void SFShapingEngineProcessAlbum(SFShapingEngineRef shapingEngine, SFAlbumRef album)
 {
     /* The function must be implemented by the concrete instance. */
     SFAssert(shapingEngine->_processAlbum != NULL);
 
-    (*shapingEngine->_processAlbum)(shapingEngine, album, direction);
+    (*shapingEngine->_processAlbum)(shapingEngine, album);
 }

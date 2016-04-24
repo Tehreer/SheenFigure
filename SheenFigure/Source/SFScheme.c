@@ -25,7 +25,6 @@
 #include "SFCommon.h"
 #include "SFPatternBuilder.h"
 #include "SFPattern.h"
-#include "SFShapingEngine.h"
 #include "SFUnifiedEngine.h"
 #include "SFScheme.h"
 
@@ -224,7 +223,7 @@ SFPatternRef SFSchemeBuildPattern(SFSchemeRef scheme)
 
             SFPatternBuilderInitialize(&state.builder, pattern);
             SFPatternBuilderSetFont(&state.builder, scheme->_font);
-            SFPatternBuilderSetScript(&state.builder, scheme->_scriptTag, state.knowledge->scriptDirection);
+            SFPatternBuilderSetScript(&state.builder, scheme->_scriptTag, state.knowledge->textFlow);
             SFPatternBuilderSetLanguage(&state.builder, scheme->_languageTag);
 
             if (gsub) {

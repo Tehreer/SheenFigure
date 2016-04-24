@@ -18,6 +18,8 @@
 #include <SFScriptTag.h>
 
 #include "SFArabicEngine.h"
+#include "SFArtist.h"
+#include "SFStandardEngine.h"
 #include "SFShapingKnowledge.h"
 #include "SFStandardEngine.h"
 #include "SFUnifiedEngine.h"
@@ -41,19 +43,19 @@ static SFScriptKnowledgeRef _SFUnifiedKnowledgeSeekScript(const void *object, SF
     return knowledge;
 }
 
-SF_INTERNAL void SFUnifiedEngineInitialize(SFUnifiedEngineRef unifiedEngine, SFPatternRef pattern)
+SF_INTERNAL void SFUnifiedEngineInitialize(SFUnifiedEngineRef unifiedEngine, SFArtistRef artist)
 {
     SFScriptKnowledgeRef knowledge;
 
-    knowledge = SFShapingKnowledgeSeekScript(&SFArabicKnowledgeInstance, pattern->scriptTag);
+    knowledge = SFShapingKnowledgeSeekScript(&SFArabicKnowledgeInstance, artist->pattern->scriptTag);
     if (knowledge) {
-        SFArabicEngineInitialize(&unifiedEngine->_arabicEngine, pattern);
+        SFArabicEngineInitialize(&unifiedEngine->_arabicEngine, artist);
         return;
     }
 
-    knowledge = SFShapingKnowledgeSeekScript(&SFStandardKnowledgeInstance, pattern->scriptTag);
+    knowledge = SFShapingKnowledgeSeekScript(&SFStandardKnowledgeInstance, artist->pattern->scriptTag);
     if (knowledge) {
-        SFStandardEngineInitialize(&unifiedEngine->_standardEngine, pattern);
+        SFStandardEngineInitialize(&unifiedEngine->_standardEngine, artist);
         return;
     }
 }

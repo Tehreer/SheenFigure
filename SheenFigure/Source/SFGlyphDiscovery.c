@@ -62,26 +62,25 @@ SF_INTERNAL void _SFDiscoverGlyphs(SFTextProcessorRef processor)
     SFUInteger length = album->codePointCount;
     SFUInteger index;
 
-    switch (processor->_visualDirection) {
-    case SFDirectionLTR:
-    case SFDirectionRTL:
-        if (processor->_visualDirection == pattern->scriptDirection) {
-            for (index = 0; index < length; index++) {
-                SFCodepoint codePoint = album->codePointArray[index];
-                SFGlyphID glyph = SFFontGetGlyphIDForCodepoint(font, codePoint);
-                SFAlbumAddGlyph(album, glyph, index);
-            }
-        } else {
-            for (index = length; index--;) {
-                SFCodepoint codePoint = album->codePointArray[index];
-                SFGlyphID glyph = SFFontGetGlyphIDForCodepoint(font, codePoint);
-                SFAlbumAddGlyph(album, glyph, index);
-            }
+    switch (processor->_textMode) {
+    case SFTextModeForward:
+        for (index = 0; index < length; index++) {
+            SFCodepoint codePoint = album->codePointArray[index];
+            SFGlyphID glyph = SFFontGetGlyphIDForCodepoint(font, codePoint);
+            SFAlbumAddGlyph(album, glyph, index);
         }
         break;
-
+            
+    case SFTextModeBackward:
+        for (index = length; index--;) {
+            SFCodepoint codePoint = album->codePointArray[index];
+            SFGlyphID glyph = SFFontGetGlyphIDForCodepoint(font, codePoint);
+            SFAlbumAddGlyph(album, glyph, index);
+        }
+        break;
+        
     default:
-        /* Unknown visual direction. */
+        /* Unknown text mode. */
         SFAssert(SFFalse);
         break;
     }

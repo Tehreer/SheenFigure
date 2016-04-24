@@ -17,11 +17,14 @@
 #ifndef _SF_SCHEME_INTERNAL_H
 #define _SF_SCHEME_INTERNAL_H
 
-#include <SFFont.h>
+#include <SFLanguageTag.h>
 #include <SFScheme.h>
+#include <SFScriptTag.h>
+#include <SFTypes.h>
 
 #include "SFData.h"
-#include "SFShapingEngine.h"
+#include "SFFont.h"
+#include "SFShapingKnowledge.h"
 
 typedef struct _SFSchemeState {
     SFSchemeRef scheme;

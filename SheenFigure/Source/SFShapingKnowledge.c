@@ -15,6 +15,8 @@
  */
 
 #include <SFConfig.h>
+#include <SFScriptTag.h>
+
 #include <stddef.h>
 
 #include "SFAssert.h"

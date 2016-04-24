@@ -18,10 +18,10 @@
 #define _SF_TEXT_PROCESSOR_INTERNAL_H
 
 #include <SFConfig.h>
-#include <SFDirection.h>
 #include <SFTypes.h>
 
 #include "SFAlbum.h"
+#include "SFArtist.h"
 #include "SFFont.h"
 #include "SFLocator.h"
 #include "SFPattern.h"
@@ -32,13 +32,13 @@ typedef struct _SFTextProcessor {
     SFAlbumRef _album;
     SFLocator _locator;
     SFData _glyphClassDef;
-    SFDirection _visualDirection;
-    SFDirection _actualDirection;
+    SFTextFlow _textFlow;
+    SFTextMode _textMode;
     /* State values. */
     SFFeatureKind _featureKind;
 } SFTextProcessor, *SFTextProcessorRef;
 
-SF_INTERNAL void SFTextProcessorInitialize(SFTextProcessorRef textProcessor, SFPatternRef pattern, SFAlbumRef album, SFDirection direction);
+SF_INTERNAL void SFTextProcessorInitialize(SFTextProcessorRef textProcessor, SFPatternRef pattern, SFAlbumRef album, SFTextFlow textFlow, SFTextMode textMode);
 
 SF_INTERNAL void SFTextProcessorDiscoverGlyphs(SFTextProcessorRef textProcessor);
 SF_INTERNAL void SFTextProcessorSubstituteGlyphs(SFTextProcessorRef textProcessor);

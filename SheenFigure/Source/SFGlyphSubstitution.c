@@ -21,7 +21,9 @@
 #include "SFData.h"
 #include "SFGSUB.h"
 #include "SFLocator.h"
+#include "SFOpenType.h"
 
+#include "SFGlyphDiscovery.h"
 #include "SFGlyphManipulation.h"
 #include "SFGlyphSubstitution.h"
 #include "SFTextProcessor.h"

@@ -18,12 +18,11 @@
 #define _SF_SHAPING_KNOWLEDGE_INTERNAL_H
 
 #include <SFConfig.h>
-#include <SFDirection.h>
 #include <SFFeatureTag.h>
+#include <SFScriptTag.h>
 #include <SFTypes.h>
 
-#include "SFAlbum.h"
-#include "SFFont.h"
+#include "SFArtist.h"
 
 typedef struct _SFFeatureInfo {
     SFFeatureTag featureTag;
@@ -32,9 +31,9 @@ typedef struct _SFFeatureInfo {
 
 typedef struct _SFScriptKnowledge {
     /**
-     * Writing direction of the script.
+     * Natural text flow of the script.
      */
-    SFDirection scriptDirection;
+    SFTextFlow textFlow;
     /**
      * Information of all features supported by the script in implementation order.
      */

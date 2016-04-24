@@ -15,7 +15,6 @@
  */
 
 #include <SFConfig.h>
-#include <SFDirection.h>
 #include <SFTypes.h>
 
 #include <stddef.h>
@@ -27,10 +26,11 @@
 SFArtistRef SFArtistCreate(void)
 {
     SFArtistRef artist = malloc(sizeof(SFArtist));
-    artist->_codepointArray = NULL;
-    artist->_pattern = NULL;
-    artist->_direction = SFDirectionLTR;
-    artist->_codepointCount = 0;
+    artist->codepointArray = NULL;
+    artist->pattern = NULL;
+    artist->textFlow = SFTextFlowLeftToRight;
+    artist->textMode = SFTextModeForward;
+    artist->codepointCount = 0;
     artist->_retainCount = 1;
 
     return artist;
@@ -38,18 +38,23 @@ SFArtistRef SFArtistCreate(void)
 
 void SFArtistSetCodepoints(SFArtistRef artist, SFCodepoint *codepoints, SFUInteger length)
 {
-    artist->_codepointArray = codepoints;
-    artist->_codepointCount = length;
+    artist->codepointArray = codepoints;
+    artist->codepointCount = length;
 }
 
 void SFArtistSetPattern(SFArtistRef artist, SFPatternRef pattern)
 {
-    artist->_pattern = pattern;
+    artist->pattern = pattern;
 }
 
-void SFArtistSetDirection(SFArtistRef artist, SFDirection direction)
+void SFArtistSetTextFlow(SFArtistRef artist, SFTextFlow textFlow)
 {
-    artist->_direction = direction;
+    artist->textFlow = textFlow;
+}
+
+void SFArtistSetTextMode(SFArtistRef artist, SFTextMode textMode)
+{
+    artist->textMode = textMode;
 }
 
 void SFArtistFillAlbum(SFArtistRef artist, SFAlbumRef album)
@@ -57,11 +62,11 @@ void SFArtistFillAlbum(SFArtistRef artist, SFAlbumRef album)
     SFUnifiedEngine unifiedEngine;
     SFShapingEngineRef shapingEngine;
 
-    SFAlbumReset(album, artist->_codepointArray, artist->_codepointCount);
-    SFUnifiedEngineInitialize(&unifiedEngine, artist->_pattern);
-
+    SFUnifiedEngineInitialize(&unifiedEngine, artist);
     shapingEngine = (SFShapingEngineRef)&unifiedEngine;
-    SFShapingEngineProcessAlbum(shapingEngine, album, artist->_direction);
+    
+    SFAlbumReset(album, artist->codepointArray, artist->codepointCount);
+    SFShapingEngineProcessAlbum(shapingEngine, album);
 }
 
 SFArtistRef SFArtistRetain(SFArtistRef artist)

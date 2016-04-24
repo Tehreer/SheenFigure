@@ -21,6 +21,8 @@
 
 #include <stddef.h>
 
+#include "SFAlbum.h"
+#include "SFArtist.h"
 #include "SFAssert.h"
 #include "SFShapingEngine.h"
 #include "SFShapingKnowledge.h"
@@ -28,7 +30,7 @@
 #include "SFStandardEngine.h"
 
 static SFScriptKnowledgeRef _SFStandardKnowledgeSeekScript(const void *object, SFScriptTag scriptTag);
-static void _SFStandardEngineProcessAlbum(const void *object, SFAlbumRef album, SFDirection direction);
+static void _SFStandardEngineProcessAlbum(const void *object, SFAlbumRef album);
 
 enum {
     _SFStandardFeatureMaskNone = 0 << 0
@@ -49,7 +51,7 @@ static SFFeatureInfo _SFStandardFeatureInfoArray[] = {
 #define _SFStandardFeatureInfoCount (sizeof(_SFStandardFeatureInfoArray) / sizeof(SFFeatureInfo))
 
 static SFScriptKnowledge _SFStandardScriptKnowledge = {
-    SFDirectionLTR,
+    SFTextFlowLeftToRight,
     { _SFStandardFeatureInfoArray, _SFStandardFeatureInfoCount },
     { NULL, 0 }
 };
@@ -78,18 +80,19 @@ static SFShapingEngine _SFStandardEngineBase = {
     &_SFStandardEngineProcessAlbum
 };
 
-SF_INTERNAL void SFStandardEngineInitialize(SFStandardEngineRef standardEngine, SFPatternRef pattern)
+SF_INTERNAL void SFStandardEngineInitialize(SFStandardEngineRef standardEngine, SFArtistRef artist)
 {
     standardEngine->_base = _SFStandardEngineBase;
-    standardEngine->_pattern = pattern;
+    standardEngine->_artist = artist;
 }
 
-static void _SFStandardEngineProcessAlbum(const void *object, SFAlbumRef album, SFDirection direction)
+static void _SFStandardEngineProcessAlbum(const void *object, SFAlbumRef album)
 {
     SFStandardEngineRef standardEngine = (SFStandardEngineRef)object;
+    SFArtistRef artist = standardEngine->_artist;
     SFTextProcessor processor;
 
-    SFTextProcessorInitialize(&processor, standardEngine->_pattern, album, direction);
+    SFTextProcessorInitialize(&processor, artist->pattern, album, artist->textFlow, artist->textMode);
     SFTextProcessorDiscoverGlyphs(&processor);
     SFTextProcessorSubstituteGlyphs(&processor);
     SFTextProcessorPositionGlyphs(&processor);

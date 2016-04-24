@@ -21,6 +21,8 @@
 
 #include <stddef.h>
 
+#include "SFAlbum.h"
+#include "SFArtist.h"
 #include "SFAssert.h"
 #include "SFJoiningType.h"
 #include "SFJoiningTypeLookup.h"
@@ -31,7 +33,7 @@
 
 static SFScriptKnowledgeRef _SFArabicKnowledgeSeekScript(const void *object, SFScriptTag scriptTag);
 static void _SFPutArabicFeatureMask(SFAlbumRef album);
-static void _SFArabicEngineProcessAlbum(const void *object, SFAlbumRef album, SFDirection direction);
+static void _SFArabicEngineProcessAlbum(const void *object, SFAlbumRef album);
 
 enum {
     _SFArabicFeatureMaskNone     = 0 << 0,
@@ -64,7 +66,7 @@ static SFFeatureInfo _SFArabicFeatureInfoArray[] = {
 #define _SFArabicFeatureInfoCount (sizeof(_SFArabicFeatureInfoArray) / sizeof(SFFeatureInfo))
 
 static SFScriptKnowledge _SFArabicScriptKnowledge = {
-    SFDirectionRTL,
+    SFTextFlowRightToLeft,
     { _SFArabicFeatureInfoArray, _SFArabicFeatureInfoCount },
     { NULL, 0 }
 };
@@ -87,10 +89,10 @@ static SFShapingEngine _SFArabicEngineBase = {
     &_SFArabicEngineProcessAlbum
 };
 
-SF_INTERNAL void SFArabicEngineInitialize(SFArabicEngineRef arabicEngine, SFPatternRef pattern)
+SF_INTERNAL void SFArabicEngineInitialize(SFArabicEngineRef arabicEngine, SFArtistRef artist)
 {
     arabicEngine->_base = _SFArabicEngineBase;
-    arabicEngine->_pattern = pattern;
+    arabicEngine->_artist = artist;
 }
 
 static void _SFPutArabicFeatureMask(SFAlbumRef album)
@@ -191,12 +193,13 @@ static void _SFPutArabicFeatureMask(SFAlbumRef album)
     }
 }
 
-static void _SFArabicEngineProcessAlbum(const void *object, SFAlbumRef album, SFDirection direction)
+static void _SFArabicEngineProcessAlbum(const void *object, SFAlbumRef album)
 {
     SFArabicEngineRef arabicEngine = (SFArabicEngineRef)object;
+    SFArtistRef artist = arabicEngine->_artist;
     SFTextProcessor processor;
 
-    SFTextProcessorInitialize(&processor, arabicEngine->_pattern, album, direction);
+    SFTextProcessorInitialize(&processor, artist->pattern, album, artist->textFlow, artist->textMode);
     SFTextProcessorDiscoverGlyphs(&processor);
     _SFPutArabicFeatureMask(album);
     SFTextProcessorSubstituteGlyphs(&processor);

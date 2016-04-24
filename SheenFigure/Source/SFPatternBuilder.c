@@ -23,6 +23,7 @@
 #include <stddef.h>
 #include <stdlib.h>
 
+#include "SFArtist.h"
 #include "SFAssert.h"
 #include "SFList.h"
 #include "SFPattern.h"
@@ -71,10 +72,10 @@ SF_INTERNAL void SFPatternBuilderSetFont(SFPatternBuilderRef builder, SFFontRef 
     builder->_font = font;
 }
 
-SF_INTERNAL void SFPatternBuilderSetScript(SFPatternBuilderRef builder, SFScriptTag scriptTag, SFDirection scriptDirection)
+SF_INTERNAL void SFPatternBuilderSetScript(SFPatternBuilderRef builder, SFScriptTag scriptTag, SFTextFlow naturalTextFlow)
 {
     builder->_scriptTag = scriptTag;
-    builder->_scriptDirection = scriptDirection;
+    builder->_textFlow = naturalTextFlow;
 }
 
 SF_INTERNAL void SFPatternBuilderSetLanguage(SFPatternBuilderRef builder, SFLanguageTag languageTag)
@@ -192,7 +193,7 @@ SF_INTERNAL void SFPatternBuilderBuild(SFPatternBuilderRef builder)
     pattern->featureUnits.gsub = builder->_gsubUnitCount;
     pattern->featureUnits.gpos = builder->_gposUnitCount;
     pattern->scriptTag = builder->_scriptTag;
-    pattern->scriptDirection = builder->_scriptDirection;
+    pattern->textFlow = builder->_textFlow;
     pattern->languageTag = builder->_languageTag;
 
     SFListFinalizeKeepingArray(&builder->_featureTags, &pattern->featureTags.items, &pattern->featureTags.count);
