@@ -109,9 +109,6 @@ SF_INTERNAL void SFAlbumInitialize(SFAlbumRef album)
 
 SF_INTERNAL void SFAlbumReset(SFAlbumRef album, SFCodepoint *codePointArray, SFUInteger codePointCount)
 {
-	/* There must be some code points. */
-	SFAssert(codePointArray != NULL && codePointCount > 0);
-
     free(album->mapArray);
 
     album->codePointArray = codePointArray;

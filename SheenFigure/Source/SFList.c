@@ -32,6 +32,9 @@ static void _SFListMoveItems(_SFListRef list, SFUInteger srcIndex, SFUInteger ds
 
 SF_PRIVATE void _SFListInitialize(_SFListRef list, SFUInteger itemSize)
 {
+    /* Item size MUST be greater than 0. */
+    SFAssert(itemSize > 0);
+
     list->_data = NULL;
     list->count = 0;
     list->capacity = 0;

@@ -44,29 +44,55 @@ void SFArtistSetCodepoints(SFArtistRef artist, SFCodepoint *codepoints, SFUInteg
 
 void SFArtistSetPattern(SFArtistRef artist, SFPatternRef pattern)
 {
-    artist->pattern = pattern;
+    artist->pattern = SFPatternRetain(pattern);
 }
 
 void SFArtistSetTextFlow(SFArtistRef artist, SFTextFlow textFlow)
 {
+    switch (textFlow) {
+    case SFTextFlowLeftToRight:
+    case SFTextFlowRightToLeft:
+        break;
+
+    default:
+        /* Fallback to default value. */
+        textFlow = SFTextFlowLeftToRight;
+        break;
+    }
+
     artist->textFlow = textFlow;
 }
 
 void SFArtistSetTextMode(SFArtistRef artist, SFTextMode textMode)
 {
+    switch (textMode) {
+    case SFTextModeForward:
+    case SFTextModeBackward:
+        break;
+
+    default:
+        /* Fallback to default value. */
+        textMode = SFTextModeForward;
+        break;
+    }
+
     artist->textMode = textMode;
 }
 
 void SFArtistFillAlbum(SFArtistRef artist, SFAlbumRef album)
 {
-    SFUnifiedEngine unifiedEngine;
-    SFShapingEngineRef shapingEngine;
+    if (artist->pattern && artist->codepointArray && artist->codepointCount > 0) {
+        SFUnifiedEngine unifiedEngine;
+        SFShapingEngineRef shapingEngine;
 
-    SFUnifiedEngineInitialize(&unifiedEngine, artist);
-    shapingEngine = (SFShapingEngineRef)&unifiedEngine;
-    
-    SFAlbumReset(album, artist->codepointArray, artist->codepointCount);
-    SFShapingEngineProcessAlbum(shapingEngine, album);
+        SFUnifiedEngineInitialize(&unifiedEngine, artist);
+        shapingEngine = (SFShapingEngineRef)&unifiedEngine;
+
+        SFAlbumReset(album, artist->codepointArray, artist->codepointCount);
+        SFShapingEngineProcessAlbum(shapingEngine, album);
+    } else {
+        SFAlbumReset(album, NULL, 0);
+    }
 }
 
 SFArtistRef SFArtistRetain(SFArtistRef artist)
