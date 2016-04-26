@@ -47,7 +47,7 @@ void SFArtistSetPattern(SFArtistRef artist, SFPatternRef pattern);
 void SFArtistSetCodepoints(SFArtistRef artist, SFCodepoint *codepoints, SFUInteger length);
 
 /**
- * Sets the flow of text for glyph positioning.
+ * Sets the flow direction of text for glyph positioning.
  *
  * The value of textFlow must reflect the script direction of input text so that individual glyphs
  * are placed at appropriate locations while rendering. It should not be confused with bidi run
@@ -65,7 +65,7 @@ void SFArtistSetTextFlow(SFArtistRef artist, SFTextFlow textFlow);
  * Sets the mode for text processing.
  *
  * This method provides a convinient way of shaping a bidi run whose direction is opposite to that
- * of script. For example, if the direction of a run, 'car' is explicitly set at right-to-left,
+ * of script. For example, if the direction of a run, 'car' is explicitly set as right-to-left,
  * backward mode will automatically treat it as 'rac' without reordering the original text.
  *
  * @param artist
@@ -78,7 +78,10 @@ void SFArtistSetTextMode(SFArtistRef artist, SFTextMode textMode);
 /**
  * Shapes the text with appropriate shaping engine, filling the album with glyph infos.
  *
- * The flow output glyphs in the album depends on text mode and text flow.
+ * The output glyphs in the album flow in logical direction as described by text flow. For
+ * left-to-right text flow, the x position of pen is incremented with glyph's advance after
+ * rendering it. Similarly, for right-to-left text flow, the x position of pen is decremented with
+ * glyph's advance after rendering it.
  *
  * @param artist
  *      The artist to be used for shaping.
