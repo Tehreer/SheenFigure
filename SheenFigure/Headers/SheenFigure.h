@@ -19,12 +19,9 @@
 
 #include <SFAlbum.h>
 #include <SFArtist.h>
-#include <SFFeatureTag.h>
 #include <SFFont.h>
-#include <SFLanguageTag.h>
 #include <SFPattern.h>
 #include <SFScheme.h>
-#include <SFScriptTag.h>
 #include <SFTypes.h>
 
 #endif
