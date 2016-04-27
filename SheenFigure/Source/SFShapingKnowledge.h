@@ -18,14 +18,12 @@
 #define _SF_SHAPING_KNOWLEDGE_INTERNAL_H
 
 #include <SFConfig.h>
-#include <SFFeatureTag.h>
-#include <SFScriptTag.h>
 #include <SFTypes.h>
 
 #include "SFArtist.h"
 
 typedef struct _SFFeatureInfo {
-    SFFeatureTag featureTag;
+    SFTag featureTag;
     SFUInt16 featureMask;
 } SFFeatureInfo, *SFFeatureInfoRef;
 
@@ -54,12 +52,12 @@ typedef struct _SFScriptKnowledge {
  * A common interface for the knowledge of a shaping engine.
  */
 typedef struct _SFShapingKnowledge {
-    SFScriptKnowledgeRef (*_seekScript)(const void *, SFScriptTag);
+    SFScriptKnowledgeRef (*_seekScript)(const void *, SFTag);
 } SFShapingKnowledge, *SFShapingKnowledgeRef;
 
 /**
  * Returns script knowledge related to given script, or NULL.
  */
-SF_INTERNAL SFScriptKnowledgeRef SFShapingKnowledgeSeekScript(SFShapingKnowledgeRef shapingKnowledge, SFScriptTag scriptTag);
+SF_INTERNAL SFScriptKnowledgeRef SFShapingKnowledgeSeekScript(SFShapingKnowledgeRef shapingKnowledge, SFTag scriptTag);
 
 #endif

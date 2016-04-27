@@ -15,9 +15,6 @@
  */
 
 #include <SFConfig.h>
-#include <SFFeatureTag.h>
-#include <SFLanguageTag.h>
-#include <SFScriptTag.h>
 #include <SFTypes.h>
 
 #include <stddef.h>
@@ -46,7 +43,7 @@ SF_INTERNAL void SFPatternBuilderInitialize(SFPatternBuilderRef builder, SFPatte
     builder->_featureKind = 0;
     builder->_canBuild = SFTrue;
 
-    SFListInitialize(&builder->_featureTags, sizeof(SFFeatureTag));
+    SFListInitialize(&builder->_featureTags, sizeof(SFTag));
     SFListSetCapacity(&builder->_featureTags, 24);
 
     SFListInitialize(&builder->_featureUnits, sizeof(SFFeatureUnit));
@@ -72,13 +69,13 @@ SF_INTERNAL void SFPatternBuilderSetFont(SFPatternBuilderRef builder, SFFontRef 
     builder->_font = font;
 }
 
-SF_INTERNAL void SFPatternBuilderSetScript(SFPatternBuilderRef builder, SFScriptTag scriptTag, SFTextFlow naturalTextFlow)
+SF_INTERNAL void SFPatternBuilderSetScript(SFPatternBuilderRef builder, SFTag scriptTag, SFTextFlow defaultTextFlow)
 {
     builder->_scriptTag = scriptTag;
-    builder->_textFlow = naturalTextFlow;
+    builder->_textFlow = defaultTextFlow;
 }
 
-SF_INTERNAL void SFPatternBuilderSetLanguage(SFPatternBuilderRef builder, SFLanguageTag languageTag)
+SF_INTERNAL void SFPatternBuilderSetLanguage(SFPatternBuilderRef builder, SFTag languageTag)
 {
     builder->_languageTag = languageTag;
 }
@@ -93,7 +90,7 @@ SF_INTERNAL void SFPatternBuilderBeginFeatures(SFPatternBuilderRef builder, SFFe
     builder->_featureKind = featureKind;
 }
 
-SF_INTERNAL void SFPatternBuilderAddFeature(SFPatternBuilderRef builder, SFFeatureTag featureTag, SFUInt16 featureMask)
+SF_INTERNAL void SFPatternBuilderAddFeature(SFPatternBuilderRef builder, SFTag featureTag, SFUInt16 featureMask)
 {
     /* The kind of features must be specified before adding them. */
     SFAssert(builder->_featureKind != 0);

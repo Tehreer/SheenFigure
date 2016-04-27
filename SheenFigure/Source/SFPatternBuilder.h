@@ -18,9 +18,6 @@
 #define _SF_PATTERN_BUILDER_INTERNAL_H
 
 #include <SFConfig.h>
-#include <SFFeatureTag.h>
-#include <SFLanguageTag.h>
-#include <SFScriptTag.h>
 #include <SFTypes.h>
 
 #include "SFArtist.h"
@@ -41,14 +38,14 @@ typedef struct _SFPatternBuilder {
     SFUInteger _gsubUnitCount;      /**< Total number of GSUB feature units. */
     SFUInteger _gposUnitCount;      /**< Total number of GPOS feature units. */
     SFUInteger _featureIndex;       /**< Starting feature index of the feature unit being built. */
-    SFScriptTag _scriptTag;         /**< Tag of the script, whose pattern is being built. */
-    SFTextFlow _textFlow;           /**< Natural text flow of the script whose pattern is being built.*/
-    SFLanguageTag _languageTag;     /**< Tag of the language, whose pattern is being built. */
+    SFTag _scriptTag;               /**< Tag of the script, whose pattern is being built. */
+    SFTextFlow _textFlow;           /**< Default text flow of the script whose pattern is being built.*/
+    SFTag _languageTag;             /**< Tag of the language, whose pattern is being built. */
     SFUInt16 _featureMask;          /**< Mask of the feature unit being built. */
     SFFeatureKind _featureKind;     /**< Kind of the features being added. */
     SFBoolean _canBuild;
 
-    SF_LIST(SFFeatureTag) _featureTags;
+    SF_LIST(SFTag) _featureTags;
     SF_LIST(SFFeatureUnit) _featureUnits;
     SF_LIST(SFUInt16) _lookupIndexes;
 } SFPatternBuilder, *SFPatternBuilderRef;
@@ -60,8 +57,8 @@ SF_INTERNAL void SFPatternBuilderInitialize(SFPatternBuilderRef builder, SFPatte
 SF_INTERNAL void SFPatternBuilderFinalize(SFPatternBuilderRef builder);
 
 SF_INTERNAL void SFPatternBuilderSetFont(SFPatternBuilderRef builder, SFFontRef font);
-SF_INTERNAL void SFPatternBuilderSetScript(SFPatternBuilderRef builder, SFScriptTag scriptTag, SFTextFlow naturalTextFlow);
-SF_INTERNAL void SFPatternBuilderSetLanguage(SFPatternBuilderRef builder, SFLanguageTag languageTag);
+SF_INTERNAL void SFPatternBuilderSetScript(SFPatternBuilderRef builder, SFTag scriptTag, SFTextFlow defaultTextFlow);
+SF_INTERNAL void SFPatternBuilderSetLanguage(SFPatternBuilderRef builder, SFTag languageTag);
 
 /**
  * Begins building features of specified kind.
@@ -71,7 +68,7 @@ SF_INTERNAL void SFPatternBuilderBeginFeatures(SFPatternBuilderRef builder, SFFe
 /**
  * Adds a new feature having recently specified kind.
  */
-SF_INTERNAL void SFPatternBuilderAddFeature(SFPatternBuilderRef builder, SFFeatureTag featureTag, SFUInt16 featureMask);
+SF_INTERNAL void SFPatternBuilderAddFeature(SFPatternBuilderRef builder, SFTag featureTag, SFUInt16 featureMask);
 
 /**
  * Adds a new lookup in recently added feature.

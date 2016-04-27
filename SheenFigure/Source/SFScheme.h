@@ -17,9 +17,7 @@
 #ifndef _SF_SCHEME_INTERNAL_H
 #define _SF_SCHEME_INTERNAL_H
 
-#include <SFLanguageTag.h>
 #include <SFScheme.h>
-#include <SFScriptTag.h>
 #include <SFTypes.h>
 
 #include "SFData.h"
@@ -38,8 +36,8 @@ typedef struct _SFSchemeState {
 
 struct _SFScheme {
     SFFontRef _font;                /**< Font, whose scheme is being built. */
-    SFScriptTag _scriptTag;         /**< Tag of the script. */
-    SFLanguageTag _languageTag;     /**< Tag of the language. */
+    SFTag _scriptTag;               /**< Tag of the script. */
+    SFTag _languageTag;             /**< Tag of the language. */
 
     SFInteger _retainCount;
 };

@@ -15,7 +15,6 @@
  */
 
 #include <SFConfig.h>
-#include <SFScriptTag.h>
 
 #include "SFArabicEngine.h"
 #include "SFArtist.h"
@@ -24,13 +23,13 @@
 #include "SFStandardEngine.h"
 #include "SFUnifiedEngine.h"
 
-static SFScriptKnowledgeRef _SFUnifiedKnowledgeSeekScript(const void *object, SFScriptTag scriptTag);
+static SFScriptKnowledgeRef _SFUnifiedKnowledgeSeekScript(const void *object, SFTag scriptTag);
 
 SFShapingKnowledge SFUnifiedKnowledgeInstance = {
     &_SFUnifiedKnowledgeSeekScript
 };
 
-static SFScriptKnowledgeRef _SFUnifiedKnowledgeSeekScript(const void *object, SFScriptTag scriptTag)
+static SFScriptKnowledgeRef _SFUnifiedKnowledgeSeekScript(const void *object, SFTag scriptTag)
 {
     SFScriptKnowledgeRef knowledge;
 

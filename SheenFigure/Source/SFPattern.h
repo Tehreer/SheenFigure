@@ -18,10 +18,7 @@
 #define _SF_PATTERN_INTERNAL_H
 
 #include <SFConfig.h>
-#include <SFFeatureTag.h>
-#include <SFLanguageTag.h>
 #include <SFPattern.h>
-#include <SFScriptTag.h>
 #include <SFTypes.h>
 
 #include "SFArtist.h"
@@ -54,7 +51,7 @@ typedef struct _SFFeatureUnit {
 struct _SFPattern {
     SFFontRef font;
     struct {
-        SFFeatureTag *items;
+        SFTag *items;
         SFUInteger count;           /**< Total number of features.*/
     } featureTags;
     struct {
@@ -62,9 +59,9 @@ struct _SFPattern {
         SFUInteger gsub;            /**< Total number of gsub feature groups.*/
         SFUInteger gpos;            /**< Total number of gpos feature groups.*/
     } featureUnits;
-    SFScriptTag scriptTag;          /**< Tag of the script. */
-    SFTextFlow textFlow;            /**< Natural text flow of the script. */
-    SFLanguageTag languageTag;      /**< Tag of the language. */
+    SFTag scriptTag;                /**< Tag of the script. */
+    SFTextFlow textFlow;            /**< Default text flow of the script. */
+    SFTag languageTag;              /**< Tag of the language. */
     SFUInteger _retainCount;
 };
 

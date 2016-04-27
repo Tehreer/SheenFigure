@@ -19,23 +19,21 @@
 
 #include "SFConfig.h"
 #include "SFFont.h"
-#include "SFLanguageTag.h"
 #include "SFPattern.h"
-#include "SFScriptTag.h"
 #include "SFTypes.h"
 
 struct _SFScheme;
 typedef struct _SFScheme SFScheme;
 /**
- * The type used to represent a scheme.
+ * The type used to represent an open type scheme.
  */
 typedef SFScheme *SFSchemeRef;
 
 SFSchemeRef SFSchemeCreate(void);
 
 void SFSchemeSetFont(SFSchemeRef scheme, SFFontRef font);
-void SFSchemeSetScript(SFSchemeRef scheme, SFScriptTag scriptTag);
-void SFSchemeSetLanguage(SFSchemeRef scheme, SFLanguageTag languageTag);
+void SFSchemeSetScript(SFSchemeRef scheme, SFTag scriptTag);
+void SFSchemeSetLanguage(SFSchemeRef scheme, SFTag languageTag);
 
 SFPatternRef SFSchemeBuildPattern(SFSchemeRef scheme);
 

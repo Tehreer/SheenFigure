@@ -15,14 +15,13 @@
  */
 
 #include <SFConfig.h>
-#include <SFScriptTag.h>
 
 #include <stddef.h>
 
 #include "SFAssert.h"
 #include "SFShapingKnowledge.h"
 
-SF_INTERNAL SFScriptKnowledgeRef SFShapingKnowledgeSeekScript(SFShapingKnowledgeRef shapingKnowledge, SFScriptTag scriptTag)
+SF_INTERNAL SFScriptKnowledgeRef SFShapingKnowledgeSeekScript(SFShapingKnowledgeRef shapingKnowledge, SFTag scriptTag)
 {
     /* The function must be implemented by the concrete instance. */
     SFAssert(shapingKnowledge->_seekScript != NULL);

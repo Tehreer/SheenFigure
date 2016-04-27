@@ -15,8 +15,6 @@
 */
 
 #include <SFConfig.h>
-#include <SFFeatureTag.h>
-#include <SFScriptTag.h>
 #include <SFTypes.h>
 
 #include <stddef.h>
@@ -29,7 +27,7 @@
 #include "SFTextProcessor.h"
 #include "SFStandardEngine.h"
 
-static SFScriptKnowledgeRef _SFStandardKnowledgeSeekScript(const void *object, SFScriptTag scriptTag);
+static SFScriptKnowledgeRef _SFStandardKnowledgeSeekScript(const void *object, SFTag scriptTag);
 static void _SFStandardEngineProcessAlbum(const void *object, SFAlbumRef album);
 
 enum {
@@ -38,15 +36,15 @@ enum {
 
 static SFFeatureInfo _SFStandardFeatureInfoArray[] = {
     /* Language based forms. */
-    { SFFeatureTagCCMP, _SFStandardFeatureMaskNone },
+    { SFTagMake('c', 'c', 'm', 'p'), _SFStandardFeatureMaskNone },
     /* Typographical forms */
-    { SFFeatureTagLIGA, _SFStandardFeatureMaskNone },
-    { SFFeatureTagCLIG, _SFStandardFeatureMaskNone },
+    { SFTagMake('l', 'i', 'g', 'a'), _SFStandardFeatureMaskNone },
+    { SFTagMake('c', 'l', 'i', 'g'), _SFStandardFeatureMaskNone },
     /* Positioning features. */
-    { SFFeatureTagDIST, _SFStandardFeatureMaskNone },
-    { SFFeatureTagKERN, _SFStandardFeatureMaskNone },
-    { SFFeatureTagMARK, _SFStandardFeatureMaskNone },
-    { SFFeatureTagMKMK, _SFStandardFeatureMaskNone }
+    { SFTagMake('d', 'i', 's', 't'), _SFStandardFeatureMaskNone },
+    { SFTagMake('k', 'e', 'r', 'n'), _SFStandardFeatureMaskNone },
+    { SFTagMake('m', 'a', 'r', 'k'), _SFStandardFeatureMaskNone },
+    { SFTagMake('m', 'k', 'm', 'k'), _SFStandardFeatureMaskNone }
 };
 #define _SFStandardFeatureInfoCount (sizeof(_SFStandardFeatureInfoArray) / sizeof(SFFeatureInfo))
 
@@ -60,16 +58,16 @@ SFShapingKnowledge SFStandardKnowledgeInstance = {
     &_SFStandardKnowledgeSeekScript
 };
 
-static SFScriptKnowledgeRef _SFStandardKnowledgeSeekScript(const void *object, SFScriptTag scriptTag)
+static SFScriptKnowledgeRef _SFStandardKnowledgeSeekScript(const void *object, SFTag scriptTag)
 {
     switch (scriptTag) {
-    case SFScriptTagARMN:
-    case SFScriptTagCYRL:
-    case SFScriptTagGEOR:
-    case SFScriptTagGREK:
-    case SFScriptTagLATN:
-    case SFScriptTagOGAM:
-    case SFScriptTagRUNR:
+    case SFTagMake('a', 'r', 'm', 'n'):
+    case SFTagMake('c', 'y', 'r', 'l'):
+    case SFTagMake('g', 'e', 'o', 'r'):
+    case SFTagMake('g', 'r', 'e', 'k'):
+    case SFTagMake('l', 'a', 't', 'n'):
+    case SFTagMake('o', 'g', 'a', 'm'):
+    case SFTagMake('r', 'u', 'n', 'r'):
         return &_SFStandardScriptKnowledge;
     }
 

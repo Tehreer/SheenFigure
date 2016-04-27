@@ -15,8 +15,6 @@
  */
 
 #include <SFConfig.h>
-#include <SFFeatureTag.h>
-#include <SFScriptTag.h>
 #include <SFTypes.h>
 
 #include <stddef.h>
@@ -31,7 +29,7 @@
 #include "SFTextProcessor.h"
 #include "SFArabicEngine.h"
 
-static SFScriptKnowledgeRef _SFArabicKnowledgeSeekScript(const void *object, SFScriptTag scriptTag);
+static SFScriptKnowledgeRef _SFArabicKnowledgeSeekScript(const void *object, SFTag scriptTag);
 static void _SFPutArabicFeatureMask(SFAlbumRef album);
 static void _SFArabicEngineProcessAlbum(const void *object, SFAlbumRef album);
 
@@ -45,23 +43,23 @@ enum {
 
 static SFFeatureInfo _SFArabicFeatureInfoArray[] = {
     /* Language based forms */
-    { SFFeatureTagCCMP, _SFArabicFeatureMaskNone },
-    { SFFeatureTagISOL, _SFArabicFeatureMaskIsolated },
-    { SFFeatureTagFINA, _SFArabicFeatureMaskFinal },
-    { SFFeatureTagMEDI, _SFArabicFeatureMaskMedial },
-    { SFFeatureTagINIT, _SFArabicFeatureMaskInitial },
-    { SFFeatureTagRLIG, _SFArabicFeatureMaskNone },
-    { SFFeatureTagCALT, _SFArabicFeatureMaskNone },
+    { SFTagMake('c', 'c', 'm', 'p'), _SFArabicFeatureMaskNone },
+    { SFTagMake('i', 's', 'o', 'l'), _SFArabicFeatureMaskIsolated },
+    { SFTagMake('f', 'i', 'n', 'a'), _SFArabicFeatureMaskFinal },
+    { SFTagMake('m', 'e', 'd', 'i'), _SFArabicFeatureMaskMedial },
+    { SFTagMake('i', 'n', 'i', 't'), _SFArabicFeatureMaskInitial },
+    { SFTagMake('r', 'l', 'i', 'g'), _SFArabicFeatureMaskNone },
+    { SFTagMake('c', 'a', 'l', 't'), _SFArabicFeatureMaskNone },
     /* Typographical forms */
-    { SFFeatureTagLIGA, _SFArabicFeatureMaskNone },
-    { SFFeatureTagDLIG, _SFArabicFeatureMaskNone },
-    { SFFeatureTagCSWH, _SFArabicFeatureMaskNone },
-    { SFFeatureTagMSET, _SFArabicFeatureMaskNone },
+    { SFTagMake('l', 'i', 'g', 'a'), _SFArabicFeatureMaskNone },
+    { SFTagMake('d', 'l', 'i', 'g'), _SFArabicFeatureMaskNone },
+    { SFTagMake('c', 's', 'w', 'h'), _SFArabicFeatureMaskNone },
+    { SFTagMake('m', 's', 'e', 't'), _SFArabicFeatureMaskNone },
     /* Positioning features */
-    { SFFeatureTagCURS, _SFArabicFeatureMaskNone },
-    { SFFeatureTagMARK, _SFArabicFeatureMaskNone },
-    { SFFeatureTagMKMK, _SFArabicFeatureMaskNone },
-    { SFFeatureTagKERN, _SFArabicFeatureMaskNone }
+    { SFTagMake('c', 'u', 'r', 's'), _SFArabicFeatureMaskNone },
+    { SFTagMake('m', 'a', 'r', 'k'), _SFArabicFeatureMaskNone },
+    { SFTagMake('m', 'k', 'm', 'k'), _SFArabicFeatureMaskNone },
+    { SFTagMake('k', 'e', 'r', 'n'), _SFArabicFeatureMaskNone }
 };
 #define _SFArabicFeatureInfoCount (sizeof(_SFArabicFeatureInfoArray) / sizeof(SFFeatureInfo))
 
@@ -75,10 +73,10 @@ SFShapingKnowledge SFArabicKnowledgeInstance = {
     &_SFArabicKnowledgeSeekScript
 };
 
-static SFScriptKnowledgeRef _SFArabicKnowledgeSeekScript(const void *object, SFScriptTag scriptTag)
+static SFScriptKnowledgeRef _SFArabicKnowledgeSeekScript(const void *object, SFTag scriptTag)
 {
     switch (scriptTag) {
-    case SFScriptTagARAB:
+    case SFTagMake('a', 'r', 'a', 'b'):
         return &_SFArabicScriptKnowledge;
     }
 

@@ -18,7 +18,6 @@
 #define _SF_FONT_H
 
 #include "SFConfig.h"
-#include "SFScriptTag.h"
 #include "SFTypes.h"
 
 #include <ft2build.h>

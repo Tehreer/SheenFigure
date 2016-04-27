@@ -15,8 +15,6 @@
  */
 
 #include <SFConfig.h>
-#include <SFLanguageTag.h>
-#include <SFScriptTag.h>
 #include <SFTypes.h>
 
 #include <stddef.h>
@@ -28,16 +26,16 @@
 #include "SFUnifiedEngine.h"
 #include "SFScheme.h"
 
-static SFData _SFSearchScriptInList(SFData scriptList, SFScriptTag scriptTag);
-static SFData _SFSearchLangSysInScript(SFData script, SFLanguageTag languageTag);
-static SFData _SFSearchFeatureInLangSys(SFData langSys, SFData featureList, SFFeatureTag featureTag);
+static SFData _SFSearchScriptInList(SFData scriptList, SFTag scriptTag);
+static SFData _SFSearchLangSysInScript(SFData script, SFTag languageTag);
+static SFData _SFSearchFeatureInLangSys(SFData langSys, SFData featureList, SFTag featureTag);
 
 static void _SFAddAllLookups(_SFSchemeStateRef state, SFData feature);
 static void _SFAddFeatureRange(_SFSchemeStateRef state, SFUInteger index, SFUInteger count, SFBoolean simultaneous);
 static void _SFAddAllFeatures(_SFSchemeStateRef state);
 static void _SFAddHeader(_SFSchemeStateRef state, SFData header);
 
-static SFData _SFSearchScriptInList(SFData scriptList, SFScriptTag scriptTag)
+static SFData _SFSearchScriptInList(SFData scriptList, SFTag scriptTag)
 {
     SFUInt16 scriptCount = SFScriptList_ScriptCount(scriptList);
     SFUInt16 index;
@@ -55,9 +53,9 @@ static SFData _SFSearchScriptInList(SFData scriptList, SFScriptTag scriptTag)
     return NULL;
 }
 
-static SFData _SFSearchLangSysInScript(SFData script, SFLanguageTag languageTag)
+static SFData _SFSearchLangSysInScript(SFData script, SFTag languageTag)
 {
-    if (languageTag == SFLanguageTagDFLT) {
+    if (languageTag == SFTagMake('d', 'f', 'l', 't')) {
         SFOffset offset = SFScript_DefaultLangSysOffset(script);
         if (offset) {
             return SFData_Subdata(script, offset);
@@ -81,7 +79,7 @@ static SFData _SFSearchLangSysInScript(SFData script, SFLanguageTag languageTag)
     return NULL;
 }
 
-static SFData _SFSearchFeatureInLangSys(SFData langSys, SFData featureList, SFFeatureTag featureTag)
+static SFData _SFSearchFeatureInLangSys(SFData langSys, SFData featureList, SFTag featureTag)
 {
     SFUInt16 featureCount = SFLangSys_FeatureCount(langSys);
     SFUInt16 index;
@@ -197,12 +195,12 @@ void SFSchemeSetFont(SFSchemeRef scheme, SFFontRef font)
     scheme->_font = font;
 }
 
-void SFSchemeSetScript(SFSchemeRef scheme, SFScriptTag scriptTag)
+void SFSchemeSetScript(SFSchemeRef scheme, SFTag scriptTag)
 {
     scheme->_scriptTag = scriptTag;
 }
 
-void SFSchemeSetLanguage(SFSchemeRef scheme, SFLanguageTag languageTag)
+void SFSchemeSetLanguage(SFSchemeRef scheme, SFTag languageTag)
 {
     scheme->_languageTag = languageTag;
 }
