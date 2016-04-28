@@ -17,7 +17,6 @@
 #ifndef _SF_FONT_H
 #define _SF_FONT_H
 
-#include "SFConfig.h"
 #include "SFTypes.h"
 
 #include <ft2build.h>

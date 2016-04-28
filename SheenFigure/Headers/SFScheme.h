@@ -17,7 +17,6 @@
 #ifndef _SF_SCHEME_H
 #define _SF_SCHEME_H
 
-#include "SFConfig.h"
 #include "SFFont.h"
 #include "SFPattern.h"
 #include "SFTypes.h"
@@ -32,8 +31,8 @@ typedef SFScheme *SFSchemeRef;
 SFSchemeRef SFSchemeCreate(void);
 
 void SFSchemeSetFont(SFSchemeRef scheme, SFFontRef font);
-void SFSchemeSetScript(SFSchemeRef scheme, SFTag scriptTag);
-void SFSchemeSetLanguage(SFSchemeRef scheme, SFTag languageTag);
+void SFSchemeSetScriptTag(SFSchemeRef scheme, SFTag scriptTag);
+void SFSchemeSetLanguageTag(SFSchemeRef scheme, SFTag languageTag);
 
 SFPatternRef SFSchemeBuildPattern(SFSchemeRef scheme);
 

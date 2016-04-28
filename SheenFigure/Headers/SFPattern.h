@@ -17,8 +17,6 @@
 #ifndef _SF_PATTERN_H
 #define _SF_PATTERN_H
 
-#include "SFConfig.h"
-
 struct _SFPattern;
 typedef struct _SFPattern SFPattern;
 typedef SFPattern *SFPatternRef;

@@ -195,12 +195,12 @@ void SFSchemeSetFont(SFSchemeRef scheme, SFFontRef font)
     scheme->_font = font;
 }
 
-void SFSchemeSetScript(SFSchemeRef scheme, SFTag scriptTag)
+void SFSchemeSetScriptTag(SFSchemeRef scheme, SFTag scriptTag)
 {
     scheme->_scriptTag = scriptTag;
 }
 
-void SFSchemeSetLanguage(SFSchemeRef scheme, SFTag languageTag)
+void SFSchemeSetLanguageTag(SFSchemeRef scheme, SFTag languageTag)
 {
     scheme->_languageTag = languageTag;
 }

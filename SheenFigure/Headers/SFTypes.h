@@ -119,7 +119,6 @@ typedef struct SFRange {
     SFUInteger start;  /**< The starting location of the range. */
     SFUInteger length; /**< The length of the range. */
 } SFRange;
-typedef SFRange *SFRangeRef;
 
 /**
  * A type to represent an ordered pair of integer x- and y-coordinates that defines a point in a
