@@ -58,14 +58,14 @@ SFUInteger SFAlbumGetGlyphCount(SFAlbumRef album);
 SFGlyphID *SFAlbumGetGlyphIDs(SFAlbumRef album);
 
 /**
- * Provides an array of glyph positions in font units where each glyph is positioned with respect to
+ * Provides an array of glyph offsets in font units where each glyph is positioned with respect to
  * zero origin.
  * @param album
  *      The album whose glyph positions you want to obtain.
  * @return
  *      An array of glyph positions produced as part of shaping process.
  */
-SFPoint *SFAlbumGetGlyphPositions(SFAlbumRef album);
+SFPoint *SFAlbumGetGlyphOffsets(SFAlbumRef album);
 
 /**
  * Provides an array of glyph advances in font units.

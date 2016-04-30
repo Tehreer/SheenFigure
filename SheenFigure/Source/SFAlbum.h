@@ -71,7 +71,7 @@ struct _SFAlbum {
     SF_LIST(SFUInteger) _indexes;       /**< List of indexes of associate glyphs. */
     SF_LIST(SFGlyphID) _glyphs;         /**< List of ids of all glyphs in the album. */
     SF_LIST(SFGlyphDetail) _details;    /**< List of details of all glyphs in the album. */
-    SF_LIST(SFPoint) _positions;        /**< List of positions of all glyphs in the album. */
+    SF_LIST(SFPoint) _offsets;          /**< List of offsets of all glyphs in the album. */
     SF_LIST(SFInteger) _advances;       /**< List of advances of all glyphs in the album. */
 
     SFUInteger _version;                /**< Current version of the album. */
