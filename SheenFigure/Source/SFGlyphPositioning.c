@@ -640,18 +640,6 @@ static SFBoolean _SFApplyMarkToBasePos(SFTextProcessorRef processor, SFData mark
     return SFFalse;
 }
 
-static SFInteger _SFGetAdvanceSum(SFTextProcessorRef processor, SFUInteger startIndex, SFUInteger endIndex)
-{
-    SFAlbumRef album = processor->_album;
-    SFInteger advanceSum = 0;
-
-    for (; startIndex <= endIndex; startIndex++) {
-        advanceSum += SFAlbumGetAdvance(album, startIndex);
-    }
-
-    return advanceSum;
-}
-
 static SFBoolean _SFApplyMarkToBaseArrays(SFTextProcessorRef processor, SFData markBasePos, SFUInteger markIndex, SFUInteger baseIndex, SFUInteger attachmentIndex)
 {
     SFAlbumRef album = processor->_album;
