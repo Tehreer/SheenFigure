@@ -19,8 +19,11 @@
 
 #include "SFTypes.h"
 
-#include <ft2build.h>
-#include FT_FREETYPE_H
+enum {
+    SFFontLayoutHorizontal = 0,
+    SFFontLayoutVertical = 1
+};
+typedef SFUInt32 SFFontLayout;
 
 struct _SFFont;
 typedef struct _SFFont SFFont;
@@ -29,16 +32,19 @@ typedef struct _SFFont SFFont;
  */
 typedef SFFont *SFFontRef;
 
-SFFontRef SFFontCreateWithFTFace(FT_Face FTFace);
+typedef void (*SFFontProtocolFinalizeFunc)(void *object);
+typedef void (*SFFontProtocolLoadTableFunc)(void *object, SFTag tableTag, SFUInt8 *buffer, SFUInteger *length);
+typedef SFGlyphID (*SFFontProtocolGetGlyphIDForCodepointFunc)(void *object, SFCodepoint codepoint);
+typedef SFInteger (*SFFontProtocolGetAdvanceForGlyphFunc)(void *object, SFFontLayout fontLayout, SFGlyphID glyphID);
 
-SFInteger SFFontGetUnitsPerEm(SFFontRef font);
-SFInteger SFFontGetAscender(SFFontRef font);
-SFInteger SFFontGetDescender(SFFontRef font);
-SFInteger SFFontGetLeading(SFFontRef font);
+typedef struct _SFFontProtocol {
+    SFFontProtocolFinalizeFunc finalize;
+    SFFontProtocolLoadTableFunc loadTable;
+    SFFontProtocolGetGlyphIDForCodepointFunc getGlyphIDForCodepoint;
+    SFFontProtocolGetAdvanceForGlyphFunc getAdvanceForGlyph;
+} SFFontProtocol;
 
-SFGlyphID SFFontGetGlyphIDForCodepoint(SFFontRef font, SFCodepoint codePoint);
-SFInteger SFFontGetGlyphAdvance(SFFontRef font, SFGlyphID glyph);
-
+SFFontRef SFFontCreateWithProtocol(const SFFontProtocol *protocol, void *object);
 SFFontRef SFFontRetain(SFFontRef font);
 void SFFontRelease(SFFontRef font);
 

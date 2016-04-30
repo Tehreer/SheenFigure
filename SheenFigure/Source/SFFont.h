@@ -21,21 +21,23 @@
 #include <SFFont.h>
 #include <SFTypes.h>
 
-#include <ft2build.h>
-#include FT_FREETYPE_H
+#include "SFData.h"
 
-#include "SFFontCache.h"
+typedef struct _SFFontTables {
+    SFData gdef;
+    SFData gsub;
+    SFData gpos;
+} SFFontTables;
 
 struct _SFFont {
-    SFFontCache cache;
-    FT_Face _FTFace;
-
-    SFInteger unitsPerEm;
-    SFInteger ascender;
-    SFInteger descender;
-    SFInteger leading;
-
-    SFInteger _retainCount;
+    SFFontTables tables;
+    SFFontProtocol _protocol;
+    void *_object;
+    SFUInteger _retainCount;
 };
+
+SF_INTERNAL void SFFontLoadTable(SFFontRef font, SFTag tableTag, SFUInt8 *buffer, SFUInteger *length);
+SF_INTERNAL SFGlyphID SFFontGetGlyphIDForCodepoint(SFFontRef font, SFCodepoint codepoint);
+SF_INTERNAL SFInteger SFFontGetAdvanceForGlyph(SFFontRef font, SFFontLayout fontLayout, SFGlyphID glyphID);
 
 #endif

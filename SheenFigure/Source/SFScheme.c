@@ -213,8 +213,8 @@ SFPatternRef SFSchemeBuildPattern(SFSchemeRef scheme)
 
     /* Check whether Sheen Figure has knowledge about this script. */
     if (state.knowledge) {
-        SFData gsub = scheme->_font->cache.gsub;
-        SFData gpos = scheme->_font->cache.gpos;
+        SFData gsub = scheme->_font->tables.gsub;
+        SFData gpos = scheme->_font->tables.gpos;
 
         if (gsub || gpos) {
             SFPatternRef pattern = SFPatternCreate();

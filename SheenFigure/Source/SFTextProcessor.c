@@ -22,6 +22,7 @@
 #include "SFAssert.h"
 #include "SFCommon.h"
 #include "SFData.h"
+#include "SFFont.h"
 #include "SFGDEF.h"
 #include "SFPattern.h"
 
@@ -45,7 +46,7 @@ SF_INTERNAL void SFTextProcessorInitialize(SFTextProcessorRef textProcessor, SFP
     /* Album must NOT be null. */
     SFAssert(album != NULL);
 
-    gdef = pattern->font->cache.gdef;
+    gdef = pattern->font->tables.gdef;
 
     textProcessor->_pattern = pattern;
     textProcessor->_album = album;
@@ -88,7 +89,7 @@ SF_INTERNAL void SFTextProcessorPositionGlyphs(SFTextProcessorRef textProcessor)
     /* Set positions and advances of all glyphs. */
     for (index = 0; index < glyphCount; index++) {
         SFGlyphID glyphID = SFAlbumGetGlyph(album, index);
-        SFInteger advance = SFFontGetGlyphAdvance(font, glyphID);
+        SFInteger advance = SFFontGetAdvanceForGlyph(font, SFFontLayoutHorizontal, glyphID);
 
         SFAlbumSetX(album, index, 0);
         SFAlbumSetY(album, index, 0);
@@ -153,14 +154,14 @@ SF_PRIVATE void _SFApplyLookup(SFTextProcessorRef processor, SFUInt16 lookupInde
 
     switch (processor->_featureKind) {
     case SFFeatureKindSubstitution:
-        lookup = _SFGetLookupFromHeader(font->cache.gsub, lookupIndex);
+        lookup = _SFGetLookupFromHeader(font->tables.gsub, lookupIndex);
         while (SFLocatorMoveNext(locator)) {
             _SFApplySubstitutionLookup(processor, lookup);
         }
         break;
 
     case SFFeatureKindPositioning:
-        lookup = _SFGetLookupFromHeader(font->cache.gpos, lookupIndex);
+        lookup = _SFGetLookupFromHeader(font->tables.gpos, lookupIndex);
         while (SFLocatorMoveNext(locator)) {
             _SFApplyPositioningLookup(processor, lookup);
         }

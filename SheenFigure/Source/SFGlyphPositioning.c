@@ -17,6 +17,9 @@
 #include <SFConfig.h>
 #include <SFTypes.h>
 
+#include <stddef.h>
+#include <stdlib.h>
+
 #include "SFAssert.h"
 #include "SFCommon.h"
 #include "SFData.h"

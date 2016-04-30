@@ -17,31 +17,39 @@
 #include <SFConfig.h>
 #include <SFTypes.h>
 
-#include <ft2build.h>
-#include FT_ADVANCES_H
-#include FT_FREETYPE_H
-#include FT_TYPES_H
-
 #include <stddef.h>
 #include <stdlib.h>
 
 #include "SFData.h"
 #include "SFFont.h"
 
-SFFontRef SFFontCreateWithFTFace(FT_Face FTFace)
+static SFUInt8 *_SFFontCopyTable(SFFontRef font, SFTag tag) {
+    SFUInt8 *data = NULL;
+    SFUInteger length = 0;
+
+    SFFontLoadTable(font, tag, NULL, &length);
+
+    if (length) {
+        data = malloc(length);
+        SFFontLoadTable(font, tag, data, NULL);
+    }
+
+    return data;
+}
+
+SFFontRef SFFontCreateWithProtocol(const SFFontProtocol *protocol, void *object)
 {
-    if (FTFace) {
+    /* Verify that required functions exist in protocol. */
+    if (protocol->loadTable && protocol->getGlyphIDForCodepoint) {
         SFFontRef font = malloc(sizeof(SFFont));
-
-        FT_Reference_Face(FTFace);
-        SFFontCacheInitialize(&font->cache, FTFace);
-
-        font->_FTFace = FTFace;
-        font->unitsPerEm = FTFace->units_per_EM;
-        font->ascender = FTFace->ascender;
-        font->descender = FTFace->descender;
-        font->leading = font->ascender - font->descender;
+        font->_protocol = *protocol;
+        font->_object = object;
         font->_retainCount = 1;
+
+        /* Load open type tables. */
+        font->tables.gdef = _SFFontCopyTable(font, SFTagMake('G', 'D', 'E', 'F'));
+        font->tables.gsub = _SFFontCopyTable(font, SFTagMake('G', 'S', 'U', 'B'));
+        font->tables.gpos = _SFFontCopyTable(font, SFTagMake('G', 'P', 'O', 'S'));
 
         return font;
     }
@@ -49,50 +57,19 @@ SFFontRef SFFontCreateWithFTFace(FT_Face FTFace)
     return NULL;
 }
 
-SFInteger SFFontGetUnitsPerEm(SFFontRef font)
+SF_INTERNAL void SFFontLoadTable(SFFontRef font, SFTag tableTag, SFUInt8 *buffer, SFUInteger *length)
 {
-    return font->unitsPerEm;
+    font->_protocol.loadTable(font->_object, tableTag, buffer, length);
 }
 
-SFInteger SFFontGetAscender(SFFontRef font)
+SF_INTERNAL SFGlyphID SFFontGetGlyphIDForCodepoint(SFFontRef font, SFCodepoint codepoint)
 {
-    return font->ascender;
+    return font->_protocol.getGlyphIDForCodepoint(font->_object, codepoint);
 }
 
-SFInteger SFFontGetDescender(SFFontRef font)
+SF_INTERNAL SFInteger SFFontGetAdvanceForGlyph(SFFontRef font, SFFontLayout fontLayout, SFGlyphID glyphID)
 {
-    return font->descender;
-}
-
-SFInteger SFFontGetLeading(SFFontRef font)
-{
-    return font->leading;
-}
-
-SFGlyphID SFFontGetGlyphIDForCodepoint(SFFontRef font, SFCodepoint codePoint) {
-    /*
-     * OpenType recommendation for 'cmap' table:
-     *      "The number of glyphs that may be included in one font is limited to 64k."
-     * Reference:
-     *      https://www.microsoft.com/typography/otspec/recom.htm
-     * Conclusion:
-     *      It is safe to assume that a font will not contain more than 64k glyphs. So, if the glyph
-     *      ID returned by FreeType is greater than 64k, it is considered invalid.
-     */
-    FT_UInt glyphIndex =  FT_Get_Char_Index(font->_FTFace, codePoint);
-    if (glyphIndex <= 64000) {
-        return (SFGlyphID)glyphIndex;
-    }
-
-    return 0;
-}
-
-SFInteger SFFontGetGlyphAdvance(SFFontRef font, SFGlyphID glyph)
-{
-    FT_Fixed advance;
-    FT_Get_Advance(font->_FTFace, glyph, FT_LOAD_NO_SCALE, &advance);
-
-    return advance;
+    return font->_protocol.getAdvanceForGlyph(font->_object, fontLayout, glyphID);
 }
 
 SFFontRef SFFontRetain(SFFontRef font)
@@ -107,8 +84,12 @@ SFFontRef SFFontRetain(SFFontRef font)
 void SFFontRelease(SFFontRef font)
 {
     if (font && --font->_retainCount == 0) {
-        FT_Done_Face(font->_FTFace);
-        SFFontCacheFinalize(&font->cache);
+        if (font->_protocol.finalize) {
+            font->_protocol.finalize(font->_object);
+        }
+        free((void *)font->tables.gdef);
+        free((void *)font->tables.gsub);
+        free((void *)font->tables.gpos);
         free(font);
     }
 }

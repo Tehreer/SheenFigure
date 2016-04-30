@@ -70,7 +70,7 @@ SF_INTERNAL void _SFDiscoverGlyphs(SFTextProcessorRef processor)
             SFAlbumAddGlyph(album, glyph, index);
         }
         break;
-            
+
     case SFTextModeBackward:
         for (index = length; index--;) {
             SFCodepoint codePoint = album->codePointArray[index];
@@ -78,7 +78,7 @@ SF_INTERNAL void _SFDiscoverGlyphs(SFTextProcessorRef processor)
             SFAlbumAddGlyph(album, glyph, index);
         }
         break;
-        
+
     default:
         /* Unknown text mode. */
         SFAssert(SFFalse);
