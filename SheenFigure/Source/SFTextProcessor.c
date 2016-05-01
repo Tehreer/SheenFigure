@@ -37,7 +37,7 @@ static SFData _SFGetLookupFromHeader(SFData header, SFUInt16 lookupIndex);
 static void _SFApplyFeatureRange(SFTextProcessorRef processor, SFUInteger index, SFUInteger count, SFFeatureKind featureKind);
 static void _SFApplyFeatureUnit(SFTextProcessorRef processor, SFFeatureUnitRef featureUnit);
 
-SF_INTERNAL void SFTextProcessorInitialize(SFTextProcessorRef textProcessor, SFPatternRef pattern, SFAlbumRef album, SFTextFlow textFlow, SFTextMode textMode)
+SF_INTERNAL void SFTextProcessorInitialize(SFTextProcessorRef textProcessor, SFPatternRef pattern, SFAlbumRef album, SFTextDirection textDirection, SFTextMode textMode)
 {
     SFData gdef;
 
@@ -46,14 +46,18 @@ SF_INTERNAL void SFTextProcessorInitialize(SFTextProcessorRef textProcessor, SFP
     /* Album must NOT be null. */
     SFAssert(album != NULL);
 
-    gdef = pattern->font->tables.gdef;
+    /* Resolve the default direction. */
+    if (textDirection == SFTextDirectionDefault) {
+        textDirection = pattern->defaultDirection;
+    }
 
     textProcessor->_pattern = pattern;
     textProcessor->_album = album;
     textProcessor->_glyphClassDef = NULL;
-    textProcessor->_textFlow = textFlow;
+    textProcessor->_textDirection = textDirection;
     textProcessor->_textMode = textMode;
 
+    gdef = pattern->font->tables.gdef;
     if (gdef) {
         SFOffset offset = SFGDEF_GlyphClassDefOffset(gdef);
         textProcessor->_glyphClassDef = SFData_Subdata(gdef, offset);

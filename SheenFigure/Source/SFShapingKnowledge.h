@@ -29,9 +29,9 @@ typedef struct _SFFeatureInfo {
 
 typedef struct _SFScriptKnowledge {
     /**
-     * Natural text flow of the script.
+     * Default direction of the script.
      */
-    SFTextFlow textFlow;
+    SFTextDirection defaultDirection;
     /**
      * Information of all features supported by the script in implementation order.
      */

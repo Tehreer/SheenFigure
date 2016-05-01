@@ -69,10 +69,10 @@ SF_INTERNAL void SFPatternBuilderSetFont(SFPatternBuilderRef builder, SFFontRef 
     builder->_font = font;
 }
 
-SF_INTERNAL void SFPatternBuilderSetScript(SFPatternBuilderRef builder, SFTag scriptTag, SFTextFlow defaultTextFlow)
+SF_INTERNAL void SFPatternBuilderSetScript(SFPatternBuilderRef builder, SFTag scriptTag, SFTextDirection defaultDirection)
 {
     builder->_scriptTag = scriptTag;
-    builder->_textFlow = defaultTextFlow;
+    builder->_defaultDirection = defaultDirection;
 }
 
 SF_INTERNAL void SFPatternBuilderSetLanguage(SFPatternBuilderRef builder, SFTag languageTag)
@@ -190,7 +190,7 @@ SF_INTERNAL void SFPatternBuilderBuild(SFPatternBuilderRef builder)
     pattern->featureUnits.gsub = builder->_gsubUnitCount;
     pattern->featureUnits.gpos = builder->_gposUnitCount;
     pattern->scriptTag = builder->_scriptTag;
-    pattern->textFlow = builder->_textFlow;
+    pattern->defaultDirection = builder->_defaultDirection;
     pattern->languageTag = builder->_languageTag;
 
     SFListFinalizeKeepingArray(&builder->_featureTags, &pattern->featureTags.items, &pattern->featureTags.count);

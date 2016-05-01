@@ -370,9 +370,9 @@ static void _SFApplyValueRecord(SFTextProcessorRef processor, SFData valueRecord
         SFAlbumSetY(album, inputIndex, glyphY + value);
     }
 
-    switch (processor->_textFlow) {
-    case SFTextFlowLeftToRight:
-    case SFTextFlowRightToLeft:
+    switch (processor->_textDirection) {
+    case SFTextDirectionLeftToRight:
+    case SFTextDirectionRightToLeft:
         if (SFValueFormat_XAdvance(valueFormat)) {
             SFInteger advance = SFAlbumGetAdvance(album, inputIndex);
 
@@ -489,8 +489,8 @@ static SFBoolean _SFApplyCursivePosF1(SFTextProcessorRef processor, SFData cursi
 
                 traits = SFGlyphTraitCursive;
 
-                switch (processor->_textFlow) {
-                case SFTextFlowLeftToRight:
+                switch (processor->_textDirection) {
+                case SFTextDirectionLeftToRight:
                     /*
                      * PROCESS:
                      *      - Set advance of first glyph in such a way that it ends at exit x.
@@ -521,7 +521,7 @@ static SFBoolean _SFApplyCursivePosF1(SFTextProcessorRef processor, SFData cursi
 
                     break;
 
-                case SFTextFlowRightToLeft:
+                case SFTextDirectionRightToLeft:
                     /*
                      * REMARKS:
                      *      - In case of RTL, the direction of a glyph is reversed. So, it starts
@@ -1029,9 +1029,9 @@ static void _SFResolveLeftCursiveSegment(SFTextProcessorRef processor, SFUIntege
         SFInteger inputY;
         SFInteger nextY;
 
-        switch (processor->_textFlow) {
-        case SFTextFlowLeftToRight:
-        case SFTextFlowRightToLeft:
+        switch (processor->_textDirection) {
+        case SFTextDirectionLeftToRight:
+        case SFTextDirectionRightToLeft:
             inputY = SFAlbumGetY(album, inputIndex);
             nextY = SFAlbumGetY(album, nextIndex);
 
@@ -1076,9 +1076,9 @@ static void _SFResolveRightCursiveSegment(SFTextProcessorRef processor, SFUInteg
 
         _SFResolveRightCursiveSegment(processor, nextIndex);
 
-        switch (processor->_textFlow) {
-        case SFTextFlowLeftToRight:
-        case SFTextFlowRightToLeft:
+        switch (processor->_textDirection) {
+        case SFTextDirectionLeftToRight:
+        case SFTextDirectionRightToLeft:
             inputY = SFAlbumGetY(album, inputIndex);
             nextY = SFAlbumGetY(album, nextIndex);
 
@@ -1136,14 +1136,14 @@ static void _SFResolveMarkPositions(SFTextProcessorRef processor, SFLocatorRef l
             markY += SFAlbumGetY(album, attachmentIndex);;
 
             /* Close the gap between the mark glyph and previous glyph. */
-            switch (processor->_textFlow) {
-            case SFTextFlowLeftToRight:
+            switch (processor->_textDirection) {
+            case SFTextDirectionLeftToRight:
                 for (index = attachmentIndex; index < inputIndex; index++) {
                     markX -= SFAlbumGetAdvance(album, index);
                 }
                 break;
 
-            case SFTextFlowRightToLeft:
+            case SFTextDirectionRightToLeft:
                 for (index = attachmentIndex + 1; index <= inputIndex; index++) {
                     markX += SFAlbumGetAdvance(album, index);
                 }

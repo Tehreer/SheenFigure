@@ -64,7 +64,7 @@ static SFFeatureInfo _SFArabicFeatureInfoArray[] = {
 #define _SFArabicFeatureInfoCount (sizeof(_SFArabicFeatureInfoArray) / sizeof(SFFeatureInfo))
 
 static SFScriptKnowledge _SFArabicScriptKnowledge = {
-    SFTextFlowRightToLeft,
+    SFTextDirectionRightToLeft,
     { _SFArabicFeatureInfoArray, _SFArabicFeatureInfoCount },
     { NULL, 0 }
 };
@@ -197,7 +197,7 @@ static void _SFArabicEngineProcessAlbum(const void *object, SFAlbumRef album)
     SFArtistRef artist = arabicEngine->_artist;
     SFTextProcessor processor;
 
-    SFTextProcessorInitialize(&processor, artist->pattern, album, artist->textFlow, artist->textMode);
+    SFTextProcessorInitialize(&processor, artist->pattern, album, artist->textDirection, artist->textMode);
     SFTextProcessorDiscoverGlyphs(&processor);
     _SFPutArabicFeatureMask(album);
     SFTextProcessorSubstituteGlyphs(&processor);

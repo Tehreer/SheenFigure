@@ -22,10 +22,11 @@
 #include "SFTypes.h"
 
 enum {
-    SFTextFlowLeftToRight = 0,
-    SFTextFlowRightToLeft = 1
+    SFTextDirectionDefault = 0,
+    SFTextDirectionLeftToRight = 1,
+    SFTextDirectionRightToLeft = 2
 };
-typedef SFUInt32 SFTextFlow;
+typedef SFUInt32 SFTextDirection;
 
 enum {
     SFTextModeForward = 0,
@@ -47,19 +48,19 @@ void SFArtistSetPattern(SFArtistRef artist, SFPatternRef pattern);
 void SFArtistSetCodepoints(SFArtistRef artist, SFCodepoint *codepoints, SFUInteger length);
 
 /**
- * Sets the flow direction of text for glyph positioning.
+ * Sets the direction of text for glyph positioning.
  *
- * The value of textFlow must reflect the script direction of input text so that individual glyphs
- * are placed at appropriate locations while rendering. It should not be confused with bidi run
- * direction as that may not reflect the script direction if overridden explicitly.
+ * The value of textDirection must reflect the script direction of input text so that individual
+ * glyphs are placed at appropriate locations while rendering. It should not be confused with bidi
+ * run direction as that may not reflect the script direction if overridden explicitly.
  *
  * @param artist
  *      The artist to modify.
- * @param textFlow
- *      A value of SFTextFlow.
+ * @param textDirection
+ *      A value of SFTextDirection.
  *
  */
-void SFArtistSetTextFlow(SFArtistRef artist, SFTextFlow textFlow);
+void SFArtistSetTextDirection(SFArtistRef artist, SFTextDirection textDirection);
 
 /**
  * Sets the mode for text processing.

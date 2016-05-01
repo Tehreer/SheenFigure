@@ -39,7 +39,7 @@ typedef struct _SFPatternBuilder {
     SFUInteger _gposUnitCount;      /**< Total number of GPOS feature units. */
     SFUInteger _featureIndex;       /**< Starting feature index of the feature unit being built. */
     SFTag _scriptTag;               /**< Tag of the script, whose pattern is being built. */
-    SFTextFlow _textFlow;           /**< Default text flow of the script whose pattern is being built.*/
+    SFTextDirection _defaultDirection; /**< Default direction of the script whose pattern is being built.*/
     SFTag _languageTag;             /**< Tag of the language, whose pattern is being built. */
     SFUInt16 _featureMask;          /**< Mask of the feature unit being built. */
     SFFeatureKind _featureKind;     /**< Kind of the features being added. */
@@ -57,7 +57,7 @@ SF_INTERNAL void SFPatternBuilderInitialize(SFPatternBuilderRef builder, SFPatte
 SF_INTERNAL void SFPatternBuilderFinalize(SFPatternBuilderRef builder);
 
 SF_INTERNAL void SFPatternBuilderSetFont(SFPatternBuilderRef builder, SFFontRef font);
-SF_INTERNAL void SFPatternBuilderSetScript(SFPatternBuilderRef builder, SFTag scriptTag, SFTextFlow defaultTextFlow);
+SF_INTERNAL void SFPatternBuilderSetScript(SFPatternBuilderRef builder, SFTag scriptTag, SFTextDirection defaultDirection);
 SF_INTERNAL void SFPatternBuilderSetLanguage(SFPatternBuilderRef builder, SFTag languageTag);
 
 /**

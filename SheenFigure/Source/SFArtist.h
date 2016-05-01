@@ -26,7 +26,7 @@
 struct _SFArtist {
     SFCodepoint *codepointArray;
     SFPatternRef pattern;
-    SFTextFlow textFlow;
+    SFTextDirection textDirection;
     SFTextMode textMode;
     SFUInteger codepointCount;
     SFUInteger _retainCount;

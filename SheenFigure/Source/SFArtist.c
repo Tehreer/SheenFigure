@@ -28,7 +28,7 @@ SFArtistRef SFArtistCreate(void)
     SFArtistRef artist = malloc(sizeof(SFArtist));
     artist->codepointArray = NULL;
     artist->pattern = NULL;
-    artist->textFlow = SFTextFlowLeftToRight;
+    artist->textDirection = SFTextDirectionLeftToRight;
     artist->textMode = SFTextModeForward;
     artist->codepointCount = 0;
     artist->_retainCount = 1;
@@ -47,20 +47,21 @@ void SFArtistSetPattern(SFArtistRef artist, SFPatternRef pattern)
     artist->pattern = SFPatternRetain(pattern);
 }
 
-void SFArtistSetTextFlow(SFArtistRef artist, SFTextFlow textFlow)
+void SFArtistSetTextDirection(SFArtistRef artist, SFTextDirection textDirection)
 {
-    switch (textFlow) {
-    case SFTextFlowLeftToRight:
-    case SFTextFlowRightToLeft:
+    switch (textDirection) {
+    case SFTextDirectionDefault:
+    case SFTextDirectionLeftToRight:
+    case SFTextDirectionRightToLeft:
         break;
 
     default:
         /* Fallback to default value. */
-        textFlow = SFTextFlowLeftToRight;
+        textDirection = SFTextDirectionDefault;
         break;
     }
 
-    artist->textFlow = textFlow;
+    artist->textDirection = textDirection;
 }
 
 void SFArtistSetTextMode(SFArtistRef artist, SFTextMode textMode)

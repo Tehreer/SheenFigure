@@ -31,13 +31,13 @@ typedef struct _SFTextProcessor {
     SFAlbumRef _album;
     SFLocator _locator;
     SFData _glyphClassDef;
-    SFTextFlow _textFlow;
+    SFTextDirection _textDirection;
     SFTextMode _textMode;
     /* State values. */
     SFFeatureKind _featureKind;
 } SFTextProcessor, *SFTextProcessorRef;
 
-SF_INTERNAL void SFTextProcessorInitialize(SFTextProcessorRef textProcessor, SFPatternRef pattern, SFAlbumRef album, SFTextFlow textFlow, SFTextMode textMode);
+SF_INTERNAL void SFTextProcessorInitialize(SFTextProcessorRef textProcessor, SFPatternRef pattern, SFAlbumRef album, SFTextDirection textDirection, SFTextMode textMode);
 
 SF_INTERNAL void SFTextProcessorDiscoverGlyphs(SFTextProcessorRef textProcessor);
 SF_INTERNAL void SFTextProcessorSubstituteGlyphs(SFTextProcessorRef textProcessor);

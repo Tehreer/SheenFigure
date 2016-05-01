@@ -49,7 +49,7 @@ static SFFeatureInfo _SFStandardFeatureInfoArray[] = {
 #define _SFStandardFeatureInfoCount (sizeof(_SFStandardFeatureInfoArray) / sizeof(SFFeatureInfo))
 
 static SFScriptKnowledge _SFStandardScriptKnowledge = {
-    SFTextFlowLeftToRight,
+    SFTextDirectionLeftToRight,
     { _SFStandardFeatureInfoArray, _SFStandardFeatureInfoCount },
     { NULL, 0 }
 };
@@ -90,7 +90,7 @@ static void _SFStandardEngineProcessAlbum(const void *object, SFAlbumRef album)
     SFArtistRef artist = standardEngine->_artist;
     SFTextProcessor processor;
 
-    SFTextProcessorInitialize(&processor, artist->pattern, album, artist->textFlow, artist->textMode);
+    SFTextProcessorInitialize(&processor, artist->pattern, album, artist->textDirection, artist->textMode);
     SFTextProcessorDiscoverGlyphs(&processor);
     SFTextProcessorSubstituteGlyphs(&processor);
     SFTextProcessorPositionGlyphs(&processor);
