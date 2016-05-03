@@ -46,11 +46,6 @@ SF_INTERNAL void SFTextProcessorInitialize(SFTextProcessorRef textProcessor, SFP
     /* Album must NOT be null. */
     SFAssert(album != NULL);
 
-    /* Resolve the default direction. */
-    if (textDirection == SFTextDirectionDefault) {
-        textDirection = pattern->defaultDirection;
-    }
-
     textProcessor->_pattern = pattern;
     textProcessor->_album = album;
     textProcessor->_glyphClassDef = NULL;

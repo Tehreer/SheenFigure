@@ -36,6 +36,16 @@ SFArtistRef SFArtistCreate(void)
     return artist;
 }
 
+SFTextDirection SFArtistGetDefaultDirectionForScript(SFArtistRef artist, SFTag scriptTag)
+{
+    SFScriptKnowledgeRef knowledge = SFShapingKnowledgeSeekScript(&SFUnifiedKnowledgeInstance, scriptTag);
+    if (knowledge != NULL) {
+        return knowledge->defaultDirection;
+    }
+
+    return SFTextModeForward;
+}
+
 void SFArtistSetCodepoints(SFArtistRef artist, SFCodepoint *codepoints, SFUInteger length)
 {
     artist->codepointArray = codepoints;
@@ -50,14 +60,13 @@ void SFArtistSetPattern(SFArtistRef artist, SFPatternRef pattern)
 void SFArtistSetTextDirection(SFArtistRef artist, SFTextDirection textDirection)
 {
     switch (textDirection) {
-    case SFTextDirectionDefault:
     case SFTextDirectionLeftToRight:
     case SFTextDirectionRightToLeft:
         break;
 
     default:
         /* Fallback to default value. */
-        textDirection = SFTextDirectionDefault;
+        textDirection = SFTextDirectionLeftToRight;
         break;
     }
 

@@ -22,9 +22,8 @@
 #include "SFTypes.h"
 
 enum {
-    SFTextDirectionDefault = 0,
-    SFTextDirectionLeftToRight = 1,
-    SFTextDirectionRightToLeft = 2
+    SFTextDirectionLeftToRight = 0,
+    SFTextDirectionRightToLeft = 1
 };
 typedef SFUInt32 SFTextDirection;
 
@@ -42,6 +41,8 @@ typedef struct _SFArtist SFArtist;
 typedef SFArtist *SFArtistRef;
 
 SFArtistRef SFArtistCreate(void);
+
+SFTextDirection SFArtistGetDefaultDirectionForScript(SFArtistRef artist, SFTag scriptTag);
 
 void SFArtistSetPattern(SFArtistRef artist, SFPatternRef pattern);
 
