@@ -30,12 +30,15 @@ public:
     void testSetCapacity();
     void testReserveRange();
     void testRemoveRange();
-    void testSet();
+    void testSetVal();
     void testAdd();
     void testInsert();
     void testRemoveAt();
+    void testIndexOfItem();
+    void testContainsItem();
     void testClear();
     void testTrimExcess();
+    void testSort();
 
     void test();
 };

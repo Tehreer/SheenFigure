@@ -133,7 +133,7 @@ void ListTester::testRemoveRange()
     SFListFinalize(&list);
 }
 
-void ListTester::testSet()
+void ListTester::testSetVal()
 {
     SF_LIST(SFInteger) list;
     SFListInitialize(&list, sizeof(SFInteger));
@@ -227,6 +227,108 @@ void ListTester::testRemoveAt()
     SFListFinalize(&list);
 }
 
+void ListTester::testIndexOfItem()
+{
+    SF_LIST(SFInteger) list;
+    SFInteger item;
+    SFUInteger index;
+
+    SFListInitialize(&list, sizeof(SFInteger));
+
+    SFListAdd(&list, -500);
+    SFListAdd(&list, -400);
+    SFListAdd(&list, -300);
+    SFListAdd(&list, -200);
+    SFListAdd(&list, -100);
+    SFListAdd(&list, 0);
+    SFListAdd(&list, 100);
+    SFListAdd(&list, 200);
+    SFListAdd(&list, 300);
+    SFListAdd(&list, 400);
+    SFListAdd(&list, 500);
+
+    item = -700;
+    index = SFListIndexOfItem(&list, &item, 0, list.count);
+    SFAssert(index == SFInvalidIndex);
+
+    item = -500;
+    index = SFListIndexOfItem(&list, &item, 0, list.count);
+    SFAssert(index == 0);
+
+    item = -300;
+    index = SFListIndexOfItem(&list, &item, 0, 2);
+    SFAssert(index == SFInvalidIndex);
+
+    item = 0;
+    index = SFListIndexOfItem(&list, &item, 5, 1);
+    SFAssert(index == 5);
+
+    item = 300;
+    index = SFListIndexOfItem(&list, &item, 9, 2);
+    SFAssert(index == SFInvalidIndex);
+
+    item = 500;
+    index = SFListIndexOfItem(&list, &item, 0, list.count);
+    SFAssert(index == 10);
+
+    item = 700;
+    index = SFListIndexOfItem(&list, &item, 0, list.count);
+    SFAssert(index == SFInvalidIndex);
+
+    SFListFinalize(&list);
+}
+
+void ListTester::testContainsItem()
+{
+    SF_LIST(SFInteger) list;
+    SFInteger item;
+    SFBoolean exists;
+
+    SFListInitialize(&list, sizeof(SFInteger));
+
+    SFListAdd(&list, -500);
+    SFListAdd(&list, -400);
+    SFListAdd(&list, -300);
+    SFListAdd(&list, -200);
+    SFListAdd(&list, -100);
+    SFListAdd(&list, 0);
+    SFListAdd(&list, 100);
+    SFListAdd(&list, 200);
+    SFListAdd(&list, 300);
+    SFListAdd(&list, 400);
+    SFListAdd(&list, 500);
+
+    item = -700;
+    exists = SFListContainsItem(&list, &item);
+    SFAssert(exists == SFFalse);
+
+    item = -500;
+    exists = SFListContainsItem(&list, &item);
+    SFAssert(exists == SFTrue);
+
+    item = -300;
+    exists = SFListContainsItem(&list, &item);
+    SFAssert(exists == SFTrue);
+
+    item = 0;
+    exists = SFListContainsItem(&list, &item);
+    SFAssert(exists == SFTrue);
+
+    item = 300;
+    exists = SFListContainsItem(&list, &item);
+    SFAssert(exists == SFTrue);
+
+    item = 500;
+    exists = SFListContainsItem(&list, &item);
+    SFAssert(exists == SFTrue);
+
+    item = 700;
+    exists = SFListContainsItem(&list, &item);
+    SFAssert(exists == SFFalse);
+
+    SFListFinalize(&list);
+}
+
 void ListTester::testClear()
 {
     SF_LIST(SFInteger) list;
@@ -264,16 +366,59 @@ void ListTester::testTrimExcess()
     SFListFinalize(&list);
 }
 
+static int SFIntegerComparison(const void *item1, const void *item2)
+{
+    SFInteger *ref1 = (SFInteger *)item1;
+    SFInteger *ref2 = (SFInteger *)item2;
+
+    return (int)(*ref1 - *ref2);
+}
+
+void ListTester::testSort()
+{
+    SF_LIST(SFInteger) list;
+    SFListInitialize(&list, sizeof(SFInteger));
+
+    SFListAdd(&list, 300);
+    SFListAdd(&list, -100);
+    SFListAdd(&list, -500);
+    SFListAdd(&list, 400);
+    SFListAdd(&list, -300);
+    SFListAdd(&list, 0);
+    SFListAdd(&list, 500);
+    SFListAdd(&list, 200);
+    SFListAdd(&list, -200);
+    SFListAdd(&list, 100);
+    SFListAdd(&list, -400);
+
+    SFListSort(&list, 0, list.count, SFIntegerComparison);
+
+    SFAssert(list.items[0] == -500);
+    SFAssert(list.items[1] == -400);
+    SFAssert(list.items[2] == -300);
+    SFAssert(list.items[3] == -200);
+    SFAssert(list.items[4] == -100);
+    SFAssert(list.items[5] == 0);
+    SFAssert(list.items[6] == 100);
+    SFAssert(list.items[7] == 200);
+    SFAssert(list.items[8] == 300);
+    SFAssert(list.items[9] == 400);
+    SFAssert(list.items[10] == 500);
+}
+
 void ListTester::test()
 {
     testInitialize();
     testSetCapacity();
     testReserveRange();
     testRemoveRange();
-    testSet();
+    testSetVal();
     testAdd();
     testInsert();
     testRemoveAt();
+    testIndexOfItem();
+    testContainsItem();
     testClear();
     testTrimExcess();
+    testSort();
 }
