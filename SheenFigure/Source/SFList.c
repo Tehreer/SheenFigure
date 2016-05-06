@@ -135,11 +135,12 @@ SF_PRIVATE void _SFListTrimExcess(_SFListRef list)
 
 SF_PRIVATE SFUInteger _SFListIndexOfItem(_SFListRef list, const void *itemPtr, SFUInteger index, SFUInteger count)
 {
-    /* The range must be valid and there should be no integer overflow. */
-    SFAssert((list->count > 0 ? (index + count) <= list->count : (index + count) == 0)
-             && index <= (index + count));
+    SFUInteger max = index + count;
 
-    for (; index < count; index++) {
+    /* The range must be valid and there should be no integer overflow. */
+    SFAssert((list->count > 0 ? max <= list->count : max == 0) && index <= max);
+
+    for (; index < max; index++) {
         void *currentPtr = _SFListGetItemPtr(list, index);
         if (memcmp(currentPtr, itemPtr, list->_itemSize) == 0) {
             return index;
