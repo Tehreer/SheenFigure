@@ -26,11 +26,10 @@
 
 static const SFGlyphMask _SFGlyphMaskEmpty = { { SFUInt16Max, 0 } };
 
-static void SFAlbumSetGlyphMask(SFAlbumRef album, SFUInteger index, SFGlyphMask glyphMask);
-
-static void SFAlbumRemoveGlyphs(SFAlbumRef album, SFUInteger index, SFUInteger count);
-static void SFAlbumRemovePlaceholders(SFAlbumRef album);
-static void SFAlbumBuildCharToGlyphMap(SFAlbumRef album);
+static void _SFAlbumSetGlyphMask(SFAlbumRef album, SFUInteger index, SFGlyphMask glyphMask);
+static void _SFAlbumRemoveGlyphs(SFAlbumRef album, SFUInteger index, SFUInteger count);
+static void _SFAlbumRemovePlaceholders(SFAlbumRef album);
+static void _SFAlbumBuildCharToGlyphMap(SFAlbumRef album);
 
 SF_PRIVATE SFUInt16 _SFAlbumGetAntiFeatureMask(SFUInt16 featureMask)
 {
@@ -150,7 +149,7 @@ SF_INTERNAL void SFAlbumAddGlyph(SFAlbumRef album, SFGlyphID glyph, SFUInteger a
 
     /* Initialize glyph along with its details. */
     SFAlbumSetGlyph(album, index, glyph);
-    SFAlbumSetGlyphMask(album, index, _SFGlyphMaskEmpty);
+    _SFAlbumSetGlyphMask(album, index, _SFGlyphMaskEmpty);
     SFAlbumSetSingleAssociation(album, index, association);
 }
 
@@ -236,7 +235,7 @@ SF_PRIVATE SFGlyphMask _SFAlbumGetGlyphMask(SFAlbumRef album, SFUInteger index)
     return SFListGetRef(&album->_details, index)->mask;
 }
 
-static void SFAlbumSetGlyphMask(SFAlbumRef album, SFUInteger index, SFGlyphMask glyphMask)
+static void _SFAlbumSetGlyphMask(SFAlbumRef album, SFUInteger index, SFGlyphMask glyphMask)
 {
     /* The album must be in filling state. */
     SFAssert(album->_state == _SFAlbumStateFilling);
@@ -378,7 +377,7 @@ SF_INTERNAL void SFAlbumEndArranging(SFAlbumRef album)
     album->_state = _SFAlbumStateArranged;
 }
 
-static void SFAlbumRemoveGlyphs(SFAlbumRef album, SFUInteger index, SFUInteger count)
+static void _SFAlbumRemoveGlyphs(SFAlbumRef album, SFUInteger index, SFUInteger count)
 {
     SFListRemoveRange(&album->_glyphs, index, count);
     SFListRemoveRange(&album->_details, index, count);
@@ -386,7 +385,7 @@ static void SFAlbumRemoveGlyphs(SFAlbumRef album, SFUInteger index, SFUInteger c
     SFListRemoveRange(&album->_advances, index, count);
 }
 
-static void SFAlbumRemovePlaceholders(SFAlbumRef album)
+static void _SFAlbumRemovePlaceholders(SFAlbumRef album)
 {
     SFUInteger placeholderCount = 0;
     SFUInteger index = album->glyphCount;
@@ -397,7 +396,7 @@ static void SFAlbumRemovePlaceholders(SFAlbumRef album)
             placeholderCount++;
         } else {
             if (placeholderCount) {
-                SFAlbumRemoveGlyphs(album, index + 1, placeholderCount);
+                _SFAlbumRemoveGlyphs(album, index + 1, placeholderCount);
                 album->glyphCount -= placeholderCount;
                 placeholderCount = 0;
             }
@@ -405,12 +404,12 @@ static void SFAlbumRemovePlaceholders(SFAlbumRef album)
     }
 
     if (placeholderCount) {
-        SFAlbumRemoveGlyphs(album, 0, placeholderCount);
+        _SFAlbumRemoveGlyphs(album, 0, placeholderCount);
         album->glyphCount -= placeholderCount;
     }
 }
 
-static void SFAlbumBuildCharToGlyphMap(SFAlbumRef album)
+static void _SFAlbumBuildCharToGlyphMap(SFAlbumRef album)
 {
     SFUInteger index = album->glyphCount;
     SFUInteger *map;
@@ -450,8 +449,11 @@ static void SFAlbumBuildCharToGlyphMap(SFAlbumRef album)
 
 SF_INTERNAL void SFAlbumWrapUp(SFAlbumRef album)
 {
-    SFAlbumRemovePlaceholders(album);
-    SFAlbumBuildCharToGlyphMap(album);
+    /* The album must be in completed state before wrapping up. */
+    SFAssert(album->_state == _SFAlbumStateFilled || album->_state == _SFAlbumStateArranged);
+
+    _SFAlbumRemovePlaceholders(album);
+    _SFAlbumBuildCharToGlyphMap(album);
 }
 
 SF_INTERNAL void SFAlbumFinalize(SFAlbumRef album) {
