@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Muhammad Tayyab Akram
+ * Copyright (C) 2016 Muhammad Tayyab Akram
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,23 +21,21 @@ namespace SheenFigure {
 namespace Tester {
 
 class ListTester {
-private:
-
 public:
     ListTester();
 
     void testInitialize();
     void testSetCapacity();
     void testReserveRange();
-    void testRemoveRange();
     void testSetVal();
     void testAdd();
     void testInsert();
     void testRemoveAt();
-    void testIndexOfItem();
-    void testContainsItem();
+    void testRemoveRange();
     void testClear();
     void testTrimExcess();
+    void testContainsItem();
+    void testIndexOfItem();
     void testSort();
 
     void test();

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Muhammad Tayyab Akram
+ * Copyright (C) 2016 Muhammad Tayyab Akram
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -89,46 +89,6 @@ void ListTester::testReserveRange()
     SFAssert(list.items[15] == 400);
     SFAssert(list.items[19] == 200);
     SFAssert(list.items[24] == 500);
-
-    SFListFinalize(&list);
-}
-
-void ListTester::testRemoveRange()
-{
-    SF_LIST(SFInteger) list;
-    SFListInitialize(&list, sizeof(SFInteger));
-    SFListReserveRange(&list, 0, 25);
-
-    /* Test by removing items at the end of the list. */
-    SFListSetVal(&list, 0, 100);
-    SFListSetVal(&list, 19, 200);
-    SFListRemoveRange(&list, 20, 5);
-    SFAssert(list.count == 20);
-    SFAssert(list.items[0] == 100);
-    SFAssert(list.items[19] == 200);
-
-    /* Test by removing items at the center of the list. */
-    SFListSetVal(&list, 9, 300);
-    SFListSetVal(&list, 15, 400);
-    SFListRemoveRange(&list, 10, 5);
-    SFAssert(list.count == 15);
-    SFAssert(list.items[0] == 100);
-    SFAssert(list.items[9] == 300);
-    SFAssert(list.items[10] == 400);
-    SFAssert(list.items[14] == 200);
-
-    /* Test by removing items at the start of the list. */
-    SFListSetVal(&list, 5, 500);
-    SFListRemoveRange(&list, 0, 5);
-    SFAssert(list.count == 10);
-    SFAssert(list.items[0] == 500);
-    SFAssert(list.items[4] == 300);
-    SFAssert(list.items[5] == 400);
-    SFAssert(list.items[9] == 200);
-
-    /* Test by removing all items. */
-    SFListRemoveRange(&list, 0, 10);
-    SFAssert(list.count == 0);
 
     SFListFinalize(&list);
 }
@@ -227,104 +187,42 @@ void ListTester::testRemoveAt()
     SFListFinalize(&list);
 }
 
-void ListTester::testIndexOfItem()
+void ListTester::testRemoveRange()
 {
     SF_LIST(SFInteger) list;
-    SFInteger item;
-    SFUInteger index;
-
     SFListInitialize(&list, sizeof(SFInteger));
+    SFListReserveRange(&list, 0, 25);
 
-    SFListAdd(&list, -500);
-    SFListAdd(&list, -400);
-    SFListAdd(&list, -300);
-    SFListAdd(&list, -200);
-    SFListAdd(&list, -100);
-    SFListAdd(&list, 0);
-    SFListAdd(&list, 100);
-    SFListAdd(&list, 200);
-    SFListAdd(&list, 300);
-    SFListAdd(&list, 400);
-    SFListAdd(&list, 500);
+    /* Test by removing items at the end of the list. */
+    SFListSetVal(&list, 0, 100);
+    SFListSetVal(&list, 19, 200);
+    SFListRemoveRange(&list, 20, 5);
+    SFAssert(list.count == 20);
+    SFAssert(list.items[0] == 100);
+    SFAssert(list.items[19] == 200);
 
-    item = -700;
-    index = SFListIndexOfItem(&list, &item, 0, list.count);
-    SFAssert(index == SFInvalidIndex);
+    /* Test by removing items at the center of the list. */
+    SFListSetVal(&list, 9, 300);
+    SFListSetVal(&list, 15, 400);
+    SFListRemoveRange(&list, 10, 5);
+    SFAssert(list.count == 15);
+    SFAssert(list.items[0] == 100);
+    SFAssert(list.items[9] == 300);
+    SFAssert(list.items[10] == 400);
+    SFAssert(list.items[14] == 200);
 
-    item = -500;
-    index = SFListIndexOfItem(&list, &item, 0, list.count);
-    SFAssert(index == 0);
+    /* Test by removing items at the start of the list. */
+    SFListSetVal(&list, 5, 500);
+    SFListRemoveRange(&list, 0, 5);
+    SFAssert(list.count == 10);
+    SFAssert(list.items[0] == 500);
+    SFAssert(list.items[4] == 300);
+    SFAssert(list.items[5] == 400);
+    SFAssert(list.items[9] == 200);
 
-    item = -300;
-    index = SFListIndexOfItem(&list, &item, 0, 2);
-    SFAssert(index == SFInvalidIndex);
-
-    item = 0;
-    index = SFListIndexOfItem(&list, &item, 5, 1);
-    SFAssert(index == 5);
-
-    item = 300;
-    index = SFListIndexOfItem(&list, &item, 9, 2);
-    SFAssert(index == SFInvalidIndex);
-
-    item = 500;
-    index = SFListIndexOfItem(&list, &item, 0, list.count);
-    SFAssert(index == 10);
-
-    item = 700;
-    index = SFListIndexOfItem(&list, &item, 0, list.count);
-    SFAssert(index == SFInvalidIndex);
-
-    SFListFinalize(&list);
-}
-
-void ListTester::testContainsItem()
-{
-    SF_LIST(SFInteger) list;
-    SFInteger item;
-    SFBoolean exists;
-
-    SFListInitialize(&list, sizeof(SFInteger));
-
-    SFListAdd(&list, -500);
-    SFListAdd(&list, -400);
-    SFListAdd(&list, -300);
-    SFListAdd(&list, -200);
-    SFListAdd(&list, -100);
-    SFListAdd(&list, 0);
-    SFListAdd(&list, 100);
-    SFListAdd(&list, 200);
-    SFListAdd(&list, 300);
-    SFListAdd(&list, 400);
-    SFListAdd(&list, 500);
-
-    item = -700;
-    exists = SFListContainsItem(&list, &item);
-    SFAssert(exists == SFFalse);
-
-    item = -500;
-    exists = SFListContainsItem(&list, &item);
-    SFAssert(exists == SFTrue);
-
-    item = -300;
-    exists = SFListContainsItem(&list, &item);
-    SFAssert(exists == SFTrue);
-
-    item = 0;
-    exists = SFListContainsItem(&list, &item);
-    SFAssert(exists == SFTrue);
-
-    item = 300;
-    exists = SFListContainsItem(&list, &item);
-    SFAssert(exists == SFTrue);
-
-    item = 500;
-    exists = SFListContainsItem(&list, &item);
-    SFAssert(exists == SFTrue);
-
-    item = 700;
-    exists = SFListContainsItem(&list, &item);
-    SFAssert(exists == SFFalse);
+    /* Test by removing all items. */
+    SFListRemoveRange(&list, 0, 10);
+    SFAssert(list.count == 0);
 
     SFListFinalize(&list);
 }
@@ -362,6 +260,110 @@ void ListTester::testTrimExcess()
 
     SFListTrimExcess(&list);
     SFAssert(list.capacity == 5);
+
+    SFListFinalize(&list);
+}
+
+void ListTester::testContainsItem()
+{
+    SF_LIST(SFInteger) list;
+    SFInteger item;
+    SFBoolean exists;
+
+    SFListInitialize(&list, sizeof(SFInteger));
+
+    SFListAdd(&list, -500);
+    SFListAdd(&list, -400);
+    SFListAdd(&list, -300);
+    SFListAdd(&list, -200);
+    SFListAdd(&list, -100);
+    SFListAdd(&list, 0);
+    SFListAdd(&list, 100);
+    SFListAdd(&list, 200);
+    SFListAdd(&list, 300);
+    SFListAdd(&list, 400);
+    SFListAdd(&list, 500);
+
+    /* Test valid entries. */
+    item = -500;
+    exists = SFListContainsItem(&list, &item);
+    SFAssert(exists == SFTrue);
+
+    item = 0;
+    exists = SFListContainsItem(&list, &item);
+    SFAssert(exists == SFTrue);
+
+    item = 500;
+    exists = SFListContainsItem(&list, &item);
+    SFAssert(exists == SFTrue);
+
+    /* Test invalid entries. */
+    item = -700;
+    exists = SFListContainsItem(&list, &item);
+    SFAssert(exists == SFFalse);
+
+    item = 50;
+    exists = SFListContainsItem(&list, &item);
+    SFAssert(exists == SFFalse);
+
+    item = 700;
+    exists = SFListContainsItem(&list, &item);
+    SFAssert(exists == SFFalse);
+
+    SFListFinalize(&list);
+}
+
+void ListTester::testIndexOfItem()
+{
+    SF_LIST(SFInteger) list;
+    SFInteger item;
+    SFUInteger index;
+
+    SFListInitialize(&list, sizeof(SFInteger));
+
+    SFListAdd(&list, -500);
+    SFListAdd(&list, -400);
+    SFListAdd(&list, -300);
+    SFListAdd(&list, -200);
+    SFListAdd(&list, -100);
+    SFListAdd(&list, 0);
+    SFListAdd(&list, 100);
+    SFListAdd(&list, 200);
+    SFListAdd(&list, 300);
+    SFListAdd(&list, 400);
+    SFListAdd(&list, 500);
+
+    /* Test extreme entries in whole list. */
+    item = -500;
+    index = SFListIndexOfItem(&list, &item, 0, list.count);
+    SFAssert(index == 0);
+
+    item = 500;
+    index = SFListIndexOfItem(&list, &item, 0, list.count);
+    SFAssert(index == 10);
+
+    /* Test a valid entry in a range. */
+    item = 0;
+    index = SFListIndexOfItem(&list, &item, 5, 1);
+    SFAssert(index == 5);
+
+    /* Test invalid entries in whole list. */
+    item = -700;
+    index = SFListIndexOfItem(&list, &item, 0, list.count);
+    SFAssert(index == SFInvalidIndex);
+
+    item = 700;
+    index = SFListIndexOfItem(&list, &item, 0, list.count);
+    SFAssert(index == SFInvalidIndex);
+
+    /* Test valid entries not in provided range. */
+    item = -300;
+    index = SFListIndexOfItem(&list, &item, 0, 2);
+    SFAssert(index == SFInvalidIndex);
+
+    item = 300;
+    index = SFListIndexOfItem(&list, &item, 9, 2);
+    SFAssert(index == SFInvalidIndex);
 
     SFListFinalize(&list);
 }
@@ -416,9 +418,9 @@ void ListTester::test()
     testAdd();
     testInsert();
     testRemoveAt();
-    testIndexOfItem();
-    testContainsItem();
     testClear();
     testTrimExcess();
+    testContainsItem();
+    testIndexOfItem();
     testSort();
 }
