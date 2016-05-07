@@ -63,11 +63,11 @@ typedef struct _SFGlyphDetail {
 } SFGlyphDetail, *SFGlyphDetailRef;
 
 struct _SFAlbum {
-    const SFCodepoint *codePointArray; /**< The array of codepoints which are to be shaped. */
-    SFUInteger *mapArray;
-    SFUInteger codePointCount;
+    const SFCodepoint *codepointArray;  /**< The array of codepoints which are to be shaped. */
+    SFUInteger codepointCount;
     SFUInteger glyphCount;              /**< Total number of glyphs in the album. */
 
+    SFUInteger *_mapArray;              /**< Character index to glyph index mapping array. */
     SF_LIST(SFUInteger) _indexes;       /**< List of indexes of associate glyphs. */
     SF_LIST(SFGlyphID) _glyphs;         /**< List of ids of all glyphs in the album. */
     SF_LIST(SFGlyphDetail) _details;    /**< List of details of all glyphs in the album. */
@@ -87,19 +87,12 @@ SF_INTERNAL void SFAlbumInitialize(SFAlbumRef album);
 /**
  * Initializes the album for given code points.
  */
-SF_INTERNAL void SFAlbumReset(SFAlbumRef album, SFCodepoint *codePointArray, SFUInteger codePointCount);
-
-/**
- * Allocates an array for charater to glyph map.
- * @note
- *      The allocated map will be uninitialized.
- */
-SF_INTERNAL void SFAlbumAllocateMap(SFAlbumRef album);
+SF_INTERNAL void SFAlbumReset(SFAlbumRef album, const SFCodepoint *codepointArray, SFUInteger codepointCount);
 
 /**
  * Starts filling the album with provided glyphs.
  */
-SF_INTERNAL void SFAlbumStartFilling(SFAlbumRef album);
+SF_INTERNAL void SFAlbumBeginFilling(SFAlbumRef album);
 
 /**
  * Adds a new glyph into the album.
@@ -133,14 +126,14 @@ SF_INTERNAL void SFAlbumInsertTraits(SFAlbumRef album, SFUInteger index, SFGlyph
 SF_INTERNAL void SFAlbumRemoveTraits(SFAlbumRef album, SFUInteger index, SFGlyphTraits traits);
 
 /**
- * Sops filling the album with glyphs.
+ * Ends filling the album with glyphs.
  */
-SF_INTERNAL void SFAlbumStopFilling(SFAlbumRef album);
+SF_INTERNAL void SFAlbumEndFilling(SFAlbumRef album);
 
 /**
- * Starts arranging glyphs in the album at specified positions.
+ * Begins arranging glyphs in the album at specified positions.
  */
-SF_INTERNAL void SFAlbumStartArranging(SFAlbumRef album);
+SF_INTERNAL void SFAlbumBeginArranging(SFAlbumRef album);
 
 SF_INTERNAL SFInteger SFAlbumGetX(SFAlbumRef album, SFUInteger index);
 SF_INTERNAL void SFAlbumSetX(SFAlbumRef album, SFUInteger index, SFInteger x);
@@ -158,9 +151,9 @@ SF_INTERNAL SFUInt16 SFAlbumGetAttachmentOffset(SFAlbumRef album, SFUInteger ind
 SF_INTERNAL void SFAlbumSetAttachmentOffset(SFAlbumRef album, SFUInteger index, SFUInt16 offset);
 
 /**
- * Stops arranging glyphs in the album.
+ * Ends arranging glyphs in the album.
  */
-SF_INTERNAL void SFAlbumStopArranging(SFAlbumRef album);
+SF_INTERNAL void SFAlbumEndArranging(SFAlbumRef album);
 
 /**
  * Wraps up the album for client's usage.

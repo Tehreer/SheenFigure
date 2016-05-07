@@ -56,8 +56,8 @@ struct _SFPattern {
     } featureTags;
     struct {
         SFFeatureUnit *items;
-        SFUInteger gsub;                /**< Total number of gsub feature groups.*/
-        SFUInteger gpos;                /**< Total number of gpos feature groups.*/
+        SFUInteger gsub;                /**< Total number of gsub feature units.*/
+        SFUInteger gpos;                /**< Total number of gpos feature units.*/
     } featureUnits;
     SFTag scriptTag;                    /**< Tag of the script. */
     SFTag languageTag;                  /**< Tag of the language. */

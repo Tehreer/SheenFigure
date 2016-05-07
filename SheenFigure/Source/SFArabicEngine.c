@@ -95,8 +95,8 @@ SF_INTERNAL void SFArabicEngineInitialize(SFArabicEngineRef arabicEngine, SFArti
 
 static void _SFPutArabicFeatureMask(SFAlbumRef album)
 {
-    const SFCodepoint *codepoints = album->codePointArray;
-    SFUInteger length = album->codePointCount;
+    const SFCodepoint *codepoints = album->codepointArray;
+    SFUInteger length = album->codepointCount;
     SFUInteger association = SFAlbumGetSingleAssociation(album, 0);
     SFJoiningType priorJoiningType = SFJoiningTypeU;
     SFJoiningType joiningType = SFJoiningTypeDetermine(codepoints[association]);
