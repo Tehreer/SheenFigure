@@ -73,6 +73,11 @@ SF_PRIVATE void _SFApplyPositioningLookup(SFTextProcessorRef processor, SFData l
 
     SFLocatorSetLookupFlag(&processor->_locator, lookupFlag);
 
+    if (lookupFlag & SFLookupFlagUseMarkFilteringSet) {
+        SFUInt16 markFilteringSet = SFLookup_MarkFilteringSet(lookup, subtableCount);
+        SFLocatorSetMarkFilteringSet(&processor->_locator, markFilteringSet);
+    }
+
     /* Apply subtables in order until one of them performs positioning. */
     for (subtableIndex = 0; subtableIndex < subtableCount; subtableIndex++) {
         SFOffset subtableOffset = SFLookup_SubtableOffset(lookup, subtableIndex);

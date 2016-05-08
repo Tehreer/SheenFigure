@@ -27,6 +27,7 @@ typedef struct _SFLocator {
     SFAlbumRef _album;
     SFData _markAttachClassDef;
     SFData _markGlyphSetsDef;
+    SFData _markFilteringCoverage;
     SFUInteger _version;
     SFUInteger _startIndex;
     SFUInteger _limitIndex;
@@ -39,7 +40,16 @@ typedef struct _SFLocator {
 SF_INTERNAL void SFLocatorInitialize(SFLocatorRef locator, SFAlbumRef album, SFData gdef);
 
 SF_INTERNAL void SFLocatorSetFeatureMask(SFLocatorRef locator, SFUInt16 featureMask);
+
+/**
+ * Sets the lookup flag describing the criterion for ignoring glyphs.
+ */
 SF_INTERNAL void SFLocatorSetLookupFlag(SFLocatorRef locator, SFLookupFlag lookupFlag);
+
+/**
+ * Sets the mark filtering set to use, if needed.
+ */
+SF_INTERNAL void SFLocatorSetMarkFilteringSet(SFLocatorRef locator, SFUInt16 markFilteringSet);
 
 SF_INTERNAL void SFLocatorReset(SFLocatorRef locator, SFUInteger index, SFUInteger count);
 
@@ -56,8 +66,8 @@ SF_INTERNAL SFBoolean SFLocatorMoveNext(SFLocatorRef locator);
 /**
  * Skips the given number of legitimate glyphs.
  * @return
- *      SFTrue if the given number of elements were successfully skipped; SFFalse if the locator has
- *      passed the end of the album.
+ *      SFTrue if the given number of glyphs were successfully skipped; SFFalse if the locator could
+ *      not find enough legitimate glyphs to skip.
  */
 SF_INTERNAL SFBoolean SFLocatorSkip(SFLocatorRef locator, SFUInteger count);
 

@@ -26,6 +26,16 @@
 #include "SFPattern.h"
 #include "SFPatternBuilder.h"
 
+static int _SFLookupIndexComparison(const void *item1, const void *item2);
+
+static int _SFLookupIndexComparison(const void *item1, const void *item2)
+{
+    SFUInt16 *ref1 = (SFUInt16 *)item1;
+    SFUInt16 *ref2 = (SFUInt16 *)item2;
+
+    return (int)(*ref1 - *ref2);
+}
+
 SF_INTERNAL void SFPatternBuilderInitialize(SFPatternBuilderRef builder, SFPatternRef pattern)
 {
     /* Pattern must NOT be null. */
@@ -116,14 +126,6 @@ SF_INTERNAL void SFPatternBuilderAddLookup(SFPatternBuilderRef builder, SFUInt16
     if (!SFListContainsItem(&builder->_lookupIndexes, &lookupIndex)) {
         SFListAdd(&builder->_lookupIndexes, lookupIndex);
     }
-}
-
-static int _SFLookupIndexComparison(const void *item1, const void *item2)
-{
-    SFUInt16 *ref1 = (SFUInt16 *)item1;
-    SFUInt16 *ref2 = (SFUInt16 *)item2;
-
-    return (int)(*ref1 - *ref2);
 }
 
 SF_INTERNAL void SFPatternBuilderMakeFeatureUnit(SFPatternBuilderRef builder)

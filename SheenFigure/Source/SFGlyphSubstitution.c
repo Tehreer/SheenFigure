@@ -45,6 +45,11 @@ SF_PRIVATE void _SFApplySubstitutionLookup(SFTextProcessorRef processor, SFData 
 
     SFLocatorSetLookupFlag(&processor->_locator, lookupFlag);
 
+    if (lookupFlag & SFLookupFlagUseMarkFilteringSet) {
+        SFUInt16 markFilteringSet = SFLookup_MarkFilteringSet(lookup, subtableCount);
+        SFLocatorSetMarkFilteringSet(&processor->_locator, markFilteringSet);
+    }
+
     /* Apply subtables in order until one of them performs substitution. */
     for (subtableIndex = 0; subtableIndex < subtableCount; subtableIndex++) {
         SFOffset offset = SFLookup_SubtableOffset(lookup, subtableIndex);

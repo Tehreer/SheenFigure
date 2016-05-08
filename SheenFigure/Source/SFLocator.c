@@ -35,6 +35,7 @@ SF_INTERNAL void SFLocatorInitialize(SFLocatorRef locator, SFAlbumRef album, SFD
     locator->_album = album;
     locator->_markAttachClassDef = NULL;
     locator->_markGlyphSetsDef = NULL;
+    locator->_markFilteringCoverage = NULL;
     locator->_version = SFInvalidIndex;
     locator->_startIndex = 0;
     locator->_limitIndex = 0;
@@ -92,6 +93,31 @@ SF_INTERNAL void SFLocatorSetLookupFlag(SFLocatorRef locator, SFLookupFlag looku
     locator->_ignoreMask.section.glyphTraits = ignoreTraits;
 }
 
+SF_INTERNAL void SFLocatorSetMarkFilteringSet(SFLocatorRef locator, SFUInt16 markFilteringSet)
+{
+    SFData markGlyphSetsDef = locator->_markGlyphSetsDef;
+
+    locator->_markFilteringCoverage = NULL;
+
+    if (markGlyphSetsDef) {
+        SFUInt16 format = SFMarkGlyphSets_Format(markGlyphSetsDef);
+        switch (format) {
+            case 1:
+            {
+                SFUInt16 markSetCount = SFMarkGlyphSets_MarkSetCount(markGlyphSetsDef);
+
+                if (markFilteringSet < markSetCount) {
+                    SFOffset offset = SFMarkGlyphSets_CoverageOffset(markGlyphSetsDef, markFilteringSet);
+                    SFData coverage = SFData_Subdata(markGlyphSetsDef, offset);
+
+                    locator->_markFilteringCoverage = coverage;
+                }
+            }
+            break;
+        }
+    }
+}
+
 SF_INTERNAL void SFLocatorReset(SFLocatorRef locator, SFUInteger index, SFUInteger count)
 {
     /* The index must be valid and there should be no integer overflow. */
@@ -113,15 +139,32 @@ static SFBoolean _SFIsIgnoredGlyph(SFLocatorRef locator, SFUInteger index) {
         return SFTrue;
     }
 
-    if (lookupFlag & SFLookupFlagMarkAttachmentType) {
-        SFGlyphID glyph = SFAlbumGetGlyph(album, index);
-        SFUInt16 glyphClass = SFOpenTypeSearchGlyphClass(locator->_markAttachClassDef, glyph);
+    if (glyphMask.section.glyphTraits & SFGlyphTraitMark) {
+        if (lookupFlag & SFLookupFlagUseMarkFilteringSet) {
+            SFData markFilteringCoverage = locator->_markFilteringCoverage;
 
-        if (locator->_markAttachClassDef
-            && (glyphMask.section.glyphTraits & SFGlyphTraitMark)
-            && (glyphClass != (lookupFlag >> 8))) {
-                return SFTrue;
+            if (markFilteringCoverage) {
+                SFGlyphID glyph = SFAlbumGetGlyph(album, index);
+                SFUInteger coverageIndex = SFOpenTypeSearchCoverageIndex(markFilteringCoverage, glyph);
+
+                if (coverageIndex == SFInvalidIndex) {
+                    return SFTrue;
+                }
             }
+        }
+
+        if (lookupFlag & SFLookupFlagMarkAttachmentType) {
+            SFData markAttachClassDef = locator->_markAttachClassDef;
+
+            if (markAttachClassDef) {
+                SFGlyphID glyph = SFAlbumGetGlyph(album, index);
+                SFUInt16 glyphClass = SFOpenTypeSearchGlyphClass(markAttachClassDef, glyph);
+
+                if (glyphClass != (lookupFlag >> 8)) {
+                    return SFTrue;
+                }
+            }
+        }
     }
 
     return SFFalse;
@@ -143,6 +186,7 @@ SF_INTERNAL SFBoolean SFLocatorMoveNext(SFLocatorRef locator)
         }
     }
 
+    locator->index = SFInvalidIndex;
     return SFFalse;
 }
 
