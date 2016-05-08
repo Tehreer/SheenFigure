@@ -379,7 +379,7 @@ static void _SFApplyValueRecord(SFTextProcessorRef processor, SFData valueRecord
     case SFTextDirectionLeftToRight:
     case SFTextDirectionRightToLeft:
         if (SFValueFormat_XAdvance(valueFormat)) {
-            SFInteger advance = SFAlbumGetAdvance(album, inputIndex);
+            SFAdvance advance = SFAlbumGetAdvance(album, inputIndex);
 
             value = (SFInt16)SFValueRecord_NextValue(valueRecord, offset);
 
@@ -490,7 +490,7 @@ static SFBoolean _SFApplyCursivePosF1(SFTextProcessorRef processor, SFData cursi
                 SFPoint entryPoint = _SFConvertAnchorToPoint(secondEntryAnchor);
                 SFGlyphTraits traits;
                 SFInteger position;
-                SFInteger advance;
+                SFAdvance advance;
 
                 traits = SFGlyphTraitCursive;
 

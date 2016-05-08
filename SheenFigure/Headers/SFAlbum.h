@@ -74,7 +74,7 @@ SFPoint *SFAlbumGetGlyphOffsets(SFAlbumRef album);
  * @return
  *      An array of glyph advances produced as part of shaping process.
  */
-SFInteger *SFAlbumGetGlyphAdvances(SFAlbumRef album);
+SFAdvance *SFAlbumGetGlyphAdvances(SFAlbumRef album);
 
 /**
  * Provides an array, mapping each character to corresponding glyph index.

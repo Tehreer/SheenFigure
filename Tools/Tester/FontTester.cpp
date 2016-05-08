@@ -86,7 +86,7 @@ static SFGlyphID getGlyphIDForCodepoint(void *object, SFCodepoint codepoint)
     return (SFGlyphID)((codepoint >> 16) ^ (codepoint & 0xFFFF));
 }
 
-static SFInteger getAdvanceForGlyph(void *object, SFFontLayout fontLayout, SFGlyphID glyphID)
+static SFAdvance getAdvanceForGlyph(void *object, SFFontLayout fontLayout, SFGlyphID glyphID)
 {
     SFAssert(object == OBJECT_FONT);
 
@@ -189,12 +189,12 @@ void FontTester::testGetAdvanceForGlyph()
     {
         SFFontRef font = SFFontCreateWithCompleteFunctionality();
 
-        SFInteger advance1 = SFFontGetAdvanceForGlyph(font, SFFontLayoutHorizontal, 0);
-        SFInteger advance2 = SFFontGetAdvanceForGlyph(font, SFFontLayoutHorizontal, 0x7FFF);
-        SFInteger advance3 = SFFontGetAdvanceForGlyph(font, SFFontLayoutHorizontal, 0xFFFF);
-        SFInteger advance4 = SFFontGetAdvanceForGlyph(font, SFFontLayoutVertical, 0);
-        SFInteger advance5 = SFFontGetAdvanceForGlyph(font, SFFontLayoutVertical, 0x7FFF);
-        SFInteger advance6 = SFFontGetAdvanceForGlyph(font, SFFontLayoutVertical, 0xFFFF);
+        SFAdvance advance1 = SFFontGetAdvanceForGlyph(font, SFFontLayoutHorizontal, 0);
+        SFAdvance advance2 = SFFontGetAdvanceForGlyph(font, SFFontLayoutHorizontal, 0x7FFF);
+        SFAdvance advance3 = SFFontGetAdvanceForGlyph(font, SFFontLayoutHorizontal, 0xFFFF);
+        SFAdvance advance4 = SFFontGetAdvanceForGlyph(font, SFFontLayoutVertical, 0);
+        SFAdvance advance5 = SFFontGetAdvanceForGlyph(font, SFFontLayoutVertical, 0x7FFF);
+        SFAdvance advance6 = SFFontGetAdvanceForGlyph(font, SFFontLayoutVertical, 0xFFFF);
 
         SFAssert(advance1 == getAdvanceForGlyph(OBJECT_FONT, SFFontLayoutHorizontal, 0));
         SFAssert(advance2 == getAdvanceForGlyph(OBJECT_FONT, SFFontLayoutHorizontal, 0x7FFF));
@@ -210,12 +210,12 @@ void FontTester::testGetAdvanceForGlyph()
     {
         SFFontRef font = SFFontCreateWithRequiredFunctionality();
 
-        SFInteger advance1 = SFFontGetAdvanceForGlyph(font, SFFontLayoutHorizontal, 0);
-        SFInteger advance2 = SFFontGetAdvanceForGlyph(font, SFFontLayoutHorizontal, 0x7FFF);
-        SFInteger advance3 = SFFontGetAdvanceForGlyph(font, SFFontLayoutHorizontal, 0xFFFF);
-        SFInteger advance4 = SFFontGetAdvanceForGlyph(font, SFFontLayoutVertical, 0);
-        SFInteger advance5 = SFFontGetAdvanceForGlyph(font, SFFontLayoutVertical, 0x7FFF);
-        SFInteger advance6 = SFFontGetAdvanceForGlyph(font, SFFontLayoutVertical, 0xFFFF);
+        SFAdvance advance1 = SFFontGetAdvanceForGlyph(font, SFFontLayoutHorizontal, 0);
+        SFAdvance advance2 = SFFontGetAdvanceForGlyph(font, SFFontLayoutHorizontal, 0x7FFF);
+        SFAdvance advance3 = SFFontGetAdvanceForGlyph(font, SFFontLayoutHorizontal, 0xFFFF);
+        SFAdvance advance4 = SFFontGetAdvanceForGlyph(font, SFFontLayoutVertical, 0);
+        SFAdvance advance5 = SFFontGetAdvanceForGlyph(font, SFFontLayoutVertical, 0x7FFF);
+        SFAdvance advance6 = SFFontGetAdvanceForGlyph(font, SFFontLayoutVertical, 0xFFFF);
 
         SFAssert(advance1 == 0);
         SFAssert(advance2 == 0);

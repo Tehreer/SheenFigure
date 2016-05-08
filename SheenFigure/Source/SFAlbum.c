@@ -67,7 +67,7 @@ SFPoint *SFAlbumGetGlyphOffsets(SFAlbumRef album)
     return album->_offsets.items;
 }
 
-SFInteger *SFAlbumGetGlyphAdvances(SFAlbumRef album)
+SFAdvance *SFAlbumGetGlyphAdvances(SFAlbumRef album)
 {
     return album->_advances.items;
 }
@@ -104,7 +104,7 @@ SF_INTERNAL void SFAlbumInitialize(SFAlbumRef album)
     SFListInitialize(&album->_glyphs, sizeof(SFGlyphID));
     SFListInitialize(&album->_details, sizeof(SFGlyphDetail));
     SFListInitialize(&album->_offsets, sizeof(SFPoint));
-    SFListInitialize(&album->_advances, sizeof(SFInteger));
+    SFListInitialize(&album->_advances, sizeof(SFAdvance));
 
     album->_version = 0;
     album->_state = _SFAlbumStateEmpty;
@@ -335,12 +335,12 @@ SF_INTERNAL void SFAlbumSetY(SFAlbumRef album, SFUInteger index, SFInteger y)
     SFListGetRef(&album->_offsets, index)->y = y;
 }
 
-SF_INTERNAL SFInteger SFAlbumGetAdvance(SFAlbumRef album, SFUInteger index)
+SF_INTERNAL SFAdvance SFAlbumGetAdvance(SFAlbumRef album, SFUInteger index)
 {
     return SFListGetVal(&album->_advances, index);
 }
 
-SF_INTERNAL void SFAlbumSetAdvance(SFAlbumRef album, SFUInteger index, SFInteger advance)
+SF_INTERNAL void SFAlbumSetAdvance(SFAlbumRef album, SFUInteger index, SFAdvance advance)
 {
     /* The album must be in arranging state. */
     SFAssert(album->_state == _SFAlbumStateArranging);

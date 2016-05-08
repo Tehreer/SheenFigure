@@ -72,7 +72,7 @@ struct _SFAlbum {
     SF_LIST(SFGlyphID) _glyphs;         /**< List of ids of all glyphs in the album. */
     SF_LIST(SFGlyphDetail) _details;    /**< List of details of all glyphs in the album. */
     SF_LIST(SFPoint) _offsets;          /**< List of offsets of all glyphs in the album. */
-    SF_LIST(SFInteger) _advances;       /**< List of advances of all glyphs in the album. */
+    SF_LIST(SFAdvance) _advances;       /**< List of advances of all glyphs in the album. */
 
     SFUInteger _version;                /**< Current version of the album. */
     _SFAlbumState _state;               /**< Current state of the album. */
@@ -141,8 +141,8 @@ SF_INTERNAL void SFAlbumSetX(SFAlbumRef album, SFUInteger index, SFInteger x);
 SF_INTERNAL SFInteger SFAlbumGetY(SFAlbumRef album, SFUInteger index);
 SF_INTERNAL void SFAlbumSetY(SFAlbumRef album, SFUInteger index, SFInteger y);
 
-SF_INTERNAL SFInteger SFAlbumGetAdvance(SFAlbumRef album, SFUInteger index);
-SF_INTERNAL void SFAlbumSetAdvance(SFAlbumRef album, SFUInteger index, SFInteger advance);
+SF_INTERNAL SFAdvance SFAlbumGetAdvance(SFAlbumRef album, SFUInteger index);
+SF_INTERNAL void SFAlbumSetAdvance(SFAlbumRef album, SFUInteger index, SFAdvance advance);
 
 SF_INTERNAL SFUInt16 SFAlbumGetCursiveOffset(SFAlbumRef album, SFUInteger index);
 SF_INTERNAL void SFAlbumSetCursiveOffset(SFAlbumRef album, SFUInteger index, SFUInt16 offset);

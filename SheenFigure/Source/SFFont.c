@@ -67,7 +67,7 @@ SF_INTERNAL SFGlyphID SFFontGetGlyphIDForCodepoint(SFFontRef font, SFCodepoint c
     return font->_protocol.getGlyphIDForCodepoint(font->_object, codepoint);
 }
 
-SF_INTERNAL SFInteger SFFontGetAdvanceForGlyph(SFFontRef font, SFFontLayout fontLayout, SFGlyphID glyphID)
+SF_INTERNAL SFAdvance SFFontGetAdvanceForGlyph(SFFontRef font, SFFontLayout fontLayout, SFGlyphID glyphID)
 {
     if (font->_protocol.getAdvanceForGlyph) {
         return font->_protocol.getAdvanceForGlyph(font->_object, fontLayout, glyphID);

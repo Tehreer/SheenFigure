@@ -687,7 +687,7 @@ void AlbumTester::testAdvance()
     SFAlbumWrapUp(&album);
 
     /* Test the output. */
-    SFInteger *advances = SFAlbumGetGlyphAdvances(&album);
+    SFAdvance *advances = SFAlbumGetGlyphAdvances(&album);
     SFAssert(advances[0] == 100);
     SFAssert(advances[1] == 200);
     SFAssert(advances[2] == 300);

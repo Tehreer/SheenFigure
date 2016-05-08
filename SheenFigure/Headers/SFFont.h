@@ -35,7 +35,7 @@ typedef SFFont *SFFontRef;
 typedef void (*SFFontProtocolFinalizeFunc)(void *object);
 typedef void (*SFFontProtocolLoadTableFunc)(void *object, SFTag tableTag, SFUInt8 *buffer, SFUInteger *length);
 typedef SFGlyphID (*SFFontProtocolGetGlyphIDForCodepointFunc)(void *object, SFCodepoint codepoint);
-typedef SFInteger (*SFFontProtocolGetAdvanceForGlyphFunc)(void *object, SFFontLayout fontLayout, SFGlyphID glyphID);
+typedef SFAdvance (*SFFontProtocolGetAdvanceForGlyphFunc)(void *object, SFFontLayout fontLayout, SFGlyphID glyphID);
 
 typedef struct _SFFontProtocol {
     SFFontProtocolFinalizeFunc finalize;

@@ -99,6 +99,11 @@ typedef SFUInt32        SFCodepoint;
 typedef SFUInt16        SFGlyphID;
 
 /**
+ * A type to represent a glyph advance.
+ */
+typedef SFInteger       SFAdvance;
+
+/**
  * A type to represent a tag of 4 characters.
  */
 typedef SFUInt32        SFTag;

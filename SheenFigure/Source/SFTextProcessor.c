@@ -88,7 +88,7 @@ SF_INTERNAL void SFTextProcessorPositionGlyphs(SFTextProcessorRef textProcessor)
     /* Set positions and advances of all glyphs. */
     for (index = 0; index < glyphCount; index++) {
         SFGlyphID glyphID = SFAlbumGetGlyph(album, index);
-        SFInteger advance = SFFontGetAdvanceForGlyph(font, SFFontLayoutHorizontal, glyphID);
+        SFAdvance advance = SFFontGetAdvanceForGlyph(font, SFFontLayoutHorizontal, glyphID);
 
         SFAlbumSetX(album, index, 0);
         SFAlbumSetY(album, index, 0);
