@@ -30,19 +30,19 @@
  */
 
 /**
- * Provides a way to cache scripts, languages, features and lookups.
+ * Provides a way to create a pattern of script, language, features and lookups.
  */
 typedef struct _SFPatternBuilder {
-    SFPatternRef _pattern;
+    SFPatternRef _pattern;          /**< The pattern to build. */
     SFFontRef _font;                /**< The font, whose pattern is being built. */
     SFUInteger _gsubUnitCount;      /**< Total number of GSUB feature units. */
     SFUInteger _gposUnitCount;      /**< Total number of GPOS feature units. */
-    SFUInteger _featureIndex;       /**< Starting feature index of the feature unit being built. */
+    SFUInteger _featureIndex;       /**< Starting index of the feature unit being built. */
     SFTag _scriptTag;               /**< Tag of the script, whose pattern is being built. */
-    SFTextDirection _defaultDirection; /**< Default direction of the script whose pattern is being built.*/
     SFTag _languageTag;             /**< Tag of the language, whose pattern is being built. */
+    SFTextDirection _defaultDirection; /**< Default direction of the script whose pattern is being built. */
     SFUInt16 _featureMask;          /**< Mask of the feature unit being built. */
-    SFFeatureKind _featureKind;     /**< Kind of the features being added. */
+    SFFeatureKind _featureKind;     /**< Kind of features being added. */
     SFBoolean _canBuild;
 
     SF_LIST(SFTag) _featureTags;
@@ -51,7 +51,7 @@ typedef struct _SFPatternBuilder {
 } SFPatternBuilder, *SFPatternBuilderRef;
 
 /**
- * Initializes builder for a script cache.
+ * Initializes the builder for a pattern.
  */
 SF_INTERNAL void SFPatternBuilderInitialize(SFPatternBuilderRef builder, SFPatternRef pattern);
 SF_INTERNAL void SFPatternBuilderFinalize(SFPatternBuilderRef builder);

@@ -22,6 +22,9 @@
 
 #include "SFPattern.h"
 
+static void _SFFinalizeFeatureUnit(SFFeatureUnitRef featureUnit);
+static void _SFPatternFinalize(SFPatternRef pattern);
+
 SF_INTERNAL SFPatternRef SFPatternCreate(void)
 {
     SFPatternRef pattern = malloc(sizeof(SFPattern));
@@ -33,12 +36,13 @@ SF_INTERNAL SFPatternRef SFPatternCreate(void)
     pattern->featureUnits.gpos = 0;
     pattern->scriptTag = 0;
     pattern->languageTag = 0;
+    pattern->defaultDirection = SFTextDirectionLeftToRight;
     pattern->_retainCount = 1;
 
     return pattern;
 }
 
-static void _SFFinalizeFeatureInfo(SFFeatureUnitRef featureUnit)
+static void _SFFinalizeFeatureUnit(SFFeatureUnitRef featureUnit)
 {
     free(featureUnit->lookupIndexes.items);
 }
@@ -48,9 +52,9 @@ static void _SFPatternFinalize(SFPatternRef pattern)
     SFUInteger featureCount = pattern->featureUnits.gsub + pattern->featureUnits.gpos;
     SFUInteger index;
 
-    /* Finalize all groups. */
+    /* Finalize all feature units. */
     for (index = 0; index < featureCount; index++) {
-        _SFFinalizeFeatureInfo((SFFeatureUnitRef)&pattern->featureUnits.items[index]);
+        _SFFinalizeFeatureUnit((SFFeatureUnitRef)&pattern->featureUnits.items[index]);
     }
 
     free(pattern->featureUnits.items);

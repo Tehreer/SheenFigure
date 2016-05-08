@@ -39,6 +39,7 @@ SF_INTERNAL void SFPatternBuilderInitialize(SFPatternBuilderRef builder, SFPatte
     builder->_featureIndex = 0;
     builder->_scriptTag = 0;
     builder->_languageTag = 0;
+    builder->_defaultDirection = SFTextDirectionLeftToRight;
     builder->_featureMask = 0;
     builder->_featureKind = 0;
     builder->_canBuild = SFTrue;
@@ -71,6 +72,9 @@ SF_INTERNAL void SFPatternBuilderSetFont(SFPatternBuilderRef builder, SFFontRef 
 
 SF_INTERNAL void SFPatternBuilderSetScript(SFPatternBuilderRef builder, SFTag scriptTag, SFTextDirection defaultDirection)
 {
+    /* The direction MUST be valid. */
+    SFAssert(defaultDirection == SFTextDirectionLeftToRight || defaultDirection == SFTextDirectionRightToLeft);
+
     builder->_scriptTag = scriptTag;
     builder->_defaultDirection = defaultDirection;
 }
@@ -182,6 +186,8 @@ SF_INTERNAL void SFPatternBuilderBuild(SFPatternBuilderRef builder)
     SFPatternRef pattern = builder->_pattern;
     SFUInteger unitCount;
 
+    /* Pattern should be built ONLY ONCE with a builder. */
+    SFAssert(builder->_canBuild == SFTrue);
     /* All features MUST be ended before building the pattern. */
     SFAssert(builder->_featureKind == 0);
 
@@ -190,8 +196,8 @@ SF_INTERNAL void SFPatternBuilderBuild(SFPatternBuilderRef builder)
     pattern->featureUnits.gsub = builder->_gsubUnitCount;
     pattern->featureUnits.gpos = builder->_gposUnitCount;
     pattern->scriptTag = builder->_scriptTag;
-    pattern->defaultDirection = builder->_defaultDirection;
     pattern->languageTag = builder->_languageTag;
+    pattern->defaultDirection = builder->_defaultDirection;
 
     SFListFinalizeKeepingArray(&builder->_featureTags, &pattern->featureTags.items, &pattern->featureTags.count);
     SFListFinalizeKeepingArray(&builder->_featureUnits, &pattern->featureUnits.items, &unitCount);

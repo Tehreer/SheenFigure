@@ -40,7 +40,7 @@ static SFUInt8 *_SFFontCopyTable(SFFontRef font, SFTag tag) {
 SFFontRef SFFontCreateWithProtocol(const SFFontProtocol *protocol, void *object)
 {
     /* Verify that required functions exist in protocol. */
-    if (protocol->loadTable && protocol->getGlyphIDForCodepoint) {
+    if (protocol && protocol->loadTable && protocol->getGlyphIDForCodepoint) {
         SFFontRef font = malloc(sizeof(SFFont));
         font->_protocol = *protocol;
         font->_object = object;
