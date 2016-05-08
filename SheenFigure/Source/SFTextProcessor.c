@@ -63,7 +63,7 @@ SF_INTERNAL void SFTextProcessorInitialize(SFTextProcessorRef textProcessor, SFP
 
 SF_INTERNAL void SFTextProcessorDiscoverGlyphs(SFTextProcessorRef textProcessor)
 {
-    SFAlbumStartFilling(textProcessor->_album);
+    SFAlbumBeginFilling(textProcessor->_album);
     _SFDiscoverGlyphs(textProcessor);
 }
 
@@ -72,7 +72,7 @@ SF_INTERNAL void SFTextProcessorSubstituteGlyphs(SFTextProcessorRef textProcesso
     SFPatternRef pattern = textProcessor->_pattern;
 
     _SFApplyFeatureRange(textProcessor, 0, pattern->featureUnits.gsub, SFFeatureKindSubstitution);
-    SFAlbumStopFilling(textProcessor->_album);
+    SFAlbumEndFilling(textProcessor->_album);
 }
 
 SF_INTERNAL void SFTextProcessorPositionGlyphs(SFTextProcessorRef textProcessor)
@@ -83,7 +83,7 @@ SF_INTERNAL void SFTextProcessorPositionGlyphs(SFTextProcessorRef textProcessor)
     SFUInteger glyphCount = album->glyphCount;
     SFUInteger index;
 
-    SFAlbumStartArranging(album);
+    SFAlbumBeginArranging(album);
 
     /* Set positions and advances of all glyphs. */
     for (index = 0; index < glyphCount; index++) {
@@ -98,7 +98,7 @@ SF_INTERNAL void SFTextProcessorPositionGlyphs(SFTextProcessorRef textProcessor)
     _SFApplyFeatureRange(textProcessor, pattern->featureUnits.gsub, pattern->featureUnits.gpos, SFFeatureKindPositioning);
     _SFResolveAttachments(textProcessor);
 
-    SFAlbumStopArranging(album);
+    SFAlbumEndArranging(album);
 }
 
 SF_INTERNAL void SFTextProcessorWrapUp(SFTextProcessorRef textProcessor)
