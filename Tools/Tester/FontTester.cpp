@@ -27,7 +27,7 @@ extern "C" {
 using namespace SheenFigure::Tester;
 
 static void *OBJECT_FONT = &OBJECT_FONT;
-static bool DID_FINALIZE = false;
+static int FINALIZE_COUNT = 0;
 
 static const char *TABLE_GDEF = "GDEF";
 static const char *TABLE_GSUB = "GSUB";
@@ -36,7 +36,7 @@ static const char *TABLE_GPOS = "GPOS";
 static void finalize(void *object)
 {
     SFAssert(object == OBJECT_FONT);
-    DID_FINALIZE = true;
+    FINALIZE_COUNT++;
 }
 
 static void loadTable(void *object, SFTag tag, SFUInt8 *buffer, SFUInteger *length)
@@ -128,24 +128,33 @@ FontTester::FontTester()
 
 void FontTester::testBadProtocol()
 {
-    const SFFontProtocol protocol = {
-        .finalize = &finalize,
-        .getAdvanceForGlyph = &getAdvanceForGlyph,
-    };
-    SFFontRef font = SFFontCreateWithProtocol(&protocol, NULL);
+    /* Test with null protocol. */
+    {
+        SFFontRef font = SFFontCreateWithProtocol(NULL, NULL);
+        SFAssert(font == NULL);
+    }
 
-    SFAssert(font == NULL);
+    /* Test with missing required functions. */
+    {
+        const SFFontProtocol protocol = {
+            .finalize = &finalize,
+            .getAdvanceForGlyph = &getAdvanceForGlyph,
+        };
+        SFFontRef font = SFFontCreateWithProtocol(&protocol, NULL);
+
+        SFAssert(font == NULL);
+    }
 }
 
 void FontTester::testFinalizeCallback()
 {
-    DID_FINALIZE = false;
+    FINALIZE_COUNT = 0;
 
     SFFontRef font = SFFontCreateWithCompleteFunctionality();
-    SFAssert(DID_FINALIZE == false);
+    SFAssert(FINALIZE_COUNT == 0);
 
     SFFontRelease(font);
-    SFAssert(DID_FINALIZE == true);
+    SFAssert(FINALIZE_COUNT == 1);
 }
 
 void FontTester::testLoadedTables()
