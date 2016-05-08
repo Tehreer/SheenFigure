@@ -31,13 +31,13 @@ SFAlbumRef SFAlbumCreate(void);
 void SFAlbumClear(SFAlbumRef album);
 
 /**
- * Provides the range of analysed text.
+ * Provides the number of analyzed characters.
  * @param album
- *      The album whose text range you want to obtain.
+ *      The album whose character count you want to obtain.
  * @return
- *      The range of input text analysed by the shaping process.
+ *      The number of characters analyzed by the shaping process.
  */
-SFRange SFAlbumGetTextRange(SFAlbumRef album);
+SFUInteger SFAlbumGetCharacterCount(SFAlbumRef album);
 
 /**
  * Provides the number of produced glyphs.

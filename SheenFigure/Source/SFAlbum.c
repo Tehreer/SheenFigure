@@ -47,6 +47,11 @@ SFAlbumRef SFAlbumCreate(void)
     return album;
 }
 
+SFUInteger SFAlbumGetCharacterCount(SFAlbumRef album)
+{
+    return album->codepointCount;
+}
+
 SFUInteger SFAlbumGetGlyphCount(SFAlbumRef album)
 {
     return album->glyphCount;
