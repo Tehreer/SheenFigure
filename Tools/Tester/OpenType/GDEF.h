@@ -168,13 +168,13 @@ struct MarkGlyphSetsDefTable : public Table {
 
         writer.write(markSetTableFormat);
         writer.write(markSetCount);
-        int coverageOffsets[markSetCount];
+        int coverageRefs[markSetCount];
         for (int i = 0; i < markSetCount; i++) {
-            coverageOffsets[i] = writer.reserveOffset();
+            coverageRefs[i] = writer.reserveLong();
         }
 
         for (int i = 0; i < markSetCount; i++) {
-            writer.writeTable(&coverage[i], coverageOffsets[i]);
+            writer.writeTable(&coverage[i], coverageRefs[i], true);
         }
         writer.exit();
     }

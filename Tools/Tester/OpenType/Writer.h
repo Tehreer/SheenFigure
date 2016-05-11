@@ -27,12 +27,14 @@ namespace OpenType {
 class Writer {
 public:
     Writer();
+    ~Writer();
 
     void enter();
     void exit();
 
     int reserveOffset();
-    void writeTable(Table *value, int offset = -1);
+    int reserveLong();
+    void writeTable(Table *value, int reference = -1, bool isLong = false);
 
     void write(UInt8 value);
     void write(UInt16 value);
@@ -42,11 +44,13 @@ public:
     void write(UInt16 *array, int count);
     void write(UInt32 *array, int count);
 
+    int size() { return m_size; }
+    UInt8 *data() { return m_data; };
+
 private:
     UInt8 *m_data;
     int m_capacity;
     int m_size;
-    int m_index;
     std::stack<int> m_enteries;
     std::stack<int> m_offsets;
 

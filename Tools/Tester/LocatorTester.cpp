@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+#include <cstdlib>
+#include "OpenType/GDEF.h"
 #include "LocatorTester.h"
 
 extern "C" {
@@ -23,6 +25,7 @@ extern "C" {
 }
 
 using namespace SheenFigure::Tester;
+using namespace SheenFigure::Tester::OpenType;
 
 static const SFCodepoint CODEPOINT = 'A';
 
@@ -414,6 +417,47 @@ static void testGetBefore(const SFGlyphTraits *traits, SFInteger count)
 
 LocatorTester::LocatorTester()
 {
+    UInt16 classValueArray[10];
+    for (int i = 0; i < 10; i++) {
+        classValueArray[i] = (i % 2);
+    }
+
+    ClassDefTable markAttachClass;
+    markAttachClass.classFormat = 1;
+    markAttachClass.format1.startGlyph = 0;
+    markAttachClass.format1.glyphCount = 10;
+    markAttachClass.format1.classValueArray = classValueArray;
+
+    CoverageTable markGlyphCoverage;
+    markGlyphCoverage.coverageFormat = 1;
+    markGlyphCoverage.format1.glyphCount = 5;
+    for (int i = 0; i < 5; i++) {
+        markGlyphCoverage.format1.glyphArray[i] = (Glyph)(i * 2);
+    }
+
+    MarkGlyphSetsDefTable markGlyphSets;
+    markGlyphSets.markSetTableFormat = 1;
+    markGlyphSets.markSetCount = 1;
+    markGlyphSets.coverage = &markGlyphCoverage;
+
+    GDEF gdef;
+    gdef.version = 0x00010002;
+    gdef.glyphClassDef = NULL;
+    gdef.attachList = NULL;
+    gdef.ligCaretList = NULL;
+    gdef.markAttachClassDef = &markAttachClass;
+    gdef.markGlyphSetsDef = &markGlyphSets;
+
+    Writer writer;
+    writer.writeTable(&gdef);
+
+    m_gdef = new uint8_t[writer.size()];
+    memcpy(m_gdef, writer.data(), (size_t)writer.size());
+}
+
+LocatorTester::~LocatorTester()
+{
+    delete [] m_gdef;
 }
 
 void LocatorTester::testMoveNext()
@@ -511,6 +555,55 @@ void LocatorTester::testGetBefore()
     ::testGetBefore(TRAIT_LIST_15, sizeof(TRAIT_LIST_15) / sizeof(SFGlyphTraits));
 }
 
+void LocatorTester::testMarkFilteringSet()
+{
+    int count = 10;
+    SFGlyphTraits traits[count];
+    for (int i = 0; i < count; i++) {
+        traits[i] = SFGlyphTraitMark;
+    }
+
+    SFAlbumRef album = SFAlbumCreateWithTraits(traits, (SFUInteger)count);
+
+    SFLocator locator;
+    SFLocatorInitialize(&locator, album, m_gdef);
+    SFLocatorReset(&locator, 0, (SFUInteger)count);
+    SFLocatorSetLookupFlag(&locator, SFLookupFlagUseMarkFilteringSet);
+    SFLocatorSetMarkFilteringSet(&locator, 0);
+
+    /* Zero mark filtering set contains even glyphs, so we should get only those. */
+    while (SFLocatorMoveNext(&locator)) {
+        SFGlyphID glyph = SFAlbumGetGlyph(album, locator.index);
+        SFAssert((glyph % 2) == 0);
+    }
+
+    SFAlbumRelease(album);
+}
+
+void LocatorTester::testMarkAttachmentType()
+{
+    int count = 10;
+    SFGlyphTraits traits[count];
+    for (int i = 0; i < count; i++) {
+        traits[i] = SFGlyphTraitMark;
+    }
+
+    SFAlbumRef album = SFAlbumCreateWithTraits(traits, (SFUInteger)count);
+
+    SFLocator locator;
+    SFLocatorInitialize(&locator, album, m_gdef);
+    SFLocatorReset(&locator, 0, (SFUInteger)count);
+    SFLocatorSetLookupFlag(&locator, 0x0100);
+
+    /* Class 1 contains odd glyphs, so we should get only those. */
+    while (SFLocatorMoveNext(&locator)) {
+        SFGlyphID glyph = SFAlbumGetGlyph(album, locator.index);
+        SFAssert((glyph % 2) == 1);
+    }
+
+    SFAlbumRelease(album);
+}
+
 void LocatorTester::test()
 {
     testMoveNext();
@@ -518,4 +611,6 @@ void LocatorTester::test()
     testJumpTo();
     testGetAfter();
     testGetBefore();
+    testMarkFilteringSet();
+    testMarkAttachmentType();
 }

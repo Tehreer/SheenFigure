@@ -23,14 +23,20 @@ namespace Tester {
 class LocatorTester {
 public:
     LocatorTester();
+    ~LocatorTester();
 
     void testMoveNext();
     void testSkip();
     void testJumpTo();
     void testGetAfter();
     void testGetBefore();
+    void testMarkFilteringSet();
+    void testMarkAttachmentType();
 
     void test();
+
+private:
+    uint8_t *m_gdef;
 };
 
 }

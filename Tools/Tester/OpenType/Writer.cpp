@@ -20,11 +20,24 @@
 
 using namespace SheenFigure::Tester::OpenType;
 
+Writer::Writer()
+{
+    m_data = (UInt8 *)malloc(128);
+    m_capacity = 128;
+    m_size = 0;
+    m_size = 0;
+}
+
+Writer::~Writer()
+{
+    free((void *)m_data);
+}
+
 void Writer::increaseSize(int size)
 {
     m_size += size;
 
-    if (m_size < m_capacity) {
+    if (m_capacity < m_size) {
         m_capacity *= 2;
         if (m_capacity < m_size) {
             m_capacity = m_size * 2;
@@ -52,42 +65,59 @@ int Writer::reserveOffset()
     return offset;
 }
 
-void Writer::writeTable(Table *table, int offset)
+int Writer::reserveLong()
+{
+    int reference = m_size;
+    write((UInt32)0);
+
+    return reference;
+}
+
+void Writer::writeTable(Table *table, int reference, bool isLong)
 {
     Offset value = 0;
 
     if (table) {
-        if (offset > -1) {
-            value = (Offset)(m_index - m_enteries.top());
+        if (reference > -1) {
+            value = (Offset)(m_size - m_enteries.top());
         }
 
         table->write(*this);
     }
 
-    m_data[offset + 0] = (value >> 8) & 0xFF;
-    m_data[offset + 1] = (value >> 0) & 0xFF;
+    if (reference > -1) {
+        if (isLong) {
+            m_data[reference + 0] = (value >> 24) & 0xFF;
+            m_data[reference + 1] = (value >> 16) & 0xFF;
+            m_data[reference + 2] = (value >>  8) & 0xFF;
+            m_data[reference + 3] = (value >>  0) & 0xFF;
+        } else {
+            m_data[reference + 0] = (value >> 8) & 0xFF;
+            m_data[reference + 1] = (value >> 0) & 0xFF;
+        }
+    }
 }
 
 void Writer::write(UInt8 value)
 {
-    m_data[m_index] = value;
     increaseSize(1);
+    m_data[m_size - 1] = value;
 }
 
 void Writer::write(UInt16 value)
 {
-    m_data[m_index + 0] = (value >> 8) & 0xFF;
-    m_data[m_index + 1] = (value >> 0) & 0xFF;
     increaseSize(2);
+    m_data[m_size - 2] = (value >> 8) & 0xFF;
+    m_data[m_size - 1] = (value >> 0) & 0xFF;
 }
 
 void Writer::write(UInt32 value)
 {
-    m_data[m_index + 0] = (value >> 24) & 0xFF;
-    m_data[m_index + 1] = (value >> 16) & 0xFF;
-    m_data[m_index + 2] = (value >>  8) & 0xFF;
-    m_data[m_index + 3] = (value >>  0) & 0xFF;
     increaseSize(4);
+    m_data[m_size - 4] = (value >> 24) & 0xFF;
+    m_data[m_size - 3] = (value >> 16) & 0xFF;
+    m_data[m_size - 2] = (value >>  8) & 0xFF;
+    m_data[m_size - 1] = (value >>  0) & 0xFF;
 }
 
 void Writer::write(Table *array, int count)
