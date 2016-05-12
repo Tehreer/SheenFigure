@@ -22,8 +22,16 @@
 
 #include "SFArtist.h"
 
+enum {
+    SFFeatureBehaviourOff = 0,
+    SFFeatureBehaviourOn = 1,
+    SFFeatureBehaviourRequired = 2,
+};
+typedef SFUInt16 SFFeatureBehaviour;
+
 typedef struct _SFFeatureInfo {
     SFTag featureTag;
+    SFFeatureBehaviour featureBehaviour;
     SFUInt16 featureMask;
 } SFFeatureInfo, *SFFeatureInfoRef;
 
