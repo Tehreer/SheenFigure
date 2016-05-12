@@ -22,6 +22,7 @@
 
 #include "SFData.h"
 #include "SFFont.h"
+#include "SFPatternBuilder.h"
 #include "SFShapingKnowledge.h"
 
 typedef struct _SFSchemeState {
