@@ -30,9 +30,6 @@ public:
     SchemeTester();
 
     void test();
-
-private:
-    void *m_gdef;
 };
 
 }

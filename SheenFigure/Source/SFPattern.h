@@ -52,12 +52,12 @@ struct _SFPattern {
     SFFontRef font;
     struct {
         SFTag *items;
-        SFUInteger count;               /**< Total number of features.*/
+        SFUInteger count;               /**< Total number of features. */
     } featureTags;
     struct {
-        SFFeatureUnit *items;
-        SFUInteger gsub;                /**< Total number of gsub feature units.*/
-        SFUInteger gpos;                /**< Total number of gpos feature units.*/
+        SFFeatureUnit *items;           /**< Items of feature units, gsub, followed by gspos. */
+        SFUInteger gsub;                /**< Total number of gsub feature units. */
+        SFUInteger gpos;                /**< Total number of gpos feature units. */
     } featureUnits;
     SFTag scriptTag;                    /**< Tag of the script. */
     SFTag languageTag;                  /**< Tag of the language. */
