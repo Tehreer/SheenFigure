@@ -22,6 +22,8 @@
 #include "SFAlbum.h"
 #include "SFArtist.h"
 #include "SFAssert.h"
+#include "SFGeneralCategory.h"
+#include "SFGeneralCategoryLookup.h"
 #include "SFJoiningType.h"
 #include "SFJoiningTypeLookup.h"
 #include "SFShapingEngine.h"
@@ -91,6 +93,29 @@ SF_INTERNAL void SFArabicEngineInitialize(SFArabicEngineRef arabicEngine, SFArti
 {
     arabicEngine->_base = _SFArabicEngineBase;
     arabicEngine->_artist = artist;
+}
+
+static SFJoiningType _SFDetermineJoiningType(SFCodepoint codepoint)
+{
+    SFJoiningType joiningType = SFJoiningTypeDetermine(codepoint);
+
+    if (joiningType == SFJoiningTypeF) {
+        SFGeneralCategory generalCategory = SFGeneralCategoryDetermine(codepoint);
+
+        switch (generalCategory) {
+        case SFGeneralCategoryMN:
+        case SFGeneralCategoryME:
+        case SFGeneralCategoryCF:
+            joiningType = SFJoiningTypeT;
+            break;
+            
+        default:
+            joiningType = SFJoiningTypeU;
+            break;
+        }
+    }
+
+    return joiningType;
 }
 
 static void _SFPutArabicFeatureMask(SFAlbumRef album)
