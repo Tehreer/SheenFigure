@@ -2960,8 +2960,8 @@ SF_INTERNAL SFGeneralCategory SFGeneralCategoryDetermine(SFCodepoint codepoint) 
                 _SFGeneralCategoryMainIndexes[
                  _SFGeneralCategoryBranchIndexes[
                       codepoint / 0x2000
-                 ] + (codepoint % 0x2000) / 0x20
-                ] + (codepoint % 0x20)
+                 ] + (codepoint % 0x2000) / 0x0100
+                ] + (codepoint % 0x0100)
                ];
     }
 

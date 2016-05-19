@@ -392,14 +392,17 @@ void GeneralCategoryLookupGenerator::generateFile(const std::string &directory) 
     source.append(arrMainIndexes).newLine();
     source.append(arrBranchIndexes).newLine();
 
+    string maxUnicode = "0x" + Converter::toHex(m_lastCodePoint, 6);
+    string mainDivider = "0x" + Converter::toHex(m_mainSegmentSize, 4);
+    string branchDivider = "0x" + Converter::toHex(m_mainSegmentSize * m_branchSegmentSize, 4);
     source.append("SF_INTERNAL SFGeneralCategory SFGeneralCategoryDetermine(SFCodepoint codepoint) {").newLine();
-    source.appendTabs(1).append("if (codepoint <= 0x" + Converter::toHex(m_lastCodePoint) + ") {").newLine();
+    source.appendTabs(1).append("if (codepoint <= " + maxUnicode + ") {").newLine();
     source.appendTabs(2).append("return " + DATA_ARRAY_NAME + "[").newLine();
     source.appendTabs(2).append("        " + MAIN_INDEXES_ARRAY_NAME + "[").newLine();
     source.appendTabs(2).append("         " + BRANCH_INDEXES_ARRAY_NAME + "[").newLine();
-    source.appendTabs(2).append("              codepoint / 0x" + Converter::toHex(m_mainSegmentSize * m_branchSegmentSize)).newLine();
-    source.appendTabs(2).append("         ] + (codepoint % 0x" + Converter::toHex(m_mainSegmentSize * m_branchSegmentSize) + ") / 0x" + Converter::toHex(m_branchSegmentSize)).newLine();
-    source.appendTabs(2).append("        ] + (codepoint % 0x" + Converter::toHex(m_branchSegmentSize) + ")").newLine();
+    source.appendTabs(2).append("              codepoint / " + branchDivider).newLine();
+    source.appendTabs(2).append("         ] + (codepoint % " + branchDivider + ") / " + mainDivider).newLine();
+    source.appendTabs(2).append("        ] + (codepoint % " + mainDivider + ")").newLine();
     source.appendTabs(2).append("       ];").newLine();
     source.appendTabs(1).append("}").newLine();
     source.newLine();

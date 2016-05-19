@@ -14,25 +14,24 @@
  * limitations under the License.
  */
 
-#ifndef __SHEEN_FIGURE__TESTER__UTILITIES__CONVERTER_H
-#define __SHEEN_FIGURE__TESTER__UTILITIES__CONVERTER_H
+#ifndef __SHEENFIGURE_TESTER__GENERAL_CATEGORY_LOOKUP_TESTER_H
+#define __SHEENFIGURE_TESTER__GENERAL_CATEGORY_LOOKUP_TESTER_H
 
-extern "C" {
-#include <SFJoiningType.h>
-#include <SFGeneralCategory.h>
-}
+#include <Parser/UnicodeData.h>
 
 namespace SheenFigure {
 namespace Tester {
-namespace Utilities {
 
-class Convert {
+class GeneralCategoryLookupTester {
 public:
-    static char toChar(SFJoiningType joiningType);
-    static std::string &toString(SFGeneralCategory generalCategory);
+    GeneralCategoryLookupTester(const Parser::UnicodeData &unicodeData);
+
+    void test();
+
+private:
+    const Parser::UnicodeData &m_unicodeData;
 };
 
-}
 }
 }
 

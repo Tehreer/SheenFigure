@@ -14,13 +14,57 @@
  * limitations under the License.
  */
 
+#include <map>
+#include <string>
+
 extern "C" {
+#include <SFGeneralCategory.h>
 #include <SFJoiningType.h>
 }
 
 #include "Convert.h"
 
+using namespace std;
 using namespace SheenFigure::Tester::Utilities;
+
+static map<SFGeneralCategory, string> createGeneralCategoryMap() {
+    map<SFGeneralCategory, string> map;
+    map[SFGeneralCategoryNil] = "Nil";
+    map[SFGeneralCategoryLU]  = "Lu";
+    map[SFGeneralCategoryLL]  = "Ll";
+    map[SFGeneralCategoryLT]  = "Lt";
+    map[SFGeneralCategoryLM]  = "Lm";
+    map[SFGeneralCategoryLO]  = "Lo";
+    map[SFGeneralCategoryMN]  = "Mn";
+    map[SFGeneralCategoryMC]  = "Mc";
+    map[SFGeneralCategoryME]  = "Me";
+    map[SFGeneralCategoryND]  = "Nd";
+    map[SFGeneralCategoryNL]  = "Nl";
+    map[SFGeneralCategoryNO]  = "No";
+    map[SFGeneralCategoryPC]  = "Pc";
+    map[SFGeneralCategoryPD]  = "Pd";
+    map[SFGeneralCategoryPS]  = "Ps";
+    map[SFGeneralCategoryPE]  = "Pe";
+    map[SFGeneralCategoryPI]  = "Pi";
+    map[SFGeneralCategoryPF]  = "Pf";
+    map[SFGeneralCategoryPO]  = "Po";
+    map[SFGeneralCategorySM]  = "Sm";
+    map[SFGeneralCategorySC]  = "Sc";
+    map[SFGeneralCategorySK]  = "Sk";
+    map[SFGeneralCategorySO]  = "So";
+    map[SFGeneralCategoryZS]  = "Zs";
+    map[SFGeneralCategoryZL]  = "Zl";
+    map[SFGeneralCategoryZP]  = "Zp";
+    map[SFGeneralCategoryCC]  = "Cc";
+    map[SFGeneralCategoryCF]  = "Cf";
+    map[SFGeneralCategoryCS]  = "Cs";
+    map[SFGeneralCategoryCO]  = "Co";
+    map[SFGeneralCategoryCN]  = "Cn";
+
+    return map;
+}
+
+static map<SFGeneralCategory, string> MAP_GENERAL_CATEGORY_TO_STRING = createGeneralCategoryMap();
 
 char Convert::toChar(SFJoiningType joiningType)
 {
@@ -45,4 +89,9 @@ char Convert::toChar(SFJoiningType joiningType)
     }
 
     return '\0';
+}
+
+std::string &Convert::toString(SFGeneralCategory generalCategory)
+{
+    return MAP_GENERAL_CATEGORY_TO_STRING[generalCategory];
 }
