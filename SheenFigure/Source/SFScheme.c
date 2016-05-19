@@ -115,14 +115,19 @@ static void _SFAddFeatureRange(_SFSchemeStateRef state, SFUInteger index, SFUInt
 
     for (; index < limit; index++) {
         SFFeatureInfoRef featureInfo = &state->knowledge->featureInfos.items[index];
-        SFData feature = _SFSearchFeatureInLangSys(state->langSys, state->featureList, featureInfo->featureTag);
 
-        if (feature) {
-            SFPatternBuilderAddFeature(&state->builder, featureInfo->featureTag, featureInfo->featureMask);
-            _SFAddAllLookups(state, feature);
+        /* Skip those features which are off by default. */
+        if (featureInfo->featureBehaviour != SFFeatureBehaviourOff) {
+            SFData feature = _SFSearchFeatureInLangSys(state->langSys, state->featureList, featureInfo->featureTag);
 
-            if (!simultaneous) {
-                SFPatternBuilderMakeFeatureUnit(&state->builder);
+            /* Add the feature, if it exists in the language. */
+            if (feature) {
+                SFPatternBuilderAddFeature(&state->builder, featureInfo->featureTag, featureInfo->featureMask);
+                _SFAddAllLookups(state, feature);
+
+                if (!simultaneous) {
+                    SFPatternBuilderMakeFeatureUnit(&state->builder);
+                }
             }
         }
     }
