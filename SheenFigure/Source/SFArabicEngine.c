@@ -120,22 +120,26 @@ static SFJoiningType _SFDetermineJoiningType(SFCodepoint codepoint)
 
 static void _SFPutArabicFeatureMask(SFAlbumRef album)
 {
-    const SFCodepoint *codepoints = album->codepointArray;
-    SFUInteger length = album->codepointCount;
+    SBCodepointSequenceRef sequence = album->codepointSequence;
     SFUInteger association = SFAlbumGetSingleAssociation(album, 0);
-    SFJoiningType priorJoiningType = SFJoiningTypeU;
-    SFJoiningType joiningType = SFJoiningTypeDetermine(codepoints[association]);
-    SFUInteger index = 0;
+    SFUInteger stringIndex = 0;
+    SFUInteger currentIndex = 0;
+    SFJoiningType priorJoiningType;
+    SFJoiningType joiningType;
+
+    priorJoiningType = SFJoiningTypeU;
+    joiningType = SFJoiningTypeDetermine(SBCodepointSequenceGetCodepointAt(sequence, &stringIndex));
 
     while (joiningType != SFJoiningTypeNil) {
         SFUInt16 featureMask = _SFArabicFeatureMaskNone;
         SFJoiningType nextJoiningType = SFJoiningTypeNil;
-        SFUInteger nextIndex = index;
+        SFUInteger nextIndex = stringIndex;
+        SBCodepoint codepoint;
 
         /* Find the joining type of next character. */
-        while (++nextIndex < length) {
+        while ((codepoint = SBCodepointSequenceGetCodepointAt(sequence, &stringIndex)) != SBCodepointInvalid) {
             association = SFAlbumGetSingleAssociation(album, nextIndex);
-            nextJoiningType = SFJoiningTypeDetermine(codepoints[association]);
+            nextJoiningType = SFJoiningTypeDetermine(codepoint);
 
             /* Normalize the joining type of next character. */
             switch (nextJoiningType) {
@@ -207,11 +211,11 @@ static void _SFPutArabicFeatureMask(SFAlbumRef album)
         }
 
         /* Save the mask of current character. */
-        SFAlbumSetFeatureMask(album, index, featureMask);
+        SFAlbumSetFeatureMask(album, currentIndex, featureMask);
 
         /* Move to the next character. */
         priorJoiningType = joiningType;
-        index = nextIndex;
+        currentIndex = nextIndex;
         joiningType = nextJoiningType;
     }
 }

@@ -21,6 +21,8 @@
 #include <SFConfig.h>
 #include <SFTypes.h>
 
+#include <SBCodepointSequence.h>
+
 #include "SFAssert.h"
 #include "SFList.h"
 
@@ -63,8 +65,8 @@ typedef struct _SFGlyphDetail {
 } SFGlyphDetail, *SFGlyphDetailRef;
 
 struct _SFAlbum {
-    const SFCodepoint *codepointArray;  /**< The array of codepoints which are to be shaped. */
-    SFUInteger codepointCount;
+    SBCodepointSequenceRef codepointSequence;  /**< The sequence of codepoints to be shaped. */
+    SBUInteger stringLength;            /**< Length of original string. */
     SFUInteger glyphCount;              /**< Total number of glyphs in the album. */
 
     SFUInteger *_mapArray;              /**< Character index to glyph index mapping array. */
@@ -87,7 +89,7 @@ SF_INTERNAL void SFAlbumInitialize(SFAlbumRef album);
 /**
  * Initializes the album for given code points.
  */
-SF_INTERNAL void SFAlbumReset(SFAlbumRef album, const SFCodepoint *codepointArray, SFUInteger codepointCount);
+SF_INTERNAL void SFAlbumReset(SFAlbumRef album, SBCodepointSequenceRef codepointSequence);
 
 /**
  * Starts filling the album with provided glyphs.
@@ -97,7 +99,7 @@ SF_INTERNAL void SFAlbumBeginFilling(SFAlbumRef album);
 /**
  * Adds a new glyph into the album.
  */
-SF_INTERNAL void SFAlbumAddGlyph(SFAlbumRef album, SFGlyphID glyph, SFUInteger association);
+SF_INTERNAL void SFAlbumAddGlyph(SFAlbumRef album, SFGlyphID glyph, SFUInteger association, SFUInteger length);
 
 /**
  * Reserves specified number of glyphs at the given index.

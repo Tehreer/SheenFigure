@@ -22,6 +22,13 @@
 #include "SFTypes.h"
 
 enum {
+    SFStringEncodingUTF8 = 0,
+    SFStringEncodingUTF16 = 1,
+    SFStringEncodingUTF32 = 2
+};
+typedef SFUInt32 SFStringEncoding;
+
+enum {
     SFTextDirectionLeftToRight = 0,
     SFTextDirectionRightToLeft = 1
 };
@@ -46,7 +53,7 @@ SFTextDirection SFArtistGetDefaultDirectionForScript(SFArtistRef artist, SFTag s
 
 void SFArtistSetPattern(SFArtistRef artist, SFPatternRef pattern);
 
-void SFArtistSetCodepoints(SFArtistRef artist, SFCodepoint *codepoints, SFUInteger length);
+void SFArtistSetString(SFArtistRef artist, SFStringEncoding stringEncoding, const void *stringBuffer, SFUInteger stringLength);
 
 /**
  * Sets the direction of text for glyph positioning.

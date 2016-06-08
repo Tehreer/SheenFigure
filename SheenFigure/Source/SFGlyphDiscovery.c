@@ -59,24 +59,35 @@ SF_INTERNAL void _SFDiscoverGlyphs(SFTextProcessorRef processor)
     SFPatternRef pattern = processor->_pattern;
     SFFontRef font = pattern->font;
     SFAlbumRef album = processor->_album;
-    SFUInteger length = album->codepointCount;
-    SFUInteger index;
+    SBCodepointSequenceRef sequence = album->codepointSequence;
+    SFUInteger startIndex;
+    SFUInteger stringIndex;
+    SBCodepoint codepoint;
 
     switch (processor->_textMode) {
     case SFTextModeForward:
-        for (index = 0; index < length; index++) {
-            SFCodepoint codepoint = album->codepointArray[index];
+        stringIndex = 0;
+        startIndex = 0;
+
+        while ((codepoint = SBCodepointSequenceGetCodepointAt(sequence, &stringIndex)) != SBCodepointInvalid) {
             SFGlyphID glyph = SFFontGetGlyphIDForCodepoint(font, codepoint);
-            SFAlbumAddGlyph(album, glyph, index);
+            SFAlbumAddGlyph(album, glyph, startIndex, stringIndex - startIndex);
+
+            startIndex = stringIndex;
         }
         break;
 
     case SFTextModeBackward:
+        /**
+         * TODO: Add support for backward decoding.
+         */
+        /*
         for (index = length; index--;) {
             SFCodepoint codepoint = album->codepointArray[index];
             SFGlyphID glyph = SFFontGetGlyphIDForCodepoint(font, codepoint);
             SFAlbumAddGlyph(album, glyph, index);
         }
+         */
         break;
 
     default:

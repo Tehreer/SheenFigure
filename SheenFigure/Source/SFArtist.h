@@ -21,14 +21,15 @@
 #include <SFConfig.h>
 #include <SFTypes.h>
 
+#include <SBCodepointSequence.h>
+
 #include "SFPattern.h"
 
 struct _SFArtist {
-    SFCodepoint *codepointArray;
+    SBCodepointSequenceRef codepointSequence;
     SFPatternRef pattern;
     SFTextDirection textDirection;
     SFTextMode textMode;
-    SFUInteger codepointCount;
     SFUInteger _retainCount;
 };
 

@@ -17,6 +17,8 @@
 #include <SFConfig.h>
 #include <SFTypes.h>
 
+#include <SBCodepointSequence.h>
+
 #include <stddef.h>
 #include <stdlib.h>
 #include <string.h>
@@ -25,6 +27,7 @@
 #include "SFAlbum.h"
 
 static const SFGlyphMask _SFGlyphMaskEmpty = { { SFUInt16Max, 0 } };
+static const SFGlyphMask _SFGlyphMaskPlaceholder = { { SFUInt16Max, SFGlyphTraitPlaceholder } };
 
 static void _SFAlbumSetGlyphMask(SFAlbumRef album, SFUInteger index, SFGlyphMask glyphMask);
 static void _SFAlbumRemoveGlyphs(SFAlbumRef album, SFUInteger index, SFUInteger count);
@@ -49,7 +52,7 @@ SFAlbumRef SFAlbumCreate(void)
 
 SFUInteger SFAlbumGetCharacterCount(SFAlbumRef album)
 {
-    return album->codepointCount;
+    return album->stringLength;
 }
 
 SFUInteger SFAlbumGetGlyphCount(SFAlbumRef album)
@@ -95,8 +98,8 @@ void SFAlbumRelease(SFAlbumRef album)
 
 SF_INTERNAL void SFAlbumInitialize(SFAlbumRef album)
 {
-    album->codepointArray = NULL;
-    album->codepointCount = 0;
+    album->codepointSequence = NULL;
+    album->stringLength = 0;
     album->glyphCount = 0;
     album->_mapArray = NULL;
 
@@ -111,12 +114,12 @@ SF_INTERNAL void SFAlbumInitialize(SFAlbumRef album)
     album->_retainCount = 1;
 }
 
-SF_INTERNAL void SFAlbumReset(SFAlbumRef album, const SFCodepoint *codepointArray, SFUInteger codepointCount)
+SF_INTERNAL void SFAlbumReset(SFAlbumRef album, SBCodepointSequenceRef codepointSequence)
 {
     free(album->_mapArray);
 
-    album->codepointArray = codepointArray;
-    album->codepointCount = codepointCount;
+    album->codepointSequence = codepointSequence;
+    album->stringLength = SBCodepointSequenceGetStringLength(codepointSequence);
     album->glyphCount = 0;
     album->_mapArray = NULL;
 
@@ -132,8 +135,8 @@ SF_INTERNAL void SFAlbumReset(SFAlbumRef album, const SFCodepoint *codepointArra
 
 SF_INTERNAL void SFAlbumBeginFilling(SFAlbumRef album)
 {
-    SFUInteger indexesCapacity = album->codepointCount >> 1;
-	SFUInteger glyphCapacity = album->codepointCount << 1;
+    SFUInteger indexesCapacity = album->stringLength >> 1;
+	SFUInteger glyphCapacity = album->stringLength << 1;
 
     SFListReserveRange(&album->_indexes, 0, indexesCapacity);
     SFListReserveRange(&album->_glyphs, 0, glyphCapacity);
@@ -142,7 +145,7 @@ SF_INTERNAL void SFAlbumBeginFilling(SFAlbumRef album)
 	album->_state = _SFAlbumStateFilling;
 }
 
-SF_INTERNAL void SFAlbumAddGlyph(SFAlbumRef album, SFGlyphID glyph, SFUInteger association)
+SF_INTERNAL void SFAlbumAddGlyph(SFAlbumRef album, SFGlyphID glyph, SFUInteger association, SFUInteger length)
 {
     SFUInteger index;
 
@@ -152,10 +155,19 @@ SF_INTERNAL void SFAlbumAddGlyph(SFAlbumRef album, SFGlyphID glyph, SFUInteger a
     album->_version++;
     index = album->glyphCount++;
 
-    /* Initialize glyph along with its details. */
+    /* Initialize the glyph along with its details. */
     SFAlbumSetGlyph(album, index, glyph);
     _SFAlbumSetGlyphMask(album, index, _SFGlyphMaskEmpty);
     SFAlbumSetSingleAssociation(album, index, association);
+
+    while (--length) {
+        index = album->glyphCount++;
+
+        /* Initialize placeholder glyph along with its details. */
+        SFAlbumSetGlyph(album, index, 0);
+        _SFAlbumSetGlyphMask(album, index, _SFGlyphMaskPlaceholder);
+        SFAlbumSetSingleAssociation(album, index, association);
+    }
 }
 
 SF_INTERNAL void SFAlbumReserveGlyphs(SFAlbumRef album, SFUInteger index, SFUInteger count)
@@ -419,7 +431,7 @@ static void _SFAlbumBuildCharToGlyphMap(SFAlbumRef album)
     SFUInteger index = album->glyphCount;
     SFUInteger *map;
 
-    map = malloc(sizeof(SFUInteger) * album->codepointCount);
+    map = malloc(sizeof(SFUInteger) * album->stringLength);
 
     /* Traverse in reverse order so that first glyph takes priority in case of multiple substitution. */
     while (index--) {
@@ -436,14 +448,14 @@ static void _SFAlbumBuildCharToGlyphMap(SFAlbumRef album)
             for (j = 0; j < count; j++) {
                 association = array[j];
                 /* The association MUST be valid. */
-                SFAssert(association < album->codepointCount);
+                SFAssert(association < album->stringLength);
 
                 map[association] = index;
             }
         } else {
             association = SFAlbumGetSingleAssociation(album, index);
             /* The association MUST be valid. */
-            SFAssert(association < album->codepointCount);
+            SFAssert(association < album->stringLength);
 
             map[association] = index;
         }

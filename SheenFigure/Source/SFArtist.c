@@ -17,6 +17,8 @@
 #include <SFConfig.h>
 #include <SFTypes.h>
 
+#include <SBCodepointSequence.h>
+
 #include <stddef.h>
 #include <stdlib.h>
 
@@ -26,11 +28,10 @@
 SFArtistRef SFArtistCreate(void)
 {
     SFArtistRef artist = malloc(sizeof(SFArtist));
-    artist->codepointArray = NULL;
+    artist->codepointSequence = NULL;
     artist->pattern = NULL;
     artist->textDirection = SFTextDirectionLeftToRight;
     artist->textMode = SFTextModeForward;
-    artist->codepointCount = 0;
     artist->_retainCount = 1;
 
     return artist;
@@ -46,10 +47,27 @@ SFTextDirection SFArtistGetDefaultDirectionForScript(SFArtistRef artist, SFTag s
     return SFTextModeForward;
 }
 
-void SFArtistSetCodepoints(SFArtistRef artist, SFCodepoint *codepoints, SFUInteger length)
+void SFArtistSetString(SFArtistRef artist, SFStringEncoding stringEncoding, const void *stringBuffer, SFUInteger stringLength)
 {
-    artist->codepointArray = codepoints;
-    artist->codepointCount = length;
+    SBCodepointSequenceRelease(artist->codepointSequence);
+
+    switch (stringEncoding) {
+        case SFStringEncodingUTF8:
+            artist->codepointSequence = SBCodepointSequenceCreateWithUTF8String(stringBuffer, stringLength);
+            break;
+
+        case SFStringEncodingUTF16:
+            artist->codepointSequence = SBCodepointSequenceCreateWithUTF16String(stringBuffer, stringLength);
+            break;
+
+        case SFStringEncodingUTF32:
+            artist->codepointSequence = SBCodepointSequenceCreateWithUTF32String(stringBuffer, stringLength);
+            break;
+
+        default:
+            artist->codepointSequence = NULL;
+            break;
+    }
 }
 
 void SFArtistSetPattern(SFArtistRef artist, SFPatternRef pattern)
@@ -91,17 +109,17 @@ void SFArtistSetTextMode(SFArtistRef artist, SFTextMode textMode)
 
 void SFArtistFillAlbum(SFArtistRef artist, SFAlbumRef album)
 {
-    if (artist->pattern && artist->codepointArray && artist->codepointCount > 0) {
+    if (artist->pattern && artist->codepointSequence) {
         SFUnifiedEngine unifiedEngine;
         SFShapingEngineRef shapingEngine;
 
         SFUnifiedEngineInitialize(&unifiedEngine, artist);
         shapingEngine = (SFShapingEngineRef)&unifiedEngine;
 
-        SFAlbumReset(album, artist->codepointArray, artist->codepointCount);
+        SFAlbumReset(album, artist->codepointSequence);
         SFShapingEngineProcessAlbum(shapingEngine, album);
     } else {
-        SFAlbumReset(album, NULL, 0);
+        SFAlbumReset(album, NULL);
     }
 }
 
@@ -117,6 +135,7 @@ SFArtistRef SFArtistRetain(SFArtistRef artist)
 void SFArtistRelease(SFArtistRef artist)
 {
     if (artist && --artist->_retainCount == 0) {
+        SBCodepointSequenceRelease(artist->codepointSequence);
         free(artist);
     }
 }
