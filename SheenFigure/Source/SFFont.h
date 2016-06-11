@@ -38,6 +38,6 @@ struct _SFFont {
 
 SF_INTERNAL void SFFontLoadTable(SFFontRef font, SFTag tableTag, SFUInt8 *buffer, SFUInteger *length);
 SF_INTERNAL SFGlyphID SFFontGetGlyphIDForCodepoint(SFFontRef font, SFCodepoint codepoint);
-SF_INTERNAL SFInteger SFFontGetAdvanceForGlyph(SFFontRef font, SFFontLayout fontLayout, SFGlyphID glyphID);
+SF_INTERNAL SFAdvance SFFontGetAdvanceForGlyph(SFFontRef font, SFFontLayout fontLayout, SFGlyphID glyphID);
 
 #endif

@@ -31,13 +31,13 @@ SFAlbumRef SFAlbumCreate(void);
 void SFAlbumClear(SFAlbumRef album);
 
 /**
- * Provides the number of analyzed characters.
+ * Provides the number of processed code units.
  * @param album
  *      The album whose character count you want to obtain.
  * @return
  *      The number of characters analyzed by the shaping process.
  */
-SFUInteger SFAlbumGetCharacterCount(SFAlbumRef album);
+SFUInteger SFAlbumGetCodeunitCount(SFAlbumRef album);
 
 /**
  * Provides the number of produced glyphs.
@@ -55,7 +55,7 @@ SFUInteger SFAlbumGetGlyphCount(SFAlbumRef album);
  * @return
  *      An array of glyphs produced as part of shaping process.
  */
-SFGlyphID *SFAlbumGetGlyphIDs(SFAlbumRef album);
+const SFGlyphID *SFAlbumGetGlyphIDsPtr(SFAlbumRef album);
 
 /**
  * Provides an array of glyph offsets in font units where each glyph is positioned with respect to
@@ -65,7 +65,7 @@ SFGlyphID *SFAlbumGetGlyphIDs(SFAlbumRef album);
  * @return
  *      An array of glyph positions produced as part of shaping process.
  */
-SFPoint *SFAlbumGetGlyphOffsets(SFAlbumRef album);
+const SFPoint *SFAlbumGetGlyphOffsetsPtr(SFAlbumRef album);
 
 /**
  * Provides an array of glyph advances in font units.
@@ -74,16 +74,16 @@ SFPoint *SFAlbumGetGlyphOffsets(SFAlbumRef album);
  * @return
  *      An array of glyph advances produced as part of shaping process.
  */
-SFAdvance *SFAlbumGetGlyphAdvances(SFAlbumRef album);
+const SFAdvance *SFAlbumGetGlyphAdvancesPtr(SFAlbumRef album);
 
 /**
- * Provides an array, mapping each character to corresponding glyph index.
+ * Provides an array, mapping each code unit in the string to corresponding glyph index.
  * @param album
  *      The album whose charater to glyph map you want to obtain.
  * @return
  *      An array of indexes mapping characters to glyphs.
  */
-SFUInteger *SFAlbumGetCharacterToGlyphMap(SFAlbumRef album);
+const SFUInteger *SFAlbumGetCodeunitToGlyphMapPtr(SFAlbumRef album);
 
 SFAlbumRef SFAlbumRetain(SFAlbumRef album);
 void SFAlbumRelease(SFAlbumRef album);

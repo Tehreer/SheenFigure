@@ -121,7 +121,9 @@ static void _SFPutArabicFeatureMask(SFAlbumRef album)
 {
     SBCodepointSequenceRef sequence = album->codepointSequence;
     SFUInteger association = SFAlbumGetSingleAssociation(album, 0);
-    SFUInteger stringIndex = 0;
+    SFUInteger stringStart = album->stringRange.start;
+    SFUInteger stringLimit = stringStart + album->stringRange.count;
+    SFUInteger stringIndex = stringStart;
     SFUInteger currentIndex = 0;
     SFJoiningType priorJoiningType;
     SFJoiningType joiningType;
@@ -132,11 +134,12 @@ static void _SFPutArabicFeatureMask(SFAlbumRef album)
     while (joiningType != SFJoiningTypeNil) {
         SFUInt16 featureMask = _SFArabicFeatureMaskNone;
         SFJoiningType nextJoiningType = SFJoiningTypeNil;
-        SFUInteger nextIndex = stringIndex;
+        SFUInteger nextIndex = stringIndex - stringStart;
         SBCodepoint codepoint;
 
         /* Find the joining type of next character. */
-        while ((codepoint = SBCodepointSequenceGetCodepointAt(sequence, &stringIndex)) != SBCodepointInvalid) {
+        while (stringIndex < stringLimit) {
+            codepoint = SBCodepointSequenceGetCodepointAt(sequence, &stringIndex);
             association = SFAlbumGetSingleAssociation(album, nextIndex);
             nextJoiningType = SFJoiningTypeDetermine(codepoint);
 

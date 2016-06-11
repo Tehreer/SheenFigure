@@ -18,13 +18,33 @@
 #define _SF_INTERNAL_BASE_H
 
 #include <SFBase.h>
+#include <SFConfig.h>
 
 /**
- * A type to represent a portion of a sequence.
+ * A value that indicates maximum limit of SFUInt8
+ */
+#define SFUInt8Max      UINT8_MAX
+
+/**
+ * A value that indicates maximum limit of SFUInt16
+ */
+#define SFUInt16Max     UINT16_MAX
+
+/**
+ * A value that indicates maximum limit of SFUInt32
+ */
+#define SFUInt32Max     UINT32_MAX
+
+/**
+ * A type to represent a range of sequential items.
  */
 typedef struct _SFRange {
-    SFUInteger start;
-    SFUInteger count;
+    SFUInteger start; /** An value representing the starting location of the range. */
+    SFUInteger count; /** A value representing the number of items in the range. */
 } SFRange;
+
+extern const SFRange SFRangeEmpty;
+
+SF_INTERNAL void SFRangeReduceToLength(SFRange *refRange, SFUInteger maxLength);
 
 #endif

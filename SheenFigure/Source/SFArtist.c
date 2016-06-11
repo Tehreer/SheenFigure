@@ -28,6 +28,7 @@ SFArtistRef SFArtistCreate(void)
 {
     SFArtistRef artist = malloc(sizeof(SFArtist));
     artist->codepointSequence = NULL;
+    artist->stringRange = SFRangeEmpty;
     artist->pattern = NULL;
     artist->textDirection = SFTextDirectionLeftToRight;
     artist->textMode = SFTextModeForward;
@@ -46,26 +47,51 @@ SFTextDirection SFArtistGetDefaultDirectionForScript(SFArtistRef artist, SFTag s
     return SFTextModeForward;
 }
 
-void SFArtistSetString(SFArtistRef artist, SFStringEncoding stringEncoding, const void *stringBuffer, SFUInteger stringLength)
+void SFArtistSetInputString(SFArtistRef artist, SFStringEncoding stringEncoding, const void *stringBuffer, SFUInteger stringLength)
 {
     SBCodepointSequenceRelease(artist->codepointSequence);
 
     switch (stringEncoding) {
         case SFStringEncodingUTF8:
             artist->codepointSequence = SBCodepointSequenceCreateWithUTF8String(stringBuffer, stringLength);
+            artist->stringRange.start = 0;
+            artist->stringRange.count = stringLength;
             break;
 
         case SFStringEncodingUTF16:
             artist->codepointSequence = SBCodepointSequenceCreateWithUTF16String(stringBuffer, stringLength);
+            artist->stringRange.start = 0;
+            artist->stringRange.count = stringLength;
             break;
 
         case SFStringEncodingUTF32:
             artist->codepointSequence = SBCodepointSequenceCreateWithUTF32String(stringBuffer, stringLength);
+            artist->stringRange.start = 0;
+            artist->stringRange.count = stringLength;
             break;
 
         default:
             artist->codepointSequence = NULL;
+            artist->stringRange = SFRangeEmpty;
             break;
+    }
+}
+
+void SFArtistSetStringRange(SFArtistRef artist, SFUInteger rangeOffset, SFUInteger rangeLength)
+{
+    if (artist->codepointSequence) {
+        SFRange inputRange;
+        SFUInteger stringLength;
+
+        inputRange.start = rangeOffset;
+        inputRange.count = rangeLength;
+        stringLength = SBCodepointSequenceGetStringLength(artist->codepointSequence);
+
+        SFRangeReduceToLength(&inputRange, stringLength);
+
+        artist->stringRange = inputRange;
+    } else {
+        artist->stringRange = SFRangeEmpty;
     }
 }
 
@@ -115,10 +141,10 @@ void SFArtistFillAlbum(SFArtistRef artist, SFAlbumRef album)
         SFUnifiedEngineInitialize(&unifiedEngine, artist);
         shapingEngine = (SFShapingEngineRef)&unifiedEngine;
 
-        SFAlbumReset(album, artist->codepointSequence);
+        SFAlbumReset(album, artist->codepointSequence, artist->stringRange);
         SFShapingEngineProcessAlbum(shapingEngine, album);
     } else {
-        SFAlbumReset(album, NULL);
+        SFAlbumReset(album, NULL, SFRangeEmpty);
     }
 }
 

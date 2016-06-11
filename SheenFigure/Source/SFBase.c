@@ -15,3 +15,20 @@
  */
 
 #include "SFBase.h"
+
+const SFRange SFRangeEmpty = { 0, 0 };
+
+SF_INTERNAL void SFRangeReduceToLength(SFRange *refRange, SFUInteger maxLength)
+{
+    if (refRange->start < maxLength) {
+        SFUInteger possibleLimit = refRange->start + refRange->count;
+
+        if (refRange->start <= possibleLimit && possibleLimit <= maxLength) {
+            /* The range is valid. Nothing to do here. */
+        } else {
+            refRange->count = maxLength - refRange->start;
+        }
+    } else {
+        *refRange = SFRangeEmpty;
+    }
+}

@@ -40,29 +40,14 @@ typedef int32_t         SFInt32;
 typedef uint8_t         SFUInt8;
 
 /**
- * A value that indicates maximum limit of SFUInt8
- */
-#define SFUInt8Max      UINT8_MAX
-
-/**
  * A type to represent a 16-bit unsigned integer.
  */
 typedef uint16_t        SFUInt16;
 
 /**
- * A value that indicates maximum limit of SFUInt16
- */
-#define SFUInt16Max     UINT16_MAX
-
-/**
  * A type to represent a 32-bit unsigned integer.
  */
 typedef uint32_t        SFUInt32;
-
-/**
- * A value that indicates maximum limit of SFUInt32
- */
-#define SFUInt32Max     UINT32_MAX
 
 /**
  * A signed integer type whose width is equal to the width of the machine word.
@@ -94,14 +79,14 @@ typedef SFUInt8         SFBoolean;
 typedef SFUInt32        SFCodepoint;
 
 /**
- * A type to represent a glyph identifier.
+ * A type to represent a glyph's identifier.
  */
 typedef SFUInt16        SFGlyphID;
 
 /**
- * A type to represent a glyph advance.
+ * A type to represent a glyph's advance.
  */
-typedef SFInteger       SFAdvance;
+typedef SFInt32         SFAdvance;
 
 /**
  * A type to represent a tag of 4 characters.
@@ -122,8 +107,8 @@ typedef SFUInt32        SFTag;
  * two-dimensional plane.
  */
 typedef struct SFPoint {
-    SFInteger x; /**< The x-coordinate of the point. */
-    SFInteger y; /**< The y-coordinate of the point. */
+    SFInt32 x; /**< The x-coordinate of the point. */
+    SFInt32 y; /**< The y-coordinate of the point. */
 } SFPoint;
 
 #endif
