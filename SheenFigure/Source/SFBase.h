@@ -20,11 +20,11 @@
 #include <SFBase.h>
 
 /**
- * A type to represent range.
+ * A type to represent a portion of a sequence.
  */
-typedef struct SFRange {
-    SFUInteger start;  /**< The starting location of the range. */
-    SFUInteger length; /**< The length of the range. */
+typedef struct _SFRange {
+    SFUInteger start;
+    SFUInteger count;
 } SFRange;
 
 #endif

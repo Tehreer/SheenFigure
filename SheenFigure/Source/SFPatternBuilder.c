@@ -141,7 +141,7 @@ SF_INTERNAL void SFPatternBuilderMakeFeatureUnit(SFPatternBuilderRef builder)
     SFListFinalizeKeepingArray(&builder->_lookupIndexes, &featureUnit.lookupIndexes.items, &featureUnit.lookupIndexes.count);
     /* Set covered range of feature unit. */
     featureUnit.coveredRange.start = builder->_featureIndex;
-    featureUnit.coveredRange.length = builder->_featureTags.count - builder->_featureIndex;
+    featureUnit.coveredRange.count = builder->_featureTags.count - builder->_featureIndex;
     featureUnit.featureMask = builder->_featureMask;
 
     /* Add the feature unit in the list. */
@@ -164,7 +164,7 @@ SF_INTERNAL void SFPatternBuilderMakeFeatureUnit(SFPatternBuilderRef builder)
     }
 
     /* Increase feature index. */
-    builder->_featureIndex += featureUnit.coveredRange.length;
+    builder->_featureIndex += featureUnit.coveredRange.count;
 
     /* Initialize lookup indexes array. */
     SFListInitialize(&builder->_lookupIndexes, sizeof(SFUInt16));

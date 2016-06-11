@@ -151,8 +151,8 @@ static void _SFAddAllFeatures(_SFSchemeStateRef state)
             _SFAddFeatureRange(state, featureIndex, groupRange.start - featureIndex, SFFalse);
             featureIndex = groupRange.start;
         } else {
-            _SFAddFeatureRange(state, groupRange.start, groupRange.length, SFTrue);
-            featureIndex += groupRange.length;
+            _SFAddFeatureRange(state, groupRange.start, groupRange.count, SFTrue);
+            featureIndex += groupRange.count;
         }
     }
 
