@@ -107,7 +107,7 @@ SF_INTERNAL void SFLocatorSetMarkFilteringSet(SFLocatorRef locator, SFUInt16 mar
                 SFUInt16 markSetCount = SFMarkGlyphSets_MarkSetCount(markGlyphSetsDef);
 
                 if (markFilteringSet < markSetCount) {
-                    SFOffset offset = SFMarkGlyphSets_CoverageOffset(markGlyphSetsDef, markFilteringSet);
+                    SFUInt32 offset = SFMarkGlyphSets_CoverageOffset(markGlyphSetsDef, markFilteringSet);
                     SFData coverage = SFData_Subdata(markGlyphSetsDef, offset);
 
                     locator->_markFilteringCoverage = coverage;

@@ -25,7 +25,7 @@
 enum {
     SFFeatureBehaviourOff = 0,
     SFFeatureBehaviourOn = 1,
-    SFFeatureBehaviourRequired = 2,
+    SFFeatureBehaviourRequired = 2
 };
 typedef SFUInt16 SFFeatureBehaviour;
 
