@@ -14,21 +14,17 @@
  * limitations under the License.
  */
 
-#ifndef _SF_JOINING_TYPE_H
-#define _SF_JOINING_TYPE_H
+#ifndef _SF_INTERNAL_BASE_H
+#define _SF_INTERNAL_BASE_H
 
-#include "SFBase.h"
+#include <SFBase.h>
 
-enum {
-    SFJoiningTypeNil = 0x00,
-    SFJoiningTypeU   = 0x01, /**< Non Joining */
-    SFJoiningTypeL   = 0x02, /**< Left Joining */
-    SFJoiningTypeR   = 0x03, /**< Right Joining */
-    SFJoiningTypeD   = 0x04, /**< Dual Joining */
-    SFJoiningTypeC   = 0x05, /**< Join Causing */
-    SFJoiningTypeT   = 0x06, /**< Transparent */
-    SFJoiningTypeF   = 0x07  /**< Unavailable */
-};
-typedef SFUInt8 SFJoiningType;
+/**
+ * A type to represent range.
+ */
+typedef struct SFRange {
+    SFUInteger start;  /**< The starting location of the range. */
+    SFUInteger length; /**< The length of the range. */
+} SFRange;
 
 #endif

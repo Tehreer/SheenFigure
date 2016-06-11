@@ -15,11 +15,11 @@
  */
 
 #include <SFConfig.h>
-#include <SFTypes.h>
 
 #include <stdlib.h>
 
 #include "SFAssert.h"
+#include "SFBase.h"
 #include "SFCommon.h"
 #include "SFData.h"
 #include "SFOpenType.h"

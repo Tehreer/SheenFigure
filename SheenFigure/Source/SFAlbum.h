@@ -19,11 +19,11 @@
 
 #include <SFAlbum.h>
 #include <SFConfig.h>
-#include <SFTypes.h>
 
 #include <SBCodepointSequence.h>
 
 #include "SFAssert.h"
+#include "SFBase.h"
 #include "SFList.h"
 
 typedef enum {

@@ -7,8 +7,8 @@
 #define _SF_GENERAL_CATEGORY_LOOKUP_H
 
 #include <SFConfig.h>
-#include <SFTypes.h>
 
+#include "SFBase.h"
 #include "SFGeneralCategory.h"
 
 SF_INTERNAL SFGeneralCategory SFGeneralCategoryDetermine(SFCodepoint codepoint);

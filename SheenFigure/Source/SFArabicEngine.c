@@ -15,13 +15,12 @@
  */
 
 #include <SFConfig.h>
-#include <SFTypes.h>
-
 #include <stddef.h>
 
 #include "SFAlbum.h"
 #include "SFArtist.h"
 #include "SFAssert.h"
+#include "SFBase.h"
 #include "SFGeneralCategory.h"
 #include "SFGeneralCategoryLookup.h"
 #include "SFJoiningType.h"

@@ -15,13 +15,12 @@
  */
 
 #include <SFConfig.h>
-#include <SFTypes.h>
 
 #include <SBCodepointSequence.h>
-
 #include <stddef.h>
 #include <stdlib.h>
 
+#include "SFBase.h"
 #include "SFUnifiedEngine.h"
 #include "SFArtist.h"
 

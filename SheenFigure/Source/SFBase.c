@@ -14,21 +14,4 @@
  * limitations under the License.
  */
 
-#ifndef _SF_JOINING_TYPE_H
-#define _SF_JOINING_TYPE_H
-
 #include "SFBase.h"
-
-enum {
-    SFJoiningTypeNil = 0x00,
-    SFJoiningTypeU   = 0x01, /**< Non Joining */
-    SFJoiningTypeL   = 0x02, /**< Left Joining */
-    SFJoiningTypeR   = 0x03, /**< Right Joining */
-    SFJoiningTypeD   = 0x04, /**< Dual Joining */
-    SFJoiningTypeC   = 0x05, /**< Join Causing */
-    SFJoiningTypeT   = 0x06, /**< Transparent */
-    SFJoiningTypeF   = 0x07  /**< Unavailable */
-};
-typedef SFUInt8 SFJoiningType;
-
-#endif

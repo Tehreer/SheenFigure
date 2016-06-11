@@ -18,9 +18,9 @@
 #define _SF_SHAPING_KNOWLEDGE_INTERNAL_H
 
 #include <SFConfig.h>
-#include <SFTypes.h>
 
 #include "SFArtist.h"
+#include "SFBase.h"
 
 enum {
     SFFeatureBehaviourOff = 0,

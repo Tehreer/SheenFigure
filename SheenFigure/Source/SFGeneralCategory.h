@@ -17,7 +17,7 @@
 #ifndef _SF_GENERAL_CATEGORY_H
 #define _SF_GENERAL_CATEGORY_H
 
-#include <SFTypes.h>
+#include "SFBase.h"
 
 enum {
     SFGeneralCategoryNil = 0x00,

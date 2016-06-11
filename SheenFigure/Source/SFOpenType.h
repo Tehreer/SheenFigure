@@ -18,8 +18,8 @@
 #define _SF_OPEN_TYPE_INTERNAL_H
 
 #include <SFConfig.h>
-#include <SFTypes.h>
 
+#include "SFBase.h"
 #include "SFData.h"
 
 SF_INTERNAL SFUInteger SFOpenTypeSearchCoverageIndex(SFData coverage, SFGlyphID glyph);

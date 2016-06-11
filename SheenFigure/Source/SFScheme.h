@@ -18,8 +18,8 @@
 #define _SF_SCHEME_INTERNAL_H
 
 #include <SFScheme.h>
-#include <SFTypes.h>
 
+#include "SFBase.h"
 #include "SFData.h"
 #include "SFFont.h"
 #include "SFPatternBuilder.h"

@@ -15,9 +15,9 @@
  */
 
 #include <SFConfig.h>
-#include <SFTypes.h>
 
 #include "SFAlbum.h"
+#include "SFBase.h"
 #include "SFFont.h"
 #include "SFGDEF.h"
 #include "SFOpenType.h"

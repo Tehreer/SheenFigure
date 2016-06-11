@@ -7,8 +7,8 @@
 #define _SF_JOINING_TYPE_LOOKUP_H
 
 #include <SFConfig.h>
-#include <SFTypes.h>
 
+#include "SFBase.h"
 #include "SFJoiningType.h"
 
 SF_INTERNAL SFJoiningType SFJoiningTypeDetermine(SFCodepoint codepoint);

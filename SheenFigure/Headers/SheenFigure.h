@@ -19,9 +19,9 @@
 
 #include <SFAlbum.h>
 #include <SFArtist.h>
+#include <SFBase.h>
 #include <SFFont.h>
 #include <SFPattern.h>
 #include <SFScheme.h>
-#include <SFTypes.h>
 
 #endif

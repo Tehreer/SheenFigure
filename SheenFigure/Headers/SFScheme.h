@@ -17,9 +17,9 @@
 #ifndef _SF_SCHEME_H
 #define _SF_SCHEME_H
 
+#include "SFBase.h"
 #include "SFFont.h"
 #include "SFPattern.h"
-#include "SFTypes.h"
 
 struct _SFScheme;
 typedef struct _SFScheme SFScheme;

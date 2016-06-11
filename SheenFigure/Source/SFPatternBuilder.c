@@ -15,13 +15,13 @@
  */
 
 #include <SFConfig.h>
-#include <SFTypes.h>
 
 #include <stddef.h>
 #include <stdlib.h>
 
 #include "SFArtist.h"
 #include "SFAssert.h"
+#include "SFBase.h"
 #include "SFList.h"
 #include "SFPattern.h"
 #include "SFPatternBuilder.h"

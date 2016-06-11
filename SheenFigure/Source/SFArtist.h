@@ -19,14 +19,15 @@
 
 #include <SFArtist.h>
 #include <SFConfig.h>
-#include <SFTypes.h>
 
 #include <SBCodepointSequence.h>
 
+#include "SFBase.h"
 #include "SFPattern.h"
 
 struct _SFArtist {
     SBCodepointSequenceRef codepointSequence;
+    SFRange inputRange;
     SFPatternRef pattern;
     SFTextDirection textDirection;
     SFTextMode textMode;

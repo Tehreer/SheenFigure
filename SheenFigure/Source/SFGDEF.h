@@ -17,7 +17,7 @@
 #ifndef _SF_GDEF_INTERNAL_H
 #define _SF_GDEF_INTERNAL_H
 
-#include <SFTypes.h>
+#include "SFBase.h"
 #include "SFData.h"
 
 enum {

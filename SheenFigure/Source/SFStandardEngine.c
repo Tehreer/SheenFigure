@@ -15,13 +15,12 @@
 */
 
 #include <SFConfig.h>
-#include <SFTypes.h>
-
 #include <stddef.h>
 
 #include "SFAlbum.h"
 #include "SFArtist.h"
 #include "SFAssert.h"
+#include "SFBase.h"
 #include "SFShapingEngine.h"
 #include "SFShapingKnowledge.h"
 #include "SFTextProcessor.h"

@@ -17,7 +17,7 @@
 #ifndef _SF_FONT_H
 #define _SF_FONT_H
 
-#include "SFTypes.h"
+#include "SFBase.h"
 
 enum {
     SFFontLayoutHorizontal = 0,

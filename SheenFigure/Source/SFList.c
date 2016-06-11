@@ -15,13 +15,13 @@
  */
 
 #include <SFConfig.h>
-#include <SFTypes.h>
 
 #include <stddef.h>
 #include <stdlib.h>
 #include <string.h>
 
 #include "SFAssert.h"
+#include "SFBase.h"
 #include "SFList.h"
 
 #define SF_DEFAULT_LIST_CAPACITY 4

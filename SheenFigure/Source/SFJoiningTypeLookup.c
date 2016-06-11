@@ -4,8 +4,8 @@
  */
 
 #include <SFConfig.h>
-#include <SFTypes.h>
 
+#include "SFBase.h"
 #include "SFJoiningType.h"
 #include "SFJoiningTypeLookup.h"
 

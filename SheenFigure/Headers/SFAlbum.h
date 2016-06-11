@@ -17,7 +17,7 @@
 #ifndef _SF_ALBUM_H
 #define _SF_ALBUM_H
 
-#include "SFTypes.h"
+#include "SFBase.h"
 
 struct _SFAlbum;
 typedef struct _SFAlbum SFAlbum;

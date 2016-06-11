@@ -18,10 +18,10 @@
 #define _SF_TEXT_PROCESSOR_INTERNAL_H
 
 #include <SFConfig.h>
-#include <SFTypes.h>
 
 #include "SFAlbum.h"
 #include "SFArtist.h"
+#include "SFBase.h"
 #include "SFFont.h"
 #include "SFLocator.h"
 #include "SFPattern.h"

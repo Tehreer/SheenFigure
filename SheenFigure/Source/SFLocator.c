@@ -15,12 +15,12 @@
  */
 
 #include <SFConfig.h>
-#include <SFTypes.h>
 
 #include <stddef.h>
 
 #include "SFAssert.h"
 #include "SFAlbum.h"
+#include "SFBase.h"
 #include "SFGDEF.h"
 #include "SFOpenType.h"
 #include "SFLocator.h"

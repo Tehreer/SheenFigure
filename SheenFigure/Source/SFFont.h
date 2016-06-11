@@ -19,8 +19,8 @@
 
 #include <SFConfig.h>
 #include <SFFont.h>
-#include <SFTypes.h>
 
+#include "SFBase.h"
 #include "SFData.h"
 
 typedef struct _SFFontTables {

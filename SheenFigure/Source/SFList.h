@@ -18,7 +18,7 @@
 #define _SF_LIST_INTERNAL_H
 
 #include <SFConfig.h>
-#include <SFTypes.h>
+#include "SFBase.h"
 
 typedef struct _SFList {
     SFUInt8 *_data;

@@ -4,8 +4,8 @@
  */
 
 #include <SFConfig.h>
-#include <SFTypes.h>
 
+#include "SFBase.h"
 #include "SFGeneralCategory.h"
 #include "SFGeneralCategoryLookup.h"
 

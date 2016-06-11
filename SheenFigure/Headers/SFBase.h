@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-#ifndef _SF_TYPES_H
-#define _SF_TYPES_H
+#ifndef _SF_BASE_H
+#define _SF_BASE_H
 
 #include <stdint.h>
 
@@ -116,14 +116,6 @@ typedef SFUInt32        SFTag;
  | ((SFUInt8)c <<  8)           \
  | ((SFUInt8)d <<  0)           \
 )
-
-/**
- * A type to represent range.
- */
-typedef struct SFRange {
-    SFUInteger start;  /**< The starting location of the range. */
-    SFUInteger length; /**< The length of the range. */
-} SFRange;
 
 /**
  * A type to represent an ordered pair of integer x- and y-coordinates that defines a point in a

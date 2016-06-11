@@ -15,15 +15,14 @@
  */
 
 #include <SFConfig.h>
-#include <SFTypes.h>
 
 #include <SBCodepointSequence.h>
-
 #include <stddef.h>
 #include <stdlib.h>
 #include <string.h>
 
 #include "SFAssert.h"
+#include "SFBase.h"
 #include "SFAlbum.h"
 
 static const SFGlyphMask _SFGlyphMaskEmpty = { { SFUInt16Max, 0 } };

@@ -18,9 +18,9 @@
 #define _SF_PATTERN_BUILDER_INTERNAL_H
 
 #include <SFConfig.h>
-#include <SFTypes.h>
 
 #include "SFArtist.h"
+#include "SFBase.h"
 #include "SFList.h"
 #include "SFPattern.h"
 

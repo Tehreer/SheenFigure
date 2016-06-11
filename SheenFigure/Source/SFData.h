@@ -17,7 +17,7 @@
 #ifndef _SF_DATA_INTERNAL_H
 #define _SF_DATA_INTERNAL_H
 
-#include <SFTypes.h>
+#include "SFBase.h"
 
 typedef SFUInt16        SFOffset;
 typedef const SFUInt8 * SFData;

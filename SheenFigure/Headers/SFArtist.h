@@ -18,8 +18,8 @@
 #define _SF_ARTIST_H
 
 #include "SFAlbum.h"
+#include "SFBase.h"
 #include "SFPattern.h"
-#include "SFTypes.h"
 
 enum {
     SFStringEncodingUTF8 = 0,

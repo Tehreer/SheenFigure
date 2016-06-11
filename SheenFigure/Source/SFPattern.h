@@ -19,9 +19,9 @@
 
 #include <SFConfig.h>
 #include <SFPattern.h>
-#include <SFTypes.h>
 
 #include "SFArtist.h"
+#include "SFBase.h"
 #include "SFFont.h"
 
 enum {
