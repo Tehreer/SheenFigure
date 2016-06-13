@@ -16,13 +16,13 @@
 
 #include <SFConfig.h>
 
-#include <SBCodepointSequence.h>
 #include <stddef.h>
 #include <stdlib.h>
 #include <string.h>
 
 #include "SFAssert.h"
 #include "SFBase.h"
+#include "SFCodepoints.h"
 #include "SFAlbum.h"
 
 static const SFGlyphMask _SFGlyphMaskEmpty = { { SFUInt16Max, 0 } };
@@ -97,7 +97,7 @@ void SFAlbumRelease(SFAlbumRef album)
 
 SF_INTERNAL void SFAlbumInitialize(SFAlbumRef album)
 {
-    album->codepointSequence = NULL;
+    album->codepoints = NULL;
     album->stringRange = SFRangeEmpty;
     album->glyphCount = 0;
     album->_mapArray = NULL;
@@ -113,11 +113,11 @@ SF_INTERNAL void SFAlbumInitialize(SFAlbumRef album)
     album->_retainCount = 1;
 }
 
-SF_INTERNAL void SFAlbumReset(SFAlbumRef album, SBCodepointSequenceRef codepointSequence, SFRange stringRange)
+SF_INTERNAL void SFAlbumReset(SFAlbumRef album, SFCodepointsRef codepoints, SFRange stringRange)
 {
     free(album->_mapArray);
 
-    album->codepointSequence = codepointSequence;
+    album->codepoints = codepoints;
     album->stringRange = stringRange;
     album->glyphCount = 0;
     album->_mapArray = NULL;

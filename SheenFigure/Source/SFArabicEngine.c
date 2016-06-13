@@ -21,6 +21,7 @@
 #include "SFArtist.h"
 #include "SFAssert.h"
 #include "SFBase.h"
+#include "SFCodepoints.h"
 #include "SFGeneralCategory.h"
 #include "SFGeneralCategoryLookup.h"
 #include "SFJoiningType.h"
@@ -119,29 +120,33 @@ static SFJoiningType _SFDetermineJoiningType(SFCodepoint codepoint)
 
 static void _SFPutArabicFeatureMask(SFAlbumRef album)
 {
-    SBCodepointSequenceRef sequence = album->codepointSequence;
+    SFCodepointsRef codepoints = album->codepoints;
     SFUInteger association = SFAlbumGetSingleAssociation(album, 0);
     SFUInteger stringStart = album->stringRange.start;
     SFUInteger stringLimit = stringStart + album->stringRange.count;
-    SFUInteger stringIndex = stringStart;
     SFUInteger currentIndex = 0;
     SFJoiningType priorJoiningType;
     SFJoiningType joiningType;
 
+    SFCodepointsReset(codepoints);
+
     priorJoiningType = SFJoiningTypeU;
-    joiningType = _SFDetermineJoiningType(SBCodepointSequenceGetCodepointAt(sequence, &stringIndex));
+    joiningType = _SFDetermineJoiningType(SFCodepointsNext(codepoints));
 
     while (joiningType != SFJoiningTypeNil) {
         SFUInt16 featureMask = _SFArabicFeatureMaskNone;
         SFJoiningType nextJoiningType = SFJoiningTypeNil;
-        SFUInteger nextIndex = stringIndex - stringStart;
-        SBCodepoint codepoint;
+        SBCodepoint nextCodepoint;
+        SFUInteger nextIndex;
+
+        nextIndex = (!codepoints->backward
+                     ? codepoints->index - stringStart
+                     : stringLimit - codepoints->index);
 
         /* Find the joining type of next character. */
-        while (stringIndex < stringLimit) {
-            codepoint = SBCodepointSequenceGetCodepointAt(sequence, &stringIndex);
+        while ((nextCodepoint = SFCodepointsNext(codepoints)) != SFCodepointInvalid) {
             association = SFAlbumGetSingleAssociation(album, nextIndex);
-            nextJoiningType = _SFDetermineJoiningType(codepoint);
+            nextJoiningType = _SFDetermineJoiningType(nextCodepoint);
 
             /* Normalize the joining type of next character. */
             switch (nextJoiningType) {

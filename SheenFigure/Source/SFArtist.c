@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Muhammad Tayyab Akram
+ * Copyright (C) 2016 Muhammad Tayyab Akram
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -135,13 +135,19 @@ void SFArtistSetTextMode(SFArtistRef artist, SFTextMode textMode)
 void SFArtistFillAlbum(SFArtistRef artist, SFAlbumRef album)
 {
     if (artist->pattern && artist->codepointSequence) {
+        SFCodepoints codepoints;
         SFUnifiedEngine unifiedEngine;
         SFShapingEngineRef shapingEngine;
+
+        SFCodepointsInitialize(&codepoints,
+                               artist->codepointSequence,
+                               artist->stringRange,
+                               artist->textMode == SFTextModeBackward);
 
         SFUnifiedEngineInitialize(&unifiedEngine, artist);
         shapingEngine = (SFShapingEngineRef)&unifiedEngine;
 
-        SFAlbumReset(album, artist->codepointSequence, artist->stringRange);
+        SFAlbumReset(album, &codepoints, artist->stringRange);
         SFShapingEngineProcessAlbum(shapingEngine, album);
     } else {
         SFAlbumReset(album, NULL, SFRangeEmpty);

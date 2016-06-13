@@ -18,6 +18,7 @@
 
 #include "SFAlbum.h"
 #include "SFBase.h"
+#include "SFCodepoints.h"
 #include "SFFont.h"
 #include "SFGDEF.h"
 #include "SFOpenType.h"
@@ -59,37 +60,35 @@ SF_INTERNAL void _SFDiscoverGlyphs(SFTextProcessorRef processor)
     SFPatternRef pattern = processor->_pattern;
     SFFontRef font = pattern->font;
     SFAlbumRef album = processor->_album;
-    SBCodepointSequenceRef sequence = album->codepointSequence;
-    SFUInteger stringStart = album->stringRange.start;
-    SFUInteger stringLimit = stringStart + album->stringRange.count;
-    SFUInteger stringIndex;
+    SFCodepointsRef codepoints = album->codepoints;
+    SFCodepoint current;
     SFUInteger oldIndex;
+
+    SFCodepointsReset(album->codepoints);
 
     switch (processor->_textMode) {
     case SFTextModeForward:
-        stringIndex = stringStart;
-        oldIndex = stringIndex;
+        oldIndex = codepoints->index;
 
-        do {
-            SBCodepoint codepoint = SBCodepointSequenceGetCodepointAt(sequence, &stringIndex);
-            SFGlyphID glyph = SFFontGetGlyphIDForCodepoint(font, codepoint);
-            SFAlbumAddGlyph(album, glyph, oldIndex, stringIndex - oldIndex);
+        while ((current = SFCodepointsNext(codepoints)) != SFCodepointInvalid) {
+            SFUInteger newIndex = codepoints->index;
+            SFGlyphID glyph = SFFontGetGlyphIDForCodepoint(font, current);
+            SFAlbumAddGlyph(album, glyph, oldIndex, newIndex - oldIndex);
 
-            oldIndex = stringIndex;
-        } while (stringIndex < stringLimit);
+            oldIndex = newIndex;
+        };
         break;
 
     case SFTextModeBackward:
-        stringIndex = stringLimit;
-        oldIndex = stringIndex;
+        oldIndex = codepoints->index;
 
-        do {
-            SBCodepoint codepoint = SBCodepointSequenceGetCodepointBefore(sequence, &stringIndex);
-            SFGlyphID glyph = SFFontGetGlyphIDForCodepoint(font, codepoint);
-            SFAlbumAddGlyph(album, glyph, stringIndex, oldIndex - stringIndex);
+        while ((current = SFCodepointsNext(codepoints)) != SFCodepointInvalid) {
+            SFUInteger newIndex = codepoints->index;
+            SFGlyphID glyph = SFFontGetGlyphIDForCodepoint(font, current);
+            SFAlbumAddGlyph(album, glyph, newIndex, oldIndex - newIndex);
 
-            oldIndex = stringIndex;
-        } while (stringIndex > stringStart);
+            oldIndex = newIndex;
+        };
         break;
 
     default:

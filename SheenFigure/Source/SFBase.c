@@ -18,6 +18,13 @@
 
 const SFRange SFRangeEmpty = { 0, 0 };
 
+SF_INTERNAL SFBoolean SFRangeFallsInLength(SFRange range, SFUInteger maxLength)
+{
+    SFUInteger possibleLimit = range.start + range.count;
+
+    return range.start < maxLength && range.start <= possibleLimit && possibleLimit <= maxLength;
+}
+
 SF_INTERNAL void SFRangeReduceToLength(SFRange *refRange, SFUInteger maxLength)
 {
     if (refRange->start < maxLength) {

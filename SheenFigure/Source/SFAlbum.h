@@ -20,10 +20,9 @@
 #include <SFAlbum.h>
 #include <SFConfig.h>
 
-#include <SBCodepointSequence.h>
-
 #include "SFAssert.h"
 #include "SFBase.h"
+#include "SFCodepoints.h"
 #include "SFList.h"
 
 typedef enum {
@@ -65,7 +64,7 @@ typedef struct _SFGlyphDetail {
 } SFGlyphDetail, *SFGlyphDetailRef;
 
 struct _SFAlbum {
-    SBCodepointSequenceRef codepointSequence;  /**< The sequence of codepoints to be shaped. */
+    SFCodepointsRef codepoints;         /**< Codepoints to be shaped. */
     SFRange stringRange;                /**< Range of original string to process. */
     SFUInteger glyphCount;              /**< Total number of glyphs in the album. */
 
@@ -89,7 +88,7 @@ SF_INTERNAL void SFAlbumInitialize(SFAlbumRef album);
 /**
  * Initializes the album for given code points.
  */
-SF_INTERNAL void SFAlbumReset(SFAlbumRef album, SBCodepointSequenceRef codepointSequence, SFRange stringRange);
+SF_INTERNAL void SFAlbumReset(SFAlbumRef album, SFCodepointsRef codepoints, SFRange stringRange);
 
 /**
  * Starts filling the album with provided glyphs.

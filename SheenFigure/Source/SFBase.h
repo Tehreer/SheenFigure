@@ -23,17 +23,22 @@
 /**
  * A value that indicates maximum limit of SFUInt8
  */
-#define SFUInt8Max      UINT8_MAX
+#define SFUInt8Max          UINT8_MAX
 
 /**
  * A value that indicates maximum limit of SFUInt16
  */
-#define SFUInt16Max     UINT16_MAX
+#define SFUInt16Max         UINT16_MAX
 
 /**
  * A value that indicates maximum limit of SFUInt32
  */
-#define SFUInt32Max     UINT32_MAX
+#define SFUInt32Max         UINT32_MAX
+
+/**
+ * A value representing an invalid code point.
+ */
+#define SFCodepointInvalid  UINT32_MAX
 
 /**
  * A type to represent a range of sequential items.
@@ -45,6 +50,7 @@ typedef struct _SFRange {
 
 extern const SFRange SFRangeEmpty;
 
+SF_INTERNAL SFBoolean SFRangeFallsInLength(SFRange range, SFUInteger maxLength);
 SF_INTERNAL void SFRangeReduceToLength(SFRange *refRange, SFUInteger maxLength);
 
 #endif
