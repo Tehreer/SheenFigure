@@ -102,7 +102,7 @@ SF_INTERNAL void SFAlbumInitialize(SFAlbumRef album)
     album->glyphCount = 0;
     album->_mapArray = NULL;
 
-    SFListInitialize(&album->_indexes, sizeof(SFUInteger));
+    SFListInitialize(&album->_associates, sizeof(SFUInteger));
     SFListInitialize(&album->_glyphs, sizeof(SFGlyphID));
     SFListInitialize(&album->_details, sizeof(SFGlyphDetail));
     SFListInitialize(&album->_offsets, sizeof(SFPoint));
@@ -122,7 +122,7 @@ SF_INTERNAL void SFAlbumReset(SFAlbumRef album, SFCodepointsRef codepoints, SFRa
     album->glyphCount = 0;
     album->_mapArray = NULL;
 
-    SFListClear(&album->_indexes);
+    SFListClear(&album->_associates);
     SFListClear(&album->_glyphs);
     SFListClear(&album->_details);
     SFListClear(&album->_offsets);
@@ -134,10 +134,10 @@ SF_INTERNAL void SFAlbumReset(SFAlbumRef album, SFCodepointsRef codepoints, SFRa
 
 SF_INTERNAL void SFAlbumBeginFilling(SFAlbumRef album)
 {
-    SFUInteger indexesCapacity = album->stringRange.count >> 1;
+    SFUInteger associatesCapacity = album->stringRange.count >> 1;
 	SFUInteger glyphCapacity = album->stringRange.count << 1;
 
-    SFListReserveRange(&album->_indexes, 0, indexesCapacity);
+    SFListReserveRange(&album->_associates, 0, associatesCapacity);
     SFListReserveRange(&album->_glyphs, 0, glyphCapacity);
     SFListReserveRange(&album->_details, 0, glyphCapacity);
 
@@ -218,7 +218,7 @@ SF_INTERNAL SFUInteger *SFAlbumGetCompositeAssociations(SFAlbumRef album, SFUInt
     SFAssert(SFAlbumGetTraits(album, index) & SFGlyphTraitComposite);
 
     association = SFListGetRef(&album->_details, index)->association;
-    array = SFListGetRef(&album->_indexes, association);
+    array = SFListGetRef(&album->_associates, association);
     *outCount = array[0];
 
     return &array[1];
@@ -235,13 +235,13 @@ SF_INTERNAL SFUInteger *SFAlbumMakeCompositeAssociations(SFAlbumRef album, SFUIn
     /* The glyph must be composite. */
     SFAssert(SFAlbumGetTraits(album, index) & SFGlyphTraitComposite);
 
-    association = album->_indexes.count;
-    SFListAdd(&album->_indexes, count);
+    association = album->_associates.count;
+    SFListAdd(&album->_associates, count);
     SFListGetRef(&album->_details, index)->association = association;
 
-    reference = album->_indexes.count;
-    SFListReserveRange(&album->_indexes, reference, count);
-    array = SFListGetRef(&album->_indexes, reference);
+    reference = album->_associates.count;
+    SFListReserveRange(&album->_associates, reference, count);
+    array = SFListGetRef(&album->_associates, reference);
 
     return array;
 }
@@ -465,10 +465,12 @@ SF_INTERNAL void SFAlbumWrapUp(SFAlbumRef album)
 
     _SFAlbumRemovePlaceholders(album);
     _SFAlbumBuildCodeunitToGlyphMap(album);
+
+    album->codepoints = NULL;
 }
 
 SF_INTERNAL void SFAlbumFinalize(SFAlbumRef album) {
-    SFListFinalize(&album->_indexes);
+    SFListFinalize(&album->_associates);
     SFListFinalize(&album->_glyphs);
     SFListFinalize(&album->_details);
     SFListFinalize(&album->_offsets);

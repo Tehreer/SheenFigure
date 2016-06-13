@@ -64,12 +64,12 @@ typedef struct _SFGlyphDetail {
 } SFGlyphDetail, *SFGlyphDetailRef;
 
 struct _SFAlbum {
-    SFCodepointsRef codepoints;         /**< Codepoints to be shaped. */
+    SFCodepointsRef codepoints;         /**< Code points to be shaped. */
     SFRange stringRange;                /**< Range of original string to process. */
     SFUInteger glyphCount;              /**< Total number of glyphs in the album. */
 
-    SFUInteger *_mapArray;              /**< Character index to glyph index mapping array. */
-    SF_LIST(SFUInteger) _indexes;       /**< List of indexes of associate glyphs. */
+    SFUInteger *_mapArray;              /**< Code unit index to glyph index mapping array. */
+    SF_LIST(SFUInteger) _associates;    /**< List of associates of composite glyphs. */
     SF_LIST(SFGlyphID) _glyphs;         /**< List of ids of all glyphs in the album. */
     SF_LIST(SFGlyphDetail) _details;    /**< List of details of all glyphs in the album. */
     SF_LIST(SFPoint) _offsets;          /**< List of offsets of all glyphs in the album. */
