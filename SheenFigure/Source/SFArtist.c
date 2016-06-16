@@ -47,7 +47,7 @@ SFTextDirection SFArtistGetDefaultDirectionForScript(SFArtistRef artist, SFTag s
     return SFTextModeForward;
 }
 
-void SFArtistSetInputString(SFArtistRef artist, SFStringEncoding stringEncoding, const void *stringBuffer, SFUInteger stringLength)
+void SFArtistSetString(SFArtistRef artist, SFStringEncoding stringEncoding, const void *stringBuffer, SFUInteger stringLength)
 {
     SBCodepointSequenceRelease(artist->codepointSequence);
 
@@ -77,14 +77,14 @@ void SFArtistSetInputString(SFArtistRef artist, SFStringEncoding stringEncoding,
     }
 }
 
-void SFArtistSetStringRange(SFArtistRef artist, SFUInteger rangeOffset, SFUInteger rangeLength)
+void SFArtistSetCodeunitRange(SFArtistRef artist, SFUInteger offset, SFUInteger length)
 {
     if (artist->codepointSequence) {
         SFRange inputRange;
         SFUInteger stringLength;
 
-        inputRange.start = rangeOffset;
-        inputRange.count = rangeLength;
+        inputRange.start = offset;
+        inputRange.count = length;
         stringLength = SBCodepointSequenceGetStringLength(artist->codepointSequence);
 
         SFRangeReduceToLength(&inputRange, stringLength);
