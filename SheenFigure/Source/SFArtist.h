@@ -27,7 +27,6 @@
 
 struct _SFArtist {
     SBCodepointSequenceRef codepointSequence;
-    SFRange stringRange;
     SFPatternRef pattern;
     SFTextDirection textDirection;
     SFTextMode textMode;

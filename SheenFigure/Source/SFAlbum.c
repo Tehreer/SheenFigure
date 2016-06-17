@@ -51,7 +51,7 @@ SFAlbumRef SFAlbumCreate(void)
 
 SFUInteger SFAlbumGetCodeunitCount(SFAlbumRef album)
 {
-    return album->stringRange.count;
+    return album->stringLength;
 }
 
 SFUInteger SFAlbumGetGlyphCount(SFAlbumRef album)
@@ -98,7 +98,7 @@ void SFAlbumRelease(SFAlbumRef album)
 SF_INTERNAL void SFAlbumInitialize(SFAlbumRef album)
 {
     album->codepoints = NULL;
-    album->stringRange = SFRangeEmpty;
+    album->stringLength = 0;
     album->glyphCount = 0;
     album->_mapArray = NULL;
 
@@ -113,12 +113,12 @@ SF_INTERNAL void SFAlbumInitialize(SFAlbumRef album)
     album->_retainCount = 1;
 }
 
-SF_INTERNAL void SFAlbumReset(SFAlbumRef album, SFCodepointsRef codepoints, SFRange stringRange)
+SF_INTERNAL void SFAlbumReset(SFAlbumRef album, SFCodepointsRef codepoints, SFUInteger stringLength)
 {
     free(album->_mapArray);
 
     album->codepoints = codepoints;
-    album->stringRange = stringRange;
+    album->stringLength = stringLength;
     album->glyphCount = 0;
     album->_mapArray = NULL;
 
@@ -134,8 +134,8 @@ SF_INTERNAL void SFAlbumReset(SFAlbumRef album, SFCodepointsRef codepoints, SFRa
 
 SF_INTERNAL void SFAlbumBeginFilling(SFAlbumRef album)
 {
-    SFUInteger associatesCapacity = album->stringRange.count >> 1;
-	SFUInteger glyphCapacity = album->stringRange.count << 1;
+    SFUInteger associatesCapacity = album->stringLength >> 1;
+	SFUInteger glyphCapacity = album->stringLength << 1;
 
     SFListReserveRange(&album->_associates, 0, associatesCapacity);
     SFListReserveRange(&album->_glyphs, 0, glyphCapacity);
@@ -427,11 +427,10 @@ static void _SFAlbumRemovePlaceholders(SFAlbumRef album)
 
 static void _SFAlbumBuildCodeunitToGlyphMap(SFAlbumRef album)
 {
-    SFUInteger stringStart = album->stringRange.start;
     SFUInteger index = album->glyphCount;
     SFUInteger *map;
 
-    map = malloc(sizeof(SFUInteger) * album->stringRange.count);
+    map = malloc(sizeof(SFUInteger) * album->stringLength);
 
     /* Traverse in reverse order so that first glyph takes priority in case of multiple substitution. */
     while (index--) {
@@ -446,11 +445,11 @@ static void _SFAlbumBuildCodeunitToGlyphMap(SFAlbumRef album)
             array = SFAlbumGetCompositeAssociations(album, index, &count);
 
             for (j = 0; j < count; j++) {
-                association = array[j] - stringStart;
+                association = array[j];
                 map[association] = index;
             }
         } else {
-            association = SFAlbumGetSingleAssociation(album, index) - stringStart;
+            association = SFAlbumGetSingleAssociation(album, index);
             map[association] = index;
         }
     }

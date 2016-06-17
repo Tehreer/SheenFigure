@@ -28,7 +28,6 @@ SFArtistRef SFArtistCreate(void)
 {
     SFArtistRef artist = malloc(sizeof(SFArtist));
     artist->codepointSequence = NULL;
-    artist->stringRange = SFRangeEmpty;
     artist->pattern = NULL;
     artist->textDirection = SFTextDirectionLeftToRight;
     artist->textMode = SFTextModeForward;
@@ -54,44 +53,19 @@ void SFArtistSetString(SFArtistRef artist, SFStringEncoding stringEncoding, cons
     switch (stringEncoding) {
         case SFStringEncodingUTF8:
             artist->codepointSequence = SBCodepointSequenceCreateWithUTF8String(stringBuffer, stringLength);
-            artist->stringRange.start = 0;
-            artist->stringRange.count = stringLength;
             break;
 
         case SFStringEncodingUTF16:
             artist->codepointSequence = SBCodepointSequenceCreateWithUTF16String(stringBuffer, stringLength);
-            artist->stringRange.start = 0;
-            artist->stringRange.count = stringLength;
             break;
 
         case SFStringEncodingUTF32:
             artist->codepointSequence = SBCodepointSequenceCreateWithUTF32String(stringBuffer, stringLength);
-            artist->stringRange.start = 0;
-            artist->stringRange.count = stringLength;
             break;
 
         default:
             artist->codepointSequence = NULL;
-            artist->stringRange = SFRangeEmpty;
             break;
-    }
-}
-
-void SFArtistSetCodeunitRange(SFArtistRef artist, SFUInteger offset, SFUInteger length)
-{
-    if (artist->codepointSequence) {
-        SFRange inputRange;
-        SFUInteger stringLength;
-
-        inputRange.start = offset;
-        inputRange.count = length;
-        stringLength = SBCodepointSequenceGetStringLength(artist->codepointSequence);
-
-        SFRangeReduceToLength(&inputRange, stringLength);
-
-        artist->stringRange = inputRange;
-    } else {
-        artist->stringRange = SFRangeEmpty;
     }
 }
 
@@ -141,16 +115,15 @@ void SFArtistFillAlbum(SFArtistRef artist, SFAlbumRef album)
 
         SFCodepointsInitialize(&codepoints,
                                artist->codepointSequence,
-                               artist->stringRange,
                                artist->textMode == SFTextModeBackward);
 
         SFUnifiedEngineInitialize(&unifiedEngine, artist);
         shapingEngine = (SFShapingEngineRef)&unifiedEngine;
 
-        SFAlbumReset(album, &codepoints, artist->stringRange);
+        SFAlbumReset(album, &codepoints, SBCodepointSequenceGetStringLength(artist->codepointSequence));
         SFShapingEngineProcessAlbum(shapingEngine, album);
     } else {
-        SFAlbumReset(album, NULL, SFRangeEmpty);
+        SFAlbumReset(album, NULL, 0);
     }
 }
 

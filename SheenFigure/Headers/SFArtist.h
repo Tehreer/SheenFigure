@@ -56,19 +56,6 @@ void SFArtistSetPattern(SFArtistRef artist, SFPatternRef pattern);
 void SFArtistSetString(SFArtistRef artist, SFStringEncoding stringEncoding, const void *stringBuffer, SFUInteger stringLength);
 
 /**
- * Sets the range of code units in input string to process.
- *
- * @param artist
- *      The artist to modify.
- * @param offset
- *      The offset to the code unit in the input string.
- * @param length
- *      The number of code units in the input string to process.
- *
- */
-void SFArtistSetCodeunitRange(SFArtistRef artist, SFUInteger offset, SFUInteger length);
-
-/**
  * Sets the direction of text for glyph positioning.
  *
  * The value of textDirection must reflect the script direction of input text so that individual

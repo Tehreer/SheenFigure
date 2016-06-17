@@ -21,34 +21,23 @@
 #include "SFBase.h"
 #include "SFCodepoints.h"
 
-void SFCodepointsInitialize(SFCodepointsRef codepoints, SBCodepointSequenceRef referral, SFRange range, SFBoolean backward)
+void SFCodepointsInitialize(SFCodepointsRef codepoints, SBCodepointSequenceRef referral, SFBoolean backward)
 {
-    /* Range MUST be valid. */
-    SFAssert(SFRangeFallsInLength(range, SBCodepointSequenceGetStringLength(referral)));
-
     codepoints->referral = referral;
     codepoints->index = SFInvalidIndex;
-    codepoints->_start = range.start;
-    codepoints->_limit = range.start + range.count;
     codepoints->backward = backward;
 }
 
 void SFCodepointsReset(SFCodepointsRef codepoints)
 {
-    codepoints->index = (!codepoints->backward ? codepoints->_start : codepoints->_limit);
+    codepoints->index = (!codepoints->backward ? 0 : SBCodepointSequenceGetStringLength(codepoints->referral));
 }
 
 SFCodepoint SFCodepointsNext(SFCodepointsRef codepoints)
 {
     if (!codepoints->backward) {
-        if (codepoints->index < codepoints->_limit) {
-            return SBCodepointSequenceGetCodepointAt(codepoints->referral, &codepoints->index);
-        }
-    } else {
-        if (codepoints->index > codepoints->_start) {
-            return SBCodepointSequenceGetCodepointBefore(codepoints->referral, &codepoints->index);
-        }
+        return SBCodepointSequenceGetCodepointAt(codepoints->referral, &codepoints->index);
     }
 
-    return SFCodepointInvalid;
+    return SBCodepointSequenceGetCodepointBefore(codepoints->referral, &codepoints->index);
 }

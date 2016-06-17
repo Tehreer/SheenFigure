@@ -25,12 +25,10 @@
 typedef struct _SFCodepoints {
     SBCodepointSequenceRef referral;
     SFUInteger index;
-    SFUInteger _start;
-    SFUInteger _limit;
     SFBoolean backward;
 } SFCodepoints, *SFCodepointsRef;
 
-void SFCodepointsInitialize(SFCodepointsRef codepoints, SBCodepointSequenceRef referral, SFRange range, SFBoolean backward);
+void SFCodepointsInitialize(SFCodepointsRef codepoints, SBCodepointSequenceRef referral, SFBoolean backward);
 
 void SFCodepointsReset(SFCodepointsRef codepoints);
 SFCodepoint SFCodepointsNext(SFCodepointsRef codepoints);
