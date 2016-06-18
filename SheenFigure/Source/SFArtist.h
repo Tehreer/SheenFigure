@@ -25,12 +25,12 @@
 #include "SFBase.h"
 #include "SFPattern.h"
 
-struct _SFArtist {
+typedef struct _SFArtist {
     SBCodepointSequenceRef codepointSequence;
     SFPatternRef pattern;
     SFTextDirection textDirection;
     SFTextMode textMode;
     SFUInteger _retainCount;
-};
+} SFArtist;
 
 #endif

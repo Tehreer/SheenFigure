@@ -63,7 +63,7 @@ typedef struct _SFGlyphDetail {
     SFUInt16 attachmentOffset;  /**< Offset to the previous glyph attached with this one. */
 } SFGlyphDetail, *SFGlyphDetailRef;
 
-struct _SFAlbum {
+typedef struct _SFAlbum {
     SFCodepointsRef codepoints;         /**< Code points to be shaped. */
     SFUInteger stringLength;            /**< Length of original string. */
     SFUInteger glyphCount;              /**< Total number of glyphs in the album. */
@@ -79,7 +79,7 @@ struct _SFAlbum {
     _SFAlbumState _state;               /**< Current state of the album. */
 
     SFUInteger _retainCount;
-};
+} SFAlbum;
 
 SF_PRIVATE SFUInt16 _SFAlbumGetAntiFeatureMask(SFUInt16 featureMask);
 

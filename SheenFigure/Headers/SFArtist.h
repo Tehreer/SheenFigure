@@ -40,12 +40,10 @@ enum {
 };
 typedef SFUInt32 SFTextMode;
 
-struct _SFArtist;
-typedef struct _SFArtist SFArtist;
 /**
  * The type used to represent a sheen figure artist.
  */
-typedef SFArtist *SFArtistRef;
+typedef struct _SFArtist *SFArtistRef;
 
 SFArtistRef SFArtistCreate(void);
 

@@ -48,7 +48,7 @@ typedef struct _SFFeatureUnit {
 /**
  * Keeps details of a script from both 'GSUB' and 'GPOS' tables.
  */
-struct _SFPattern {
+typedef struct _SFPattern {
     SFFontRef font;
     struct {
         SFTag *items;
@@ -63,7 +63,7 @@ struct _SFPattern {
     SFTag languageTag;                  /**< Tag of the language. */
     SFTextDirection defaultDirection;   /**< Default direction of the script. */
     SFUInteger _retainCount;
-};
+} SFPattern;
 
 SF_INTERNAL SFPatternRef SFPatternCreate(void);
 

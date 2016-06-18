@@ -29,12 +29,12 @@ typedef struct _SFFontTables {
     SFData gpos;
 } SFFontTables;
 
-struct _SFFont {
-    SFFontTables tables;
+typedef struct _SFFont {
     SFFontProtocol _protocol;
     void *_object;
+    SFFontTables tables;
     SFUInteger _retainCount;
-};
+} SFFont;
 
 SF_INTERNAL void SFFontLoadTable(SFFontRef font, SFTag tableTag, SFUInt8 *buffer, SFUInteger *length);
 SF_INTERNAL SFGlyphID SFFontGetGlyphIDForCodepoint(SFFontRef font, SFCodepoint codepoint);

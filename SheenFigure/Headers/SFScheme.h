@@ -21,12 +21,10 @@
 #include "SFFont.h"
 #include "SFPattern.h"
 
-struct _SFScheme;
-typedef struct _SFScheme SFScheme;
 /**
  * The type used to represent an open type scheme.
  */
-typedef SFScheme *SFSchemeRef;
+typedef struct _SFScheme *SFSchemeRef;
 
 SFSchemeRef SFSchemeCreate(void);
 

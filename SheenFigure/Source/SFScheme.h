@@ -35,12 +35,12 @@ typedef struct _SFSchemeState {
     SFData langSys;                 /**< OpenType language system table. */
 } _SFSchemeState, *_SFSchemeStateRef;
 
-struct _SFScheme {
+typedef struct _SFScheme {
     SFFontRef _font;                /**< Font, whose scheme is being built. */
     SFTag _scriptTag;               /**< Tag of the script. */
     SFTag _languageTag;             /**< Tag of the language. */
 
     SFInteger _retainCount;
-};
+} SFScheme;
 
 #endif

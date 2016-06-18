@@ -19,16 +19,12 @@
 
 #include "SFBase.h"
 
-struct _SFAlbum;
-typedef struct _SFAlbum SFAlbum;
 /**
  * The type used to represent a glyph set.
  */
-typedef SFAlbum *SFAlbumRef;
+typedef struct _SFAlbum *SFAlbumRef;
 
 SFAlbumRef SFAlbumCreate(void);
-
-void SFAlbumClear(SFAlbumRef album);
 
 /**
  * Provides the number of processed code units.
@@ -77,7 +73,7 @@ const SFPoint *SFAlbumGetGlyphOffsetsPtr(SFAlbumRef album);
 const SFAdvance *SFAlbumGetGlyphAdvancesPtr(SFAlbumRef album);
 
 /**
- * Provides an array, mapping each code unit in the string to corresponding glyph index.
+ * Provides an array, mapping each code unit in the input string to corresponding glyph index.
  * @param album
  *      The album whose charater to glyph map you want to obtain.
  * @return

@@ -17,9 +17,7 @@
 #ifndef _SF_PATTERN_H
 #define _SF_PATTERN_H
 
-struct _SFPattern;
-typedef struct _SFPattern SFPattern;
-typedef SFPattern *SFPatternRef;
+typedef struct _SFPattern *SFPatternRef;
 
 SFPatternRef SFPatternRetain(SFPatternRef pattern);
 void SFPatternRelease(SFPatternRef pattern);

@@ -25,12 +25,10 @@ enum {
 };
 typedef SFUInt32 SFFontLayout;
 
-struct _SFFont;
-typedef struct _SFFont SFFont;
 /**
  * The type used to represent a font.
  */
-typedef SFFont *SFFontRef;
+typedef struct _SFFont *SFFontRef;
 
 typedef void (*SFFontProtocolFinalizeFunc)(void *object);
 typedef void (*SFFontProtocolLoadTableFunc)(void *object, SFTag tableTag, SFUInt8 *buffer, SFUInteger *length);
