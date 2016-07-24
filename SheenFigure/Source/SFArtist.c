@@ -24,10 +24,22 @@
 #include "SFUnifiedEngine.h"
 #include "SFArtist.h"
 
+static void _SFLoadCodepointSequence(SBCodepointSequence *codepointSequence, SFStringEncoding stringEncoding, void *stringBuffer, SFUInteger stringLength)
+{
+    codepointSequence->stringEncoding = stringEncoding;
+    codepointSequence->stringBuffer = stringBuffer;
+    codepointSequence->stringLength = stringLength;
+}
+
+static SFBoolean _SFIsValidCodepointSequence(SBCodepointSequence *codepointSequence)
+{
+    return (codepointSequence->stringBuffer && codepointSequence->stringLength);
+}
+
 SFArtistRef SFArtistCreate(void)
 {
     SFArtistRef artist = malloc(sizeof(SFArtist));
-    artist->codepointSequence = NULL;
+    _SFLoadCodepointSequence(&artist->codepointSequence, 0, NULL, 0);
     artist->pattern = NULL;
     artist->textDirection = SFTextDirectionLeftToRight;
     artist->textMode = SFTextModeForward;
@@ -46,27 +58,9 @@ SFTextDirection SFArtistGetDefaultDirectionForScript(SFArtistRef artist, SFTag s
     return SFTextModeForward;
 }
 
-void SFArtistSetString(SFArtistRef artist, SFStringEncoding stringEncoding, const void *stringBuffer, SFUInteger stringLength)
+void SFArtistSetString(SFArtistRef artist, SFStringEncoding stringEncoding, void *stringBuffer, SFUInteger stringLength)
 {
-    SBCodepointSequenceRelease(artist->codepointSequence);
-
-    switch (stringEncoding) {
-        case SFStringEncodingUTF8:
-            artist->codepointSequence = SBCodepointSequenceCreateWithUTF8String(stringBuffer, stringLength);
-            break;
-
-        case SFStringEncodingUTF16:
-            artist->codepointSequence = SBCodepointSequenceCreateWithUTF16String(stringBuffer, stringLength);
-            break;
-
-        case SFStringEncodingUTF32:
-            artist->codepointSequence = SBCodepointSequenceCreateWithUTF32String(stringBuffer, stringLength);
-            break;
-
-        default:
-            artist->codepointSequence = NULL;
-            break;
-    }
+    _SFLoadCodepointSequence(&artist->codepointSequence, stringEncoding, stringBuffer, stringLength);
 }
 
 void SFArtistSetPattern(SFArtistRef artist, SFPatternRef pattern)
@@ -108,19 +102,19 @@ void SFArtistSetTextMode(SFArtistRef artist, SFTextMode textMode)
 
 void SFArtistFillAlbum(SFArtistRef artist, SFAlbumRef album)
 {
-    if (artist->pattern && artist->codepointSequence) {
+    if (artist->pattern && _SFIsValidCodepointSequence(&artist->codepointSequence)) {
         SFCodepoints codepoints;
         SFUnifiedEngine unifiedEngine;
         SFShapingEngineRef shapingEngine;
 
         SFCodepointsInitialize(&codepoints,
-                               artist->codepointSequence,
+                               &artist->codepointSequence,
                                artist->textMode == SFTextModeBackward);
 
         SFUnifiedEngineInitialize(&unifiedEngine, artist);
         shapingEngine = (SFShapingEngineRef)&unifiedEngine;
 
-        SFAlbumReset(album, &codepoints, SBCodepointSequenceGetStringLength(artist->codepointSequence));
+        SFAlbumReset(album, &codepoints, artist->codepointSequence.stringLength);
         SFShapingEngineProcessAlbum(shapingEngine, album);
     } else {
         SFAlbumReset(album, NULL, 0);
@@ -139,7 +133,6 @@ SFArtistRef SFArtistRetain(SFArtistRef artist)
 void SFArtistRelease(SFArtistRef artist)
 {
     if (artist && --artist->_retainCount == 0) {
-        SBCodepointSequenceRelease(artist->codepointSequence);
         free(artist);
     }
 }

@@ -21,7 +21,7 @@
 #include "SFBase.h"
 #include "SFCodepoints.h"
 
-void SFCodepointsInitialize(SFCodepointsRef codepoints, SBCodepointSequenceRef referral, SFBoolean backward)
+void SFCodepointsInitialize(SFCodepointsRef codepoints, SBCodepointSequencePtr referral, SFBoolean backward)
 {
     codepoints->referral = referral;
     codepoints->index = SFInvalidIndex;
@@ -30,7 +30,7 @@ void SFCodepointsInitialize(SFCodepointsRef codepoints, SBCodepointSequenceRef r
 
 void SFCodepointsReset(SFCodepointsRef codepoints)
 {
-    codepoints->index = (!codepoints->backward ? 0 : SBCodepointSequenceGetStringLength(codepoints->referral));
+    codepoints->index = (!codepoints->backward ? 0 : codepoints->referral->stringLength);
 }
 
 SFCodepoint SFCodepointsNext(SFCodepointsRef codepoints)

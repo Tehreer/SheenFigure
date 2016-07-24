@@ -23,12 +23,12 @@
 #include "SFBase.h"
 
 typedef struct _SFCodepoints {
-    SBCodepointSequenceRef referral;
+    SBCodepointSequencePtr referral;
     SFUInteger index;
     SFBoolean backward;
 } SFCodepoints, *SFCodepointsRef;
 
-void SFCodepointsInitialize(SFCodepointsRef codepoints, SBCodepointSequenceRef referral, SFBoolean backward);
+void SFCodepointsInitialize(SFCodepointsRef codepoints, SBCodepointSequencePtr referral, SFBoolean backward);
 
 void SFCodepointsReset(SFCodepointsRef codepoints);
 SFCodepoint SFCodepointsNext(SFCodepointsRef codepoints);

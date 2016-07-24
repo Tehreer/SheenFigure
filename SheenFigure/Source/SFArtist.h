@@ -26,7 +26,7 @@
 #include "SFPattern.h"
 
 typedef struct _SFArtist {
-    SBCodepointSequenceRef codepointSequence;
+    SBCodepointSequence codepointSequence;
     SFPatternRef pattern;
     SFTextDirection textDirection;
     SFTextMode textMode;

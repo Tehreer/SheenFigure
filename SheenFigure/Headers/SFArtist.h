@@ -51,7 +51,7 @@ SFTextDirection SFArtistGetDefaultDirectionForScript(SFArtistRef artist, SFTag s
 
 void SFArtistSetPattern(SFArtistRef artist, SFPatternRef pattern);
 
-void SFArtistSetString(SFArtistRef artist, SFStringEncoding stringEncoding, const void *stringBuffer, SFUInteger stringLength);
+void SFArtistSetString(SFArtistRef artist, SFStringEncoding stringEncoding, void *stringBuffer, SFUInteger stringLength);
 
 /**
  * Sets the direction of text for glyph positioning.
