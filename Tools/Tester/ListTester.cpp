@@ -166,6 +166,7 @@ void ListTester::testRemoveAt()
     SFListSetVal(&list, 3, 400);
     SFListSetVal(&list, 4, 500);
 
+    /* Test by removing last item. */
     SFListRemoveAt(&list, 4);
     SFAssert(list.count == 4);
     SFAssert(list.items[0] == 100);
@@ -173,12 +174,14 @@ void ListTester::testRemoveAt()
     SFAssert(list.items[2] == 300);
     SFAssert(list.items[3] == 400);
 
+    /* Test by removing middle item. */
     SFListRemoveAt(&list, 2);
     SFAssert(list.count == 3);
     SFAssert(list.items[0] == 100);
     SFAssert(list.items[1] == 200);
     SFAssert(list.items[2] == 400);
 
+    /* Test by removing first item. */
     SFListRemoveAt(&list, 0);
     SFAssert(list.count == 2);
     SFAssert(list.items[0] == 200);

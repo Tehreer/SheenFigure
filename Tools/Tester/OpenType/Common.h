@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-#ifndef __SHEENFIGURE_TESTER__OPENTYPE__BIG_INT_H
-#define __SHEENFIGURE_TESTER__OPENTYPE__BIG_INT_H
+#ifndef __SHEENFIGURE_TESTER__OPENTYPE__COMMON_H
+#define __SHEENFIGURE_TESTER__OPENTYPE__COMMON_H
 
 #include <cstddef>
 #include "DataTypes.h"

@@ -35,7 +35,7 @@ struct {                    \
     SFUInteger _itemSize;   \
 }
 
-typedef int(*SFComparison)(const void *item1, const void *item2);
+typedef int (*SFComparison)(const void *item1, const void *item2);
 
 SF_PRIVATE void _SFListInitialize(_SFListRef list, SFUInteger itemSize);
 SF_PRIVATE void _SFListFinalize(_SFListRef list);
@@ -83,13 +83,6 @@ do {                                                    \
 
 #define _SFListAdd(list_, item_)                        \
         _SFListInsert(list_, (list_)->count, item_)
-
-#define _SFListIndexOf(list_, index_, item_)            \
-do {                                                    \
-    SFUInteger __safeIndex = index_;                    \
-    _SFListReserveRange((_SFListRef)(list_), __safeIndex, 1);   \
-    _SFListSetVal(list_, __safeIndex, item_);           \
-} while (0)
 
 
 #define SFListInitialize(list, itemSize)            _SFListInitialize((_SFListRef)(list), itemSize)
