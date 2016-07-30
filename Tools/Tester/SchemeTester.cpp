@@ -142,7 +142,7 @@ void SchemeTester::test()
     SFAssert(pattern1->featureUnits.items[0].lookupIndexes.items[0] == 0);
     SFAssert(pattern1->featureUnits.items[0].lookupIndexes.count == 1);
     SFAssert(pattern1->featureUnits.items[0].coveredRange.start == 0);
-    SFAssert(pattern1->featureUnits.items[0].coveredRange.length == 1);
+    SFAssert(pattern1->featureUnits.items[0].coveredRange.count == 1);
     SFAssert(pattern1->featureUnits.gsub == 1);
     SFAssert(pattern1->featureUnits.gpos == 0);
     SFAssert(pattern1->scriptTag == SFTagMake('l', 'a', 't', 'n'));
@@ -161,7 +161,7 @@ void SchemeTester::test()
     SFAssert(pattern2->featureUnits.items[0].lookupIndexes.items[0] == 0);
     SFAssert(pattern2->featureUnits.items[0].lookupIndexes.count == 1);
     SFAssert(pattern2->featureUnits.items[0].coveredRange.start == 0);
-    SFAssert(pattern2->featureUnits.items[0].coveredRange.length == 1);
+    SFAssert(pattern2->featureUnits.items[0].coveredRange.count == 1);
     SFAssert(pattern2->featureUnits.gsub == 1);
     SFAssert(pattern2->featureUnits.gpos == 0);
     SFAssert(pattern2->scriptTag == SFTagMake('l', 'a', 't', 'n'));

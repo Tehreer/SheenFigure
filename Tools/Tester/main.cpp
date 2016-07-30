@@ -17,9 +17,14 @@
 #include <cstdio>
 
 #include <Parser/ArabicShaping.h>
+#include <Parser/UnicodeData.h>
 
+#include "FontTester.h"
+#include "GeneralCategoryLookupTester.h"
 #include "JoiningTypeLookupTester.h"
 #include "ListTester.h"
+#include "PatternTester.h"
+#include "SchemeTester.h"
 
 using namespace std;
 using namespace SheenFigure::Parser;
@@ -27,13 +32,24 @@ using namespace SheenFigure::Tester;
 
 int main(int argc, const char * argv[])
 {
-    ArabicShaping arabicShaping("/Users/mta/Desktop");
-    
-    JoiningTypeLookupTester tester(arabicShaping);
-    tester.test();
+    const char *dir = "/path/to/unidata";
 
-    //ListTester tester;
-    //tester.test();
+    ArabicShaping arabicShaping(dir);
+    UnicodeData unicodeData(dir);
+
+    JoiningTypeLookupTester joiningTypeLookuptester(arabicShaping);
+    GeneralCategoryLookupTester generalCategoryLookupTester(unicodeData);
+    ListTester listTester;
+    FontTester fontTester;
+    PatternTester patternTester;
+    SchemeTester schemeTester;
+
+    joiningTypeLookuptester.test();
+    generalCategoryLookupTester.test();
+    listTester.test();
+    fontTester.test();
+    patternTester.test();
+    schemeTester.test();
 
     getchar();
 

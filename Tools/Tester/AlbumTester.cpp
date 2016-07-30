@@ -20,6 +20,7 @@
 #include "AlbumTester.h"
 
 extern "C" {
+#include <SheenBidi/SBCodepointSequence.h>
 #include <SheenFigure/Source/SFAlbum.h>
 #include <SheenFigure/Source/SFAssert.h>
 }
@@ -28,6 +29,12 @@ using namespace SheenFigure::Tester;
 
 static const SFCodepoint CODEPOINT_ARRAY[] = { 'S', 'H', 'E', 'E', 'N' };
 static const SFUInteger CODEPOINT_COUNT = sizeof(CODEPOINT_ARRAY) / sizeof(SFCodepoint);
+
+static const SBCodepointSequence CODEPOINT_SEQUENCE = {
+    SBStringEncodingUTF32,
+    (void *)CODEPOINT_ARRAY,
+    CODEPOINT_COUNT
+};
 
 static void SFAlbumReserveGlyphsInitialized(SFAlbumRef album, SFUInteger index, SFUInteger count)
 {
@@ -46,6 +53,7 @@ static void SFAlbumReserveGlyphsInitialized(SFAlbumRef album, SFUInteger index, 
 
 AlbumTester::AlbumTester()
 {
+    SFCodepointsInitialize(&m_codepoints, &CODEPOINT_SEQUENCE, SFFalse);
 }
 
 void AlbumTester::testInitialize()
@@ -53,8 +61,8 @@ void AlbumTester::testInitialize()
     SFAlbum album;
     SFAlbumInitialize(&album);
 
-    SFAssert(album.codepointArray == NULL);
-    SFAssert(album.codepointCount == 0);
+    SFAssert(album.codepoints == NULL);
+    SFAssert(album.stringLength == 0);
     SFAssert(album.glyphCount == 0);
 
     SFAlbumFinalize(&album);
@@ -65,25 +73,25 @@ void AlbumTester::testReset()
     SFAlbum album;
     SFAlbumInitialize(&album);
 
-    /* Test initial reset. */
+    /* Test reset just after initialization. */
     {
-        SFAlbumReset(&album, CODEPOINT_ARRAY, CODEPOINT_COUNT);
+        SFAlbumReset(&album, &m_codepoints, CODEPOINT_COUNT);
 
-        SFAssert(album.codepointArray == CODEPOINT_ARRAY);
-        SFAssert(album.codepointCount == CODEPOINT_COUNT);
+        SFAssert(album.codepoints == &m_codepoints);
+        SFAssert(album.stringLength == CODEPOINT_COUNT);
         SFAssert(album.glyphCount == 0);
     }
 
-    /* Test after some manipulation. */
+    /* Test reset after some manipulation. */
     {
         SFAlbumBeginFilling(&album);
         SFAlbumReserveGlyphsInitialized(&album, 0, 5);
         SFAlbumEndFilling(&album);
 
-        SFAlbumReset(&album, CODEPOINT_ARRAY, CODEPOINT_COUNT);
+        SFAlbumReset(&album, &m_codepoints, CODEPOINT_COUNT);
 
-        SFAssert(album.codepointArray == CODEPOINT_ARRAY);
-        SFAssert(album.codepointCount == CODEPOINT_COUNT);
+        SFAssert(album.codepoints == &m_codepoints);
+        SFAssert(album.stringLength == CODEPOINT_COUNT);
         SFAssert(album.glyphCount == 0);
     }
 
@@ -97,31 +105,31 @@ void AlbumTester::testAddGlyph()
 
     /* Test with forward associations. */
     {
-        SFAlbumReset(&album, CODEPOINT_ARRAY, CODEPOINT_COUNT);
+        SFAlbumReset(&album, &m_codepoints, CODEPOINT_COUNT);
         SFAlbumBeginFilling(&album);
 
-        SFAlbumAddGlyph(&album, 100, 0);
-        SFAlbumAddGlyph(&album, 200, 1);
-        SFAlbumAddGlyph(&album, 300, 2);
-        SFAlbumAddGlyph(&album, 400, 3);
-        SFAlbumAddGlyph(&album, 500, 4);
+        SFAlbumAddGlyph(&album, 100, 0, 1);
+        SFAlbumAddGlyph(&album, 200, 1, 1);
+        SFAlbumAddGlyph(&album, 300, 2, 1);
+        SFAlbumAddGlyph(&album, 400, 3, 1);
+        SFAlbumAddGlyph(&album, 500, 4, 1);
 
         SFAlbumEndFilling(&album);
         SFAlbumWrapUp(&album);
 
-        /* Test glyph count. */
+        /* Test the glyph count. */
         SFAssert(SFAlbumGetGlyphCount(&album) == 5);
 
-        /* Test output glyphs. */
-        SFGlyphID *glyphs = SFAlbumGetGlyphIDs(&album);
+        /* Test the output glyphs. */
+        const SFGlyphID *glyphs = SFAlbumGetGlyphIDsPtr(&album);
         SFAssert(glyphs[0] == 100);
         SFAssert(glyphs[1] == 200);
         SFAssert(glyphs[2] == 300);
         SFAssert(glyphs[3] == 400);
         SFAssert(glyphs[4] == 500);
 
-        /* Test output map. */
-        SFUInteger *map = SFAlbumGetCharacterToGlyphMap(&album);
+        /* Test the output map. */
+        const SFUInteger *map = SFAlbumGetCodeunitToGlyphMapPtr(&album);
         SFAssert(map[0] == 0);
         SFAssert(map[1] == 1);
         SFAssert(map[2] == 2);
@@ -131,31 +139,31 @@ void AlbumTester::testAddGlyph()
 
     /* Test with backward associations. */
     {
-        SFAlbumReset(&album, CODEPOINT_ARRAY, CODEPOINT_COUNT);
+        SFAlbumReset(&album, &m_codepoints, CODEPOINT_COUNT);
         SFAlbumBeginFilling(&album);
 
-        SFAlbumAddGlyph(&album, 100, 4);
-        SFAlbumAddGlyph(&album, 200, 3);
-        SFAlbumAddGlyph(&album, 300, 2);
-        SFAlbumAddGlyph(&album, 400, 1);
-        SFAlbumAddGlyph(&album, 500, 0);
+        SFAlbumAddGlyph(&album, 100, 4, 1);
+        SFAlbumAddGlyph(&album, 200, 3, 1);
+        SFAlbumAddGlyph(&album, 300, 2, 1);
+        SFAlbumAddGlyph(&album, 400, 1, 1);
+        SFAlbumAddGlyph(&album, 500, 0, 1);
 
         SFAlbumEndFilling(&album);
         SFAlbumWrapUp(&album);
 
-        /* Test glyph count. */
+        /* Test the glyph count. */
         SFAssert(SFAlbumGetGlyphCount(&album) == 5);
 
-        /* Test output glyphs. */
-        SFGlyphID *glyphs = SFAlbumGetGlyphIDs(&album);
+        /* Test the output glyphs. */
+        const SFGlyphID *glyphs = SFAlbumGetGlyphIDsPtr(&album);
         SFAssert(glyphs[0] == 100);
         SFAssert(glyphs[1] == 200);
         SFAssert(glyphs[2] == 300);
         SFAssert(glyphs[3] == 400);
         SFAssert(glyphs[4] == 500);
 
-        /* Test output map. */
-        SFUInteger *map = SFAlbumGetCharacterToGlyphMap(&album);
+        /* Test the output map. */
+        const SFUInteger *map = SFAlbumGetCodeunitToGlyphMapPtr(&album);
         SFAssert(map[0] == 4);
         SFAssert(map[1] == 3);
         SFAssert(map[2] == 2);
@@ -170,15 +178,15 @@ void AlbumTester::testReserveGlyphs()
 {
     SFAlbum album;
     SFAlbumInitialize(&album);
-    SFAlbumReset(&album, CODEPOINT_ARRAY, CODEPOINT_COUNT);
+    SFAlbumReset(&album, &m_codepoints, CODEPOINT_COUNT);
     SFAlbumBeginFilling(&album);
 
-    /* Reserve some initial glyphs and place markings. */
+    /* Reserve some initial glyphs and place marking. */
     SFAlbumReserveGlyphs(&album, 0, 10);
     SFAlbumSetGlyph(&album, 0, 100);
     SFAlbumSetGlyph(&album, 9, 200);
 
-    /* Reserve some glyphs at the end and place markings. */
+    /* Reserve some glyphs at the end and place marking. */
     SFAlbumReserveGlyphs(&album, 10, 5);
     SFAlbumSetGlyph(&album, 4, 300);
     SFAlbumSetGlyph(&album, 5, 400);
@@ -198,11 +206,11 @@ void AlbumTester::testReserveGlyphs()
     SFAlbumEndFilling(&album);
     SFAlbumWrapUp(&album);
 
-    /* Test glyph count. */
+    /* Test the glyph count. */
     SFAssert(SFAlbumGetGlyphCount(&album) == 25);
 
     /* Test the expected locations of output glyphs. */
-    SFGlyphID *glyphs = SFAlbumGetGlyphIDs(&album);
+    const SFGlyphID *glyphs = SFAlbumGetGlyphIDsPtr(&album);
     SFAssert(glyphs[5] == 100);
     SFAssert(glyphs[9] == 300);
     SFAssert(glyphs[15] == 400);
@@ -216,7 +224,7 @@ void AlbumTester::testSetGlyph()
 {
     SFAlbum album;
     SFAlbumInitialize(&album);
-    SFAlbumReset(&album, CODEPOINT_ARRAY, CODEPOINT_COUNT);
+    SFAlbumReset(&album, &m_codepoints, CODEPOINT_COUNT);
     SFAlbumBeginFilling(&album);
 
     SFAlbumReserveGlyphsInitialized(&album, 0, 5);
@@ -231,11 +239,11 @@ void AlbumTester::testSetGlyph()
     SFAlbumEndFilling(&album);
     SFAlbumWrapUp(&album);
 
-    /* Test glyph count. */
+    /* Test the glyph count. */
     SFAssert(SFAlbumGetGlyphCount(&album) == 5);
 
-    /* Test output glyphs. */
-    SFGlyphID *glyphs = SFAlbumGetGlyphIDs(&album);
+    /* Test the output glyphs. */
+    const SFGlyphID *glyphs = SFAlbumGetGlyphIDsPtr(&album);
     SFAssert(glyphs[0] == 100);
     SFAssert(glyphs[1] == 200);
     SFAssert(glyphs[2] == 300);
@@ -249,13 +257,13 @@ void AlbumTester::testGetGlyph()
 {
     SFAlbum album;
     SFAlbumInitialize(&album);
-    SFAlbumReset(&album, CODEPOINT_ARRAY, CODEPOINT_COUNT);
+    SFAlbumReset(&album, &m_codepoints, CODEPOINT_COUNT);
     SFAlbumBeginFilling(&album);
 
     /* Test by adding some glyphs. */
     {
-        SFAlbumAddGlyph(&album, 100, 0);
-        SFAlbumAddGlyph(&album, 200, 0);
+        SFAlbumAddGlyph(&album, 100, 0, 1);
+        SFAlbumAddGlyph(&album, 200, 0, 1);
 
         /* Test with get glyph. */
         SFAssert(SFAlbumGetGlyph(&album, 0) == 100);
@@ -278,13 +286,13 @@ void AlbumTester::testGetGlyph()
     SFAlbumEndFilling(&album);
     SFAlbumWrapUp(&album);
 
-    /* Test the output. */
+    /* Test the overall output. */
     {
-        /* Test glyph count. */
+        /* Test the glyph count. */
         SFAssert(SFAlbumGetGlyphCount(&album) == 5);
 
-        /* Test output glyphs. */
-        SFGlyphID *glyphs = SFAlbumGetGlyphIDs(&album);
+        /* Test the output glyphs. */
+        const SFGlyphID *glyphs = SFAlbumGetGlyphIDsPtr(&album);
         SFAssert(glyphs[0] == 100);
         SFAssert(glyphs[1] == 300);
         SFAssert(glyphs[2] == 400);
@@ -302,7 +310,7 @@ void AlbumTester::testSetSingleAssociation()
 
     /* Test with forward associations. */
     {
-        SFAlbumReset(&album, CODEPOINT_ARRAY, CODEPOINT_COUNT);
+        SFAlbumReset(&album, &m_codepoints, CODEPOINT_COUNT);
         SFAlbumBeginFilling(&album);
 
         SFAlbumReserveGlyphsInitialized(&album, 0, 5);
@@ -317,7 +325,7 @@ void AlbumTester::testSetSingleAssociation()
         SFAlbumWrapUp(&album);
 
         /* Test the output map. */
-        SFUInteger *map = SFAlbumGetCharacterToGlyphMap(&album);
+        const SFUInteger *map = SFAlbumGetCodeunitToGlyphMapPtr(&album);
         SFAssert(map[0] == 0);
         SFAssert(map[1] == 1);
         SFAssert(map[2] == 2);
@@ -327,7 +335,7 @@ void AlbumTester::testSetSingleAssociation()
 
     /* Test with backward associations. */
     {
-        SFAlbumReset(&album, CODEPOINT_ARRAY, CODEPOINT_COUNT);
+        SFAlbumReset(&album, &m_codepoints, CODEPOINT_COUNT);
         SFAlbumBeginFilling(&album);
 
         SFAlbumReserveGlyphsInitialized(&album, 0, 5);
@@ -342,7 +350,7 @@ void AlbumTester::testSetSingleAssociation()
         SFAlbumWrapUp(&album);
 
         /* Test the output map. */
-        SFUInteger *map = SFAlbumGetCharacterToGlyphMap(&album);
+        const SFUInteger *map = SFAlbumGetCodeunitToGlyphMapPtr(&album);
         SFAssert(map[0] == 4);
         SFAssert(map[1] == 3);
         SFAssert(map[2] == 2);
@@ -352,7 +360,7 @@ void AlbumTester::testSetSingleAssociation()
 
     /* Test with complex associations. */
     {
-        SFAlbumReset(&album, CODEPOINT_ARRAY, CODEPOINT_COUNT);
+        SFAlbumReset(&album, &m_codepoints, CODEPOINT_COUNT);
         SFAlbumBeginFilling(&album);
 
         SFAlbumReserveGlyphsInitialized(&album, 0, 8);
@@ -370,7 +378,7 @@ void AlbumTester::testSetSingleAssociation()
         SFAlbumWrapUp(&album);
 
         /* Test the output map. */
-        SFUInteger *map = SFAlbumGetCharacterToGlyphMap(&album);
+        const SFUInteger *map = SFAlbumGetCodeunitToGlyphMapPtr(&album);
         SFAssert(map[0] == 7);
         SFAssert(map[1] == 6);
         SFAssert(map[2] == 5);
@@ -385,13 +393,13 @@ void AlbumTester::testGetSingleAssociation()
 {
     SFAlbum album;
     SFAlbumInitialize(&album);
-    SFAlbumReset(&album, CODEPOINT_ARRAY, CODEPOINT_COUNT);
+    SFAlbumReset(&album, &m_codepoints, CODEPOINT_COUNT);
     SFAlbumBeginFilling(&album);
 
     /* Test by adding some glyphs. */
     {
-        SFAlbumAddGlyph(&album, 0, 0);
-        SFAlbumAddGlyph(&album, 0, 1);
+        SFAlbumAddGlyph(&album, 0, 0, 1);
+        SFAlbumAddGlyph(&album, 0, 1, 1);
 
         /* Test with get single association. */
         SFAssert(SFAlbumGetSingleAssociation(&album, 0) == 0);
@@ -414,9 +422,9 @@ void AlbumTester::testGetSingleAssociation()
     SFAlbumEndFilling(&album);
     SFAlbumWrapUp(&album);
 
-    /* Test the output. */
+    /* Test the overall output. */
     {
-        SFUInteger *map = SFAlbumGetCharacterToGlyphMap(&album);
+        const SFUInteger *map = SFAlbumGetCodeunitToGlyphMapPtr(&album);
         SFAssert(map[0] == 0);
         SFAssert(map[1] == 4);
         SFAssert(map[2] == 1);
@@ -431,13 +439,13 @@ void AlbumTester::testMakeCompositeAssociations()
 {
     SFAlbum album;
     SFAlbumInitialize(&album);
-    SFAlbumReset(&album, CODEPOINT_ARRAY, CODEPOINT_COUNT);
+    SFAlbumReset(&album, &m_codepoints, CODEPOINT_COUNT);
     SFAlbumBeginFilling(&album);
 
     /* Add some glyphs with associations. */
-    SFAlbumAddGlyph(&album, 0, 1);
-    SFAlbumAddGlyph(&album, 0, 2);
-    SFAlbumAddGlyph(&album, 0, 3);
+    SFAlbumAddGlyph(&album, 0, 1, 1);
+    SFAlbumAddGlyph(&album, 0, 2, 1);
+    SFAlbumAddGlyph(&album, 0, 3, 1);
 
     /* Make the second glyph composite. */
     SFAlbumSetTraits(&album, 1, SFGlyphTraitComposite);
@@ -452,7 +460,7 @@ void AlbumTester::testMakeCompositeAssociations()
     SFAlbumWrapUp(&album);
 
     /* Test the output map. */
-    SFUInteger *map = SFAlbumGetCharacterToGlyphMap(&album);
+    const SFUInteger *map = SFAlbumGetCodeunitToGlyphMapPtr(&album);
     SFAssert(map[0] == 1);
     SFAssert(map[1] == 0);
     SFAssert(map[2] == 1);
@@ -466,7 +474,7 @@ void AlbumTester::testGetCompositeAssociations()
 {
     SFAlbum album;
     SFAlbumInitialize(&album);
-    SFAlbumReset(&album, CODEPOINT_ARRAY, CODEPOINT_COUNT);
+    SFAlbumReset(&album, &m_codepoints, CODEPOINT_COUNT);
     SFAlbumBeginFilling(&album);
 
     /* Add some composite glyphs. */
@@ -535,7 +543,7 @@ void AlbumTester::testFeatureMask()
 {
     SFAlbum album;
     SFAlbumInitialize(&album);
-    SFAlbumReset(&album, CODEPOINT_ARRAY, CODEPOINT_COUNT);
+    SFAlbumReset(&album, &m_codepoints, CODEPOINT_COUNT);
 
     SFAlbumBeginFilling(&album);
     SFAlbumReserveGlyphsInitialized(&album, 0, 5);
@@ -567,7 +575,7 @@ void AlbumTester::testTraits()
 {
     SFAlbum album;
     SFAlbumInitialize(&album);
-    SFAlbumReset(&album, CODEPOINT_ARRAY, CODEPOINT_COUNT);
+    SFAlbumReset(&album, &m_codepoints, CODEPOINT_COUNT);
 
     SFAlbumBeginFilling(&album);
     SFAlbumReserveGlyphsInitialized(&album, 0, 5);
@@ -625,7 +633,7 @@ void AlbumTester::testPosition()
 {
     SFAlbum album;
     SFAlbumInitialize(&album);
-    SFAlbumReset(&album, CODEPOINT_ARRAY, CODEPOINT_COUNT);
+    SFAlbumReset(&album, &m_codepoints, CODEPOINT_COUNT);
 
     SFAlbumBeginFilling(&album);
     SFAlbumReserveGlyphsInitialized(&album, 0, 5);
@@ -648,8 +656,8 @@ void AlbumTester::testPosition()
     SFAlbumEndArranging(&album);
     SFAlbumWrapUp(&album);
 
-    /* Test the output. */
-    SFPoint *offsets = SFAlbumGetGlyphOffsets(&album);
+    /* Test the overall output. */
+    const SFPoint *offsets = SFAlbumGetGlyphOffsetsPtr(&album);
     SFAssert(offsets[0].x == 100 && offsets[0].y == 150);
     SFAssert(offsets[1].x == 200 && offsets[1].y == 250);
     SFAssert(offsets[2].x == 300 && offsets[2].y == 350);
@@ -663,7 +671,7 @@ void AlbumTester::testAdvance()
 {
     SFAlbum album;
     SFAlbumInitialize(&album);
-    SFAlbumReset(&album, CODEPOINT_ARRAY, CODEPOINT_COUNT);
+    SFAlbumReset(&album, &m_codepoints, CODEPOINT_COUNT);
 
     SFAlbumBeginFilling(&album);
     SFAlbumReserveGlyphsInitialized(&album, 0, 5);
@@ -686,8 +694,8 @@ void AlbumTester::testAdvance()
     SFAlbumEndArranging(&album);
     SFAlbumWrapUp(&album);
 
-    /* Test the output. */
-    SFAdvance *advances = SFAlbumGetGlyphAdvances(&album);
+    /* Test the overall output. */
+    const SFAdvance *advances = SFAlbumGetGlyphAdvancesPtr(&album);
     SFAssert(advances[0] == 100);
     SFAssert(advances[1] == 200);
     SFAssert(advances[2] == 300);
@@ -701,7 +709,7 @@ void AlbumTester::testCursiveOffset()
 {
     SFAlbum album;
     SFAlbumInitialize(&album);
-    SFAlbumReset(&album, CODEPOINT_ARRAY, CODEPOINT_COUNT);
+    SFAlbumReset(&album, &m_codepoints, CODEPOINT_COUNT);
 
     SFAlbumBeginFilling(&album);
     SFAlbumReserveGlyphsInitialized(&album, 0, 5);
@@ -730,7 +738,7 @@ void AlbumTester::testAttachmentOffset()
 {
     SFAlbum album;
     SFAlbumInitialize(&album);
-    SFAlbumReset(&album, CODEPOINT_ARRAY, CODEPOINT_COUNT);
+    SFAlbumReset(&album, &m_codepoints, CODEPOINT_COUNT);
 
     SFAlbumBeginFilling(&album);
     SFAlbumReserveGlyphsInitialized(&album, 0, 5);

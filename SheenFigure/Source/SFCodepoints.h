@@ -28,9 +28,9 @@ typedef struct _SFCodepoints {
     SFBoolean backward;
 } SFCodepoints, *SFCodepointsRef;
 
-void SFCodepointsInitialize(SFCodepointsRef codepoints, const SBCodepointSequence *referral, SFBoolean backward);
+SF_INTERNAL void SFCodepointsInitialize(SFCodepointsRef codepoints, const SBCodepointSequence *referral, SFBoolean backward);
 
-void SFCodepointsReset(SFCodepointsRef codepoints);
-SFCodepoint SFCodepointsNext(SFCodepointsRef codepoints);
+SF_INTERNAL void SFCodepointsReset(SFCodepointsRef codepoints);
+SF_INTERNAL SFCodepoint SFCodepointsNext(SFCodepointsRef codepoints);
 
 #endif

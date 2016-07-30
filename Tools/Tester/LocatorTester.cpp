@@ -27,7 +27,24 @@ extern "C" {
 using namespace SheenFigure::Tester;
 using namespace SheenFigure::Tester::OpenType;
 
-static const SFCodepoint CODEPOINT = 'A';
+static const SFCodepoint CODEPOINT_ARRAY[] = { 'A' };
+static const SFUInteger CODEPOINT_COUNT = 1;
+
+static const SBCodepointSequence CODEPOINT_SEQUENCE = {
+    SBStringEncodingUTF32,
+    (void *)CODEPOINT_ARRAY,
+    CODEPOINT_COUNT
+};
+
+static SFCodepoints SFCodepointsMake(const SBCodepointSequence *referral, SFBoolean backward)
+{
+    SFCodepoints codepoints;
+    SFCodepointsInitialize(&codepoints, referral, backward);
+
+    return codepoints;
+}
+
+static SFCodepoints CODEPOINT_HANDLER = SFCodepointsMake(&CODEPOINT_SEQUENCE, SFFalse);
 
 static const SFGlyphTraits TRAIT_LIST_1[] = {
     SFGlyphTraitNone,
@@ -167,7 +184,7 @@ static const SFLookupFlag LOOKUP_FLAG_LIST[] = {
 static SFAlbumRef SFAlbumCreateWithTraits(const SFGlyphTraits *traits, SFUInteger count)
 {
     SFAlbumRef album = SFAlbumCreate();
-    SFAlbumReset(album, &CODEPOINT, 1);
+    SFAlbumReset(album, &CODEPOINT_HANDLER, 1);
 
     SFAlbumBeginFilling(album);
     SFAlbumReserveGlyphs(album, 0, count);

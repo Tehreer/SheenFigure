@@ -21,19 +21,19 @@
 #include "SFBase.h"
 #include "SFCodepoints.h"
 
-void SFCodepointsInitialize(SFCodepointsRef codepoints, const SBCodepointSequence *referral, SFBoolean backward)
+SF_INTERNAL void SFCodepointsInitialize(SFCodepointsRef codepoints, const SBCodepointSequence *referral, SFBoolean backward)
 {
     codepoints->referral = referral;
     codepoints->index = SFInvalidIndex;
     codepoints->backward = backward;
 }
 
-void SFCodepointsReset(SFCodepointsRef codepoints)
+SF_INTERNAL void SFCodepointsReset(SFCodepointsRef codepoints)
 {
     codepoints->index = (!codepoints->backward ? 0 : codepoints->referral->stringLength);
 }
 
-SFCodepoint SFCodepointsNext(SFCodepointsRef codepoints)
+SF_INTERNAL SFCodepoint SFCodepointsNext(SFCodepointsRef codepoints)
 {
     if (!codepoints->backward) {
         return SBCodepointSequenceGetCodepointAt(codepoints->referral, &codepoints->index);
