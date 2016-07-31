@@ -59,20 +59,31 @@ static SFAdvance getGlyphAdvance(void *object, SFFontLayout fontLayout, SFGlyphI
     return 0;
 }
 
-static void writeGSUB(Writer &writer, Table &subtable, LookupType type)
+static void writeGSUB(Writer &writer, LookupSubtable &subtable, LookupSubtable *referrals = NULL, SFUInteger count = 0)
 {
-    /* Create the lookup table. */
-    LookupTable lookup;
-    lookup.lookupType = type;
-    lookup.lookupFlag = (LookupFlag)0;
-    lookup.subTableCount = 1;
-    lookup.subtables = &subtable;
-    lookup.markFilteringSet = 0;
+    UInt16 lookupCount = (UInt16)(count + 1);
+
+    /* Create the lookup tables. */
+    LookupTable *lookups = new LookupTable[lookupCount];
+    lookups[0].lookupType = subtable.lookupType();
+    lookups[0].lookupFlag = (LookupFlag)0;
+    lookups[0].subTableCount = 1;
+    lookups[0].subtables = &subtable;
+    lookups[0].markFilteringSet = 0;
+
+    for (SFUInteger i = 1; i < lookupCount; i++) {
+        LookupSubtable *other = &referrals[i - 1];
+        lookups[i].lookupType = other->lookupType();
+        lookups[i].lookupFlag = (LookupFlag)0;
+        lookups[i].subTableCount = 1;
+        lookups[i].subtables = other;
+        lookups[i].markFilteringSet = 0;
+    }
 
     /* Create the lookup list table. */
     LookupListTable lookupList;
-    lookupList.lookupCount = 1;
-    lookupList.lookupTables = &lookup;
+    lookupList.lookupCount = lookupCount;
+    lookupList.lookupTables = lookups;
 
     UInt16 lookupIndex[1] = { 0 };
 
@@ -125,13 +136,16 @@ static void writeGSUB(Writer &writer, Table &subtable, LookupType type)
     gsub.lookupList = &lookupList;
 
     writer.writeTable(&gsub);
+
+    delete [] lookups;
 }
 
-static void processSubtable(Table &subtable, LookupType type, SFAlbumRef album, SFCodepoint *input, SFUInteger length)
+static void processSubtable(LookupSubtable &subtable, SFAlbumRef album,
+    SFCodepoint *input, SFUInteger length, LookupSubtable *referrals = NULL, SFUInteger count = 0)
 {
     /* Write GSUB table for the given lookup. */
     Writer writer;
-    writeGSUB(writer, subtable, type);
+    writeGSUB(writer, subtable, referrals, count);
 
     /* Create font with protocol. */
     SFFontProtocol protocol = {
@@ -206,7 +220,7 @@ void GlyphSubstituterTester::testSingleSubstitution()
         SFAlbumInitialize(&album);
 
         SFCodepoint input[] = { 1 };
-        processSubtable(subtable, LookupType::sSingle, &album, input, sizeof(input) / sizeof(SFCodepoint));
+        processSubtable(subtable, &album, input, sizeof(input) / sizeof(SFCodepoint));
 
         /* Test the glyph count. */
         SFAssert(SFAlbumGetGlyphCount(&album) == 1);
@@ -230,7 +244,7 @@ void GlyphSubstituterTester::testSingleSubstitution()
         SFAlbumInitialize(&album);
 
         SFCodepoint input[] = { 1 };
-        processSubtable(subtable, LookupType::sSingle, &album, input, sizeof(input) / sizeof(SFCodepoint));
+        processSubtable(subtable, &album, input, sizeof(input) / sizeof(SFCodepoint));
 
         /* Test the glyph count. */
         SFAssert(SFAlbumGetGlyphCount(&album) == 1);
@@ -269,7 +283,7 @@ void GlyphSubstituterTester::testMultipleSubstitution()
         SFAlbumInitialize(&album);
 
         SFCodepoint input[] = { 1 };
-        processSubtable(subtable, LookupType::sMultiple, &album, input, sizeof(input) / sizeof(SFCodepoint));
+        processSubtable(subtable, &album, input, sizeof(input) / sizeof(SFCodepoint));
 
         /* Test the glyph count. */
         SFAssert(SFAlbumGetGlyphCount(&album) == 5);
@@ -294,38 +308,130 @@ void GlyphSubstituterTester::testLigatureSubstitution()
     coverage.format1.glyphCount = sizeof(glyphs) / sizeof(Glyph);
     coverage.format1.glyphArray = glyphs;
 
-    /* Test with format 1. */
-    {
-        Glyph componenets[] = { 2, 3, 4, 5 };
+    Glyph componenets[] = { 2, 3, 4, 5 };
 
-        LigatureTable ligature;
-        ligature.ligGlyph = 10;
-        ligature.compCount = (sizeof(componenets) / sizeof(Glyph)) + 1;
-        ligature.component = componenets;
+    /* Create the ligature table. */
+    LigatureTable ligature;
+    ligature.ligGlyph = 10;
+    ligature.compCount = (sizeof(componenets) / sizeof(Glyph)) + 1;
+    ligature.component = componenets;
 
-        LigatureSetTable ligatureSet;
-        ligatureSet.ligatureCount = 1;
-        ligatureSet.ligature = &ligature;
+    /* Create the ligature set table. */
+    LigatureSetTable ligatureSet;
+    ligatureSet.ligatureCount = 1;
+    ligatureSet.ligature = &ligature;
 
-        LigatureSubstSubtable subtable;
-        subtable.substFormat = 1;
-        subtable.coverage = &coverage;
-        subtable.ligSetCount = 1;
-        subtable.ligatureSet = &ligatureSet;
+    /* Create the ligature substitution table. */
+    LigatureSubstSubtable subtable;
+    subtable.substFormat = 1;
+    subtable.coverage = &coverage;
+    subtable.ligSetCount = 1;
+    subtable.ligatureSet = &ligatureSet;
 
-        SFAlbum album;
-        SFAlbumInitialize(&album);
+    /* Create the album. */
+    SFAlbum album;
+    SFAlbumInitialize(&album);
 
-        SFCodepoint input[] = { 1, 2, 3, 4, 5 };
-        processSubtable(subtable, LookupType::sLigature, &album, input, sizeof(input) / sizeof(SFCodepoint));
+    /* Process the subtable. */
+    SFCodepoint input[] = { 1, 2, 3, 4, 5 };
+    processSubtable(subtable, &album, input, sizeof(input) / sizeof(SFCodepoint));
 
-        /* Test the glyph count. */
-        SFAssert(SFAlbumGetGlyphCount(&album) == 1);
+    /* Test the glyph count. */
+    SFAssert(SFAlbumGetGlyphCount(&album) == 1);
 
-        /* Test the output glyphs. */
-        const SFGlyphID *output = SFAlbumGetGlyphIDsPtr(&album);
-        SFAssert(output[0] == 10);
-    }
+    /* Test the output glyphs. */
+    const SFGlyphID *output = SFAlbumGetGlyphIDsPtr(&album);
+    SFAssert(output[0] == 10);
+}
+
+void GlyphSubstituterTester::testChainContextSubstitution()
+{
+    Glyph inputGlyphs[] = { 1, 2, 3 };
+    Glyph backtrackGlyphs[] = { 1 };
+    Glyph lookaheadGlyphs[] = { 3 };
+
+    /* Create the input coverage table. */
+    CoverageTable inputCoverage;
+    inputCoverage.coverageFormat = 1;
+    inputCoverage.format1.glyphCount = sizeof(inputGlyphs) / sizeof(Glyph);
+    inputCoverage.format1.glyphArray = inputGlyphs;
+
+    /* Create an array for input coverage tables. */
+    CoverageTable inputArray[] = {
+        inputCoverage,
+        inputCoverage,
+        inputCoverage,
+    };
+
+    /* Create the backtrack coverage table. */
+    CoverageTable backtrackCoverage;
+    backtrackCoverage.coverageFormat = 1;
+    backtrackCoverage.format1.glyphCount = sizeof(backtrackGlyphs) / sizeof(Glyph);
+    backtrackCoverage.format1.glyphArray = backtrackGlyphs;
+
+    /* Create an array for backtrack coverage tables. */
+    CoverageTable backtrackArray[] = {
+        backtrackCoverage,
+        backtrackCoverage,
+        backtrackCoverage,
+    };
+
+    /* Create the lookahead coverage table. */
+    CoverageTable lookaheadCoverage;
+    lookaheadCoverage.coverageFormat = 1;
+    lookaheadCoverage.format1.glyphCount = sizeof(lookaheadGlyphs) / sizeof(Glyph);
+    lookaheadCoverage.format1.glyphArray = lookaheadGlyphs;
+
+    /* Create an array for lookahead coverage tables. */
+    CoverageTable lookaheadArray[] = {
+        lookaheadCoverage,
+        lookaheadCoverage,
+        lookaheadCoverage,
+    };
+
+    /* Create the lookup record. */
+    LookupRecord lookupRecord;
+    lookupRecord.sequenceIndex = 1;
+    lookupRecord.lookupListIndex = 1;
+
+    /* Create the chain context subtable. */
+    ChainContextSubtable subtable;
+    subtable.format = 3;
+    subtable.format3.backtrackGlyphCount = sizeof(backtrackArray) / sizeof(CoverageTable);
+    subtable.format3.backtrackGlyphCoverage = backtrackArray;
+    subtable.format3.inputGlyphCount = sizeof(inputArray) / sizeof(CoverageTable);
+    subtable.format3.inputGlyphCoverage = inputArray;
+    subtable.format3.lookaheadGlyphCount = sizeof(lookaheadArray) / sizeof(CoverageTable);
+    subtable.format3.lookaheadGlyphCoverage = lookaheadArray;
+    subtable.format3.recordCount = 1;
+    subtable.format3.lookupRecord = &lookupRecord;
+
+    /* Create the inner substitution subtable. */
+    SingleSubstSubtable inner;
+    inner.substFormat = 1;
+    inner.coverage = &inputCoverage;
+    inner.format1.deltaGlyphID = 1;
+
+    SFAlbum album;
+    SFAlbumInitialize(&album);
+
+    SFCodepoint input[] = { 1, 1, 1, 1, 2, 3, 3, 3, 3 };
+    processSubtable(subtable, &album, input, sizeof(input) / sizeof(SFCodepoint), &inner, 1);
+
+    /* Test the glyph count. */
+    SFAssert(SFAlbumGetGlyphCount(&album) == 9);
+
+    /* Test the output glyphs. */
+    const SFGlyphID *output = SFAlbumGetGlyphIDsPtr(&album);
+    SFAssert(output[0] == 1);
+    SFAssert(output[1] == 1);
+    SFAssert(output[2] == 1);
+    SFAssert(output[3] == 1);
+    SFAssert(output[4] == 3);
+    SFAssert(output[5] == 3);
+    SFAssert(output[6] == 3);
+    SFAssert(output[7] == 3);
+    SFAssert(output[8] == 3);
 }
 
 void GlyphSubstituterTester::test()
@@ -333,4 +439,5 @@ void GlyphSubstituterTester::test()
     testSingleSubstitution();
     testMultipleSubstitution();
     testLigatureSubstitution();
+    testChainContextSubstitution();
 }

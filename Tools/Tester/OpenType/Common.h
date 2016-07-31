@@ -184,11 +184,15 @@ enum class LookupFlag : UInt16 {
     MarkAttachmentType = 0xFF00,    // If not zero, skips over all marks of attachment type different from specified.
 };
 
+struct LookupSubtable : public Table {
+    virtual LookupType lookupType() = 0;
+};
+
 struct LookupTable : public Table {
     LookupType lookupType;          // Different enumerations for GSUB and GPOS
     LookupFlag lookupFlag;          // Lookup qualifiers
     UInt16 subTableCount;           // Number of SubTables for this lookup
-    Table *subtables;               // Array of offsets to SubTables-from beginning of Lookup table
+    LookupSubtable *subtables;      // Array of offsets to SubTables-from beginning of Lookup table
     UInt16 markFilteringSet;        // Index (base 0) into GDEF mark glyph sets structure. This field is only present if bit UseMarkFilteringSet of lookup flags is set.
 
     void write(Writer &writer) override {
@@ -333,7 +337,7 @@ struct CoverageTable : public Table {
                 writer.write(coverageFormat);
                 writer.write(format2.rangeCount);
                 writer.write(format2.rangeRecord, format2.rangeCount);
-                
+
                 writer.exit();
                 break;
         }
@@ -359,6 +363,95 @@ struct DeviceTable : public Table {
         writer.write(endSize);
         writer.write(deltaFormat);
         writer.write(deltaValue);
+
+        writer.exit();
+    }
+};
+
+struct LookupRecord : public Table {
+    UInt16 sequenceIndex;           // Index into current glyph sequence-first glyph = 0
+    UInt16 lookupListIndex;         // Lookup to apply to that position-zero-based
+
+    void write(Writer &writer) override {
+        writer.write(sequenceIndex);
+        writer.write(lookupListIndex);
+    }
+};
+
+struct ChainContextSubtable : public LookupSubtable {
+    UInt16 format;                                  // Format identifier
+
+    union {
+        struct {
+            UInt16 backtrackGlyphCount;             // Number of glyphs in the backtracking sequence
+            CoverageTable *backtrackGlyphCoverage;  // Array of offsets to coverage tables in backtracking sequence, in glyph sequence order
+            UInt16 inputGlyphCount;                 // Number of glyphs in input sequence
+            CoverageTable *inputGlyphCoverage;      // Array of offsets to coverage tables in input sequence, in glyph sequence order
+            UInt16 lookaheadGlyphCount;             // Number of glyphs in lookahead sequence
+            CoverageTable *lookaheadGlyphCoverage;  // Array of offsets to coverage tables in lookahead sequence, in glyph sequence order
+            UInt16 recordCount;                     // Number of LookupRecords
+            LookupRecord *lookupRecord;             // Array of LookupRecords, in design order
+        } format3;
+    };
+
+    LookupType lookupType() override {
+        return LookupType::sChainingContext;
+    }
+
+    void write(Writer &writer) override {
+        writer.enter();
+
+        switch (format) {
+            case 3: {
+                writer.write(format);
+                writer.write(format3.backtrackGlyphCount);
+                int batrackCoverageOffsets[format3.backtrackGlyphCount];
+                for (int i = 0; i < format3.backtrackGlyphCount; i++) {
+                    batrackCoverageOffsets[i] = writer.reserveOffset();
+                }
+                writer.write(format3.inputGlyphCount);
+                int inputCoverageOffsets[format3.inputGlyphCount];
+                for (int i = 0; i < format3.inputGlyphCount; i++) {
+                    inputCoverageOffsets[i] = writer.reserveOffset();
+                }
+                writer.write(format3.lookaheadGlyphCount);
+                int lookaheadCoverageOffsets[format3.lookaheadGlyphCount];
+                for (int i = 0; i < format3.lookaheadGlyphCount; i++) {
+                    lookaheadCoverageOffsets[i] = writer.reserveOffset();
+                }
+                writer.write(format3.recordCount);
+                writer.write(format3.lookupRecord, format3.recordCount);
+
+                for (int i = 0; i < format3.backtrackGlyphCount; i++) {
+                    writer.writeTable(&format3.backtrackGlyphCoverage[i], batrackCoverageOffsets[i]);
+                }
+                for (int i = 0; i < format3.inputGlyphCount; i++) {
+                    writer.writeTable(&format3.inputGlyphCoverage[i], inputCoverageOffsets[i]);
+                }
+                for (int i = 0; i < format3.lookaheadGlyphCount; i++) {
+                    writer.writeTable(&format3.lookaheadGlyphCoverage[i], lookaheadCoverageOffsets[i]);
+                }
+                break;
+            }
+        }
+
+        writer.exit();
+    }
+};
+
+struct ExtensionSubtable : public Table {
+    UInt16 format;                  // Format identifier
+    LookupType extensionLookupType; // Lookup type of subtable referenced by ExtensionOffset (i.e. the extension subtable)
+    Table *extensionTable;          // Offset to the extension subtable, of lookup type ExtensionLookupType, relative to the start of the extension subtable
+
+    void write(Writer &writer) override {
+        writer.enter();
+
+        writer.write(format);
+        writer.write((UInt16)extensionLookupType);
+        int extensionOffset = writer.reserveLong();
+
+        writer.writeTable(extensionTable, extensionOffset, true);
 
         writer.exit();
     }

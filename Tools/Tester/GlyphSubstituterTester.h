@@ -27,6 +27,7 @@ public:
     void testSingleSubstitution();
     void testMultipleSubstitution();
     void testLigatureSubstitution();
+    void testChainContextSubstitution();
 
     void test();
 };

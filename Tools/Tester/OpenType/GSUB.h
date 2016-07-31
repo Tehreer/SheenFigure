@@ -25,7 +25,7 @@ namespace SheenFigure {
 namespace Tester {
 namespace OpenType {
 
-struct SingleSubstSubtable : public Table {
+struct SingleSubstSubtable : public LookupSubtable {
     UInt16 substFormat;             // Format identifier-format = 1
     CoverageTable *coverage;        // Offset to Coverage table-from beginning of Substitution table
 
@@ -39,6 +39,10 @@ struct SingleSubstSubtable : public Table {
             Glyph *substitute;      // Array of substitute GlyphIDs-ordered by Coverage Index
         } format2;
     };
+
+    LookupType lookupType() override {
+        return LookupType::sSingle;
+    }
 
     void write(Writer &writer) override {
         switch (substFormat) {
@@ -86,11 +90,15 @@ struct SequenceTable : public Table {
     }
 };
 
-struct MultipleSubstSubtable : public Table {
+struct MultipleSubstSubtable : public LookupSubtable {
     UInt16 substFormat;             // Format identifier-format = 2
     CoverageTable *coverage;        // Offset to Coverage table-from beginning of Substitution table
     UInt16 sequenceCount;           // Number of Sequence table offsets in the Sequence array
     SequenceTable *sequence;        // Array of offsets to Sequence tables-from beginning of Substitution table-ordered by Coverage Index
+
+    LookupType lookupType() override {
+        return LookupType::sMultiple;
+    }
 
     void write(Writer &writer) override {
         writer.enter();
@@ -126,11 +134,15 @@ struct AlternateSetTable : public Table {
     }
 };
 
-struct AlternateSubstSubtable : public Table {
+struct AlternateSubstSubtable : public LookupSubtable {
     UInt16 substFormat;             // Format identifier-format = 1
     CoverageTable *coverage;        // Offset to Coverage table-from beginning of Substitution table
     UInt16 alternateSetCount;       // Number of AlternateSet tables
     AlternateSetTable *alternateSet;// Array of offsets to AlternateSet tables-from beginning of Substitution table-ordered by Coverage Index
+
+    LookupType lookupType() override {
+        return LookupType::sAlternate;
+    }
 
     void write(Writer &writer) override {
         writer.enter();
@@ -162,7 +174,7 @@ struct LigatureTable : public Table {
 
         writer.write(ligGlyph);
         writer.write(compCount);
-        writer.write(component, compCount);
+        writer.write(component, compCount - 1);
 
         writer.exit();
     }
@@ -184,11 +196,15 @@ struct LigatureSetTable : public Table {
     }
 };
 
-struct LigatureSubstSubtable : public Table {
+struct LigatureSubstSubtable : public LookupSubtable {
     UInt16 substFormat;             // Format identifier-format = 1
     CoverageTable *coverage;        // Offset to Coverage table-from beginning of Substitution table
     UInt16 ligSetCount;             // Number of LigatureSet tables
     LigatureSetTable *ligatureSet;  // Array of offsets to LigatureSet tables-from beginning of Substitution table-ordered by Coverage Index
+
+    LookupType lookupType() override {
+        return LookupType::sLigature;
+    }
 
     void write(Writer &writer) override {
         writer.enter();
