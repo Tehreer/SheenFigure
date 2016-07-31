@@ -218,7 +218,7 @@ void GlyphSubstituterTester::testSingleSubstitution()
 
     /* Test with format 2. */
     {
-        Glyph substitutes[] = { 0 };
+        Glyph substitutes[] = { 10 };
 
         SingleSubstSubtable subtable;
         subtable.substFormat = 2;
@@ -237,7 +237,7 @@ void GlyphSubstituterTester::testSingleSubstitution()
 
         /* Test the output glyphs. */
         const SFGlyphID *output = SFAlbumGetGlyphIDsPtr(&album);
-        SFAssert(output[0] == 0);
+        SFAssert(output[0] == 10);
     }
 }
 
@@ -284,8 +284,53 @@ void GlyphSubstituterTester::testMultipleSubstitution()
     }
 }
 
+void GlyphSubstituterTester::testLigatureSubstitution()
+{
+    Glyph glyphs[] = { 1 };
+
+    /* Create the coverage table. */
+    CoverageTable coverage;
+    coverage.coverageFormat = 1;
+    coverage.format1.glyphCount = sizeof(glyphs) / sizeof(Glyph);
+    coverage.format1.glyphArray = glyphs;
+
+    /* Test with format 1. */
+    {
+        Glyph componenets[] = { 2, 3, 4, 5 };
+
+        LigatureTable ligature;
+        ligature.ligGlyph = 10;
+        ligature.compCount = (sizeof(componenets) / sizeof(Glyph)) + 1;
+        ligature.component = componenets;
+
+        LigatureSetTable ligatureSet;
+        ligatureSet.ligatureCount = 1;
+        ligatureSet.ligature = &ligature;
+
+        LigatureSubstSubtable subtable;
+        subtable.substFormat = 1;
+        subtable.coverage = &coverage;
+        subtable.ligSetCount = 1;
+        subtable.ligatureSet = &ligatureSet;
+
+        SFAlbum album;
+        SFAlbumInitialize(&album);
+
+        SFCodepoint input[] = { 1, 2, 3, 4, 5 };
+        processSubtable(subtable, LookupType::sLigature, &album, input, sizeof(input) / sizeof(SFCodepoint));
+
+        /* Test the glyph count. */
+        SFAssert(SFAlbumGetGlyphCount(&album) == 1);
+
+        /* Test the output glyphs. */
+        const SFGlyphID *output = SFAlbumGetGlyphIDsPtr(&album);
+        SFAssert(output[0] == 10);
+    }
+}
+
 void GlyphSubstituterTester::test()
 {
     testSingleSubstitution();
     testMultipleSubstitution();
+    testLigatureSubstitution();
 }
