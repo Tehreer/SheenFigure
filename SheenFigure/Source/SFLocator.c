@@ -213,7 +213,7 @@ SF_INTERNAL void SFLocatorJumpTo(SFLocatorRef locator, SFUInteger index)
      * NOTE:
      *      It is legal to jump to limit index so that MoveNext method returns SFFalse thereafter.
      */
-    SFAssert(index <= locator->_limitIndex);
+    SFAssert(index >= locator->_startIndex && index <= locator->_limitIndex);
     /* The album version MUST be same. */
     SFAssert(locator->_version == locator->_album->_version);
 

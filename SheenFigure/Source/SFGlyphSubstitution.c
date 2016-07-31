@@ -316,7 +316,7 @@ static SFBoolean _SFApplyLigatureSet(SFTextProcessorRef processor, SFData ligatu
          *
          * NOTE:
          *      The loop is started from 1..CompCount, rather than 0..(CompCount - 1) so that
-         *      it does not accidently become too large if the component count is zero.
+         *      it does not accidently overflow if the component count is zero.
          */
         for (compIndex = 1; compIndex < compCount; compIndex++) {
             nextIndex = SFLocatorGetAfter(locator, prevIndex);

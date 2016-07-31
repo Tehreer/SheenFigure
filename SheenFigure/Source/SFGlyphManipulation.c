@@ -107,7 +107,7 @@ static SFBoolean _SFApplyChainContextF3(SFTextProcessorRef processor, SFData cha
 
             inputIndex = locator->index;
 
-            /* Match the input glyphs. */
+            /* Match the remaining input glyphs. */
             for (recordIndex = 1; recordIndex < inputCount; recordIndex++) {
                 inputIndex = SFLocatorGetAfter(locator, inputIndex);
 
@@ -178,27 +178,35 @@ NotMatched:
 }
 
 static void _SFApplyContextRecord(SFTextProcessorRef processor, SFData contextRecord, SFUInteger index, SFUInteger count) {
-    SFLocator originalLocator = processor->_locator;
+    SFLocatorRef contextLocator = &processor->_locator;
+    SFLocator originalLocator = *contextLocator;
     SFUInt16 lookupCount;
     SFUInteger lookupIndex;
 
     lookupCount = SFContextRecord_LookupCount(contextRecord);
 
+    /* Make the context locator cover only context range. */
+    SFLocatorReset(contextLocator, index, count);
+
+    /* Apply the lookup records sequentially as they are ordered by */
     for (lookupIndex = 0; lookupIndex < lookupCount; lookupIndex++) {
         SFData lookupRecord = SFContextRecord_LookupRecord(contextRecord, lookupIndex);
         SFUInt16 sequenceIndex = SFLookupRecord_SequenceIndex(lookupRecord);
         SFUInt16 lookupListIndex = SFLookupRecord_LookupListIndex(lookupRecord);
 
-        /* Make the locator cover only context range. */
-        SFLocatorReset(&processor->_locator, index, count);
-        /* Skip the glyphs till sequence index and apply the lookup. */
-        if (SFLocatorSkip(&processor->_locator, sequenceIndex)) {
-            _SFApplyLookup(processor, lookupListIndex);
+        /* Jump the locator to context index. */
+        SFLocatorJumpTo(contextLocator, index);
+        
+        if (SFLocatorMoveNext(contextLocator)) {
+            /* Skip the glyphs till sequence index and apply the lookup. */
+            if (SFLocatorSkip(contextLocator, sequenceIndex)) {
+                _SFApplyLookup(processor, lookupListIndex);
+            }
         }
     }
 
     /* Take the state of context locator so that input glyphs are skipped properly. */
-    SFLocatorTakeState(&originalLocator, &processor->_locator);
+    SFLocatorTakeState(&originalLocator, contextLocator);
     /* Switch back to the original locator. */
     processor->_locator = originalLocator;
 }

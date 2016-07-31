@@ -141,7 +141,9 @@ static void _SFApplyFeatureUnit(SFTextProcessorRef processor, SFFeatureUnitRef f
         SFLocatorReset(locator, 0, processor->_album->glyphCount);
         SFLocatorSetFeatureMask(locator, featureUnit->featureMask);
 
-        _SFApplyLookup(processor, lookupArray[lookupIndex]);
+        while (SFLocatorMoveNext(locator)) {
+            _SFApplyLookup(processor, lookupArray[lookupIndex]);
+        }
     }
 }
 
@@ -154,16 +156,12 @@ SF_PRIVATE void _SFApplyLookup(SFTextProcessorRef processor, SFUInt16 lookupInde
     switch (processor->_featureKind) {
     case SFFeatureKindSubstitution:
         lookup = _SFGetLookupFromHeader(font->tables.gsub, lookupIndex);
-        while (SFLocatorMoveNext(locator)) {
-            _SFApplySubstitutionLookup(processor, lookup);
-        }
+        _SFApplySubstitutionLookup(processor, lookup);
         break;
 
     case SFFeatureKindPositioning:
         lookup = _SFGetLookupFromHeader(font->tables.gpos, lookupIndex);
-        while (SFLocatorMoveNext(locator)) {
-            _SFApplyPositioningLookup(processor, lookup);
-        }
+        _SFApplyPositioningLookup(processor, lookup);
         break;
     }
 }
