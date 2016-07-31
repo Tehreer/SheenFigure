@@ -63,7 +63,7 @@ static void writeGSUB(Writer &writer, Table &subtable, LookupType type)
 {
     /* Create the lookup table. */
     LookupTable lookup;
-    lookup.lookupType = LookupType::sSingle;
+    lookup.lookupType = type;
     lookup.lookupFlag = (LookupFlag)0;
     lookup.subTableCount = 1;
     lookup.subtables = &subtable;
@@ -218,7 +218,7 @@ void GlyphSubstituterTester::testSingleSubstitution()
 
     /* Test with format 2. */
     {
-        Glyph substitutes[] = { 10 };
+        Glyph substitutes[] = { 0 };
 
         SingleSubstSubtable subtable;
         subtable.substFormat = 2;
@@ -237,11 +237,55 @@ void GlyphSubstituterTester::testSingleSubstitution()
 
         /* Test the output glyphs. */
         const SFGlyphID *output = SFAlbumGetGlyphIDsPtr(&album);
-        SFAssert(output[0] == 10);
+        SFAssert(output[0] == 0);
+    }
+}
+
+void GlyphSubstituterTester::testMultipleSubstitution()
+{
+    Glyph glyphs[] = { 1 };
+
+    /* Create the coverage table. */
+    CoverageTable coverage;
+    coverage.coverageFormat = 1;
+    coverage.format1.glyphCount = sizeof(glyphs) / sizeof(Glyph);
+    coverage.format1.glyphArray = glyphs;
+
+    /* Test with format 1. */
+    {
+        Glyph substitutes[] = { 0, 1, 2, 3, 4 };
+
+        SequenceTable sequence;
+        sequence.glyphCount = sizeof(substitutes) / sizeof(Glyph);
+        sequence.substitute = substitutes;
+
+        MultipleSubstSubtable subtable;
+        subtable.substFormat = 1;
+        subtable.coverage = &coverage;
+        subtable.sequenceCount = sizeof(glyphs) / sizeof(Glyph);
+        subtable.sequence = &sequence;
+
+        SFAlbum album;
+        SFAlbumInitialize(&album);
+
+        SFCodepoint input[] = { 1 };
+        processSubtable(subtable, LookupType::sMultiple, &album, input, sizeof(input) / sizeof(SFCodepoint));
+
+        /* Test the glyph count. */
+        SFAssert(SFAlbumGetGlyphCount(&album) == 5);
+
+        /* Test the output glyphs. */
+        const SFGlyphID *output = SFAlbumGetGlyphIDsPtr(&album);
+        SFAssert(output[0] == 0);
+        SFAssert(output[1] == 1);
+        SFAssert(output[2] == 2);
+        SFAssert(output[3] == 3);
+        SFAssert(output[4] == 4);
     }
 }
 
 void GlyphSubstituterTester::test()
 {
     testSingleSubstitution();
+    testMultipleSubstitution();
 }

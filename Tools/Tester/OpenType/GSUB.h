@@ -74,7 +74,7 @@ struct SingleSubstSubtable : public Table {
 
 struct SequenceTable : public Table {
     UInt16 glyphCount;              // Number of GlyphIDs in the Substitute array. This should always be greater than 0.
-    Glyph *substitute;          // String of GlyphIDs to substitute
+    Glyph *substitute;              // String of GlyphIDs to substitute
 
     void write(Writer &writer) override {
         writer.enter();

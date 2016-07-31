@@ -25,6 +25,7 @@ public:
     GlyphSubstituterTester();
 
     void testSingleSubstitution();
+    void testMultipleSubstitution();
 
     void test();
 };
