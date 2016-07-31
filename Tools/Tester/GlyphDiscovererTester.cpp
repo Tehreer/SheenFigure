@@ -48,7 +48,7 @@ static void loadTable(void *object, SFTag tag, SFUInt8 *buffer, SFUInteger *leng
 
 static SFGlyphID getGlyphIDForCodepoint(void *object, SFCodepoint codepoint)
 {
-    return (SFGlyphID)((codepoint >> 16) ^ (codepoint & 0xFFFF));
+    return (SFGlyphID)codepoint;
 }
 
 static SFAdvance getAdvanceForGlyph(void *object, SFFontLayout fontLayout, SFGlyphID glyphID)

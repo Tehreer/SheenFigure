@@ -25,6 +25,191 @@ namespace SheenFigure {
 namespace Tester {
 namespace OpenType {
 
+struct SingleSubstSubtable : public Table {
+    UInt16 substFormat;             // Format identifier-format = 1
+    CoverageTable *coverage;        // Offset to Coverage table-from beginning of Substitution table
+
+    union {
+        struct {
+            Int16 deltaGlyphID;     // Add to original GlyphID to get substitute GlyphID
+        } format1;
+
+        struct {
+            UInt16 glyphCount;      // Number of GlyphIDs in the Substitute array
+            Glyph *substitute;      // Array of substitute GlyphIDs-ordered by Coverage Index
+        } format2;
+    };
+
+    void write(Writer &writer) override {
+        switch (substFormat) {
+            case 1: {
+                writer.enter();
+
+                writer.write(substFormat);
+                int coverageOffset = writer.reserveOffset();
+                writer.write((UInt16)format1.deltaGlyphID);
+
+                writer.writeTable(coverage, coverageOffset);
+
+                writer.exit();
+                break;
+            }
+                
+            case 2: {
+                writer.enter();
+
+                writer.write(substFormat);
+                int coverageOffset = writer.reserveOffset();
+                writer.write(format2.glyphCount);
+                writer.write(format2.substitute, format2.glyphCount);
+
+                writer.writeTable(coverage, coverageOffset);
+
+                writer.exit();
+                break;
+            }
+        }
+    }
+};
+
+struct SequenceTable : public Table {
+    UInt16 glyphCount;              // Number of GlyphIDs in the Substitute array. This should always be greater than 0.
+    Glyph *substitute;          // String of GlyphIDs to substitute
+
+    void write(Writer &writer) override {
+        writer.enter();
+
+        writer.write(glyphCount);
+        writer.write(substitute, glyphCount);
+
+        writer.exit();
+    }
+};
+
+struct MultipleSubstSubtable : public Table {
+    UInt16 substFormat;             // Format identifier-format = 2
+    CoverageTable *coverage;        // Offset to Coverage table-from beginning of Substitution table
+    UInt16 sequenceCount;           // Number of Sequence table offsets in the Sequence array
+    SequenceTable *sequence;        // Array of offsets to Sequence tables-from beginning of Substitution table-ordered by Coverage Index
+
+    void write(Writer &writer) override {
+        writer.enter();
+
+        writer.write(substFormat);
+        int coverageOffset = writer.reserveOffset();
+        writer.write(sequenceCount);
+        int sequenceRefs[sequenceCount];
+        for (int i = 0; i < sequenceCount; i++) {
+            sequenceRefs[i] = writer.reserveOffset();
+        }
+
+        writer.writeTable(coverage, coverageOffset);
+        for (int i = 0; i < sequenceCount; i++) {
+            writer.writeTable(&sequence[i], sequenceRefs[i]);
+        }
+
+        writer.exit();
+    }
+};
+
+struct AlternateSetTable : public Table {
+    UInt16 glyphCount;              // Number of GlyphIDs in the Alternate array
+    Glyph *substitute;              // Array of alternate GlyphIDs-in arbitrary order
+
+    void write(Writer &writer) override {
+        writer.enter();
+
+        writer.write(glyphCount);
+        writer.write(substitute, glyphCount);
+
+        writer.exit();
+    }
+};
+
+struct AlternateSubstSubtable : public Table {
+    UInt16 substFormat;             // Format identifier-format = 1
+    CoverageTable *coverage;        // Offset to Coverage table-from beginning of Substitution table
+    UInt16 alternateSetCount;       // Number of AlternateSet tables
+    AlternateSetTable *alternateSet;// Array of offsets to AlternateSet tables-from beginning of Substitution table-ordered by Coverage Index
+
+    void write(Writer &writer) override {
+        writer.enter();
+
+        writer.write(substFormat);
+        int coverageOffset = writer.reserveOffset();
+        writer.write(alternateSetCount);
+        int sequenceRefs[alternateSetCount];
+        for (int i = 0; i < alternateSetCount; i++) {
+            sequenceRefs[i] = writer.reserveOffset();
+        }
+
+        writer.writeTable(coverage, coverageOffset);
+        for (int i = 0; i < alternateSetCount; i++) {
+            writer.writeTable(&alternateSet[i], sequenceRefs[i]);
+        }
+
+        writer.exit();
+    }
+};
+
+struct LigatureTable : public Table {
+    Glyph ligGlyph;             // GlyphID of ligature to substitute
+    UInt16 compCount;           // Number of components in the ligature
+    Glyph *component;           // [CompCount - 1]. Array of component GlyphIDs-start with the second component-ordered in writing direction
+
+    void write(Writer &writer) override {
+        writer.enter();
+
+        writer.write(ligGlyph);
+        writer.write(compCount);
+        writer.write(component, compCount);
+
+        writer.exit();
+    }
+};
+
+struct LigatureSetTable : public Table {
+    UInt16 ligatureCount;           // Number of Ligature tables
+    LigatureTable *ligature;        // Array of offsets to Ligature tables-from beginning of LigatureSet table-ordered by preference
+
+    void write(Writer &writer) override {
+        writer.enter();
+
+        writer.write(ligatureCount);
+        int ligatureOffset = writer.reserveOffset();
+
+        writer.writeTable(ligature, ligatureOffset);
+
+        writer.exit();
+    }
+};
+
+struct LigatureSubstSubtable : public Table {
+    UInt16 substFormat;             // Format identifier-format = 1
+    CoverageTable *coverage;        // Offset to Coverage table-from beginning of Substitution table
+    UInt16 ligSetCount;             // Number of LigatureSet tables
+    LigatureSetTable *ligatureSet;  // Array of offsets to LigatureSet tables-from beginning of Substitution table-ordered by Coverage Index
+
+    void write(Writer &writer) override {
+        writer.enter();
+
+        writer.write(substFormat);
+        int coverageOffset = writer.reserveOffset();
+        writer.write(ligSetCount);
+        int ligatureSetOffsets[ligSetCount];
+        for (int i = 0; i < ligSetCount; i++) {
+            ligatureSetOffsets[i] = writer.reserveOffset();
+        }
+
+        writer.writeTable(coverage, coverageOffset);
+        for (int i = 0; i < ligSetCount; i++) {
+            writer.writeTable(&ligatureSet[i], ligatureSetOffsets[i]);
+        }
+
+        writer.exit();
+    }
+};
+
 struct GSUB : public Table {
     UInt32 version;                 // Version of the GSUB table-initially set to 0x00010000
     ScriptListTable *scriptList;    // Offset to ScriptList table-from beginning of GSUB table
@@ -42,6 +227,7 @@ struct GSUB : public Table {
         writer.writeTable(scriptList, scriptListRef);
         writer.writeTable(featureList, featureListRef);
         writer.writeTable(lookupList, lookupListRef);
+
         writer.exit();
     }
 };

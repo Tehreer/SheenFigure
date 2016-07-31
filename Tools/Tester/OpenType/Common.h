@@ -197,8 +197,15 @@ struct LookupTable : public Table {
         writer.write((UInt16)lookupType);
         writer.write((UInt16)lookupFlag);
         writer.write(subTableCount);
-        writer.write(subtables, subTableCount);
+        int subtableOffsets[subTableCount];
+        for (int i = 0; i < subTableCount; i++) {
+            subtableOffsets[i] = writer.reserveOffset();
+        }
         writer.write(markFilteringSet);
+
+        for (int i = 0; i < subTableCount; i++) {
+            writer.writeTable(&subtables[i], subtableOffsets[i]);
+        }
 
         writer.exit();
     }
@@ -212,7 +219,14 @@ struct LookupListTable : public Table {
         writer.enter();
 
         writer.write(lookupCount);
-        writer.write(lookupTables, lookupCount);
+        int lookupTableOffsets[lookupCount];
+        for (int i = 0; i < lookupCount; i++) {
+            lookupTableOffsets[i] = writer.reserveOffset();
+        }
+
+        for (int i = 0; i < lookupCount; i++) {
+            writer.writeTable(&lookupTables[i], lookupTableOffsets[i]);
+        }
 
         writer.exit();
     }
