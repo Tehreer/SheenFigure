@@ -420,7 +420,9 @@ struct ChainContextSubtable : public LookupSubtable {
                     lookaheadCoverageOffsets[i] = writer.reserveOffset();
                 }
                 writer.write(format3.recordCount);
-                writer.write(format3.lookupRecord, format3.recordCount);
+                for (int i = 0; i < format3.recordCount; i++) {
+                    writer.writeTable(&format3.lookupRecord[i]);
+                }
 
                 for (int i = 0; i < format3.backtrackGlyphCount; i++) {
                     writer.writeTable(&format3.backtrackGlyphCoverage[i], batrackCoverageOffsets[i]);
