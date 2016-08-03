@@ -17,10 +17,6 @@
 #ifndef __SHEENFIGURE_TESTER__ALBUM_TESTER_H
 #define __SHEENFIGURE_TESTER__ALBUM_TESTER_H
 
-extern "C" {
-#include <SheenFigure/Source/SFCodepoints.h>
-}
-
 namespace SheenFigure {
 namespace Tester {
 
@@ -46,9 +42,6 @@ public:
     void testAttachmentOffset();
 
     void test();
-
-private:
-    SFCodepoints m_codepoints;
 };
 
 }
