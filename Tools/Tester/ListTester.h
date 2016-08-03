@@ -27,14 +27,12 @@ public:
     void testInitialize();
     void testSetCapacity();
     void testReserveRange();
-    void testSetVal();
     void testAdd();
     void testInsert();
     void testRemoveAt();
     void testRemoveRange();
     void testClear();
     void testTrimExcess();
-    void testContainsItem();
     void testIndexOfItem();
     void testSort();
 

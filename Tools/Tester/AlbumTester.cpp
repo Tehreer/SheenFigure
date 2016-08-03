@@ -285,21 +285,6 @@ void AlbumTester::testGetGlyph()
 
     SFAlbumEndFilling(&album);
     SFAlbumWrapUp(&album);
-
-    /* Test the overall output. */
-    {
-        /* Test the glyph count. */
-        SFAssert(SFAlbumGetGlyphCount(&album) == 5);
-
-        /* Test the output glyphs. */
-        const SFGlyphID *glyphs = SFAlbumGetGlyphIDsPtr(&album);
-        SFAssert(glyphs[0] == 100);
-        SFAssert(glyphs[1] == 300);
-        SFAssert(glyphs[2] == 400);
-        SFAssert(glyphs[3] == 500);
-        SFAssert(glyphs[4] == 200);
-    }
-
     SFAlbumFinalize(&album);
 }
 
@@ -421,17 +406,6 @@ void AlbumTester::testGetSingleAssociation()
 
     SFAlbumEndFilling(&album);
     SFAlbumWrapUp(&album);
-
-    /* Test the overall output. */
-    {
-        const SFUInteger *map = SFAlbumGetCodeunitToGlyphMapPtr(&album);
-        SFAssert(map[0] == 0);
-        SFAssert(map[1] == 4);
-        SFAssert(map[2] == 1);
-        SFAssert(map[3] == 2);
-        SFAssert(map[4] == 3);
-    }
-
     SFAlbumFinalize(&album);
 }
 
