@@ -29,6 +29,7 @@ typedef struct _SFCodepoints {
 } SFCodepoints, *SFCodepointsRef;
 
 SF_INTERNAL void SFCodepointsInitialize(SFCodepointsRef codepoints, const SBCodepointSequence *referral, SFBoolean backward);
+SF_INTERNAL SFUInteger SFCodepointsGetMaxIndex(SFCodepointsRef codepoints);
 
 SF_INTERNAL void SFCodepointsReset(SFCodepointsRef codepoints);
 SF_INTERNAL SFCodepoint SFCodepointsNext(SFCodepointsRef codepoints);

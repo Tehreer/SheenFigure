@@ -28,6 +28,11 @@ SF_INTERNAL void SFCodepointsInitialize(SFCodepointsRef codepoints, const SBCode
     codepoints->backward = backward;
 }
 
+SF_INTERNAL SFUInteger SFCodepointsGetMaxIndex(SFCodepointsRef codepoints)
+{
+    return codepoints->referral->stringLength;
+}
+
 SF_INTERNAL void SFCodepointsReset(SFCodepointsRef codepoints)
 {
     codepoints->index = (!codepoints->backward ? 0 : codepoints->referral->stringLength);

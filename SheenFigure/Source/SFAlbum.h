@@ -65,7 +65,7 @@ typedef struct _SFGlyphDetail {
 
 typedef struct _SFAlbum {
     SFCodepointsRef codepoints;         /**< Code points to be shaped. */
-    SFUInteger stringLength;            /**< Length of original string. */
+    SFUInteger codeunitCount;           /**< Number of code units to process. */
     SFUInteger glyphCount;              /**< Total number of glyphs in the album. */
 
     SFUInteger *_mapArray;              /**< Code unit index to glyph index mapping array. */
@@ -88,7 +88,7 @@ SF_INTERNAL void SFAlbumInitialize(SFAlbumRef album);
 /**
  * Initializes the album for given code points.
  */
-SF_INTERNAL void SFAlbumReset(SFAlbumRef album, SFCodepointsRef codepoints, SFUInteger stringLength);
+SF_INTERNAL void SFAlbumReset(SFAlbumRef album, SFCodepointsRef codepoints, SFUInteger codeunitCount);
 
 /**
  * Starts filling the album with provided glyphs.

@@ -51,7 +51,7 @@ SFAlbumRef SFAlbumCreate(void)
 
 SFUInteger SFAlbumGetCodeunitCount(SFAlbumRef album)
 {
-    return album->stringLength;
+    return album->codeunitCount;
 }
 
 SFUInteger SFAlbumGetGlyphCount(SFAlbumRef album)
@@ -98,7 +98,7 @@ void SFAlbumRelease(SFAlbumRef album)
 SF_INTERNAL void SFAlbumInitialize(SFAlbumRef album)
 {
     album->codepoints = NULL;
-    album->stringLength = 0;
+    album->codeunitCount = 0;
     album->glyphCount = 0;
     album->_mapArray = NULL;
 
@@ -113,12 +113,12 @@ SF_INTERNAL void SFAlbumInitialize(SFAlbumRef album)
     album->_retainCount = 1;
 }
 
-SF_INTERNAL void SFAlbumReset(SFAlbumRef album, SFCodepointsRef codepoints, SFUInteger stringLength)
+SF_INTERNAL void SFAlbumReset(SFAlbumRef album, SFCodepointsRef codepoints, SFUInteger codeunitCount)
 {
     free(album->_mapArray);
 
     album->codepoints = codepoints;
-    album->stringLength = stringLength;
+    album->codeunitCount = codeunitCount;
     album->glyphCount = 0;
     album->_mapArray = NULL;
 
@@ -134,8 +134,8 @@ SF_INTERNAL void SFAlbumReset(SFAlbumRef album, SFCodepointsRef codepoints, SFUI
 
 SF_INTERNAL void SFAlbumBeginFilling(SFAlbumRef album)
 {
-    SFUInteger associatesCapacity = album->stringLength >> 1;
-	SFUInteger glyphCapacity = album->stringLength << 1;
+    SFUInteger associatesCapacity = album->codeunitCount >> 1;
+	SFUInteger glyphCapacity = album->codeunitCount << 1;
 
     SFListReserveRange(&album->_associates, 0, associatesCapacity);
     SFListReserveRange(&album->_glyphs, 0, glyphCapacity);
@@ -430,7 +430,7 @@ static void _SFAlbumBuildCodeunitToGlyphMap(SFAlbumRef album)
     SFUInteger index = album->glyphCount;
     SFUInteger *map;
 
-    map = malloc(sizeof(SFUInteger) * album->stringLength);
+    map = malloc(sizeof(SFUInteger) * album->codeunitCount);
 
     /* Traverse in reverse order so that first glyph takes priority in case of multiple substitution. */
     while (index--) {
