@@ -46,14 +46,14 @@ void JoiningTypeLookupTester::test()
     size_t failCounter = 0;
 
     for (uint32_t codepoint = 0; codepoint < Unicode::MaxCodepoint; codepoint++) {
-        char expJoiningType = m_arabicShaping.joiningTypeForCodePoint(codepoint);
-        char genJoiningType = Convert::toChar(SFJoiningTypeDetermine(codepoint));
+        char actual = Convert::toChar(SFJoiningTypeDetermine(codepoint));
+        char expected = m_arabicShaping.joiningTypeForCodePoint(codepoint);
 
-        if (expJoiningType != genJoiningType) {
+        if (expected != actual) {
                 cout << "Invalid joining type found: " << endl
                      << "  Code Point: " << codepoint << endl
-                     << "  Generated Joining Type: " << genJoiningType << endl
-                     << "  Expected Joining Type: " << expJoiningType << endl;
+                     << "  Generated Joining Type: " << actual << endl
+                     << "  Expected Joining Type: " << expected << endl;
 
             failCounter++;
         }

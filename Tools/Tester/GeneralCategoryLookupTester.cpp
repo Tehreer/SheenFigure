@@ -49,17 +49,17 @@ void GeneralCategoryLookupTester::test()
     string uniGeneralCategory;
 
     for (uint32_t codepoint = 0; codepoint < Unicode::MaxCodepoint; codepoint++) {
-        m_unicodeData.getGeneralCategory(codepoint, uniGeneralCategory);
-        const string &expGeneralCategory = (uniGeneralCategory.length() ? uniGeneralCategory : DEFAULT_GENERAL_CATEGORY);
-
         SFGeneralCategory numGeneralCategory = SFGeneralCategoryDetermine(codepoint);
-        const string &genGeneralCategory = Convert::toString(numGeneralCategory);
+        const string &actual = Convert::toString(numGeneralCategory);
 
-        if (expGeneralCategory != genGeneralCategory) {
+        m_unicodeData.getGeneralCategory(codepoint, uniGeneralCategory);
+        const string &expected = (uniGeneralCategory.length() ? uniGeneralCategory : DEFAULT_GENERAL_CATEGORY);
+
+        if (actual != expected) {
                 cout << "Invalid general category found: " << endl
                      << "  Code Point: " << codepoint << endl
-                     << "  Generated General Category: " << genGeneralCategory << endl
-                     << "  Expected General Category: " << expGeneralCategory << endl;
+                     << "  Generated General Category: " << actual << endl
+                     << "  Expected General Category: " << expected << endl;
 
             failCounter++;
         }

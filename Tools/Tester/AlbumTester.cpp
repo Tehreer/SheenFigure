@@ -114,20 +114,14 @@ void AlbumTester::testAddGlyph()
         SFAssert(SFAlbumGetGlyphCount(&album) == 5);
 
         /* Test the output glyphs. */
-        const SFGlyphID *glyphs = SFAlbumGetGlyphIDsPtr(&album);
-        SFAssert(glyphs[0] == 100);
-        SFAssert(glyphs[1] == 200);
-        SFAssert(glyphs[2] == 300);
-        SFAssert(glyphs[3] == 400);
-        SFAssert(glyphs[4] == 500);
+        const SFGlyphID *actualGlyphs = SFAlbumGetGlyphIDsPtr(&album);
+        const SFGlyphID expectedGlyphs[] = { 100, 200, 300, 400, 500 };
+        SFAssert(memcmp(actualGlyphs, expectedGlyphs, sizeof(expectedGlyphs)) == 0);
 
         /* Test the output map. */
-        const SFUInteger *map = SFAlbumGetCodeunitToGlyphMapPtr(&album);
-        SFAssert(map[0] == 0);
-        SFAssert(map[1] == 1);
-        SFAssert(map[2] == 2);
-        SFAssert(map[3] == 3);
-        SFAssert(map[4] == 4);
+        const SFUInteger *actualMap = SFAlbumGetCodeunitToGlyphMapPtr(&album);
+        const SFInteger expectedMap[] = { 0, 1, 2, 3, 4 };
+        SFAssert(memcmp(actualMap, expectedMap, sizeof(expectedMap)) == 0);
     }
 
     /* Test with backward associations. */
@@ -148,20 +142,14 @@ void AlbumTester::testAddGlyph()
         SFAssert(SFAlbumGetGlyphCount(&album) == 5);
 
         /* Test the output glyphs. */
-        const SFGlyphID *glyphs = SFAlbumGetGlyphIDsPtr(&album);
-        SFAssert(glyphs[0] == 100);
-        SFAssert(glyphs[1] == 200);
-        SFAssert(glyphs[2] == 300);
-        SFAssert(glyphs[3] == 400);
-        SFAssert(glyphs[4] == 500);
+        const SFGlyphID *actualGlyphs = SFAlbumGetGlyphIDsPtr(&album);
+        const SFGlyphID expectedGlyphs[] = { 100, 200, 300, 400, 500 };
+        SFAssert(memcmp(actualGlyphs, expectedGlyphs, sizeof(expectedGlyphs)) == 0);
 
         /* Test the output map. */
-        const SFUInteger *map = SFAlbumGetCodeunitToGlyphMapPtr(&album);
-        SFAssert(map[0] == 4);
-        SFAssert(map[1] == 3);
-        SFAssert(map[2] == 2);
-        SFAssert(map[3] == 1);
-        SFAssert(map[4] == 0);
+        const SFUInteger *actualMap = SFAlbumGetCodeunitToGlyphMapPtr(&album);
+        const SFInteger expectedMap[] = { 4, 3, 2, 1, 0 };
+        SFAssert(memcmp(actualMap, expectedMap, sizeof(expectedMap)) == 0);
     }
 
     SFAlbumFinalize(&album);
