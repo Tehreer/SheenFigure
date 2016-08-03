@@ -53,7 +53,7 @@ void AlbumTester::testInitialize()
     SFAlbumInitialize(&album);
 
     SFAssert(album.codepoints == NULL);
-    SFAssert(album.stringLength == 0);
+    SFAssert(album.codeunitCount == 0);
     SFAssert(album.glyphCount == 0);
 
     SFAlbumFinalize(&album);
@@ -70,7 +70,7 @@ void AlbumTester::testReset()
         SFAlbumReset(&album, &codepoints, 1024);
 
         SFAssert(album.codepoints == &codepoints);
-        SFAssert(album.stringLength == 1024);
+        SFAssert(album.codeunitCount == 1024);
         SFAssert(album.glyphCount == 0);
     }
 
@@ -84,7 +84,7 @@ void AlbumTester::testReset()
         SFAlbumReset(&album, &codepoints, 1024);
 
         SFAssert(album.codepoints == &codepoints);
-        SFAssert(album.stringLength == 1024);
+        SFAssert(album.codeunitCount == 1024);
         SFAssert(album.glyphCount == 0);
     }
 

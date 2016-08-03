@@ -15,6 +15,7 @@
  */
 
 #include <cstddef>
+#include <cstring>
 
 #include "PatternTester.h"
 
@@ -24,6 +25,23 @@ extern "C" {
 }
 
 using namespace SheenFigure::Tester;
+
+static SFBoolean SFPatternEqualToPattern(SFPatternRef pattern1, SFPatternRef pattern2)
+{
+    return (pattern1->font == pattern2->font
+            && pattern1->scriptTag == pattern2->scriptTag
+            && pattern1->languageTag == pattern2->languageTag
+            && pattern1->defaultDirection == pattern2->defaultDirection
+            && pattern1->featureTags.count == pattern2->featureTags.count
+            && memcmp(pattern1->featureTags.items,
+                      pattern2->featureTags.items,
+                      pattern1->featureTags.count * sizeof(SFTag)) == 0
+            && pattern1->featureUnits.gsub == pattern2->featureUnits.gsub
+            && pattern1->featureUnits.gpos == pattern2->featureUnits.gpos
+            && memcmp(pattern1->featureUnits.items,
+                      pattern2->featureUnits.items,
+                      (pattern1->featureUnits.gsub + pattern1->featureUnits.gpos) * sizeof(SFTag)) == 0);
+}
 
 PatternTester::PatternTester()
 {
@@ -44,15 +62,15 @@ void PatternTester::testNoFeatures()
 
         SFPatternBuilderFinalize(&builder);
 
-        SFAssert(pattern->font == &font);
-        SFAssert(pattern->featureTags.items == NULL);
-        SFAssert(pattern->featureTags.count == 0);
-        SFAssert(pattern->featureUnits.items == NULL);
-        SFAssert(pattern->featureUnits.gsub == 0);
-        SFAssert(pattern->featureUnits.gpos == 0);
-        SFAssert(pattern->scriptTag == 0);
-        SFAssert(pattern->languageTag == 0);
-        SFAssert(pattern->defaultDirection == SFTextDirectionLeftToRight);
+        SFPattern expected = {
+            .font = &font,
+            .featureTags = { NULL, 0 },
+            .featureUnits = { NULL, 0, 0 },
+            .scriptTag = 0,
+            .languageTag = 0,
+            .defaultDirection = SFTextDirectionLeftToRight,
+        };
+        SFAssert(SFPatternEqualToPattern(pattern, &expected));
 
         SFPatternRelease(pattern);
     }
@@ -69,15 +87,15 @@ void PatternTester::testNoFeatures()
 
         SFPatternBuilderFinalize(&builder);
 
-        SFAssert(pattern->font == NULL);
-        SFAssert(pattern->featureTags.items == NULL);
-        SFAssert(pattern->featureTags.count == 0);
-        SFAssert(pattern->featureUnits.items == NULL);
-        SFAssert(pattern->featureUnits.gsub == 0);
-        SFAssert(pattern->featureUnits.gpos == 0);
-        SFAssert(pattern->scriptTag == SFTagMake('a', 'r', 'a', 'b'));
-        SFAssert(pattern->languageTag == 0);
-        SFAssert(pattern->defaultDirection == SFTextDirectionRightToLeft);
+        SFPattern expected = {
+            .font = NULL,
+            .featureTags = { NULL, 0 },
+            .featureUnits = { NULL, 0, 0 },
+            .scriptTag = SFTagMake('a', 'r', 'a', 'b'),
+            .languageTag = 0,
+            .defaultDirection = SFTextDirectionRightToLeft,
+        };
+        SFAssert(SFPatternEqualToPattern(pattern, &expected));
 
         SFPatternRelease(pattern);
     }
@@ -94,15 +112,15 @@ void PatternTester::testNoFeatures()
 
         SFPatternBuilderFinalize(&builder);
 
-        SFAssert(pattern->font == NULL);
-        SFAssert(pattern->featureTags.items == NULL);
-        SFAssert(pattern->featureTags.count == 0);
-        SFAssert(pattern->featureUnits.items == NULL);
-        SFAssert(pattern->featureUnits.gsub == 0);
-        SFAssert(pattern->featureUnits.gpos == 0);
-        SFAssert(pattern->scriptTag == 0);
-        SFAssert(pattern->languageTag == SFTagMake('U', 'R', 'D', 'U'));
-        SFAssert(pattern->defaultDirection == SFTextDirectionLeftToRight);
+        SFPattern expected = {
+            .font = NULL,
+            .featureTags = { NULL, 0 },
+            .featureUnits = { NULL, 0, 0 },
+            .scriptTag = 0,
+            .languageTag = SFTagMake('U', 'R', 'D', 'U'),
+            .defaultDirection = SFTextDirectionLeftToRight,
+        };
+        SFAssert(SFPatternEqualToPattern(pattern, &expected));
 
         SFPatternRelease(pattern);
     }
