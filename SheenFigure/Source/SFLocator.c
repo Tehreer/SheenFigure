@@ -259,4 +259,5 @@ SF_INTERNAL void SFLocatorTakeState(SFLocatorRef locator, SFLocatorRef sibling) 
     SFAssert(sibling->_stateIndex <= locator->_limitIndex);
 
     locator->_stateIndex = sibling->_stateIndex;
+    locator->_version = sibling->_version;
 }
