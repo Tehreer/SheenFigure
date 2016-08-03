@@ -15,6 +15,7 @@
  */
 
 #include <cstddef>
+#include <cstring>
 
 #include "ListTester.h"
 
@@ -48,7 +49,7 @@ void ListTester::testSetCapacity()
     SFListSetCapacity(&list, 1024);
     SFAssert(list.capacity == 1024);
 
-    /* Text by setting zero capacity. */
+    /* Test by setting zero capacity. */
     SFListSetCapacity(&list, 0);
     SFAssert(list.capacity == 0);
 
@@ -106,11 +107,8 @@ void ListTester::testAdd()
     SFListAdd(&list, 400);
     SFListAdd(&list, 500);
 
-    SFAssert(list.items[0] == 100);
-    SFAssert(list.items[1] == 200);
-    SFAssert(list.items[2] == 300);
-    SFAssert(list.items[3] == 400);
-    SFAssert(list.items[4] == 500);
+    SFInteger expected[] = { 100, 200, 300, 400, 500 };
+    SFAssert(memcmp(list.items, expected, sizeof(expected)) == 0);
 
     SFListFinalize(&list);
 }
@@ -126,11 +124,8 @@ void ListTester::testInsert()
     SFListInsert(&list, 0, 400);
     SFListInsert(&list, 0, 500);
 
-    SFAssert(list.items[0] == 500);
-    SFAssert(list.items[1] == 400);
-    SFAssert(list.items[2] == 300);
-    SFAssert(list.items[3] == 200);
-    SFAssert(list.items[4] == 100);
+    SFInteger expected[] = { 500, 400, 300, 200, 100 };
+    SFAssert(memcmp(list.items, expected, sizeof(expected)) == 0);
 
     SFListFinalize(&list);
 }

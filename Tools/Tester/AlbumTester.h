@@ -36,7 +36,7 @@ public:
     void testGetCompositeAssociations();
     void testFeatureMask();
     void testTraits();
-    void testPosition();
+    void testOffset();
     void testAdvance();
     void testCursiveOffset();
     void testAttachmentOffset();
