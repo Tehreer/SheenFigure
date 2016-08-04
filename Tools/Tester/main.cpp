@@ -19,8 +19,11 @@
 #include <Parser/ArabicShaping.h>
 #include <Parser/UnicodeData.h>
 
+#include "AlbumTester.h"
 #include "FontTester.h"
 #include "GeneralCategoryLookupTester.h"
+#include "GlyphDiscovererTester.h"
+#include "GlyphSubstituterTester.h"
 #include "JoiningTypeLookupTester.h"
 #include "ListTester.h"
 #include "PatternTester.h"
@@ -37,19 +40,25 @@ int main(int argc, const char * argv[])
     ArabicShaping arabicShaping(dir);
     UnicodeData unicodeData(dir);
 
+    AlbumTester albumTester;
     JoiningTypeLookupTester joiningTypeLookuptester(arabicShaping);
     GeneralCategoryLookupTester generalCategoryLookupTester(unicodeData);
     ListTester listTester;
     FontTester fontTester;
     PatternTester patternTester;
     SchemeTester schemeTester;
+    GlyphDiscovererTester glyphDiscovererTester;
+    GlyphSubstituterTester glyphSubstituterTester;
 
+    albumTester.test();
     joiningTypeLookuptester.test();
     generalCategoryLookupTester.test();
     listTester.test();
     fontTester.test();
     patternTester.test();
     schemeTester.test();
+    glyphDiscovererTester.test();
+    glyphSubstituterTester.test();
 
     getchar();
 
