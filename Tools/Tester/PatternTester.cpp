@@ -21,10 +21,31 @@
 
 extern "C" {
 #include <SheenFigure/Source/SFAssert.h>
+#include <SheenFigure/Source/SFPattern.h>
 #include <SheenFigure/Source/SFPatternBuilder.h>
 }
 
 using namespace SheenFigure::Tester;
+
+static SFBoolean SFFeatureUnitListEqualToList(SFFeatureUnit *list1, SFFeatureUnit *list2, SFUInteger count)
+{
+    for (SFUInteger i = 0; i < count; i++) {
+        SFFeatureUnitRef unit1 = &list1[i];
+        SFFeatureUnitRef unit2 = &list2[i];
+
+        if (!(unit1->featureMask == unit2->featureMask
+              && unit1->coveredRange.start == unit2->coveredRange.start
+              && unit1->coveredRange.count == unit2->coveredRange.count
+              && unit1->lookupIndexes.count == unit2->lookupIndexes.count
+              && memcmp(unit1->lookupIndexes.items,
+                        unit2->lookupIndexes.items,
+                        unit1->lookupIndexes.count * sizeof(SFUInt16)) == 0)) {
+            return SFFalse;
+        }
+    }
+
+    return SFTrue;
+}
 
 static SFBoolean SFPatternEqualToPattern(SFPatternRef pattern1, SFPatternRef pattern2)
 {
@@ -38,9 +59,9 @@ static SFBoolean SFPatternEqualToPattern(SFPatternRef pattern1, SFPatternRef pat
                       pattern1->featureTags.count * sizeof(SFTag)) == 0
             && pattern1->featureUnits.gsub == pattern2->featureUnits.gsub
             && pattern1->featureUnits.gpos == pattern2->featureUnits.gpos
-            && memcmp(pattern1->featureUnits.items,
-                      pattern2->featureUnits.items,
-                      (pattern1->featureUnits.gsub + pattern1->featureUnits.gpos) * sizeof(SFTag)) == 0);
+            && SFFeatureUnitListEqualToList(pattern1->featureUnits.items,
+                                            pattern2->featureUnits.items,
+                                            pattern1->featureUnits.gsub + pattern1->featureUnits.gpos));
 }
 
 PatternTester::PatternTester()
@@ -49,81 +70,30 @@ PatternTester::PatternTester()
 
 void PatternTester::testNoFeatures()
 {
-    /* Test with font only. */
-    {
-        SFPatternRef pattern = SFPatternCreate();
+    SFPatternRef pattern = SFPatternCreate();
 
-        SFPatternBuilder builder;
-        SFPatternBuilderInitialize(&builder, pattern);
+    SFPatternBuilder builder;
+    SFPatternBuilderInitialize(&builder, pattern);
 
-        SFFont font;
-        SFPatternBuilderSetFont(&builder, &font);
-        SFPatternBuilderBuild(&builder);
+    SFFont font;
+    SFPatternBuilderSetFont(&builder, &font);
+    SFPatternBuilderSetScript(&builder, SFTagMake('a', 'r', 'a', 'b'), SFTextDirectionRightToLeft);
+    SFPatternBuilderSetLanguage(&builder, SFTagMake('U', 'R', 'D', 'U'));
+    SFPatternBuilderBuild(&builder);
 
-        SFPatternBuilderFinalize(&builder);
+    SFPatternBuilderFinalize(&builder);
 
-        SFPattern expected = {
-            .font = &font,
-            .featureTags = { NULL, 0 },
-            .featureUnits = { NULL, 0, 0 },
-            .scriptTag = 0,
-            .languageTag = 0,
-            .defaultDirection = SFTextDirectionLeftToRight,
-        };
-        SFAssert(SFPatternEqualToPattern(pattern, &expected));
+    SFPattern expected = {
+        .font = &font,
+        .featureTags = { NULL, 0 },
+        .featureUnits = { NULL, 0, 0 },
+        .scriptTag = SFTagMake('a', 'r', 'a', 'b'),
+        .languageTag = SFTagMake('U', 'R', 'D', 'U'),
+        .defaultDirection = SFTextDirectionRightToLeft,
+    };
+    SFAssert(SFPatternEqualToPattern(pattern, &expected));
 
-        SFPatternRelease(pattern);
-    }
-
-    /* Test with script only. */
-    {
-        SFPatternRef pattern = SFPatternCreate();
-
-        SFPatternBuilder builder;
-        SFPatternBuilderInitialize(&builder, pattern);
-
-        SFPatternBuilderSetScript(&builder, SFTagMake('a', 'r', 'a', 'b'), SFTextDirectionRightToLeft);
-        SFPatternBuilderBuild(&builder);
-
-        SFPatternBuilderFinalize(&builder);
-
-        SFPattern expected = {
-            .font = NULL,
-            .featureTags = { NULL, 0 },
-            .featureUnits = { NULL, 0, 0 },
-            .scriptTag = SFTagMake('a', 'r', 'a', 'b'),
-            .languageTag = 0,
-            .defaultDirection = SFTextDirectionRightToLeft,
-        };
-        SFAssert(SFPatternEqualToPattern(pattern, &expected));
-
-        SFPatternRelease(pattern);
-    }
-
-    /* Test with language only. */
-    {
-        SFPatternRef pattern = SFPatternCreate();
-
-        SFPatternBuilder builder;
-        SFPatternBuilderInitialize(&builder, pattern);
-
-        SFPatternBuilderSetLanguage(&builder, SFTagMake('U', 'R', 'D', 'U'));
-        SFPatternBuilderBuild(&builder);
-
-        SFPatternBuilderFinalize(&builder);
-
-        SFPattern expected = {
-            .font = NULL,
-            .featureTags = { NULL, 0 },
-            .featureUnits = { NULL, 0, 0 },
-            .scriptTag = 0,
-            .languageTag = SFTagMake('U', 'R', 'D', 'U'),
-            .defaultDirection = SFTextDirectionLeftToRight,
-        };
-        SFAssert(SFPatternEqualToPattern(pattern, &expected));
-
-        SFPatternRelease(pattern);
-    }
+    SFPatternRelease(pattern);
 }
 
 void PatternTester::testDistinctFeatures()
@@ -151,33 +121,37 @@ void PatternTester::testDistinctFeatures()
 
         SFPatternBuilderFinalize(&builder);
 
-        SFAssert(pattern->font == NULL);
-        SFAssert(pattern->featureTags.items != NULL);
-        SFAssert(pattern->featureTags.items[0] == SFTagMake('c', 'c', 'm', 'p'));
-        SFAssert(pattern->featureTags.items[1] == SFTagMake('l', 'i', 'g', 'a'));
-        SFAssert(pattern->featureTags.items[2] == SFTagMake('c', 'l', 'i', 'g'));
-        SFAssert(pattern->featureTags.count == 3);
-        SFAssert(pattern->featureUnits.items != NULL);
-        SFAssert(pattern->featureUnits.items[0].lookupIndexes.items == NULL);
-        SFAssert(pattern->featureUnits.items[0].lookupIndexes.count == 0);
-        SFAssert(pattern->featureUnits.items[0].coveredRange.start == 0);
-        SFAssert(pattern->featureUnits.items[0].coveredRange.count == 1);
-        SFAssert(pattern->featureUnits.items[0].featureMask == 0x01);
-        SFAssert(pattern->featureUnits.items[1].lookupIndexes.items == NULL);
-        SFAssert(pattern->featureUnits.items[1].lookupIndexes.count == 0);
-        SFAssert(pattern->featureUnits.items[1].coveredRange.start == 1);
-        SFAssert(pattern->featureUnits.items[1].coveredRange.count == 1);
-        SFAssert(pattern->featureUnits.items[1].featureMask == 0x02);
-        SFAssert(pattern->featureUnits.items[2].lookupIndexes.items == NULL);
-        SFAssert(pattern->featureUnits.items[2].lookupIndexes.count == 0);
-        SFAssert(pattern->featureUnits.items[2].coveredRange.start == 2);
-        SFAssert(pattern->featureUnits.items[2].coveredRange.count == 1);
-        SFAssert(pattern->featureUnits.items[2].featureMask == 0x04);
-        SFAssert(pattern->featureUnits.gsub == 3);
-        SFAssert(pattern->featureUnits.gpos == 0);
-        SFAssert(pattern->scriptTag == 0);
-        SFAssert(pattern->languageTag == 0);
-        SFAssert(pattern->defaultDirection == SFTextDirectionLeftToRight);
+        SFTag expectedTags[] = {
+            SFTagMake('c', 'c', 'm', 'p'),
+            SFTagMake('l', 'i', 'g', 'a'),
+            SFTagMake('c', 'l', 'i', 'g'),
+        };
+        SFFeatureUnit expectedUnits[] = {
+            {
+                .lookupIndexes = { NULL, 0 },
+                .coveredRange = { 0, 1 },
+                .featureMask = 0x01,
+            },
+            {
+                .lookupIndexes = { NULL, 0 },
+                .coveredRange = { 1, 1 },
+                .featureMask = 0x02,
+            },
+            {
+                .lookupIndexes = { NULL, 0 },
+                .coveredRange = { 2, 1 },
+                .featureMask = 0x04,
+            },
+        };
+        SFPattern expectedPattern = {
+            .font = NULL,
+            .featureTags = { expectedTags, sizeof(expectedTags) / sizeof(SFTag) },
+            .featureUnits = { expectedUnits, sizeof(expectedUnits) / sizeof(SFFeatureUnit), 0 },
+            .scriptTag = 0,
+            .languageTag = 0,
+            .defaultDirection = SFTextDirectionLeftToRight,
+        };
+        SFAssert(SFPatternEqualToPattern(pattern, &expectedPattern));
 
         SFPatternRelease(pattern);
     }
@@ -205,33 +179,37 @@ void PatternTester::testDistinctFeatures()
 
         SFPatternBuilderFinalize(&builder);
 
-        SFAssert(pattern->font == NULL);
-        SFAssert(pattern->featureTags.items != NULL);
-        SFAssert(pattern->featureTags.items[0] == SFTagMake('d', 'i', 's', 't'));
-        SFAssert(pattern->featureTags.items[1] == SFTagMake('k', 'e', 'r', 'n'));
-        SFAssert(pattern->featureTags.items[2] == SFTagMake('m', 'a', 'r', 'k'));
-        SFAssert(pattern->featureTags.count == 3);
-        SFAssert(pattern->featureUnits.items != NULL);
-        SFAssert(pattern->featureUnits.items[0].lookupIndexes.items == NULL);
-        SFAssert(pattern->featureUnits.items[0].lookupIndexes.count == 0);
-        SFAssert(pattern->featureUnits.items[0].coveredRange.start == 0);
-        SFAssert(pattern->featureUnits.items[0].coveredRange.count == 1);
-        SFAssert(pattern->featureUnits.items[0].featureMask == 0x01);
-        SFAssert(pattern->featureUnits.items[1].lookupIndexes.items == NULL);
-        SFAssert(pattern->featureUnits.items[1].lookupIndexes.count == 0);
-        SFAssert(pattern->featureUnits.items[1].coveredRange.start == 1);
-        SFAssert(pattern->featureUnits.items[1].coveredRange.count == 1);
-        SFAssert(pattern->featureUnits.items[1].featureMask == 0x02);
-        SFAssert(pattern->featureUnits.items[2].lookupIndexes.items == NULL);
-        SFAssert(pattern->featureUnits.items[2].lookupIndexes.count == 0);
-        SFAssert(pattern->featureUnits.items[2].coveredRange.start == 2);
-        SFAssert(pattern->featureUnits.items[2].coveredRange.count == 1);
-        SFAssert(pattern->featureUnits.items[2].featureMask == 0x04);
-        SFAssert(pattern->featureUnits.gsub == 0);
-        SFAssert(pattern->featureUnits.gpos == 3);
-        SFAssert(pattern->scriptTag == 0);
-        SFAssert(pattern->languageTag == 0);
-        SFAssert(pattern->defaultDirection == SFTextDirectionLeftToRight);
+        SFTag expectedTags[] = {
+            SFTagMake('d', 'i', 's', 't'),
+            SFTagMake('k', 'e', 'r', 'n'),
+            SFTagMake('m', 'a', 'r', 'k'),
+        };
+        SFFeatureUnit expectedUnits[] = {
+            {
+                .lookupIndexes = { NULL, 0 },
+                .coveredRange = { 0, 1 },
+                .featureMask = 0x01,
+            },
+            {
+                .lookupIndexes = { NULL, 0 },
+                .coveredRange = { 1, 1 },
+                .featureMask = 0x02,
+            },
+            {
+                .lookupIndexes = { NULL, 0 },
+                .coveredRange = { 2, 1 },
+                .featureMask = 0x04,
+            },
+        };
+        SFPattern expectedPattern = {
+            .font = NULL,
+            .featureTags = { expectedTags, sizeof(expectedTags) / sizeof(SFTag) },
+            .featureUnits = { expectedUnits, 0, sizeof(expectedUnits) / sizeof(SFFeatureUnit) },
+            .scriptTag = 0,
+            .languageTag = 0,
+            .defaultDirection = SFTextDirectionLeftToRight,
+        };
+        SFAssert(SFPatternEqualToPattern(pattern, &expectedPattern));
 
         SFPatternRelease(pattern);
     }
@@ -265,31 +243,35 @@ void PatternTester::testSimultaneousFeatures()
     SFPatternBuilderBuild(&builder);
     SFPatternBuilderFinalize(&builder);
 
-    SFAssert(pattern->font == NULL);
-    SFAssert(pattern->featureTags.items != NULL);
-    SFAssert(pattern->featureTags.items[0] == SFTagMake('c', 'c', 'm', 'p'));
-    SFAssert(pattern->featureTags.items[1] == SFTagMake('l', 'i', 'g', 'a'));
-    SFAssert(pattern->featureTags.items[2] == SFTagMake('c', 'l', 'i', 'g'));
-    SFAssert(pattern->featureTags.items[3] == SFTagMake('d', 'i', 's', 't'));
-    SFAssert(pattern->featureTags.items[4] == SFTagMake('k', 'e', 'r', 'n'));
-    SFAssert(pattern->featureTags.items[5] == SFTagMake('m', 'a', 'r', 'k'));
-    SFAssert(pattern->featureTags.count == 6);
-    SFAssert(pattern->featureUnits.items != NULL);
-    SFAssert(pattern->featureUnits.items[0].lookupIndexes.items == NULL);
-    SFAssert(pattern->featureUnits.items[0].lookupIndexes.count == 0);
-    SFAssert(pattern->featureUnits.items[0].coveredRange.start == 0);
-    SFAssert(pattern->featureUnits.items[0].coveredRange.count == 3);
-    SFAssert(pattern->featureUnits.items[0].featureMask == (0x01 | 0x02 | 0x04));
-    SFAssert(pattern->featureUnits.items[1].lookupIndexes.items == NULL);
-    SFAssert(pattern->featureUnits.items[1].lookupIndexes.count == 0);
-    SFAssert(pattern->featureUnits.items[1].coveredRange.start == 3);
-    SFAssert(pattern->featureUnits.items[1].coveredRange.count == 3);
-    SFAssert(pattern->featureUnits.items[1].featureMask == (0x01 | 0x02 | 0x04));
-    SFAssert(pattern->featureUnits.gsub == 1);
-    SFAssert(pattern->featureUnits.gpos == 1);
-    SFAssert(pattern->scriptTag == 0);
-    SFAssert(pattern->languageTag == 0);
-    SFAssert(pattern->defaultDirection == SFTextDirectionLeftToRight);
+    SFTag expectedTags[] = {
+        SFTagMake('c', 'c', 'm', 'p'),
+        SFTagMake('l', 'i', 'g', 'a'),
+        SFTagMake('c', 'l', 'i', 'g'),
+        SFTagMake('d', 'i', 's', 't'),
+        SFTagMake('k', 'e', 'r', 'n'),
+        SFTagMake('m', 'a', 'r', 'k'),
+    };
+    SFFeatureUnit expectedUnits[] = {
+        {
+            .lookupIndexes = { NULL, 0 },
+            .coveredRange = { 0, 3 },
+            .featureMask = (0x01 | 0x02 | 0x04),
+        },
+        {
+            .lookupIndexes = { NULL, 0 },
+            .coveredRange = { 3, 3 },
+            .featureMask = (0x01 | 0x02 | 0x04),
+        },
+    };
+    SFPattern expectedPattern = {
+        .font = NULL,
+        .featureTags = { expectedTags, sizeof(expectedTags) / sizeof(SFTag) },
+        .featureUnits = { expectedUnits, 1, 1 },
+        .scriptTag = 0,
+        .languageTag = 0,
+        .defaultDirection = SFTextDirectionLeftToRight,
+    };
+    SFAssert(SFPatternEqualToPattern(pattern, &expectedPattern));
 
     SFPatternRelease(pattern);
 }
@@ -330,38 +312,34 @@ void PatternTester::testLookupIndexSorting()
         SFPatternBuilderBuild(&builder);
         SFPatternBuilderFinalize(&builder);
 
-        SFAssert(pattern->font == NULL);
-        SFAssert(pattern->featureTags.items != NULL);
-        SFAssert(pattern->featureTags.items[0] == SFTagMake('c', 'c', 'm', 'p'));
-        SFAssert(pattern->featureTags.items[1] == SFTagMake('d', 'i', 's', 't'));
-        SFAssert(pattern->featureTags.count == 2);
-        SFAssert(pattern->featureUnits.items != NULL);
-        SFAssert(pattern->featureUnits.items[0].lookupIndexes.items != NULL);
-        SFAssert(pattern->featureUnits.items[0].lookupIndexes.items[0] == 0);
-        SFAssert(pattern->featureUnits.items[0].lookupIndexes.items[1] == 1);
-        SFAssert(pattern->featureUnits.items[0].lookupIndexes.items[2] == 2);
-        SFAssert(pattern->featureUnits.items[0].lookupIndexes.items[3] == 3);
-        SFAssert(pattern->featureUnits.items[0].lookupIndexes.items[4] == 4);
-        SFAssert(pattern->featureUnits.items[0].lookupIndexes.count == 5);
-        SFAssert(pattern->featureUnits.items[0].coveredRange.start == 0);
-        SFAssert(pattern->featureUnits.items[0].coveredRange.count == 1);
-        SFAssert(pattern->featureUnits.items[0].featureMask == 0);
-        SFAssert(pattern->featureUnits.items[1].lookupIndexes.items != NULL);
-        SFAssert(pattern->featureUnits.items[1].lookupIndexes.items[0] == 4);
-        SFAssert(pattern->featureUnits.items[1].lookupIndexes.items[1] == 5);
-        SFAssert(pattern->featureUnits.items[1].lookupIndexes.items[2] == 6);
-        SFAssert(pattern->featureUnits.items[1].lookupIndexes.items[3] == 7);
-        SFAssert(pattern->featureUnits.items[1].lookupIndexes.items[4] == 8);
-        SFAssert(pattern->featureUnits.items[1].lookupIndexes.count == 5);
-        SFAssert(pattern->featureUnits.items[1].coveredRange.start == 1);
-        SFAssert(pattern->featureUnits.items[1].coveredRange.count == 1);
-        SFAssert(pattern->featureUnits.items[1].featureMask == 0);
-        SFAssert(pattern->featureUnits.gsub == 1);
-        SFAssert(pattern->featureUnits.gpos == 1);
-        SFAssert(pattern->scriptTag == 0);
-        SFAssert(pattern->languageTag == 0);
-        SFAssert(pattern->defaultDirection == SFTextDirectionLeftToRight);
-        
+        SFTag expectedTags[] = {
+            SFTagMake('c', 'c', 'm', 'p'),
+            SFTagMake('d', 'i', 's', 't'),
+        };
+        SFUInt16 expectedSubLookup[] = { 0, 1, 2, 3, 4 };
+        SFUInt16 expectedPosLookup[] = { 4, 5, 6, 7, 8 };
+        SFFeatureUnit expectedUnits[] = {
+            {
+                .lookupIndexes = { expectedSubLookup, sizeof(expectedSubLookup) / sizeof(SFUInt16) },
+                .coveredRange = { 0, 1 },
+                .featureMask = 0,
+            },
+            {
+                .lookupIndexes = { expectedPosLookup, sizeof(expectedPosLookup) / sizeof(SFUInt16) },
+                .coveredRange = { 1, 1 },
+                .featureMask = 0,
+            },
+        };
+        SFPattern expectedPattern = {
+            .font = NULL,
+            .scriptTag = 0,
+            .languageTag = 0,
+            .defaultDirection = SFTextDirectionLeftToRight,
+            .featureTags = { expectedTags, sizeof(expectedTags) / sizeof(SFTag) },
+            .featureUnits = { expectedUnits, 1, 1 },
+        };
+        SFAssert(SFPatternEqualToPattern(pattern, &expectedPattern));
+
         SFPatternRelease(pattern);
     }
 
@@ -394,30 +372,27 @@ void PatternTester::testLookupIndexSorting()
         SFPatternBuilderBuild(&builder);
         SFPatternBuilderFinalize(&builder);
 
-        SFAssert(pattern->font == NULL);
-        SFAssert(pattern->featureTags.items != NULL);
-        SFAssert(pattern->featureTags.items[0] == SFTagMake('c', 'c', 'm', 'p'));
-        SFAssert(pattern->featureTags.items[1] == SFTagMake('l', 'i', 'g', 'a'));
-        SFAssert(pattern->featureTags.count == 2);
-        SFAssert(pattern->featureUnits.items != NULL);
-        SFAssert(pattern->featureUnits.items[0].lookupIndexes.items != NULL);
-        SFAssert(pattern->featureUnits.items[0].lookupIndexes.items[0] == 0);
-        SFAssert(pattern->featureUnits.items[0].lookupIndexes.items[1] == 1);
-        SFAssert(pattern->featureUnits.items[0].lookupIndexes.items[2] == 2);
-        SFAssert(pattern->featureUnits.items[0].lookupIndexes.items[3] == 3);
-        SFAssert(pattern->featureUnits.items[0].lookupIndexes.items[4] == 4);
-        SFAssert(pattern->featureUnits.items[0].lookupIndexes.items[5] == 5);
-        SFAssert(pattern->featureUnits.items[0].lookupIndexes.items[6] == 6);
-        SFAssert(pattern->featureUnits.items[0].lookupIndexes.items[7] == 7);
-        SFAssert(pattern->featureUnits.items[0].lookupIndexes.count == 8);
-        SFAssert(pattern->featureUnits.items[0].coveredRange.start == 0);
-        SFAssert(pattern->featureUnits.items[0].coveredRange.count == 2);
-        SFAssert(pattern->featureUnits.items[0].featureMask == 0);
-        SFAssert(pattern->featureUnits.gsub == 1);
-        SFAssert(pattern->featureUnits.gpos == 0);
-        SFAssert(pattern->scriptTag == 0);
-        SFAssert(pattern->languageTag == 0);
-        SFAssert(pattern->defaultDirection == SFTextDirectionLeftToRight);
+        SFTag expectedTags[] = {
+            SFTagMake('c', 'c', 'm', 'p'),
+            SFTagMake('l', 'i', 'g', 'a'),
+        };
+        SFUInt16 expectedSubLookup[] = { 0, 1, 2, 3, 4, 5, 6, 7 };
+        SFFeatureUnit expectedUnits[] = {
+            {
+                .lookupIndexes = { expectedSubLookup, sizeof(expectedSubLookup) / sizeof(SFUInt16) },
+                .coveredRange = { 0, 2 },
+                .featureMask = 0,
+            },
+        };
+        SFPattern expectedPattern = {
+            .font = NULL,
+            .scriptTag = 0,
+            .languageTag = 0,
+            .defaultDirection = SFTextDirectionLeftToRight,
+            .featureTags = { expectedTags, sizeof(expectedTags) / sizeof(SFTag) },
+            .featureUnits = { expectedUnits, 1, 0 },
+        };
+        SFAssert(SFPatternEqualToPattern(pattern, &expectedPattern));
         
         SFPatternRelease(pattern);
     }
