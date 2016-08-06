@@ -53,12 +53,12 @@ void TextProcessorTester::testSingleSubstitution()
         SFCodepoint input[] = { 1 };
         processGSUB(&album, input, sizeof(input) / sizeof(SFCodepoint), subtable);
 
-        /* Test the glyph count. */
-        SFAssert(SFAlbumGetGlyphCount(&album) == 1);
-
         /* Test the output glyphs. */
-        const SFGlyphID *output = SFAlbumGetGlyphIDsPtr(&album);
-        SFAssert(output[0] == 0);
+        const SFGlyphID *actual = SFAlbumGetGlyphIDsPtr(&album);
+        const SFGlyphID expected[] = { 0 };
+
+        SFAssert(SFAlbumGetGlyphCount(&album) == (sizeof(expected) / sizeof(SFGlyphID)));
+        SFAssert(memcmp(actual, expected, sizeof(expected) / sizeof(SFGlyphID)) == 0);
     }
 
     /* Test with format 2. */
@@ -77,12 +77,12 @@ void TextProcessorTester::testSingleSubstitution()
         SFCodepoint input[] = { 1 };
         processGSUB(&album, input, sizeof(input) / sizeof(SFCodepoint), subtable);
 
-        /* Test the glyph count. */
-        SFAssert(SFAlbumGetGlyphCount(&album) == 1);
-
         /* Test the output glyphs. */
-        const SFGlyphID *output = SFAlbumGetGlyphIDsPtr(&album);
-        SFAssert(output[0] == 10);
+        const SFGlyphID *actual = SFAlbumGetGlyphIDsPtr(&album);
+        const SFGlyphID expected[] = { 10 };
+
+        SFAssert(SFAlbumGetGlyphCount(&album) == (sizeof(expected) / sizeof(SFGlyphID)));
+        SFAssert(memcmp(actual, expected, sizeof(expected) / sizeof(SFGlyphID)) == 0);
     }
 }
 
@@ -96,37 +96,30 @@ void TextProcessorTester::testMultipleSubstitution()
     coverage.format1.glyphCount = sizeof(glyphs) / sizeof(Glyph);
     coverage.format1.glyphArray = glyphs;
 
-    /* Test with format 1. */
-    {
-        Glyph substitutes[] = { 0, 1, 2, 3, 4 };
+    Glyph substitutes[] = { 0, 1, 2, 3, 4 };
 
-        SequenceTable sequence;
-        sequence.glyphCount = sizeof(substitutes) / sizeof(Glyph);
-        sequence.substitute = substitutes;
+    SequenceTable sequence;
+    sequence.glyphCount = sizeof(substitutes) / sizeof(Glyph);
+    sequence.substitute = substitutes;
 
-        MultipleSubstSubtable subtable;
-        subtable.substFormat = 1;
-        subtable.coverage = &coverage;
-        subtable.sequenceCount = sizeof(glyphs) / sizeof(Glyph);
-        subtable.sequence = &sequence;
+    MultipleSubstSubtable subtable;
+    subtable.substFormat = 1;
+    subtable.coverage = &coverage;
+    subtable.sequenceCount = sizeof(glyphs) / sizeof(Glyph);
+    subtable.sequence = &sequence;
 
-        SFAlbum album;
-        SFAlbumInitialize(&album);
+    SFAlbum album;
+    SFAlbumInitialize(&album);
 
-        SFCodepoint input[] = { 1 };
-        processGSUB(&album, input, sizeof(input) / sizeof(SFCodepoint), subtable);
+    SFCodepoint input[] = { 1 };
+    processGSUB(&album, input, sizeof(input) / sizeof(SFCodepoint), subtable);
 
-        /* Test the glyph count. */
-        SFAssert(SFAlbumGetGlyphCount(&album) == 5);
+    /* Test the output glyphs. */
+    const SFGlyphID *actual = SFAlbumGetGlyphIDsPtr(&album);
+    const SFGlyphID expected[] = { 0, 1, 2, 3, 4 };
 
-        /* Test the output glyphs. */
-        const SFGlyphID *output = SFAlbumGetGlyphIDsPtr(&album);
-        SFAssert(output[0] == 0);
-        SFAssert(output[1] == 1);
-        SFAssert(output[2] == 2);
-        SFAssert(output[3] == 3);
-        SFAssert(output[4] == 4);
-    }
+    SFAssert(SFAlbumGetGlyphCount(&album) == (sizeof(expected) / sizeof(SFGlyphID)));
+    SFAssert(memcmp(actual, expected, sizeof(expected) / sizeof(SFGlyphID)) == 0);
 }
 
 void TextProcessorTester::testLigatureSubstitution()
@@ -167,12 +160,12 @@ void TextProcessorTester::testLigatureSubstitution()
     SFCodepoint input[] = { 1, 2, 3, 4, 5 };
     processGSUB(&album, input, sizeof(input) / sizeof(SFCodepoint), subtable);
 
-    /* Test the glyph count. */
-    SFAssert(SFAlbumGetGlyphCount(&album) == 1);
-
     /* Test the output glyphs. */
-    const SFGlyphID *output = SFAlbumGetGlyphIDsPtr(&album);
-    SFAssert(output[0] == 10);
+    const SFGlyphID *actual = SFAlbumGetGlyphIDsPtr(&album);
+    const SFGlyphID expected[] = { 10 };
+
+    SFAssert(SFAlbumGetGlyphCount(&album) == (sizeof(expected) / sizeof(SFGlyphID)));
+    SFAssert(memcmp(actual, expected, sizeof(expected) / sizeof(SFGlyphID)) == 0);
 }
 
 void TextProcessorTester::testChainContextSubstitution()
@@ -255,20 +248,12 @@ void TextProcessorTester::testChainContextSubstitution()
         SFCodepoint input[] = { 1, 1, 1, 1, 2, 3, 3, 3, 3 };
         processGSUB(&album, input, sizeof(input) / sizeof(SFCodepoint), subtable, referrals, 1);
 
-        /* Test the glyph count. */
-        SFAssert(SFAlbumGetGlyphCount(&album) == 9);
-
         /* Test the output glyphs. */
-        const SFGlyphID *output = SFAlbumGetGlyphIDsPtr(&album);
-        SFAssert(output[0] == 1);
-        SFAssert(output[1] == 1);
-        SFAssert(output[2] == 1);
-        SFAssert(output[3] == 1);
-        SFAssert(output[4] == 3);
-        SFAssert(output[5] == 3);
-        SFAssert(output[6] == 3);
-        SFAssert(output[7] == 3);
-        SFAssert(output[8] == 3);
+        const SFGlyphID *actual = SFAlbumGetGlyphIDsPtr(&album);
+        const SFGlyphID expected[] = { 1, 1, 1, 1, 3, 3, 3, 3, 3 };
+
+        SFAssert(SFAlbumGetGlyphCount(&album) == (sizeof(expected) / sizeof(SFGlyphID)));
+        SFAssert(memcmp(actual, expected, sizeof(expected) / sizeof(SFGlyphID)) == 0);
     }
 
     /* Test with complex substitutions. */
@@ -370,19 +355,11 @@ void TextProcessorTester::testChainContextSubstitution()
         SFCodepoint input[] = { 1, 1, 1, 1, 2, 3, 3, 3, 3 };
         processGSUB(&album, input, sizeof(input) / sizeof(SFCodepoint), subtable, referrals, 3);
 
-        /* Test the glyph count. */
-        SFAssert(SFAlbumGetGlyphCount(&album) == 9);
-
         /* Test the output glyphs. */
-        const SFGlyphID *output = SFAlbumGetGlyphIDsPtr(&album);
-        SFAssert(output[0] == 1);
-        SFAssert(output[1] == 1);
-        SFAssert(output[2] == 1);
-        SFAssert(output[3] == 10);
-        SFAssert(output[4] == 6);
-        SFAssert(output[5] == 20);
-        SFAssert(output[6] == 3);
-        SFAssert(output[7] == 3);
-        SFAssert(output[8] == 3);
+        const SFGlyphID *actual = SFAlbumGetGlyphIDsPtr(&album);
+        const SFGlyphID expected[] = { 1, 1, 1, 10, 6, 20, 3, 3, 3 };
+
+        SFAssert(SFAlbumGetGlyphCount(&album) == (sizeof(expected) / sizeof(SFGlyphID)));
+        SFAssert(memcmp(actual, expected, sizeof(expected) / sizeof(SFGlyphID)) == 0);
     }
 }
