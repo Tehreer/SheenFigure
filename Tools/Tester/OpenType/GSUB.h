@@ -46,32 +46,26 @@ struct SingleSubstSubtable : public LookupSubtable {
 
     void write(Writer &writer) override {
         switch (substFormat) {
-            case 1: {
-                writer.enter();
+        case 1:
+            writer.enter();
 
-                writer.write(substFormat);
-                int coverageOffset = writer.reserveOffset();
-                writer.write((UInt16)format1.deltaGlyphID);
+            writer.write(substFormat);
+            writer.defer(coverage);
+            writer.write((UInt16)format1.deltaGlyphID);
 
-                writer.writeTable(coverage, coverageOffset);
+            writer.exit();
+            break;
+            
+        case 2:
+            writer.enter();
 
-                writer.exit();
-                break;
-            }
-                
-            case 2: {
-                writer.enter();
+            writer.write(substFormat);
+            writer.defer(coverage);
+            writer.write(format2.glyphCount);
+            writer.write(format2.substitute, format2.glyphCount);
 
-                writer.write(substFormat);
-                int coverageOffset = writer.reserveOffset();
-                writer.write(format2.glyphCount);
-                writer.write(format2.substitute, format2.glyphCount);
-
-                writer.writeTable(coverage, coverageOffset);
-
-                writer.exit();
-                break;
-            }
+            writer.exit();
+            break;
         }
     }
 };
@@ -104,16 +98,10 @@ struct MultipleSubstSubtable : public LookupSubtable {
         writer.enter();
 
         writer.write(substFormat);
-        int coverageOffset = writer.reserveOffset();
+        writer.defer(coverage);
         writer.write(sequenceCount);
-        int sequenceRefs[sequenceCount];
         for (int i = 0; i < sequenceCount; i++) {
-            sequenceRefs[i] = writer.reserveOffset();
-        }
-
-        writer.writeTable(coverage, coverageOffset);
-        for (int i = 0; i < sequenceCount; i++) {
-            writer.writeTable(&sequence[i], sequenceRefs[i]);
+            writer.defer(&sequence[i]);
         }
 
         writer.exit();
@@ -148,16 +136,10 @@ struct AlternateSubstSubtable : public LookupSubtable {
         writer.enter();
 
         writer.write(substFormat);
-        int coverageOffset = writer.reserveOffset();
+        writer.defer(coverage);
         writer.write(alternateSetCount);
-        int sequenceRefs[alternateSetCount];
         for (int i = 0; i < alternateSetCount; i++) {
-            sequenceRefs[i] = writer.reserveOffset();
-        }
-
-        writer.writeTable(coverage, coverageOffset);
-        for (int i = 0; i < alternateSetCount; i++) {
-            writer.writeTable(&alternateSet[i], sequenceRefs[i]);
+            writer.defer(alternateSet);
         }
 
         writer.exit();
@@ -188,9 +170,7 @@ struct LigatureSetTable : public Table {
         writer.enter();
 
         writer.write(ligatureCount);
-        int ligatureOffset = writer.reserveOffset();
-
-        writer.writeTable(ligature, ligatureOffset);
+        writer.defer(ligature);
 
         writer.exit();
     }
@@ -210,16 +190,10 @@ struct LigatureSubstSubtable : public LookupSubtable {
         writer.enter();
 
         writer.write(substFormat);
-        int coverageOffset = writer.reserveOffset();
+        writer.defer(coverage);
         writer.write(ligSetCount);
-        int ligatureSetOffsets[ligSetCount];
         for (int i = 0; i < ligSetCount; i++) {
-            ligatureSetOffsets[i] = writer.reserveOffset();
-        }
-
-        writer.writeTable(coverage, coverageOffset);
-        for (int i = 0; i < ligSetCount; i++) {
-            writer.writeTable(&ligatureSet[i], ligatureSetOffsets[i]);
+            writer.defer(&ligatureSet[i]);
         }
 
         writer.exit();
@@ -236,13 +210,9 @@ struct GSUB : public Table {
         writer.enter();
 
         writer.write(version);
-        int scriptListRef = writer.reserveOffset();
-        int featureListRef = writer.reserveOffset();
-        int lookupListRef = writer.reserveOffset();
-
-        writer.writeTable(scriptList, scriptListRef);
-        writer.writeTable(featureList, featureListRef);
-        writer.writeTable(lookupList, lookupListRef);
+        writer.defer(scriptList);
+        writer.defer(featureList);
+        writer.defer(lookupList);
 
         writer.exit();
     }

@@ -17,6 +17,7 @@
 #ifndef __SHEEN_FIGURE__TESTER__OPEN_TYPE__WRITER_H
 #define __SHEEN_FIGURE__TESTER__OPEN_TYPE__WRITER_H
 
+#include <map>
 #include <stack>
 #include "DataTypes.h"
 
@@ -32,14 +33,12 @@ public:
     void enter();
     void exit();
 
-    int reserveOffset();
-    int reserveLong();
-    void writeTable(Table *value, int reference = -1, bool isLong = false);
+    void defer(Table *table, bool largeOffset = false);
 
     void write(UInt8 value);
     void write(UInt16 value);
     void write(UInt32 value);
-    void write(Table *array, int count);
+    void write(Table *table);
     void write(UInt8 *array, int count);
     void write(UInt16 *array, int count);
     void write(UInt32 *array, int count);
@@ -48,13 +47,24 @@ public:
     UInt8 *data() { return m_data; };
 
 private:
+    struct Deferral {
+        size_t entryIndex;
+        bool largeOffset;
+        int reference;
+        Table *table;
+    };
+
     UInt8 *m_data;
     int m_capacity;
     int m_size;
     std::stack<int> m_enteries;
-    std::stack<int> m_offsets;
+    std::stack<Deferral> m_deferrals;
 
     void increaseSize(int size);
+
+    int reserveOffset(bool large = false);
+    void writeTable(Table *value, int reference = -1, bool largeOffset = false);
+
 };
 
 }

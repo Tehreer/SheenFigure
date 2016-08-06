@@ -91,7 +91,7 @@ static void loadTable(void *object, SFTag tag, SFUInt8 *buffer, SFUInteger *leng
         gsub.lookupList = NULL;
         
         Writer writer;
-        writer.writeTable(&gsub);
+        writer.write(&gsub);
 
         if (length) {
             *length = (SFUInteger)writer.size();

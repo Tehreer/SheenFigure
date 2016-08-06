@@ -138,7 +138,7 @@ static void writeTable(Writer &writer,
     gsub.featureList = &featureList;
     gsub.lookupList = &lookupList;
 
-    writer.writeTable(&gsub);
+    writer.write(&gsub);
 
     delete [] lookups;
 }

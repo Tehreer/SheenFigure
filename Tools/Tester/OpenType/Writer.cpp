@@ -54,26 +54,35 @@ void Writer::enter()
 
 void Writer::exit()
 {
+    size_t entryIndex = m_enteries.size();
+
+    while (!m_deferrals.empty()) {
+        Deferral deferral = m_deferrals.top();
+        if (deferral.entryIndex != entryIndex) {
+            break;
+        }
+
+        writeTable(deferral.table, deferral.reference, deferral.largeOffset);
+
+        m_deferrals.pop();
+    }
+
     m_enteries.pop();
 }
 
-int Writer::reserveOffset()
-{
-    int offset = m_size;
-    write((UInt16)0);
-
-    return offset;
-}
-
-int Writer::reserveLong()
+int Writer::reserveOffset(bool large)
 {
     int reference = m_size;
-    write((UInt32)0);
+    if (large) {
+        write((UInt32)0);
+    } else {
+        write((UInt16)0);
+    }
 
     return reference;
 }
 
-void Writer::writeTable(Table *table, int reference, bool isLong)
+void Writer::writeTable(Table *table, int reference, bool largeOffset)
 {
     Offset value = 0;
 
@@ -86,7 +95,7 @@ void Writer::writeTable(Table *table, int reference, bool isLong)
     }
 
     if (reference > -1) {
-        if (isLong) {
+        if (largeOffset) {
             m_data[reference + 0] = (value >> 24) & 0xFF;
             m_data[reference + 1] = (value >> 16) & 0xFF;
             m_data[reference + 2] = (value >>  8) & 0xFF;
@@ -96,6 +105,17 @@ void Writer::writeTable(Table *table, int reference, bool isLong)
             m_data[reference + 1] = (value >> 0) & 0xFF;
         }
     }
+}
+
+void Writer::defer(Table *table, bool largeOffset)
+{
+    Deferral deferral;
+    deferral.entryIndex = m_enteries.size();
+    deferral.largeOffset = largeOffset;
+    deferral.reference = reserveOffset(largeOffset);
+    deferral.table = table;
+
+    m_deferrals.push(deferral);
 }
 
 void Writer::write(UInt8 value)
@@ -120,11 +140,9 @@ void Writer::write(UInt32 value)
     m_data[m_size - 1] = (value >>  0) & 0xFF;
 }
 
-void Writer::write(Table *array, int count)
+void Writer::write(Table *table)
 {
-    for (int i = 0; i < count; i++) {
-        writeTable(&array[i]);
-    }
+    writeTable(table);
 }
 
 void Writer::write(UInt8 *array, int count)

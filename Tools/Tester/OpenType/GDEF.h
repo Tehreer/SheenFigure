@@ -47,17 +47,12 @@ struct AttachListTable : public Table {
     void write(Writer &writer) override {
         writer.enter();
 
-        int coverageOffset = writer.reserveOffset();
+        writer.defer(coverage);
         writer.write(glyphCount);
-        int attachPointOffsets[glyphCount];
         for (int i = 0; i < glyphCount; i++) {
-            attachPointOffsets[i] = writer.reserveOffset();
+            writer.defer(&attachPoints[i]);
         }
 
-        writer.writeTable(coverage, coverageOffset);
-        for (int i = 0; i < glyphCount; i++) {
-            writer.writeTable(&attachPoints[i], attachPointOffsets[i]);
-        }
         writer.exit();
     }
 };
@@ -82,35 +77,33 @@ struct CaretValuesTable : public Table {
 
     void write(Writer &writer) override {
         switch (caretValueFormat) {
-            case 1:
-                writer.enter();
+        case 1:
+            writer.enter();
 
-                writer.write(caretValueFormat);
-                writer.write((UInt16)format1.coordinate);
+            writer.write(caretValueFormat);
+            writer.write((UInt16)format1.coordinate);
 
-                writer.exit();
-                break;
-                
-            case 2:
-                writer.enter();
+            writer.exit();
+            break;
+            
+        case 2:
+            writer.enter();
 
-                writer.write(caretValueFormat);
-                writer.write(format2.caretValuePoint);
+            writer.write(caretValueFormat);
+            writer.write(format2.caretValuePoint);
 
-                writer.exit();
-                break;
+            writer.exit();
+            break;
 
-            case 3: {
-                writer.enter();
+        case 3:
+            writer.enter();
 
-                writer.write(caretValueFormat);
-                writer.write((UInt16)format3.coordinate);
-                int deviceOffset = writer.reserveOffset();
+            writer.write(caretValueFormat);
+            writer.write((UInt16)format3.coordinate);
+            writer.defer(format3.deviceTable);
 
-                writer.write(format3.deviceTable, deviceOffset);
-                writer.exit();
-                break;
-            }
+            writer.exit();
+            break;
         }
     }
 };
@@ -123,14 +116,10 @@ struct LigatureGlyphTable : public Table {
         writer.enter();
 
         writer.write(caretCount);
-        int caretValueOffsets[caretCount];
         for (int i = 0; i < caretCount; i++) {
-            caretValueOffsets[i] = writer.reserveOffset();
+            writer.defer(&caretValue[i]);
         }
 
-        for (int i = 0; i < caretCount; i++) {
-            writer.writeTable(&caretValue[i], caretValueOffsets[i]);
-        }
         writer.exit();
     }
 };
@@ -143,17 +132,12 @@ struct LigatureCaretListTable : public Table {
     void write(Writer &writer) override {
         writer.enter();
 
-        int coverageOffset = writer.reserveOffset();
+        writer.defer(coverage);
         writer.write(ligGlyphCount);
-        int ligGlyphOffsets[ligGlyphCount];
         for (int i = 0; i < ligGlyphCount; i++) {
-            ligGlyphOffsets[i] = writer.reserveOffset();
+            writer.defer(&ligGlyph[i]);
         }
 
-        writer.writeTable(coverage, coverageOffset);
-        for (int i = 0; i < ligGlyphCount; i++) {
-            writer.writeTable(&ligGlyph[i], ligGlyphOffsets[i]);
-        }
         writer.exit();
     }
 };
@@ -168,14 +152,10 @@ struct MarkGlyphSetsDefTable : public Table {
 
         writer.write(markSetTableFormat);
         writer.write(markSetCount);
-        int coverageRefs[markSetCount];
         for (int i = 0; i < markSetCount; i++) {
-            coverageRefs[i] = writer.reserveLong();
+            writer.defer(&coverage[i], true);
         }
 
-        for (int i = 0; i < markSetCount; i++) {
-            writer.writeTable(&coverage[i], coverageRefs[i], true);
-        }
         writer.exit();
     }
 };
@@ -192,17 +172,12 @@ struct GDEF : public Table {
         writer.enter();
 
         writer.write(version);
-        int glyphClassDefOffset = writer.reserveOffset();
-        int attachListOffset = writer.reserveOffset();
-        int ligCaretListOffset = writer.reserveOffset();
-        int markAttachClassDefOffset = writer.reserveOffset();
-        int markGlyphSetsDefOffset = writer.reserveOffset();
+        writer.defer(glyphClassDef);
+        writer.defer(attachList);
+        writer.defer(ligCaretList);
+        writer.defer(markAttachClassDef);
+        writer.defer(markGlyphSetsDef);
 
-        writer.writeTable(glyphClassDef, glyphClassDefOffset);
-        writer.writeTable(attachList, attachListOffset);
-        writer.writeTable(ligCaretList, ligCaretListOffset);
-        writer.writeTable(markAttachClassDef, markAttachClassDefOffset);
-        writer.writeTable(markGlyphSetsDef, markGlyphSetsDefOffset);
         writer.exit();
     }
 };

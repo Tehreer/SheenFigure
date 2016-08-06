@@ -47,9 +47,7 @@ struct LangSysRecord : public Table {
 
     void write(Writer &writer) override {
         writer.write(langSysTag, 4);
-        int langSysOffset = writer.reserveOffset();
-
-        writer.writeTable(langSys, langSysOffset);
+        writer.defer(langSys);
     }
 };
 
@@ -61,11 +59,12 @@ struct ScriptTable : public Table {
     void write(Writer &writer) override {
         writer.enter();
 
-        int defaultLangSysOffset = writer.reserveOffset();
+        writer.defer(defaultLangSys);
         writer.write(langSysCount);
-        writer.write(langSysRecord, langSysCount);
+        for (int i = 0; i < langSysCount; i++) {
+            writer.write(&langSysRecord[i]);
+        }
 
-        writer.writeTable(defaultLangSys, defaultLangSysOffset);
         writer.exit();
     }
 };
@@ -76,9 +75,7 @@ struct ScriptRecord : public Table {
 
     void write(Writer &writer) override {
         writer.write(scriptTag, 4);
-        int scriptOffset = writer.reserveOffset();
-
-        writer.writeTable(script, scriptOffset);
+        writer.defer(script);
     }
 };
 
@@ -90,7 +87,9 @@ struct ScriptListTable : public Table {
         writer.enter();
 
         writer.write(scriptCount);
-        writer.write(scriptRecord, scriptCount);
+        for (int i = 0; i < scriptCount; i++) {
+            writer.write(&scriptRecord[i]);
+        }
 
         writer.exit();
     }
@@ -122,9 +121,7 @@ struct FeatureRecord : public Table {
 
     void write(Writer &writer) override {
         writer.write(featureTag, 4);
-        int featureOffset = writer.reserveOffset();
-
-        writer.writeTable(feature, featureOffset);
+        writer.defer(feature);
     }
 };
 
@@ -136,7 +133,9 @@ struct FeatureListTable : public Table {
         writer.enter();
 
         writer.write(featureCount);
-        writer.write(featureRecord, featureCount);
+        for (int i = 0; i < featureCount; i++) {
+            writer.write(&featureRecord[i]);
+        }
 
         writer.exit();
     }
@@ -201,15 +200,10 @@ struct LookupTable : public Table {
         writer.write((UInt16)lookupType);
         writer.write((UInt16)lookupFlag);
         writer.write(subTableCount);
-        int subtableOffsets[subTableCount];
         for (int i = 0; i < subTableCount; i++) {
-            subtableOffsets[i] = writer.reserveOffset();
+            writer.defer(&subtables[i]);
         }
         writer.write(markFilteringSet);
-
-        for (int i = 0; i < subTableCount; i++) {
-            writer.writeTable(&subtables[i], subtableOffsets[i]);
-        }
 
         writer.exit();
     }
@@ -223,13 +217,8 @@ struct LookupListTable : public Table {
         writer.enter();
 
         writer.write(lookupCount);
-        int lookupTableOffsets[lookupCount];
         for (int i = 0; i < lookupCount; i++) {
-            lookupTableOffsets[i] = writer.reserveOffset();
-        }
-
-        for (int i = 0; i < lookupCount; i++) {
-            writer.writeTable(&lookupTables[i], lookupTableOffsets[i]);
+            writer.defer(&lookupTables[i]);
         }
 
         writer.exit();
@@ -268,26 +257,28 @@ struct ClassDefTable : public Table {
 
     void write(Writer &writer) override {
         switch (classFormat) {
-            case 1:
-                writer.enter();
+        case 1:
+            writer.enter();
 
-                writer.write(classFormat);
-                writer.write(format1.startGlyph);
-                writer.write(format1.glyphCount);
-                writer.write(format1.classValueArray, format1.glyphCount);
+            writer.write(classFormat);
+            writer.write(format1.startGlyph);
+            writer.write(format1.glyphCount);
+            writer.write(format1.classValueArray, format1.glyphCount);
 
-                writer.exit();
-                break;
+            writer.exit();
+            break;
 
-            case 2:
-                writer.enter();
+        case 2:
+            writer.enter();
 
-                writer.write(classFormat);
-                writer.write(format2.classRangeCount);
-                writer.write(format2.classRangeRecord, format2.classRangeCount);
-                
-                writer.exit();
-                break;
+            writer.write(classFormat);
+            writer.write(format2.classRangeCount);
+            for (int i = 0; i < format2.classRangeCount; i++) {
+                writer.write(&format2.classRangeRecord[i]);
+            }
+            
+            writer.exit();
+            break;
         }
     }
 };
@@ -321,25 +312,27 @@ struct CoverageTable : public Table {
 
     void write(Writer &writer) override {
         switch (coverageFormat) {
-            case 1:
-                writer.enter();
+        case 1:
+            writer.enter();
 
-                writer.write(coverageFormat);
-                writer.write(format1.glyphCount);
-                writer.write(format1.glyphArray, format1.glyphCount);
+            writer.write(coverageFormat);
+            writer.write(format1.glyphCount);
+            writer.write(format1.glyphArray, format1.glyphCount);
 
-                writer.exit();
-                break;
+            writer.exit();
+            break;
 
-            case 2:
-                writer.enter();
+        case 2:
+            writer.enter();
 
-                writer.write(coverageFormat);
-                writer.write(format2.rangeCount);
-                writer.write(format2.rangeRecord, format2.rangeCount);
+            writer.write(coverageFormat);
+            writer.write(format2.rangeCount);
+            for (int i = 0; i < format2.rangeCount; i++) {
+                writer.write(&format2.rangeRecord[i]);
+            }
 
-                writer.exit();
-                break;
+            writer.exit();
+            break;
         }
     }
 };
@@ -399,45 +392,31 @@ struct ChainContextSubtable : public LookupSubtable {
     }
 
     void write(Writer &writer) override {
-        writer.enter();
-
         switch (format) {
-            case 3: {
-                writer.write(format);
-                writer.write(format3.backtrackGlyphCount);
-                int batrackCoverageOffsets[format3.backtrackGlyphCount];
-                for (int i = 0; i < format3.backtrackGlyphCount; i++) {
-                    batrackCoverageOffsets[i] = writer.reserveOffset();
-                }
-                writer.write(format3.inputGlyphCount);
-                int inputCoverageOffsets[format3.inputGlyphCount];
-                for (int i = 0; i < format3.inputGlyphCount; i++) {
-                    inputCoverageOffsets[i] = writer.reserveOffset();
-                }
-                writer.write(format3.lookaheadGlyphCount);
-                int lookaheadCoverageOffsets[format3.lookaheadGlyphCount];
-                for (int i = 0; i < format3.lookaheadGlyphCount; i++) {
-                    lookaheadCoverageOffsets[i] = writer.reserveOffset();
-                }
-                writer.write(format3.recordCount);
-                for (int i = 0; i < format3.recordCount; i++) {
-                    writer.writeTable(&format3.lookupRecord[i]);
-                }
+        case 3:
+            writer.enter();
 
-                for (int i = 0; i < format3.backtrackGlyphCount; i++) {
-                    writer.writeTable(&format3.backtrackGlyphCoverage[i], batrackCoverageOffsets[i]);
-                }
-                for (int i = 0; i < format3.inputGlyphCount; i++) {
-                    writer.writeTable(&format3.inputGlyphCoverage[i], inputCoverageOffsets[i]);
-                }
-                for (int i = 0; i < format3.lookaheadGlyphCount; i++) {
-                    writer.writeTable(&format3.lookaheadGlyphCoverage[i], lookaheadCoverageOffsets[i]);
-                }
-                break;
+            writer.write(format);
+            writer.write(format3.backtrackGlyphCount);
+            for (int i = 0; i < format3.backtrackGlyphCount; i++) {
+                writer.defer(&format3.backtrackGlyphCoverage[i]);
             }
-        }
+            writer.write(format3.inputGlyphCount);
+            for (int i = 0; i < format3.inputGlyphCount; i++) {
+                writer.defer(&format3.inputGlyphCoverage[i]);
+            }
+            writer.write(format3.lookaheadGlyphCount);
+            for (int i = 0; i < format3.lookaheadGlyphCount; i++) {
+                writer.defer(&format3.lookaheadGlyphCoverage[i]);
+            }
+            writer.write(format3.recordCount);
+            for (int i = 0; i < format3.recordCount; i++) {
+                writer.write(&format3.lookupRecord[i]);
+            }
 
-        writer.exit();
+            writer.exit();
+            break;
+        }
     }
 };
 
@@ -451,9 +430,7 @@ struct ExtensionSubtable : public Table {
 
         writer.write(format);
         writer.write((UInt16)extensionLookupType);
-        int extensionOffset = writer.reserveLong();
-
-        writer.writeTable(extensionTable, extensionOffset, true);
+        writer.defer(extensionTable, true);
 
         writer.exit();
     }

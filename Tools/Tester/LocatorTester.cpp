@@ -466,7 +466,7 @@ LocatorTester::LocatorTester()
     gdef.markGlyphSetsDef = &markGlyphSets;
 
     Writer writer;
-    writer.writeTable(&gdef);
+    writer.write(&gdef);
 
     m_gdef = new uint8_t[writer.size()];
     memcpy(m_gdef, writer.data(), (size_t)writer.size());
