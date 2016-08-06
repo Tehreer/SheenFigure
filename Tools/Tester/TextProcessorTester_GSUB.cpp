@@ -20,186 +20,17 @@
 extern "C" {
 #include <SheenFigure/Source/SFAlbum.h>
 #include <SheenFigure/Source/SFAssert.h>
-#include <SheenFigure/Source/SFPattern.h>
-#include <SheenFigure/Source/SFPatternBuilder.h>
-#include <SheenFigure/Source/SFTextProcessor.h>
 }
 
 #include "OpenType/Common.h"
 #include "OpenType/GSUB.h"
-#include "GlyphSubstituterTester.h"
+#include "TextProcessorTester.h"
 
 using namespace std;
 using namespace SheenFigure::Tester;
 using namespace SheenFigure::Tester::OpenType;
 
-static void loadTable(void *object, SFTag tag, SFUInt8 *buffer, SFUInteger *length)
-{
-    Writer *writer = reinterpret_cast<Writer *>(object);
-
-    switch (tag) {
-    case SFTagMake('G', 'S', 'U', 'B'):
-        if (buffer) {
-            memcpy(buffer, writer->data(), (size_t)writer->size());
-        }
-        if (length) {
-            *length = (SFUInteger)writer->size();
-        }
-        break;
-    }
-}
-
-static SFGlyphID getGlyphID(void *object, SFCodepoint codepoint)
-{
-    return (SFGlyphID)codepoint;
-}
-
-static SFAdvance getGlyphAdvance(void *object, SFFontLayout fontLayout, SFGlyphID glyphID)
-{
-    return 0;
-}
-
-static void writeGSUB(Writer &writer, LookupSubtable &subtable, LookupSubtable *referrals[] = NULL, SFUInteger count = 0)
-{
-    UInt16 lookupCount = (UInt16)(count + 1);
-
-    /* Create the lookup tables. */
-    LookupTable *lookups = new LookupTable[lookupCount];
-    lookups[0].lookupType = subtable.lookupType();
-    lookups[0].lookupFlag = (LookupFlag)0;
-    lookups[0].subTableCount = 1;
-    lookups[0].subtables = &subtable;
-    lookups[0].markFilteringSet = 0;
-
-    for (SFUInteger i = 1; i < lookupCount; i++) {
-        LookupSubtable *other = referrals[i - 1];
-        lookups[i].lookupType = other->lookupType();
-        lookups[i].lookupFlag = (LookupFlag)0;
-        lookups[i].subTableCount = 1;
-        lookups[i].subtables = other;
-        lookups[i].markFilteringSet = 0;
-    }
-
-    /* Create the lookup list table. */
-    LookupListTable lookupList;
-    lookupList.lookupCount = lookupCount;
-    lookupList.lookupTables = lookups;
-
-    UInt16 lookupIndex[1] = { 0 };
-
-    /* Create the feature table. */
-    FeatureTable testFeature;
-    testFeature.featureParams = 0;
-    testFeature.lookupCount = 1;
-    testFeature.lookupListIndex = lookupIndex;
-
-    /* Create the feature record. */
-    FeatureRecord featureRecord[1];
-    memcpy(&featureRecord[0].featureTag, "test", 4);
-    featureRecord[0].feature = &testFeature;
-
-    /* Create the feature list table. */
-    FeatureListTable featureList;
-    featureList.featureCount = 1;
-    featureList.featureRecord = featureRecord;
-
-    UInt16 dfltFeatureIndex[] = { 0 };
-
-    /* Create the language system table. */
-    LangSysTable dfltLangSys;
-    dfltLangSys.lookupOrder = 0;
-    dfltLangSys.reqFeatureIndex = 0xFFFF;
-    dfltLangSys.featureCount = 1;
-    dfltLangSys.featureIndex = dfltFeatureIndex;
-
-    /* Create the script table. */
-    ScriptTable dfltScript;
-    dfltScript.defaultLangSys = &dfltLangSys;
-    dfltScript.langSysCount = 0;
-    dfltScript.langSysRecord = NULL;
-
-    /* Create the script record. */
-    ScriptRecord scripts[1];
-    memcpy(&scripts[0].scriptTag, "dflt", 4);
-    scripts[0].script = &dfltScript;
-
-    /* Create the script list table */
-    ScriptListTable scriptList;
-    scriptList.scriptCount = 1;
-    scriptList.scriptRecord = scripts;
-
-    /* Create the gsub table. */
-    GSUB gsub;
-    gsub.version = 0x00010000;
-    gsub.scriptList = &scriptList;
-    gsub.featureList = &featureList;
-    gsub.lookupList = &lookupList;
-
-    writer.writeTable(&gsub);
-
-    delete [] lookups;
-}
-
-static void processSubtable(LookupSubtable &subtable, SFAlbumRef album,
-    SFCodepoint *input, SFUInteger length, LookupSubtable *referrals[] = NULL, SFUInteger count = 0)
-{
-    /* Write GSUB table for the given lookup. */
-    Writer writer;
-    writeGSUB(writer, subtable, referrals, count);
-
-    /* Create font with protocol. */
-    SFFontProtocol protocol = {
-        .loadTable = &loadTable,
-        .getGlyphIDForCodepoint = &getGlyphID,
-        .getAdvanceForGlyph = &getGlyphAdvance,
-    };
-    SFFontRef font = SFFontCreateWithProtocol(&protocol, &writer);
-
-    /* Create a pattern. */
-    SFPatternRef pattern = SFPatternCreate();
-
-    /* Build the pattern. */
-    SFPatternBuilder builder;
-    SFPatternBuilderInitialize(&builder, pattern);
-    SFPatternBuilderSetFont(&builder, font);
-    SFPatternBuilderSetScript(&builder, SFTagMake('d', 'f', 'l', 't'), SFTextDirectionLeftToRight);
-    SFPatternBuilderSetLanguage(&builder, SFTagMake('d', 'f', 'l', 't'));
-    SFPatternBuilderBeginFeatures(&builder, SFFeatureKindSubstitution);
-    SFPatternBuilderAddFeature(&builder, SFTagMake('t', 'e', 's', 't'), 0);
-    SFPatternBuilderAddLookup(&builder, 0);
-    SFPatternBuilderMakeFeatureUnit(&builder);
-    SFPatternBuilderEndFeatures(&builder);
-    SFPatternBuilderBuild(&builder);
-
-    /* Create the codepoint sequence. */
-    SBCodepointSequence sequence;
-    sequence.stringEncoding = SBStringEncodingUTF32;
-    sequence.stringBuffer = input;
-    sequence.stringLength = length;
-
-    /* Reset the album for given codepoints. */
-    SFCodepoints codepoints;
-    SFCodepointsInitialize(&codepoints, &sequence, SFFalse);
-    SFAlbumReset(album, &codepoints, length);
-
-    /* Process the album. */
-    SFTextProcessor processor;
-    SFTextProcessorInitialize(&processor, pattern, album, SFTextDirectionLeftToRight, SFTextModeForward);
-    SFTextProcessorDiscoverGlyphs(&processor);
-    SFTextProcessorSubstituteGlyphs(&processor);
-    SFTextProcessorPositionGlyphs(&processor);
-    SFTextProcessorWrapUp(&processor);
-
-    /* Release the allocated objects. */
-    SFPatternRelease(pattern);
-    SFFontRelease(font);
-}
-
-GlyphSubstituterTester::GlyphSubstituterTester()
-{
-}
-
-void GlyphSubstituterTester::testSingleSubstitution()
+void TextProcessorTester::testSingleSubstitution()
 {
     Glyph glyphs[] = { 1 };
 
@@ -220,7 +51,7 @@ void GlyphSubstituterTester::testSingleSubstitution()
         SFAlbumInitialize(&album);
 
         SFCodepoint input[] = { 1 };
-        processSubtable(subtable, &album, input, sizeof(input) / sizeof(SFCodepoint));
+        processGSUB(&album, input, sizeof(input) / sizeof(SFCodepoint), subtable);
 
         /* Test the glyph count. */
         SFAssert(SFAlbumGetGlyphCount(&album) == 1);
@@ -244,7 +75,7 @@ void GlyphSubstituterTester::testSingleSubstitution()
         SFAlbumInitialize(&album);
 
         SFCodepoint input[] = { 1 };
-        processSubtable(subtable, &album, input, sizeof(input) / sizeof(SFCodepoint));
+        processGSUB(&album, input, sizeof(input) / sizeof(SFCodepoint), subtable);
 
         /* Test the glyph count. */
         SFAssert(SFAlbumGetGlyphCount(&album) == 1);
@@ -255,7 +86,7 @@ void GlyphSubstituterTester::testSingleSubstitution()
     }
 }
 
-void GlyphSubstituterTester::testMultipleSubstitution()
+void TextProcessorTester::testMultipleSubstitution()
 {
     Glyph glyphs[] = { 1 };
 
@@ -283,7 +114,7 @@ void GlyphSubstituterTester::testMultipleSubstitution()
         SFAlbumInitialize(&album);
 
         SFCodepoint input[] = { 1 };
-        processSubtable(subtable, &album, input, sizeof(input) / sizeof(SFCodepoint));
+        processGSUB(&album, input, sizeof(input) / sizeof(SFCodepoint), subtable);
 
         /* Test the glyph count. */
         SFAssert(SFAlbumGetGlyphCount(&album) == 5);
@@ -298,7 +129,7 @@ void GlyphSubstituterTester::testMultipleSubstitution()
     }
 }
 
-void GlyphSubstituterTester::testLigatureSubstitution()
+void TextProcessorTester::testLigatureSubstitution()
 {
     Glyph glyphs[] = { 1 };
 
@@ -334,7 +165,7 @@ void GlyphSubstituterTester::testLigatureSubstitution()
 
     /* Process the subtable. */
     SFCodepoint input[] = { 1, 2, 3, 4, 5 };
-    processSubtable(subtable, &album, input, sizeof(input) / sizeof(SFCodepoint));
+    processGSUB(&album, input, sizeof(input) / sizeof(SFCodepoint), subtable);
 
     /* Test the glyph count. */
     SFAssert(SFAlbumGetGlyphCount(&album) == 1);
@@ -344,7 +175,7 @@ void GlyphSubstituterTester::testLigatureSubstitution()
     SFAssert(output[0] == 10);
 }
 
-void GlyphSubstituterTester::testChainContextSubstitution()
+void TextProcessorTester::testChainContextSubstitution()
 {
     Glyph inputGlyphs[] = { 1, 2, 3 };
     Glyph backtrackGlyphs[] = { 1 };
@@ -422,7 +253,7 @@ void GlyphSubstituterTester::testChainContextSubstitution()
         SFAlbumInitialize(&album);
 
         SFCodepoint input[] = { 1, 1, 1, 1, 2, 3, 3, 3, 3 };
-        processSubtable(subtable, &album, input, sizeof(input) / sizeof(SFCodepoint), referrals, 1);
+        processGSUB(&album, input, sizeof(input) / sizeof(SFCodepoint), subtable, referrals, 1);
 
         /* Test the glyph count. */
         SFAssert(SFAlbumGetGlyphCount(&album) == 9);
@@ -537,7 +368,7 @@ void GlyphSubstituterTester::testChainContextSubstitution()
         SFAlbumInitialize(&album);
 
         SFCodepoint input[] = { 1, 1, 1, 1, 2, 3, 3, 3, 3 };
-        processSubtable(subtable, &album, input, sizeof(input) / sizeof(SFCodepoint), referrals, 3);
+        processGSUB(&album, input, sizeof(input) / sizeof(SFCodepoint), subtable, referrals, 3);
 
         /* Test the glyph count. */
         SFAssert(SFAlbumGetGlyphCount(&album) == 9);
@@ -554,12 +385,4 @@ void GlyphSubstituterTester::testChainContextSubstitution()
         SFAssert(output[7] == 3);
         SFAssert(output[8] == 3);
     }
-}
-
-void GlyphSubstituterTester::test()
-{
-    testSingleSubstitution();
-    testMultipleSubstitution();
-    testLigatureSubstitution();
-    testChainContextSubstitution();
 }

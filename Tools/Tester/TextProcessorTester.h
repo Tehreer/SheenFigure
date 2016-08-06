@@ -14,15 +14,21 @@
  * limitations under the License.
  */
 
-#ifndef __SHEENFIGURE_TESTER__GLYPH_SUBSTITUTER_TESTER_H
-#define __SHEENFIGURE_TESTER__GLYPH_SUBSTITUTER_TESTER_H
+#ifndef __SHEENFIGURE_TESTER__TEXT_PROCESSOR_TESTER_H
+#define __SHEENFIGURE_TESTER__TEXT_PROCESSOR_TESTER_H
+
+extern "C" {
+#include <SheenFigure/Source/SFAlbum.h>
+}
+
+#include "OpenType/Common.h"
 
 namespace SheenFigure {
 namespace Tester {
 
-class GlyphSubstituterTester {
+class TextProcessorTester {
 public:
-    GlyphSubstituterTester();
+    TextProcessorTester();
 
     void testSingleSubstitution();
     void testMultipleSubstitution();
@@ -30,6 +36,14 @@ public:
     void testChainContextSubstitution();
 
     void test();
+
+private:
+    void processGSUB(SFAlbumRef album,
+                     SFCodepoint *input, SFUInteger length, OpenType::LookupSubtable &subtable,
+                     OpenType::LookupSubtable *referrals[] = NULL, SFUInteger count = 0);
+    void processGPOS(SFAlbumRef album,
+                     SFCodepoint *input, SFUInteger length, OpenType::LookupSubtable &subtable,
+                     OpenType::LookupSubtable *referrals[] = NULL, SFUInteger count = 0);
 };
 
 }
