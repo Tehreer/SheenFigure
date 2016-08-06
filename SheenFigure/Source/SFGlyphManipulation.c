@@ -33,21 +33,21 @@
 #include "SFGlyphSubstitution.h"
 #include "SFShapingEngine.h"
 
-static SFBoolean _SFApplyChainContextF3(SFTextProcessorRef processor, SFData chainContext);
-static void _SFApplyContextRecord(SFTextProcessorRef processor, SFData contextRecord, SFUInteger startIndex, SFUInteger endIndex);
+static SFBoolean _SFApplyChainContextF3(SFTextProcessorRef processor, SFFeatureKind featureKind, SFData chainContext);
+static void _SFApplyContextRecord(SFTextProcessorRef processor, SFFeatureKind featureKind, SFData contextRecord, SFUInteger startIndex, SFUInteger endIndex);
 
-SF_PRIVATE SFBoolean _SFApplyExtensionSubtable(SFTextProcessorRef processor, SFData extensionSubtable)
+SF_PRIVATE SFBoolean _SFApplyExtensionSubtable(SFTextProcessorRef processor, SFFeatureKind featureKind, SFData extension)
 {
-    SFUInt16 format = SFExtension_Format(extensionSubtable);
+    SFUInt16 format = SFExtension_Format(extension);
 
     switch (format) {
     case 1:
         {
-            SFLookupType lookupType = SFExtensionF1_LookupType(extensionSubtable);
-            SFUInt32 offset = SFExtensionF1_ExtensionOffset(extensionSubtable);
-            SFData innerSubtable = SFData_Subdata(extensionSubtable, offset);
+            SFLookupType lookupType = SFExtensionF1_LookupType(extension);
+            SFUInt32 offset = SFExtensionF1_ExtensionOffset(extension);
+            SFData innerSubtable = SFData_Subdata(extension, offset);
 
-            switch (processor->_featureKind) {
+            switch (featureKind) {
             case SFFeatureKindSubstitution:
                 return _SFApplySubstitutionSubtable(processor, lookupType, innerSubtable);
 
@@ -61,19 +61,19 @@ SF_PRIVATE SFBoolean _SFApplyExtensionSubtable(SFTextProcessorRef processor, SFD
     return SFFalse;
 }
 
-SF_PRIVATE SFBoolean _SFApplyChainContextSubtable(SFTextProcessorRef processor, SFData chainContext)
+SF_PRIVATE SFBoolean _SFApplyChainContextSubtable(SFTextProcessorRef processor, SFFeatureKind featureKind, SFData chainContext)
 {
     SFUInt16 format = SFChainContext_Format(chainContext);
 
     switch (format) {
     case 3:
-        return _SFApplyChainContextF3(processor, chainContext);
+        return _SFApplyChainContextF3(processor, featureKind, chainContext);
     }
 
     return SFFalse;
 }
 
-static SFBoolean _SFApplyChainContextF3(SFTextProcessorRef processor, SFData chainContext)
+static SFBoolean _SFApplyChainContextF3(SFTextProcessorRef processor, SFFeatureKind featureKind, SFData chainContext)
 {
     SFData backtrackRecord = SFChainContextF3_BacktrackRecord(chainContext);
     SFUInt16 backtrackCount = SFBacktrackRecord_GlyphCount(backtrackRecord);
@@ -168,7 +168,7 @@ static SFBoolean _SFApplyChainContextF3(SFTextProcessorRef processor, SFData cha
                 }
             }
 
-            _SFApplyContextRecord(processor, contextRecord, locator->index, (inputIndex - locator->index) + 1);
+            _SFApplyContextRecord(processor, featureKind, contextRecord, locator->index, (inputIndex - locator->index) + 1);
             return SFTrue;
         }
     }
@@ -177,7 +177,7 @@ NotMatched:
     return SFFalse;
 }
 
-static void _SFApplyContextRecord(SFTextProcessorRef processor, SFData contextRecord, SFUInteger index, SFUInteger count) {
+static void _SFApplyContextRecord(SFTextProcessorRef processor, SFFeatureKind featureKind, SFData contextRecord, SFUInteger index, SFUInteger count) {
     SFLocatorRef contextLocator = &processor->_locator;
     SFLocator originalLocator = *contextLocator;
     SFUInt16 lookupCount;
@@ -200,7 +200,7 @@ static void _SFApplyContextRecord(SFTextProcessorRef processor, SFData contextRe
         if (SFLocatorMoveNext(contextLocator)) {
             /* Skip the glyphs till sequence index and apply the lookup. */
             if (SFLocatorSkip(contextLocator, sequenceIndex)) {
-                _SFApplyLookup(processor, lookupListIndex);
+                _SFApplyLookup(processor, featureKind, lookupListIndex);
             }
         }
     }

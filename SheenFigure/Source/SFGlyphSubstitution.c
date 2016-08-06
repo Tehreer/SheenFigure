@@ -21,6 +21,7 @@
 #include "SFData.h"
 #include "SFGSUB.h"
 #include "SFLocator.h"
+#include "SFPattern.h"
 #include "SFOpenType.h"
 
 #include "SFGlyphDiscovery.h"
@@ -84,10 +85,10 @@ SF_PRIVATE SFBoolean _SFApplySubstitutionSubtable(SFTextProcessorRef processor, 
         break;
 
     case SFLookupTypeChainingContext:
-        return _SFApplyChainContextSubtable(processor, subtable);
+        return _SFApplyChainContextSubtable(processor, SFFeatureKindSubstitution, subtable);
 
     case SFLookupTypeExtension:
-        return _SFApplyExtensionSubtable(processor, subtable);
+        return _SFApplyExtensionSubtable(processor, SFFeatureKindSubstitution, subtable);
 
     case SFLookupTypeReverseChainingContext:
         break;

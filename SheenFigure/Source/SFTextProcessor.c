@@ -34,10 +34,11 @@
 
 static SFData _SFGetLookupFromHeader(SFData header, SFUInt16 lookupIndex);
 
-static void _SFApplyFeatureRange(SFTextProcessorRef processor, SFUInteger index, SFUInteger count, SFFeatureKind featureKind);
-static void _SFApplyFeatureUnit(SFTextProcessorRef processor, SFFeatureUnitRef featureUnit);
+static void _SFApplyFeatureRange(SFTextProcessorRef processor, SFFeatureKind featureKind, SFUInteger index, SFUInteger count);
+static void _SFApplyFeatureUnit(SFTextProcessorRef processor, SFFeatureKind featureKind, SFFeatureUnitRef featureUnit);
 
-SF_INTERNAL void SFTextProcessorInitialize(SFTextProcessorRef textProcessor, SFPatternRef pattern, SFAlbumRef album, SFTextDirection textDirection, SFTextMode textMode)
+SF_INTERNAL void SFTextProcessorInitialize(SFTextProcessorRef textProcessor, SFPatternRef pattern,
+    SFAlbumRef album, SFTextDirection textDirection, SFTextMode textMode)
 {
     SFData gdef;
 
@@ -71,7 +72,7 @@ SF_INTERNAL void SFTextProcessorSubstituteGlyphs(SFTextProcessorRef textProcesso
 {
     SFPatternRef pattern = textProcessor->_pattern;
 
-    _SFApplyFeatureRange(textProcessor, 0, pattern->featureUnits.gsub, SFFeatureKindSubstitution);
+    _SFApplyFeatureRange(textProcessor, SFFeatureKindSubstitution, 0, pattern->featureUnits.gsub);
     SFAlbumEndFilling(textProcessor->_album);
 }
 
@@ -95,7 +96,7 @@ SF_INTERNAL void SFTextProcessorPositionGlyphs(SFTextProcessorRef textProcessor)
         SFAlbumSetAdvance(album, index, advance);
     }
 
-    _SFApplyFeatureRange(textProcessor, pattern->featureUnits.gsub, pattern->featureUnits.gpos, SFFeatureKindPositioning);
+    _SFApplyFeatureRange(textProcessor, SFFeatureKindPositioning, pattern->featureUnits.gsub, pattern->featureUnits.gpos);
     _SFResolveAttachments(textProcessor);
 
     SFAlbumEndArranging(album);
@@ -116,20 +117,18 @@ static SFData _SFGetLookupFromHeader(SFData header, SFUInt16 lookupIndex)
     return lookup;
 }
 
-static void _SFApplyFeatureRange(SFTextProcessorRef processor, SFUInteger index, SFUInteger count, SFFeatureKind featureKind)
+static void _SFApplyFeatureRange(SFTextProcessorRef processor, SFFeatureKind featureKind, SFUInteger index, SFUInteger count)
 {
     SFPatternRef pattern = processor->_pattern;
     SFUInteger limit = index + count;
 
-    processor->_featureKind = featureKind;
-
     for (; index < limit; index++) {
         /* Apply the feature unit. */
-        _SFApplyFeatureUnit(processor, &pattern->featureUnits.items[index]);
+        _SFApplyFeatureUnit(processor, featureKind, &pattern->featureUnits.items[index]);
     }
 }
 
-static void _SFApplyFeatureUnit(SFTextProcessorRef processor, SFFeatureUnitRef featureUnit)
+static void _SFApplyFeatureUnit(SFTextProcessorRef processor, SFFeatureKind featureKind, SFFeatureUnitRef featureUnit)
 {
     SFUInt16 *lookupArray = featureUnit->lookupIndexes.items;
     SFUInteger lookupCount = featureUnit->lookupIndexes.count;
@@ -142,18 +141,18 @@ static void _SFApplyFeatureUnit(SFTextProcessorRef processor, SFFeatureUnitRef f
         SFLocatorSetFeatureMask(locator, featureUnit->featureMask);
 
         while (SFLocatorMoveNext(locator)) {
-            _SFApplyLookup(processor, lookupArray[lookupIndex]);
+            _SFApplyLookup(processor, featureKind, lookupArray[lookupIndex]);
         }
     }
 }
 
-SF_PRIVATE void _SFApplyLookup(SFTextProcessorRef processor, SFUInt16 lookupIndex)
+SF_PRIVATE void _SFApplyLookup(SFTextProcessorRef processor, SFFeatureKind featureKind, SFUInt16 lookupIndex)
 {
     SFFontRef font = processor->_pattern->font;
     SFLocatorRef locator = &processor->_locator;
     SFData lookup;
 
-    switch (processor->_featureKind) {
+    switch (featureKind) {
     case SFFeatureKindSubstitution:
         lookup = _SFGetLookupFromHeader(font->tables.gsub, lookupIndex);
         _SFApplySubstitutionLookup(processor, lookup);

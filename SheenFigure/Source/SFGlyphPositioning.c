@@ -25,6 +25,7 @@
 #include "SFData.h"
 #include "SFGPOS.h"
 #include "SFLocator.h"
+#include "SFPattern.h"
 #include "SFOpenType.h"
 
 #include "SFGlyphManipulation.h"
@@ -118,10 +119,10 @@ SF_PRIVATE SFBoolean _SFApplyPositioningSubtable(SFTextProcessorRef processor, S
         break;
 
     case SFLookupTypeChainedContextPositioning:
-        return _SFApplyChainContextSubtable(processor, subtable);
+        return _SFApplyChainContextSubtable(processor, SFFeatureKindPositioning, subtable);
 
     case SFLookupTypeExtensionPositioning:
-        return _SFApplyExtensionSubtable(processor, subtable);
+        return _SFApplyExtensionSubtable(processor, SFFeatureKindPositioning, subtable);
     }
 
     return SFFalse;
