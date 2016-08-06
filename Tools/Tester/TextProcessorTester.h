@@ -35,6 +35,8 @@ public:
     void testLigatureSubstitution();
     void testChainContextSubstitution();
 
+    void testSingleAdjustment();
+
     void test();
 
 private:
