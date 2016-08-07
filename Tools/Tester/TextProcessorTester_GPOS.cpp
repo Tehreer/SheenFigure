@@ -30,7 +30,7 @@ using namespace std;
 using namespace SheenFigure::Tester;
 using namespace SheenFigure::Tester::OpenType;
 
-void TextProcessorTester::testSingleAdjustment()
+void TextProcessorTester::testSinglePositioning()
 {
     Glyph glyphs[] = { 1 };
 

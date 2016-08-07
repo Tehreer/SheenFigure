@@ -22,12 +22,11 @@
 #include "AlbumTester.h"
 #include "FontTester.h"
 #include "GeneralCategoryLookupTester.h"
-#include "GlyphDiscovererTester.h"
-#include "GlyphSubstituterTester.h"
 #include "JoiningTypeLookupTester.h"
 #include "ListTester.h"
 #include "PatternTester.h"
 #include "SchemeTester.h"
+#include "TextProcessorTester.h"
 
 using namespace std;
 using namespace SheenFigure::Parser;
@@ -39,7 +38,6 @@ int main(int argc, const char * argv[])
 
     ArabicShaping arabicShaping(dir);
     UnicodeData unicodeData(dir);
-
     AlbumTester albumTester;
     JoiningTypeLookupTester joiningTypeLookuptester(arabicShaping);
     GeneralCategoryLookupTester generalCategoryLookupTester(unicodeData);
@@ -47,8 +45,7 @@ int main(int argc, const char * argv[])
     FontTester fontTester;
     PatternTester patternTester;
     SchemeTester schemeTester;
-    GlyphDiscovererTester glyphDiscovererTester;
-    GlyphSubstituterTester glyphSubstituterTester;
+    TextProcessorTester textProcessorTester;
 
     albumTester.test();
     joiningTypeLookuptester.test();
@@ -57,10 +54,9 @@ int main(int argc, const char * argv[])
     fontTester.test();
     patternTester.test();
     schemeTester.test();
-    glyphDiscovererTester.test();
-    glyphSubstituterTester.test();
-
+    textProcessorTester.test();
+    
     getchar();
-
+    
     return 0;
 }

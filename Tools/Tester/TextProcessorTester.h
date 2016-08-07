@@ -35,7 +35,7 @@ public:
     void testLigatureSubstitution();
     void testChainContextSubstitution();
 
-    void testSingleAdjustment();
+    void testSinglePositioning();
     void testPairPositioning();
     void testCursivePositioning();
     void testMarkToBasePositioning();

@@ -58,7 +58,7 @@ static SFGlyphID getGlyphID(void *object, SFCodepoint codepoint)
 
 static SFAdvance getGlyphAdvance(void *object, SFFontLayout fontLayout, SFGlyphID glyphID)
 {
-    return (glyphID * 100);
+    return 100;
 }
 
 static void writeTable(Writer &writer,
@@ -97,14 +97,14 @@ static void writeTable(Writer &writer,
     testFeature.lookupListIndex = lookupIndex;
 
     /* Create the feature record. */
-    FeatureRecord featureRecord[1];
-    memcpy(&featureRecord[0].featureTag, "test", 4);
-    featureRecord[0].feature = &testFeature;
+    FeatureRecord featureRecord;
+    memcpy(&featureRecord.featureTag, "test", 4);
+    featureRecord.feature = &testFeature;
 
     /* Create the feature list table. */
     FeatureListTable featureList;
     featureList.featureCount = 1;
-    featureList.featureRecord = featureRecord;
+    featureList.featureRecord = &featureRecord;
 
     UInt16 dfltFeatureIndex[] = { 0 };
 
@@ -174,7 +174,7 @@ static void processSubtable(SFAlbumRef album,
     SFPatternBuilderSetFont(&builder, font);
     SFPatternBuilderSetScript(&builder, SFTagMake('d', 'f', 'l', 't'), SFTextDirectionLeftToRight);
     SFPatternBuilderSetLanguage(&builder, SFTagMake('d', 'f', 'l', 't'));
-    SFPatternBuilderBeginFeatures(&builder, SFFeatureKindSubstitution);
+    SFPatternBuilderBeginFeatures(&builder, positioning ? SFFeatureKindPositioning : SFFeatureKindSubstitution);
     SFPatternBuilderAddFeature(&builder, SFTagMake('t', 'e', 's', 't'), 0);
     SFPatternBuilderAddLookup(&builder, 0);
     SFPatternBuilderMakeFeatureUnit(&builder);
@@ -229,4 +229,10 @@ void TextProcessorTester::test()
     testMultipleSubstitution();
     testLigatureSubstitution();
     testChainContextSubstitution();
+    testSinglePositioning();
+    testPairPositioning();
+    testCursivePositioning();
+    testMarkToBasePositioning();
+    testMarkToLigaturePositioning();
+    testMarkToMarkPositioning();
 }
