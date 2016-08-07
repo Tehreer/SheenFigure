@@ -37,6 +37,7 @@ public:
 
     void testSingleAdjustment();
     void testPairPositioning();
+    void testCursivePositioning();
 
     void test();
 

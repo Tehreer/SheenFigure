@@ -377,7 +377,7 @@ struct CursiveAttachmentPosSubtable : public LookupSubtable {
         writer.defer(coverage);
         writer.write(entryExitCount);
         for (int i = 0; i < entryExitCount; i++) {
-            entryExitRecord[i].write(writer);
+            writer.write(&entryExitRecord[i]);
         }
 
         writer.exit();

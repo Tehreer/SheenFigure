@@ -195,3 +195,70 @@ void TextProcessorTester::testPairPositioning()
         SFAssert(memcmp(actual, expected, sizeof(expected) / sizeof(SFPoint)) == 0);
     }
 }
+
+void TextProcessorTester::testCursivePositioning()
+{
+    Glyph glyphs[] = { 1, 2, 3 };
+
+    /* Create the coverage table. */
+    CoverageTable coverage;
+    coverage.coverageFormat = 1;
+    coverage.format1.glyphCount = sizeof(glyphs) / sizeof(Glyph);
+    coverage.format1.glyphArray = glyphs;
+
+    AnchorTable firstExitAnchor;
+    firstExitAnchor.anchorFormat = 1;
+    firstExitAnchor.xCoordinate = 100;
+    firstExitAnchor.yCoordinate = 0;
+
+    EntryExitRecord firstRecord;
+    firstRecord.entryAnchor = NULL;
+    firstRecord.exitAnchor = &firstExitAnchor;
+
+    AnchorTable secondEntryAnchor;
+    secondEntryAnchor.anchorFormat = 1;
+    secondEntryAnchor.xCoordinate = 10;
+    secondEntryAnchor.yCoordinate = -10;
+
+    AnchorTable secondExitAnchor;
+    secondExitAnchor.anchorFormat = 1;
+    secondExitAnchor.xCoordinate = 90;
+    secondExitAnchor.yCoordinate = -10;
+
+    EntryExitRecord secondRecord;
+    secondRecord.entryAnchor = &secondEntryAnchor;
+    secondRecord.exitAnchor = &secondExitAnchor;
+
+    AnchorTable thirdEntryAnchor;
+    thirdEntryAnchor.anchorFormat = 1;
+    thirdEntryAnchor.xCoordinate = -10;
+    thirdEntryAnchor.yCoordinate = 10;
+
+    EntryExitRecord thirdRecord;
+    thirdRecord.entryAnchor = &thirdEntryAnchor;
+    thirdRecord.exitAnchor = NULL;
+
+    EntryExitRecord allRecords[] = { firstRecord, secondRecord, thirdRecord };
+
+    CursiveAttachmentPosSubtable subtable;
+    subtable.posFormat = 1;
+    subtable.coverage = &coverage;
+    subtable.entryExitCount = sizeof(allRecords) / sizeof(EntryExitRecord);
+    subtable.entryExitRecord = allRecords;
+
+    SFAlbum album;
+    SFAlbumInitialize(&album);
+
+    SFCodepoint input[] = { 1, 2, 3 };
+    processGPOS(&album, input, sizeof(input) / sizeof(SFCodepoint), subtable);
+
+    /* Test the output. */
+    const SFPoint *actualOffsets = SFAlbumGetGlyphOffsetsPtr(&album);
+    const SFAdvance *actualAdvances = SFAlbumGetGlyphAdvancesPtr(&album);
+    const SFPoint expectedOffsets[] = { {0, 0}, { -10, 10, }, { 10, -10 } };
+    const SFAdvance expectedAdvances[] = { 100, 80, 113 };
+
+    SFAssert(SFAlbumGetGlyphCount(&album) == (sizeof(expectedOffsets) / sizeof(SFPoint)));
+    SFAssert(memcmp(actualOffsets, expectedOffsets, sizeof(expectedOffsets) / sizeof(SFPoint)) == 0);
+    SFAssert(memcmp(actualAdvances, expectedAdvances, sizeof(expectedAdvances) / sizeof(SFAdvance)) == 0);
+}
