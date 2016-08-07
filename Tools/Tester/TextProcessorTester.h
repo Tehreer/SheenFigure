@@ -36,6 +36,7 @@ public:
     void testChainContextSubstitution();
 
     void testSingleAdjustment();
+    void testPairPositioning();
 
     void test();
 

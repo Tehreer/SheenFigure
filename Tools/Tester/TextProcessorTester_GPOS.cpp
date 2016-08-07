@@ -93,3 +93,105 @@ void TextProcessorTester::testSingleAdjustment()
         SFAssert(memcmp(actual, expected, sizeof(expected) / sizeof(SFPoint)) == 0);
     }
 }
+
+void TextProcessorTester::testPairPositioning()
+{
+    Glyph glyphs[] = { 1 };
+
+    /* Create the coverage table. */
+    CoverageTable coverage;
+    coverage.coverageFormat = 1;
+    coverage.format1.glyphCount = sizeof(glyphs) / sizeof(Glyph);
+    coverage.format1.glyphArray = glyphs;
+
+    /* Test with format 1. */
+    {
+        ValueRecord value2Record;
+        value2Record.xPlacement = -100;
+        value2Record.yPlacement = -100;
+
+        PairValueRecord pairValueRecord;
+        pairValueRecord.secondGlyph = 2;
+        pairValueRecord.value1 = NULL;
+        pairValueRecord.value2 = &value2Record;
+
+        PairSetTable pairSet;
+        pairSet.pairValueCount = 1;
+        pairSet.pairValueRecord = &pairValueRecord;
+
+        PairAdjustmentPosSubtable subtable;
+        subtable.posFormat = 1;
+        subtable.coverage = &coverage;
+        subtable.valueFormat1 = ValueFormat::None;
+        subtable.valueFormat2 = ValueFormat::XPlacement | ValueFormat::YPlacement;
+        subtable.format1.pairSetCount = 1;
+        subtable.format1.pairSetTable = &pairSet;
+
+        SFAlbum album;
+        SFAlbumInitialize(&album);
+
+        SFCodepoint input[] = { 1, 2 };
+        processGPOS(&album, input, sizeof(input) / sizeof(SFCodepoint), subtable);
+
+        /* Test the output offsets. */
+        const SFPoint *actual = SFAlbumGetGlyphOffsetsPtr(&album);
+        const SFPoint expected[] = { {0, 0}, { -100, -100, } };
+
+        SFAssert(SFAlbumGetGlyphCount(&album) == (sizeof(expected) / sizeof(SFPoint)));
+        SFAssert(memcmp(actual, expected, sizeof(expected) / sizeof(SFPoint)) == 0);
+    }
+
+    /* Test with format 2. */
+    {
+        UInt16 classValues1[] = { 0 };
+
+        ClassDefTable classDef1;
+        classDef1.classFormat = 1;
+        classDef1.format1.startGlyph = 1;
+        classDef1.format1.glyphCount = 1;
+        classDef1.format1.classValueArray = classValues1;
+
+        UInt16 classValues2[] = { 0 };
+
+        ClassDefTable classDef2;
+        classDef2.classFormat = 1;
+        classDef2.format1.startGlyph = 2;
+        classDef2.format1.glyphCount = 1;
+        classDef2.format1.classValueArray = classValues2;
+
+        ValueRecord value2Record;
+        value2Record.xPlacement = -100;
+        value2Record.yPlacement = -100;
+
+        Class2Record class2Record;
+        class2Record.value1 = NULL;
+        class2Record.value2 = &value2Record;
+
+        Class1Record class1Record;
+        class1Record.class2Record = &class2Record;
+
+        PairAdjustmentPosSubtable subtable;
+        subtable.posFormat = 2;
+        subtable.coverage = &coverage;
+        subtable.valueFormat1 = ValueFormat::None;
+        subtable.valueFormat2 = ValueFormat::XPlacement | ValueFormat::YPlacement;
+        subtable.format2.classDef1 = &classDef1;
+        subtable.format2.classDef2 = &classDef2;
+        subtable.format2.class1Count = 1;
+        subtable.format2.class2Count = 1;
+        subtable.format2.class1Record = &class1Record;
+
+        SFAlbum album;
+        SFAlbumInitialize(&album);
+
+        SFCodepoint input[] = { 1, 2 };
+        processGPOS(&album, input, sizeof(input) / sizeof(SFCodepoint), subtable);
+
+        /* Test the output glyphs. */
+        const SFPoint *actual = SFAlbumGetGlyphOffsetsPtr(&album);
+        const SFPoint expected[] = { {0, 0}, { -100, -100, } };
+
+        SFAssert(SFAlbumGetGlyphCount(&album) == (sizeof(expected) / sizeof(SFPoint)));
+        SFAssert(memcmp(actual, expected, sizeof(expected) / sizeof(SFPoint)) == 0);
+    }
+}

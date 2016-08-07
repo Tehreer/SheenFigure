@@ -26,6 +26,7 @@ namespace Tester {
 namespace OpenType {
 
 enum class ValueFormat : UInt16 {
+    None = 0x0000,
     XPlacement = 0x0001,                // Includes horizontal adjustment for placement
     YPlacement = 0x0002,                // Includes vertical adjustment for placement
     XAdvance = 0x0004,                  // Includes horizontal adjustment for advance
@@ -143,18 +144,22 @@ struct SinglePosSubtable : public LookupSubtable {
 
 struct PairValueRecord : public Table {
     Glyph secondGlyph;                  // GlyphID of second glyph in the pair-first glyph is listed in the Coverage table
-    ValueRecord value1;                 // Positioning data for the first glyph in the pair
-    ValueRecord value2;                 // Positioning data for the second glyph in the pair
+    ValueRecord *value1;                // Positioning data for the first glyph in the pair
+    ValueRecord *value2;                // Positioning data for the second glyph in the pair
 
     void preset(ValueFormat valueFormat1, ValueFormat valueFormat2) {
-        value1.preset(valueFormat1);
-        value2.preset(valueFormat2);
+        if (value1 || valueFormat1 != ValueFormat::None) {
+            value1->preset(valueFormat1);
+        }
+        if (value2 || valueFormat2 != ValueFormat::None) {
+            value2->preset(valueFormat2);
+        }
     }
 
     void write(Writer &writer) override {
         writer.write(secondGlyph);
-        writer.write(&value1);
-        writer.write(&value2);
+        writer.write(value1);
+        writer.write(value2);
     }
 };
 
@@ -181,17 +186,21 @@ struct PairSetTable : public Table {
 };
 
 struct Class2Record : public Table {
-    ValueRecord value1;                 // Positioning for first glyph-empty if ValueFormat1 = 0
-    ValueRecord value2;                 // Positioning for second glyph-empty if ValueFormat2 = 0
+    ValueRecord *value1;                // Positioning for first glyph-empty if ValueFormat1 = 0
+    ValueRecord *value2;                // Positioning for second glyph-empty if ValueFormat2 = 0
 
     void preset(ValueFormat valueFormat1, ValueFormat valueFormat2) {
-        value1.preset(valueFormat1);
-        value2.preset(valueFormat2);
+        if (value1 || valueFormat1 != ValueFormat::None) {
+            value1->preset(valueFormat1);
+        }
+        if (value2 || valueFormat2 != ValueFormat::None) {
+            value2->preset(valueFormat2);
+        }
     }
 
     void write(Writer &writer) override {
-        writer.write(&value1);
-        writer.write(&value2);
+        writer.write(value1);
+        writer.write(value2);
     }
 };
 
@@ -273,7 +282,6 @@ struct PairAdjustmentPosSubtable : public LookupSubtable {
             writer.defer(coverage);
             writer.write((UInt16)valueFormat1);
             writer.write((UInt16)valueFormat2);
-            writer.write(format1.pairSetCount);
             writer.defer(format2.classDef1);
             writer.defer(format2.classDef2);
             writer.write(format2.class1Count);
