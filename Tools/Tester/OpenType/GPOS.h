@@ -92,7 +92,7 @@ struct SinglePosSubtable : public LookupSubtable {
 
     union {
         struct {
-            ValueRecord value;          // Defines positioning value(s)-applied to all glyphs in the Coverage table
+            ValueRecord *value;         // Defines positioning value(s)-applied to all glyphs in the Coverage table
         } format1;
 
         struct {
@@ -108,14 +108,14 @@ struct SinglePosSubtable : public LookupSubtable {
     void write(Writer &writer) override {
         switch (posFormat) {
         case 1:
-            format1.value.preset(valueFormat);
+            format1.value->preset(valueFormat);
 
             writer.enter();
 
             writer.write(posFormat);
             writer.defer(coverage);
             writer.write((UInt16)valueFormat);
-            writer.write(&format1.value);
+            writer.write(format1.value);
 
             writer.exit();
             break;
@@ -229,8 +229,8 @@ struct PairAdjustmentPosSubtable : public LookupSubtable {
         } format1;
 
         struct {
-            ClassDefTable classDef1;    // Offset to ClassDef table-from beginning of PairPos subtable-for the first glyph of the pair
-            ClassDefTable classDef2;    // Offset to ClassDef table-from beginning of PairPos subtable-for the second glyph of the pair
+            ClassDefTable *classDef1;   // Offset to ClassDef table-from beginning of PairPos subtable-for the first glyph of the pair
+            ClassDefTable *classDef2;   // Offset to ClassDef table-from beginning of PairPos subtable-for the second glyph of the pair
             UInt16 class1Count;         // Number of classes in ClassDef1 table-includes Class0
             UInt16 class2Count;         // Number of classes in ClassDef2 table-includes Class0
             Class1Record *class1Record; // Array of Class1 records-ordered by Class1
@@ -274,8 +274,8 @@ struct PairAdjustmentPosSubtable : public LookupSubtable {
             writer.write((UInt16)valueFormat1);
             writer.write((UInt16)valueFormat2);
             writer.write(format1.pairSetCount);
-            writer.defer(&format2.classDef1);
-            writer.defer(&format2.classDef2);
+            writer.defer(format2.classDef1);
+            writer.defer(format2.classDef2);
             writer.write(format2.class1Count);
             writer.write(format2.class2Count);
             for (int i = 0; i < format2.class1Count; i++) {

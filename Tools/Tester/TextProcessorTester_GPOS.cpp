@@ -32,5 +32,64 @@ using namespace SheenFigure::Tester::OpenType;
 
 void TextProcessorTester::testSingleAdjustment()
 {
-    
+    Glyph glyphs[] = { 1 };
+
+    /* Create the coverage table. */
+    CoverageTable coverage;
+    coverage.coverageFormat = 1;
+    coverage.format1.glyphCount = sizeof(glyphs) / sizeof(Glyph);
+    coverage.format1.glyphArray = glyphs;
+
+    /* Test with format 1. */
+    {
+        ValueRecord record;
+        record.xPlacement = -100;
+        record.yPlacement = -100;
+
+        SinglePosSubtable subtable;
+        subtable.posFormat = 1;
+        subtable.coverage = &coverage;
+        subtable.valueFormat = ValueFormat::XPlacement | ValueFormat::YPlacement;
+        subtable.format1.value = &record;
+
+        SFAlbum album;
+        SFAlbumInitialize(&album);
+
+        SFCodepoint input[] = { 1 };
+        processGPOS(&album, input, sizeof(input) / sizeof(SFCodepoint), subtable);
+
+        /* Test the output offsets. */
+        const SFPoint *actual = SFAlbumGetGlyphOffsetsPtr(&album);
+        const SFPoint expected[] = { { -100, -100, } };
+
+        SFAssert(SFAlbumGetGlyphCount(&album) == (sizeof(expected) / sizeof(SFPoint)));
+        SFAssert(memcmp(actual, expected, sizeof(expected) / sizeof(SFPoint)) == 0);
+    }
+
+    /* Test with format 2. */
+    {
+        ValueRecord record;
+        record.xPlacement = -100;
+        record.yPlacement = -100;
+
+        SinglePosSubtable subtable;
+        subtable.posFormat = 2;
+        subtable.coverage = &coverage;
+        subtable.valueFormat = ValueFormat::XPlacement | ValueFormat::YPlacement;
+        subtable.format2.valueCount = 1;
+        subtable.format2.value = &record;
+
+        SFAlbum album;
+        SFAlbumInitialize(&album);
+
+        SFCodepoint input[] = { 1 };
+        processGPOS(&album, input, sizeof(input) / sizeof(SFCodepoint), subtable);
+
+        /* Test the output glyphs. */
+        const SFPoint *actual = SFAlbumGetGlyphOffsetsPtr(&album);
+        const SFPoint expected[] = { { -100, -100, } };
+
+        SFAssert(SFAlbumGetGlyphCount(&album) == (sizeof(expected) / sizeof(SFPoint)));
+        SFAssert(memcmp(actual, expected, sizeof(expected) / sizeof(SFPoint)) == 0);
+    }
 }
