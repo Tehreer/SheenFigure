@@ -189,7 +189,7 @@ void TextProcessorTester::testPairPositioning()
 
         /* Test the output glyphs. */
         const SFPoint *actual = SFAlbumGetGlyphOffsetsPtr(&album);
-        const SFPoint expected[] = { {0, 0}, { -100, -100, } };
+        const SFPoint expected[] = { { 0, 0 }, { -100, -100, } };
 
         SFAssert(SFAlbumGetGlyphCount(&album) == (sizeof(expected) / sizeof(SFPoint)));
         SFAssert(memcmp(actual, expected, sizeof(expected) / sizeof(SFPoint)) == 0);
@@ -255,8 +255,74 @@ void TextProcessorTester::testCursivePositioning()
     /* Test the output. */
     const SFPoint *actualOffsets = SFAlbumGetGlyphOffsetsPtr(&album);
     const SFAdvance *actualAdvances = SFAlbumGetGlyphAdvancesPtr(&album);
-    const SFPoint expectedOffsets[] = { {0, 0}, { -10, 10, }, { 10, -10 } };
-    const SFAdvance expectedAdvances[] = { 100, 80, 113 };
+    const SFPoint expectedOffsets[] = { { 0, 0 }, { -10, 10, }, { 10, -10 } };
+    const SFAdvance expectedAdvances[] = { 100, 80, 100 };
+
+    SFAssert(SFAlbumGetGlyphCount(&album) == (sizeof(expectedOffsets) / sizeof(SFPoint)));
+    SFAssert(memcmp(actualOffsets, expectedOffsets, sizeof(expectedOffsets) / sizeof(SFPoint)) == 0);
+    SFAssert(memcmp(actualAdvances, expectedAdvances, sizeof(expectedAdvances) / sizeof(SFAdvance)) == 0);
+}
+
+void TextProcessorTester::testMarkToBasePositioning()
+{
+    Glyph baseGlyphs[] = { 1 };
+
+    CoverageTable baseCoverage;
+    baseCoverage.coverageFormat = 1;
+    baseCoverage.format1.glyphCount = sizeof(baseGlyphs) / sizeof(Glyph);
+    baseCoverage.format1.glyphArray = baseGlyphs;
+
+    Glyph markGlyphs[] = { 2 };
+
+    CoverageTable markCoverage;
+    markCoverage.coverageFormat = 1;
+    markCoverage.format1.glyphCount = sizeof(markGlyphs) / sizeof(Glyph);
+    markCoverage.format1.glyphArray = markGlyphs;
+
+    AnchorTable markAnchor;
+    markAnchor.anchorFormat = 1;
+    markAnchor.xCoordinate = 50;
+    markAnchor.yCoordinate = -50;
+
+    MarkRecord markRecord;
+    markRecord.clazz = 0;
+    markRecord.markAnchor = &markAnchor;
+
+    MarkArrayTable markArray;
+    markArray.markCount = 1;
+    markArray.markRecord = &markRecord;
+
+    AnchorTable baseAnchor;
+    baseAnchor.anchorFormat = 1;
+    baseAnchor.xCoordinate = -50;
+    baseAnchor.yCoordinate = 50;
+
+    BaseRecord baseRecord;
+    baseRecord.baseAnchor = &baseAnchor;
+
+    BaseArrayTable baseArray;
+    baseArray.baseCount = 1;
+    baseArray.baseRecord = &baseRecord;
+
+    MarkToBaseAttachmentPosSubtable subtable;
+    subtable.posFormat = 1;
+    subtable.markCoverage = &markCoverage;
+    subtable.baseCoverage = &baseCoverage;
+    subtable.classCount = 1;
+    subtable.markArray = &markArray;
+    subtable.baseArray = &baseArray;
+
+    SFAlbum album;
+    SFAlbumInitialize(&album);
+
+    SFCodepoint input[] = { 1, 2 };
+    processGPOS(&album, input, sizeof(input) / sizeof(SFCodepoint), subtable);
+
+    /* Test the output. */
+    const SFPoint *actualOffsets = SFAlbumGetGlyphOffsetsPtr(&album);
+    const SFAdvance *actualAdvances = SFAlbumGetGlyphAdvancesPtr(&album);
+    const SFPoint expectedOffsets[] = { { 0, 0 }, { -100, 100, } };
+    const SFAdvance expectedAdvances[] = { 100, 100 };
 
     SFAssert(SFAlbumGetGlyphCount(&album) == (sizeof(expectedOffsets) / sizeof(SFPoint)));
     SFAssert(memcmp(actualOffsets, expectedOffsets, sizeof(expectedOffsets) / sizeof(SFPoint)) == 0);

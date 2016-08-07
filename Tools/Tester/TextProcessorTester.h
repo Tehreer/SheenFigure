@@ -38,6 +38,7 @@ public:
     void testSingleAdjustment();
     void testPairPositioning();
     void testCursivePositioning();
+    void testMarkToBasePositioning();
 
     void test();
 
