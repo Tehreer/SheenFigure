@@ -39,6 +39,8 @@ public:
     void testPairPositioning();
     void testCursivePositioning();
     void testMarkToBasePositioning();
+    void testMarkToLigaturePositioning();
+    void testMarkToMarkPositioning();
 
     void test();
 
