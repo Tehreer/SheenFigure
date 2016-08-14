@@ -59,9 +59,9 @@ static SFFeatureInfo _SFArabicFeatureInfoArray[] = {
     { SFTagMake('m', 's', 'e', 't'), SFFeatureBehaviourRequired, _SFArabicFeatureMaskNone },
     /* Positioning features */
     { SFTagMake('c', 'u', 'r', 's'), SFFeatureBehaviourRequired, _SFArabicFeatureMaskNone },
+    { SFTagMake('k', 'e', 'r', 'n'), SFFeatureBehaviourRequired, _SFArabicFeatureMaskNone },
     { SFTagMake('m', 'a', 'r', 'k'), SFFeatureBehaviourRequired, _SFArabicFeatureMaskNone },
     { SFTagMake('m', 'k', 'm', 'k'), SFFeatureBehaviourRequired, _SFArabicFeatureMaskNone },
-    { SFTagMake('k', 'e', 'r', 'n'), SFFeatureBehaviourRequired, _SFArabicFeatureMaskNone }
 };
 #define _SFArabicFeatureInfoCount (sizeof(_SFArabicFeatureInfoArray) / sizeof(SFFeatureInfo))
 

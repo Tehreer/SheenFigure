@@ -149,7 +149,6 @@ static void _SFApplyFeatureUnit(SFTextProcessorRef processor, SFFeatureKind feat
 SF_PRIVATE void _SFApplyLookup(SFTextProcessorRef processor, SFFeatureKind featureKind, SFUInt16 lookupIndex)
 {
     SFFontRef font = processor->_pattern->font;
-    SFLocatorRef locator = &processor->_locator;
     SFData lookup;
 
     switch (featureKind) {
