@@ -78,8 +78,8 @@ SFShapingKnowledge SFArabicKnowledgeInstance = {
 static SFScriptKnowledgeRef _SFArabicKnowledgeSeekScript(const void *object, SFTag scriptTag)
 {
     switch (scriptTag) {
-    case SFTagMake('a', 'r', 'a', 'b'):
-        return &_SFArabicScriptKnowledge;
+        case SFTagMake('a', 'r', 'a', 'b'):
+            return &_SFArabicScriptKnowledge;
     }
 
     return NULL;
@@ -103,15 +103,15 @@ static SFJoiningType _SFDetermineJoiningType(SFCodepoint codepoint)
         SFGeneralCategory generalCategory = SFGeneralCategoryDetermine(codepoint);
 
         switch (generalCategory) {
-        case SFGeneralCategoryMN:
-        case SFGeneralCategoryME:
-        case SFGeneralCategoryCF:
-            joiningType = SFJoiningTypeT;
-            break;
-            
-        default:
-            joiningType = SFJoiningTypeU;
-            break;
+            case SFGeneralCategoryMN:
+            case SFGeneralCategoryME:
+            case SFGeneralCategoryCF:
+                joiningType = SFJoiningTypeT;
+                break;
+                
+            default:
+                joiningType = SFJoiningTypeU;
+                break;
         }
     }
 
@@ -146,71 +146,71 @@ static void _SFPutArabicFeatureMask(SFAlbumRef album)
 
             /* Normalize the joining type of next character. */
             switch (nextJoiningType) {
-            case SFJoiningTypeT:
-                break;
+                case SFJoiningTypeT:
+                    break;
 
-            case SFJoiningTypeC:
-                nextJoiningType = SFJoiningTypeD;
-                goto Process;
+                case SFJoiningTypeC:
+                    nextJoiningType = SFJoiningTypeD;
+                    goto Process;
 
-            default:
-                goto Process;
+                default:
+                    goto Process;
             }
         }
 
     Process:
         switch (joiningType) {
-        case SFJoiningTypeR:
-            switch (priorJoiningType) {
-            case SFJoiningTypeD:
-                featureMask |= _SFArabicFeatureMaskFinal;
-                break;
+            case SFJoiningTypeR:
+                switch (priorJoiningType) {
+                    case SFJoiningTypeD:
+                        featureMask |= _SFArabicFeatureMaskFinal;
+                        break;
 
-            default:
-                featureMask |= _SFArabicFeatureMaskIsolated;
-                break;
-            }
-            break;
-
-        case SFJoiningTypeD:
-            switch (priorJoiningType) {
-            case SFJoiningTypeD:
-                switch (nextJoiningType) {
-                case SFJoiningTypeR:
-                case SFJoiningTypeD:
-                    featureMask |= _SFArabicFeatureMaskMedial;
-                    break;
-
-                default:
-                    featureMask |= _SFArabicFeatureMaskFinal;
-                    break;
+                    default:
+                        featureMask |= _SFArabicFeatureMaskIsolated;
+                        break;
                 }
                 break;
 
-            default:
-                switch (nextJoiningType) {
-                case SFJoiningTypeR:
-                case SFJoiningTypeD:
-                    featureMask |= _SFArabicFeatureMaskInitial;
-                    break;
-                    
-                default:
-                    featureMask |= _SFArabicFeatureMaskIsolated;
-                    break;
+            case SFJoiningTypeD:
+                switch (priorJoiningType) {
+                    case SFJoiningTypeD:
+                        switch (nextJoiningType) {
+                            case SFJoiningTypeR:
+                            case SFJoiningTypeD:
+                                featureMask |= _SFArabicFeatureMaskMedial;
+                                break;
+
+                            default:
+                                featureMask |= _SFArabicFeatureMaskFinal;
+                                break;
+                        }
+                        break;
+
+                    default:
+                        switch (nextJoiningType) {
+                            case SFJoiningTypeR:
+                            case SFJoiningTypeD:
+                                featureMask |= _SFArabicFeatureMaskInitial;
+                                break;
+                                
+                            default:
+                                featureMask |= _SFArabicFeatureMaskIsolated;
+                                break;
+                        }
+                        break;
                 }
                 break;
-            }
-            break;
 
-        /* Can only occur for first character. Should be treated same as dual joining. */
-        case SFJoiningTypeC:
-            joiningType = SFJoiningTypeD;
-            goto Process;
+            /* Can only occur for first character. Should be treated same as dual joining. */
+            case SFJoiningTypeC:
+                joiningType = SFJoiningTypeD;
+                goto Process;
 
-        /* Can only occur for first character. Should be treated as if there was no character. */
-        case SFJoiningTypeT:
-            joiningType = SFJoiningTypeU;
-            break;
+            /* Can only occur for first character. Should be treated as if there was no character. */
+            case SFJoiningTypeT:
+                joiningType = SFJoiningTypeU;
+                break;
         }
 
         /* Save the mask of current character. */

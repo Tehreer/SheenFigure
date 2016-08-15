@@ -69,29 +69,29 @@ SF_PRIVATE void _SFApplySubstitutionLookup(SFTextProcessorRef processor, SFData 
 SF_PRIVATE SFBoolean _SFApplySubstitutionSubtable(SFTextProcessorRef processor, SFLookupType lookupType, SFData subtable)
 {
     switch (lookupType) {
-    case SFLookupTypeSingle:
-        return _SFApplySingleSubst(processor, subtable);
+        case SFLookupTypeSingle:
+            return _SFApplySingleSubst(processor, subtable);
 
-    case SFLookupTypeMultiple:
-        return _SFApplyMultipleSubst(processor, subtable);
+        case SFLookupTypeMultiple:
+            return _SFApplyMultipleSubst(processor, subtable);
 
-    case SFLookupTypeAlternate:
-        break;
+        case SFLookupTypeAlternate:
+            break;
 
-    case SFLookupTypeLigature:
-        return _SFApplyLigatureSubst(processor, subtable);
+        case SFLookupTypeLigature:
+            return _SFApplyLigatureSubst(processor, subtable);
 
-    case SFLookupTypeContext:
-        break;
+        case SFLookupTypeContext:
+            break;
 
-    case SFLookupTypeChainingContext:
-        return _SFApplyChainContextSubtable(processor, SFFeatureKindSubstitution, subtable);
+        case SFLookupTypeChainingContext:
+            return _SFApplyChainContextSubtable(processor, SFFeatureKindSubstitution, subtable);
 
-    case SFLookupTypeExtension:
-        return _SFApplyExtensionSubtable(processor, SFFeatureKindSubstitution, subtable);
+        case SFLookupTypeExtension:
+            return _SFApplyExtensionSubtable(processor, SFFeatureKindSubstitution, subtable);
 
-    case SFLookupTypeReverseChainingContext:
-        break;
+        case SFLookupTypeReverseChainingContext:
+            break;
     }
 
     return SFFalse;
@@ -108,8 +108,7 @@ static SFBoolean _SFApplySingleSubst(SFTextProcessorRef processor, SFData single
     format = SFSingleSubst_Format(singleSubst);
 
     switch (format) {
-    case 1:
-        {
+        case 1: {
             SFOffset offset = SFSingleSubstF1_CoverageOffset(singleSubst);
             SFData coverage = SFData_Subdata(singleSubst, offset);
             SFUInteger coverageIndex;
@@ -127,11 +126,10 @@ static SFBoolean _SFApplySingleSubst(SFTextProcessorRef processor, SFData single
 
                 return SFTrue;
             }
+            break;
         }
-        break;
 
-    case 2:
-        {
+        case 2: {
             SFOffset offset = SFSingleSubstF2_CoverageOffset(singleSubst);
             SFData coverage = SFData_Subdata(singleSubst, offset);
             SFUInteger coverageIndex;
@@ -152,8 +150,8 @@ static SFBoolean _SFApplySingleSubst(SFTextProcessorRef processor, SFData single
                     return SFTrue;
                 }
             }
+            break;
         }
-        break;
     }
 
     return SFFalse;
@@ -170,8 +168,7 @@ static SFBoolean _SFApplyMultipleSubst(SFTextProcessorRef processor, SFData mult
     format = SFMultipleSubst_Format(multipleSubst);
 
     switch (format) {
-        case 1:
-        {
+        case 1: {
             SFOffset offset = SFMultipleSubstF1_CoverageOffset(multipleSubst);
             SFData coverage = SFData_Subdata(multipleSubst, offset);
             SFUInteger coverageIndex;
@@ -190,8 +187,8 @@ static SFBoolean _SFApplyMultipleSubst(SFTextProcessorRef processor, SFData mult
                     return _SFApplySequence(processor, sequence);
                 }
             }
+            break;
         }
-        break;
     }
 
     return SFFalse;
@@ -265,8 +262,7 @@ static SFBoolean _SFApplyLigatureSubst(SFTextProcessorRef processor, SFData liga
     format = SFLigatureSubst_Format(ligatureSubst);
 
     switch (format) {
-        case 1:
-        {
+        case 1: {
             SFOffset offset = SFLigatureSubstF1_CoverageOffset(ligatureSubst);
             SFData coverage = SFData_Subdata(ligatureSubst, offset);
             SFUInteger coverageIndex;
@@ -284,8 +280,8 @@ static SFBoolean _SFApplyLigatureSubst(SFTextProcessorRef processor, SFData liga
                     return _SFApplyLigatureSet(processor, ligatureSet);
                 }
             }
+            break;
         }
-        break;
     }
 
     return SFFalse;

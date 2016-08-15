@@ -102,8 +102,7 @@ SF_INTERNAL void SFLocatorSetMarkFilteringSet(SFLocatorRef locator, SFUInt16 mar
     if (markGlyphSetsDef) {
         SFUInt16 format = SFMarkGlyphSets_Format(markGlyphSetsDef);
         switch (format) {
-            case 1:
-            {
+            case 1: {
                 SFUInt16 markSetCount = SFMarkGlyphSets_MarkSetCount(markGlyphSetsDef);
 
                 if (markFilteringSet < markSetCount) {
@@ -112,8 +111,8 @@ SF_INTERNAL void SFLocatorSetMarkFilteringSet(SFLocatorRef locator, SFUInt16 mar
 
                     locator->_markFilteringCoverage = coverage;
                 }
+                break;
             }
-            break;
         }
     }
 }

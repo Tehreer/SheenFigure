@@ -152,14 +152,14 @@ SF_PRIVATE void _SFApplyLookup(SFTextProcessorRef processor, SFFeatureKind featu
     SFData lookup;
 
     switch (featureKind) {
-    case SFFeatureKindSubstitution:
-        lookup = _SFGetLookupFromHeader(font->tables.gsub, lookupIndex);
-        _SFApplySubstitutionLookup(processor, lookup);
-        break;
+        case SFFeatureKindSubstitution:
+            lookup = _SFGetLookupFromHeader(font->tables.gsub, lookupIndex);
+            _SFApplySubstitutionLookup(processor, lookup);
+            break;
 
-    case SFFeatureKindPositioning:
-        lookup = _SFGetLookupFromHeader(font->tables.gpos, lookupIndex);
-        _SFApplyPositioningLookup(processor, lookup);
-        break;
+        case SFFeatureKindPositioning:
+            lookup = _SFGetLookupFromHeader(font->tables.gpos, lookupIndex);
+            _SFApplyPositioningLookup(processor, lookup);
+            break;
     }
 }

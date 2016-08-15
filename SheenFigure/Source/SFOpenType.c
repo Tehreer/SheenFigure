@@ -84,18 +84,16 @@ SF_INTERNAL SFUInteger SFOpenTypeSearchCoverageIndex(SFData coverage, SFGlyphID 
     format = SFCoverage_Format(coverage);
 
     switch (format) {
-    case 1:
-        {
+        case 1: {
             SFUInt16 glyphCount = SFCoverageF1_GlyphCount(coverage);
             if (glyphCount) {
                 SFData glyphArray = SFCoverageF1_GlyphArray(coverage);
                 return _SFBinarySearchUInt16(glyphArray, glyphCount, glyph);
             }
+            break;
         }
-        break;
 
-    case 2:
-        {
+        case 2: {
             SFUInt16 rangeCount = SFCoverageF2_RangeCount(coverage);
             if (rangeCount) {
                 SFData rangeArray = SFCoverageF2_RangeRecord(coverage, 0);
@@ -111,8 +109,8 @@ SF_INTERNAL SFUInteger SFOpenTypeSearchCoverageIndex(SFData coverage, SFGlyphID 
 
                 return SFInvalidIndex;
             }
+            break;
         }
-        break;
     }
 
     return SFInvalidIndex;
@@ -128,8 +126,7 @@ SF_INTERNAL SFUInt16 SFOpenTypeSearchGlyphClass(SFData classDef, SFGlyphID glyph
     format = SFClassDef_Format(classDef);
 
     switch (format) {
-    case 1:
-        {
+        case 1: {
             SFGlyphID startGlyph = SFClassDefF1_StartGlyph(classDef);
             SFUInt16 glyphCount = SFClassDefF1_GlyphCount(classDef);
             SFUInteger limit;
@@ -142,11 +139,10 @@ SF_INTERNAL SFUInt16 SFOpenTypeSearchGlyphClass(SFData classDef, SFGlyphID glyph
                 SFData classArray = SFClassDefF1_ClassValueArray(classDef);
                 return SFUInt16Array_Value(classArray, index);
             }
+            break;
         }
-        break;
 
-    case 2:
-        {
+        case 2: {
             SFUInt16 rangeCount = SFClassDefF2_ClassRangeCount(classDef);
             if (rangeCount) {
                 SFData rangeArray = SFClassDefF2_RangeRecordArray(classDef);
@@ -158,8 +154,8 @@ SF_INTERNAL SFUInt16 SFOpenTypeSearchGlyphClass(SFData classDef, SFGlyphID glyph
                     return SFClassRangeRecord_Class(rangeRecord);
                 }
             }
+            break;
         }
-        break;
     }
 
     /* A glyph not assigned a class value falls into Class 0. */

@@ -60,14 +60,14 @@ SFShapingKnowledge SFStandardKnowledgeInstance = {
 static SFScriptKnowledgeRef _SFStandardKnowledgeSeekScript(const void *object, SFTag scriptTag)
 {
     switch (scriptTag) {
-    case SFTagMake('a', 'r', 'm', 'n'):
-    case SFTagMake('c', 'y', 'r', 'l'):
-    case SFTagMake('g', 'e', 'o', 'r'):
-    case SFTagMake('g', 'r', 'e', 'k'):
-    case SFTagMake('l', 'a', 't', 'n'):
-    case SFTagMake('o', 'g', 'a', 'm'):
-    case SFTagMake('r', 'u', 'n', 'r'):
-        return &_SFStandardScriptKnowledge;
+        case SFTagMake('a', 'r', 'm', 'n'):
+        case SFTagMake('c', 'y', 'r', 'l'):
+        case SFTagMake('g', 'e', 'o', 'r'):
+        case SFTagMake('g', 'r', 'e', 'k'):
+        case SFTagMake('l', 'a', 't', 'n'):
+        case SFTagMake('o', 'g', 'a', 'm'):
+        case SFTagMake('r', 'u', 'n', 'r'):
+            return &_SFStandardScriptKnowledge;
     }
 
     return NULL;

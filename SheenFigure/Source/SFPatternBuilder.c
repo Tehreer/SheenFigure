@@ -149,18 +149,18 @@ SF_INTERNAL void SFPatternBuilderMakeFeatureUnit(SFPatternBuilderRef builder)
 
     /* Increase feature unit count. */
     switch (builder->_featureKind) {
-    case SFFeatureKindSubstitution:
-        builder->_gsubUnitCount++;
-        break;
+        case SFFeatureKindSubstitution:
+            builder->_gsubUnitCount++;
+            break;
 
-    case SFFeatureKindPositioning:
-        builder->_gposUnitCount++;
-        break;
+        case SFFeatureKindPositioning:
+            builder->_gposUnitCount++;
+            break;
 
-    default:
-        /* Invalid feature kind. */
-        SFAssert(SFFalse);
-        break;
+        default:
+            /* Invalid feature kind. */
+            SFAssert(SFFalse);
+            break;
     }
 
     /* Increase feature index. */

@@ -41,21 +41,20 @@ SF_PRIVATE SFBoolean _SFApplyExtensionSubtable(SFTextProcessorRef processor, SFF
     SFUInt16 format = SFExtension_Format(extension);
 
     switch (format) {
-    case 1:
-        {
+        case 1: {
             SFLookupType lookupType = SFExtensionF1_LookupType(extension);
             SFUInt32 offset = SFExtensionF1_ExtensionOffset(extension);
             SFData innerSubtable = SFData_Subdata(extension, offset);
 
             switch (featureKind) {
-            case SFFeatureKindSubstitution:
-                return _SFApplySubstitutionSubtable(processor, lookupType, innerSubtable);
+                case SFFeatureKindSubstitution:
+                    return _SFApplySubstitutionSubtable(processor, lookupType, innerSubtable);
 
-            case SFFeatureKindPositioning:
-                return _SFApplyPositioningSubtable(processor, lookupType, innerSubtable);
+                case SFFeatureKindPositioning:
+                    return _SFApplyPositioningSubtable(processor, lookupType, innerSubtable);
             }
+            break;
         }
-        break;
     }
 
     return SFFalse;
@@ -66,8 +65,8 @@ SF_PRIVATE SFBoolean _SFApplyChainContextSubtable(SFTextProcessorRef processor, 
     SFUInt16 format = SFChainContext_Format(chainContext);
 
     switch (format) {
-    case 3:
-        return _SFApplyChainContextF3(processor, featureKind, chainContext);
+        case 3:
+            return _SFApplyChainContextF3(processor, featureKind, chainContext);
     }
 
     return SFFalse;
