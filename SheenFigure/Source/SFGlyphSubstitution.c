@@ -322,7 +322,7 @@ static SFBoolean _SFApplyLigatureSet(SFTextProcessorRef processor, SFData ligatu
         for (compIndex = 1; compIndex < compCount; compIndex++) {
             nextIndex = SFLocatorGetAfter(locator, prevIndex);
 
-            if (inputIndex != SFInvalidIndex) {
+            if (nextIndex != SFInvalidIndex) {
                 SFGlyphID component = SFLigature_Component(ligature, compIndex - 1);
                 SFGlyphID glyph = SFAlbumGetGlyph(album, nextIndex);
 
