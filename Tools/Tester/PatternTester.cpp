@@ -15,8 +15,8 @@
  */
 
 #include <cstddef>
-#include <cstring>
 
+#include "Utilities/SFPattern+Testing.h"
 #include "PatternTester.h"
 
 extern "C" {
@@ -26,43 +26,6 @@ extern "C" {
 }
 
 using namespace SheenFigure::Tester;
-
-static SFBoolean SFFeatureUnitListEqualToList(SFFeatureUnit *list1, SFFeatureUnit *list2, SFUInteger count)
-{
-    for (SFUInteger i = 0; i < count; i++) {
-        SFFeatureUnitRef unit1 = &list1[i];
-        SFFeatureUnitRef unit2 = &list2[i];
-
-        if (!(unit1->featureMask == unit2->featureMask
-              && unit1->coveredRange.start == unit2->coveredRange.start
-              && unit1->coveredRange.count == unit2->coveredRange.count
-              && unit1->lookupIndexes.count == unit2->lookupIndexes.count
-              && memcmp(unit1->lookupIndexes.items,
-                        unit2->lookupIndexes.items,
-                        unit1->lookupIndexes.count * sizeof(SFUInt16)) == 0)) {
-            return SFFalse;
-        }
-    }
-
-    return SFTrue;
-}
-
-static SFBoolean SFPatternEqualToPattern(SFPatternRef pattern1, SFPatternRef pattern2)
-{
-    return (pattern1->font == pattern2->font
-            && pattern1->scriptTag == pattern2->scriptTag
-            && pattern1->languageTag == pattern2->languageTag
-            && pattern1->defaultDirection == pattern2->defaultDirection
-            && pattern1->featureTags.count == pattern2->featureTags.count
-            && memcmp(pattern1->featureTags.items,
-                      pattern2->featureTags.items,
-                      pattern1->featureTags.count * sizeof(SFTag)) == 0
-            && pattern1->featureUnits.gsub == pattern2->featureUnits.gsub
-            && pattern1->featureUnits.gpos == pattern2->featureUnits.gpos
-            && SFFeatureUnitListEqualToList(pattern1->featureUnits.items,
-                                            pattern2->featureUnits.items,
-                                            pattern1->featureUnits.gsub + pattern1->featureUnits.gpos));
-}
 
 PatternTester::PatternTester()
 {
