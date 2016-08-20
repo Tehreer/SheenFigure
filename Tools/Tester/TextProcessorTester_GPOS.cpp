@@ -108,7 +108,7 @@ void TextProcessorTester::testPairPositioning()
     {
         ValueRecord value2Record;
         value2Record.xPlacement = -100;
-        value2Record.yPlacement = -100;
+        value2Record.yPlacement = 100;
 
         PairValueRecord pairValueRecord;
         pairValueRecord.secondGlyph = 2;
@@ -133,12 +133,15 @@ void TextProcessorTester::testPairPositioning()
         SFCodepoint input[] = { 1, 2 };
         processGPOS(&album, input, sizeof(input) / sizeof(SFCodepoint), subtable);
 
-        /* Test the output offsets. */
-        const SFPoint *actual = SFAlbumGetGlyphOffsetsPtr(&album);
-        const SFPoint expected[] = { {0, 0}, { -100, -100, } };
+        /* Test the output. */
+        const SFPoint *actualOffsets = SFAlbumGetGlyphOffsetsPtr(&album);
+        const SFAdvance *actualAdvances = SFAlbumGetGlyphAdvancesPtr(&album);
+        const SFPoint expectedOffsets[] = { { 0, 0 }, { -100, 100 } };
+        const SFAdvance expectedAdvances[] = { 100, 100 };
 
-        SFAssert(SFAlbumGetGlyphCount(&album) == (sizeof(expected) / sizeof(SFPoint)));
-        SFAssert(memcmp(actual, expected, sizeof(expected) / sizeof(SFPoint)) == 0);
+        SFAssert(SFAlbumGetGlyphCount(&album) == (sizeof(expectedOffsets) / sizeof(SFPoint)));
+        SFAssert(memcmp(actualOffsets, expectedOffsets, sizeof(expectedOffsets) / sizeof(SFPoint)) == 0);
+        SFAssert(memcmp(actualAdvances, expectedAdvances, sizeof(expectedAdvances) / sizeof(SFAdvance)) == 0);
     }
 
     /* Test with format 2. */
@@ -159,13 +162,13 @@ void TextProcessorTester::testPairPositioning()
         classDef2.format1.glyphCount = 1;
         classDef2.format1.classValueArray = classValues2;
 
-        ValueRecord value2Record;
-        value2Record.xPlacement = -100;
-        value2Record.yPlacement = -100;
+        ValueRecord value1Record;
+        value1Record.xAdvance = -100;
+        value1Record.yAdvance = 100;
 
         Class2Record class2Record;
-        class2Record.value1 = NULL;
-        class2Record.value2 = &value2Record;
+        class2Record.value1 = &value1Record;
+        class2Record.value2 = NULL;
 
         Class1Record class1Record;
         class1Record.class2Record = &class2Record;
@@ -173,8 +176,8 @@ void TextProcessorTester::testPairPositioning()
         PairAdjustmentPosSubtable subtable;
         subtable.posFormat = 2;
         subtable.coverage = &coverage;
-        subtable.valueFormat1 = ValueFormat::None;
-        subtable.valueFormat2 = ValueFormat::XPlacement | ValueFormat::YPlacement;
+        subtable.valueFormat1 = ValueFormat::XAdvance | ValueFormat::YAdvance;
+        subtable.valueFormat2 = ValueFormat::None;
         subtable.format2.classDef1 = &classDef1;
         subtable.format2.classDef2 = &classDef2;
         subtable.format2.class1Count = 1;
@@ -187,12 +190,15 @@ void TextProcessorTester::testPairPositioning()
         SFCodepoint input[] = { 1, 2 };
         processGPOS(&album, input, sizeof(input) / sizeof(SFCodepoint), subtable);
 
-        /* Test the output glyphs. */
-        const SFPoint *actual = SFAlbumGetGlyphOffsetsPtr(&album);
-        const SFPoint expected[] = { { 0, 0 }, { -100, -100, } };
+        /* Test the output. */
+        const SFPoint *actualOffsets = SFAlbumGetGlyphOffsetsPtr(&album);
+        const SFAdvance *actualAdvances = SFAlbumGetGlyphAdvancesPtr(&album);
+        const SFPoint expectedOffsets[] = { { 0, 0 }, { 0, 0 } };
+        const SFAdvance expectedAdvances[] = { 0, 100 };
 
-        SFAssert(SFAlbumGetGlyphCount(&album) == (sizeof(expected) / sizeof(SFPoint)));
-        SFAssert(memcmp(actual, expected, sizeof(expected) / sizeof(SFPoint)) == 0);
+        SFAssert(SFAlbumGetGlyphCount(&album) == (sizeof(expectedOffsets) / sizeof(SFPoint)));
+        SFAssert(memcmp(actualOffsets, expectedOffsets, sizeof(expectedOffsets) / sizeof(SFPoint)) == 0);
+        SFAssert(memcmp(actualAdvances, expectedAdvances, sizeof(expectedAdvances) / sizeof(SFAdvance)) == 0);
     }
 }
 
