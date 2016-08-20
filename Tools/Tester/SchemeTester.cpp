@@ -19,6 +19,7 @@
 
 #include "OpenType/Common.h"
 #include "OpenType/GSUB.h"
+#include "Utilities/SFPattern+Testing.h"
 #include "SchemeTester.h"
 
 extern "C" {
@@ -130,43 +131,60 @@ void SchemeTester::test()
     SFSchemeRef scheme = SFSchemeCreate();
     SFSchemeSetFont(scheme, font);
     SFSchemeSetScriptTag(scheme, SFTagMake('l', 'a', 't', 'n'));
-    SFSchemeSetLanguageTag(scheme, SFTagMake('d', 'f', 'l', 't'));
 
-    SFPatternRef pattern1 = SFSchemeBuildPattern(scheme);
-    SFAssert(pattern1->font == font);
-    SFAssert(pattern1->featureTags.items != NULL);
-    SFAssert(pattern1->featureTags.items[0] == SFTagMake('c', 'c', 'm', 'p'));
-    SFAssert(pattern1->featureTags.count == 1);
-    SFAssert(pattern1->featureUnits.items != NULL);
-    SFAssert(pattern1->featureUnits.items[0].lookupIndexes.items != NULL);
-    SFAssert(pattern1->featureUnits.items[0].lookupIndexes.items[0] == 0);
-    SFAssert(pattern1->featureUnits.items[0].lookupIndexes.count == 1);
-    SFAssert(pattern1->featureUnits.items[0].coveredRange.start == 0);
-    SFAssert(pattern1->featureUnits.items[0].coveredRange.count == 1);
-    SFAssert(pattern1->featureUnits.gsub == 1);
-    SFAssert(pattern1->featureUnits.gpos == 0);
-    SFAssert(pattern1->scriptTag == SFTagMake('l', 'a', 't', 'n'));
-    SFAssert(pattern1->languageTag == SFTagMake('d', 'f', 'l', 't'));
-    SFPatternRelease(pattern1);
+    /* Test with default language. */
+    {
+        SFSchemeSetLanguageTag(scheme, SFTagMake('d', 'f', 'l', 't'));
+        SFPatternRef pattern = SFSchemeBuildPattern(scheme);
 
-    SFSchemeSetLanguageTag(scheme, SFTagMake('E', 'N', 'G', ' '));
+        SFTag expectedTags[] = { SFTagMake('c', 'c', 'm', 'p') };
+        SFUInt16 expectedLookups[] = { 0 };
+        SFFeatureUnit expectedUnits[] = {
+            {
+                .lookupIndexes = { expectedLookups, 1 },
+                .coveredRange = { 0, 1 },
+                .featureMask = 0x00,
+            }
+        };
+        SFPattern expectedPattern = {
+            .font = font,
+            .featureTags = { expectedTags, 1 },
+            .featureUnits = { expectedUnits, 1, 0 },
+            .scriptTag = SFTagMake('l', 'a', 't', 'n'),
+            .languageTag = SFTagMake('d', 'f', 'l', 't'),
+            .defaultDirection = SFTextDirectionLeftToRight,
+        };
+        SFAssert(SFPatternEqualToPattern(pattern, &expectedPattern));
 
-    SFPatternRef pattern2 = SFSchemeBuildPattern(scheme);
-    SFAssert(pattern2->font == font);
-    SFAssert(pattern2->featureTags.items != NULL);
-    SFAssert(pattern2->featureTags.items[0] == SFTagMake('c', 'c', 'm', 'p'));
-    SFAssert(pattern2->featureTags.count == 1);
-    SFAssert(pattern2->featureUnits.items != NULL);
-    SFAssert(pattern2->featureUnits.items[0].lookupIndexes.items != NULL);
-    SFAssert(pattern2->featureUnits.items[0].lookupIndexes.items[0] == 0);
-    SFAssert(pattern2->featureUnits.items[0].lookupIndexes.count == 1);
-    SFAssert(pattern2->featureUnits.items[0].coveredRange.start == 0);
-    SFAssert(pattern2->featureUnits.items[0].coveredRange.count == 1);
-    SFAssert(pattern2->featureUnits.gsub == 1);
-    SFAssert(pattern2->featureUnits.gpos == 0);
-    SFAssert(pattern2->scriptTag == SFTagMake('l', 'a', 't', 'n'));
-    SFAssert(pattern2->languageTag == SFTagMake('E', 'N', 'G', ' '));
-    SFPatternRelease(pattern2);
+        SFPatternRelease(pattern);
+    }
+
+    /* Test with a non-default language. */
+    {
+        SFSchemeSetLanguageTag(scheme, SFTagMake('E', 'N', 'G', ' '));
+        SFPatternRef pattern = SFSchemeBuildPattern(scheme);
+
+        SFTag expectedTags[] = { SFTagMake('c', 'c', 'm', 'p') };
+        SFUInt16 expectedLookups[] = { 0 };
+        SFFeatureUnit expectedUnits[] = {
+            {
+                .lookupIndexes = { expectedLookups, 1 },
+                .coveredRange = { 0, 1 },
+                .featureMask = 0x00,
+            }
+        };
+        SFPattern expectedPattern = {
+            .font = font,
+            .featureTags = { expectedTags, 1 },
+            .featureUnits = { expectedUnits, 1, 0 },
+            .scriptTag = SFTagMake('l', 'a', 't', 'n'),
+            .languageTag = SFTagMake('E', 'N', 'G', ' '),
+            .defaultDirection = SFTextDirectionLeftToRight,
+        };
+        SFAssert(SFPatternEqualToPattern(pattern, &expectedPattern));
+
+        SFPatternRelease(pattern);
+    }
 
     SFSchemeRelease(scheme);
     SFFontRelease(font);
