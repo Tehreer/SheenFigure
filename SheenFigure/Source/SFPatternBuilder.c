@@ -159,7 +159,7 @@ SF_INTERNAL void SFPatternBuilderMakeFeatureUnit(SFPatternBuilderRef builder)
 
         default:
             /* Invalid feature kind. */
-            SFAssert(SFFalse);
+            SFAssert(0);
             break;
     }
 

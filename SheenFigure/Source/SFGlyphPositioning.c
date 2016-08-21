@@ -388,7 +388,7 @@ static void _SFApplyValueRecord(SFTextProcessorRef processor, SFData valueRecord
 
         default:
             /* Unsupported direction. */
-            SFAssert(SFFalse);
+            SFAssert(0);
             break;
     }
 
@@ -561,7 +561,7 @@ static SFBoolean _SFApplyCursivePosF1(SFTextProcessorRef processor, SFData cursi
 
                     default:
                         /* Unsupported direction. */
-                        SFAssert(SFFalse);
+                        SFAssert(0);
                         break;
                 }
 
@@ -1041,7 +1041,7 @@ static void _SFResolveLeftCursiveSegment(SFTextProcessorRef processor, SFUIntege
 
             default:
                 /* Unsupported direction. */
-                SFAssert(SFFalse);
+                SFAssert(0);
                 break;
         }
 
@@ -1088,7 +1088,7 @@ static void _SFResolveRightCursiveSegment(SFTextProcessorRef processor, SFUInteg
                 
             default:
                 /* Unsupported direction. */
-                SFAssert(SFFalse);
+                SFAssert(0);
                 break;
         }
 
@@ -1152,7 +1152,7 @@ static void _SFResolveMarkPositions(SFTextProcessorRef processor, SFLocatorRef l
 
                 default:
                     /* Unsupported direction. */
-                    SFAssert(SFFalse);
+                    SFAssert(0);
                     break;
             }
 
