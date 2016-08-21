@@ -99,15 +99,18 @@ void AlbumTester::testAddGlyph()
     /* Test with forward associations. */
     {
         SFAlbumReset(&album, NULL, 5);
+
         SFAlbumBeginFilling(&album);
-
-        SFAlbumAddGlyph(&album, 100, 0, 1);
-        SFAlbumAddGlyph(&album, 200, 1, 1);
-        SFAlbumAddGlyph(&album, 300, 2, 1);
-        SFAlbumAddGlyph(&album, 400, 3, 1);
-        SFAlbumAddGlyph(&album, 500, 4, 1);
-
+        SFAlbumAddGlyph(&album, 100, 0);
+        SFAlbumAddGlyph(&album, 200, 1);
+        SFAlbumAddGlyph(&album, 300, 2);
+        SFAlbumAddGlyph(&album, 400, 3);
+        SFAlbumAddGlyph(&album, 500, 4);
         SFAlbumEndFilling(&album);
+
+        SFAlbumBeginArranging(&album);
+        SFAlbumEndArranging(&album);
+
         SFAlbumWrapUp(&album);
 
         /* Test the glyph count. */
@@ -127,15 +130,18 @@ void AlbumTester::testAddGlyph()
     /* Test with backward associations. */
     {
         SFAlbumReset(&album, NULL, 5);
+
         SFAlbumBeginFilling(&album);
-
-        SFAlbumAddGlyph(&album, 100, 4, 1);
-        SFAlbumAddGlyph(&album, 200, 3, 1);
-        SFAlbumAddGlyph(&album, 300, 2, 1);
-        SFAlbumAddGlyph(&album, 400, 1, 1);
-        SFAlbumAddGlyph(&album, 500, 0, 1);
-
+        SFAlbumAddGlyph(&album, 100, 4);
+        SFAlbumAddGlyph(&album, 200, 3);
+        SFAlbumAddGlyph(&album, 300, 2);
+        SFAlbumAddGlyph(&album, 400, 1);
+        SFAlbumAddGlyph(&album, 500, 0);
         SFAlbumEndFilling(&album);
+
+        SFAlbumBeginArranging(&album);
+        SFAlbumEndArranging(&album);
+
         SFAlbumWrapUp(&album);
 
         /* Test the glyph count. */
@@ -149,6 +155,37 @@ void AlbumTester::testAddGlyph()
         /* Test the output map. */
         const SFUInteger *actualMap = SFAlbumGetCodeunitToGlyphMapPtr(&album);
         const SFInteger expectedMap[] = { 4, 3, 2, 1, 0 };
+        SFAssert(memcmp(actualMap, expectedMap, sizeof(expectedMap)) == 0);
+    }
+
+    /* Test by mimicing multiple code units per codepoint. */
+    {
+        SFAlbumReset(&album, NULL, 15);
+
+        SFAlbumBeginFilling(&album);
+        SFAlbumAddGlyph(&album, 100, 0);
+        SFAlbumAddGlyph(&album, 200, 1);
+        SFAlbumAddGlyph(&album, 300, 3);
+        SFAlbumAddGlyph(&album, 400, 6);
+        SFAlbumAddGlyph(&album, 500, 10);
+        SFAlbumEndFilling(&album);
+
+        SFAlbumBeginArranging(&album);
+        SFAlbumEndArranging(&album);
+
+        SFAlbumWrapUp(&album);
+
+        /* Test the glyph count. */
+        SFAssert(SFAlbumGetGlyphCount(&album) == 5);
+
+        /* Test the output glyphs. */
+        const SFGlyphID *actualGlyphs = SFAlbumGetGlyphIDsPtr(&album);
+        const SFGlyphID expectedGlyphs[] = { 100, 200, 300, 400, 500 };
+        SFAssert(memcmp(actualGlyphs, expectedGlyphs, sizeof(expectedGlyphs)) == 0);
+
+        /* Test the output map. */
+        const SFUInteger *actualMap = SFAlbumGetCodeunitToGlyphMapPtr(&album);
+        const SFInteger expectedMap[] = { 0, 1, 1, 2, 2, 2, 3, 3, 3, 3, 4, 4, 4, 4, 4 };
         SFAssert(memcmp(actualMap, expectedMap, sizeof(expectedMap)) == 0);
     }
 
@@ -240,8 +277,8 @@ void AlbumTester::testGetGlyph()
 
     /* Test by adding some glyphs. */
     {
-        SFAlbumAddGlyph(&album, 100, 0, 1);
-        SFAlbumAddGlyph(&album, 200, 0, 1);
+        SFAlbumAddGlyph(&album, 100, 0);
+        SFAlbumAddGlyph(&album, 200, 0);
 
         SFAssert(SFAlbumGetGlyph(&album, 0) == 100);
         SFAssert(SFAlbumGetGlyph(&album, 1) == 200);
@@ -350,8 +387,8 @@ void AlbumTester::testGetSingleAssociation()
 
     /* Test by adding some glyphs. */
     {
-        SFAlbumAddGlyph(&album, 0, 0, 1);
-        SFAlbumAddGlyph(&album, 0, 1, 1);
+        SFAlbumAddGlyph(&album, 0, 0);
+        SFAlbumAddGlyph(&album, 0, 1);
 
         /* Test with get single association. */
         SFAssert(SFAlbumGetSingleAssociation(&album, 0) == 0);
@@ -384,9 +421,9 @@ void AlbumTester::testMakeCompositeAssociations()
     SFAlbumBeginFilling(&album);
 
     /* Add some glyphs with associations. */
-    SFAlbumAddGlyph(&album, 0, 1, 1);
-    SFAlbumAddGlyph(&album, 0, 2, 1);
-    SFAlbumAddGlyph(&album, 0, 3, 1);
+    SFAlbumAddGlyph(&album, 0, 1);
+    SFAlbumAddGlyph(&album, 0, 2);
+    SFAlbumAddGlyph(&album, 0, 3);
 
     /* Make the second glyph composite. */
     SFAlbumSetTraits(&album, 1, SFGlyphTraitComposite);
