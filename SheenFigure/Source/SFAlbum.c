@@ -144,7 +144,7 @@ SF_INTERNAL void SFAlbumBeginFilling(SFAlbumRef album)
 	album->_state = _SFAlbumStateFilling;
 }
 
-SF_INTERNAL void SFAlbumAddGlyph(SFAlbumRef album, SFGlyphID glyph, SFUInteger association, SFUInteger length)
+SF_INTERNAL void SFAlbumAddGlyph(SFAlbumRef album, SFGlyphID glyph, SFUInteger association)
 {
     SFUInteger index;
 
@@ -158,15 +158,6 @@ SF_INTERNAL void SFAlbumAddGlyph(SFAlbumRef album, SFGlyphID glyph, SFUInteger a
     SFAlbumSetGlyph(album, index, glyph);
     _SFAlbumSetGlyphMask(album, index, _SFGlyphMaskEmpty);
     SFAlbumSetSingleAssociation(album, index, association);
-
-    while (--length) {
-        index = album->glyphCount++;
-
-        /* Initialize placeholder glyph along with its details. */
-        SFAlbumSetGlyph(album, index, 0);
-        _SFAlbumSetGlyphMask(album, index, _SFGlyphMaskPlaceholder);
-        SFAlbumSetSingleAssociation(album, index, association);
-    }
 }
 
 SF_INTERNAL void SFAlbumReserveGlyphs(SFAlbumRef album, SFUInteger index, SFUInteger count)
@@ -427,15 +418,22 @@ static void _SFAlbumRemovePlaceholders(SFAlbumRef album)
 
 static void _SFAlbumBuildCodeunitToGlyphMap(SFAlbumRef album)
 {
-    SFUInteger index = album->glyphCount;
-    SFUInteger *map;
+    SFUInteger *mapArray;
+    SFUInteger association;
+    SFUInteger codeunitCount;
+    SFUInteger index;
 
-    map = malloc(sizeof(SFUInteger) * album->codeunitCount);
+    codeunitCount = album->codeunitCount;
+    mapArray = malloc(sizeof(SFUInteger) * codeunitCount);
+
+    /* Initialize the map array. */
+    for (index = 0; index < codeunitCount; index++) {
+        mapArray[index] = SFInvalidIndex;
+    }
 
     /* Traverse in reverse order so that first glyph takes priority in case of multiple substitution. */
-    while (index--) {
+    for (index = album->glyphCount; index--;) {
         SFGlyphTraits traits = SFAlbumGetTraits(album, index);
-        SFUInteger association;
 
         if (traits & SFGlyphTraitComposite) {
             SFUInteger count;
@@ -446,15 +444,24 @@ static void _SFAlbumBuildCodeunitToGlyphMap(SFAlbumRef album)
 
             for (j = 0; j < count; j++) {
                 association = array[j];
-                map[association] = index;
+                mapArray[association] = index;
             }
         } else {
             association = SFAlbumGetSingleAssociation(album, index);
-            map[association] = index;
+            mapArray[association] = index;
         }
     }
 
-    album->_mapArray = map;
+    /* Assign the same glyph index to subsequent codeunits. */
+    for (index = 0; index < codeunitCount; index++) {
+        if (mapArray[index] == SFInvalidIndex) {
+            mapArray[index] = association;
+        }
+
+        association = mapArray[index];
+    }
+
+    album->_mapArray = mapArray;
 }
 
 SF_INTERNAL void SFAlbumWrapUp(SFAlbumRef album)

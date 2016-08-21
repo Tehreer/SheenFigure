@@ -98,7 +98,7 @@ SF_INTERNAL void SFAlbumBeginFilling(SFAlbumRef album);
 /**
  * Adds a new glyph into the album.
  */
-SF_INTERNAL void SFAlbumAddGlyph(SFAlbumRef album, SFGlyphID glyph, SFUInteger association, SFUInteger length);
+SF_INTERNAL void SFAlbumAddGlyph(SFAlbumRef album, SFGlyphID glyph, SFUInteger association);
 
 /**
  * Reserves specified number of glyphs at the given index.
