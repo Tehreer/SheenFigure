@@ -138,10 +138,7 @@ static void _SFPutArabicFeatureMask(SFAlbumRef album)
 
         /* Find the joining type of next character. */
         while ((nextCodepoint = SFCodepointsNext(codepoints)) != SFCodepointInvalid) {
-            SFUInteger association;
-
             nextIndex += 1;
-            association = SFAlbumGetSingleAssociation(album, nextIndex);
             nextJoiningType = _SFDetermineJoiningType(nextCodepoint);
 
             /* Normalize the joining type of next character. */
