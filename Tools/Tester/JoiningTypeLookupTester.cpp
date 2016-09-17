@@ -17,17 +17,17 @@
 #include <cstdint>
 #include <iostream>
 
-#include "JoiningTypeLookupTester.h"
-
 extern "C" {
-#include <SFAssert.h>
-#include <SFJoiningTypeLookup.h>
+#include <Source/SFAssert.h>
+#include <Source/SFJoiningTypeLookup.h>
 }
 
 #include <Parser/ArabicShaping.h>
 
 #include "Utilities/Convert.h"
 #include "Utilities/Unicode.h"
+
+#include "JoiningTypeLookupTester.h"
 
 using namespace std;
 using namespace SheenFigure::Parser;

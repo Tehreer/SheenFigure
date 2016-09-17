@@ -18,8 +18,8 @@
 #include <iostream>
 
 extern "C" {
-#include <SheenFigure/Source/SFAlbum.h>
-#include <SheenFigure/Source/SFAssert.h>
+#include <Source/SFAlbum.h>
+#include <Source/SFAssert.h>
 }
 
 #include "OpenType/Common.h"

@@ -18,8 +18,8 @@
 #include <string>
 
 extern "C" {
-#include <SFGeneralCategory.h>
-#include <SFJoiningType.h>
+#include <Source/SFGeneralCategory.h>
+#include <Source/SFJoiningType.h>
 }
 
 #include "Convert.h"

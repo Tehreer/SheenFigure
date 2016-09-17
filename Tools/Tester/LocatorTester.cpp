@@ -15,14 +15,15 @@
  */
 
 #include <cstdlib>
-#include "OpenType/GDEF.h"
-#include "LocatorTester.h"
 
 extern "C" {
-#include <SheenFigure/Source/SFAlbum.h>
-#include <SheenFigure/Source/SFAssert.h>
-#include <SheenFigure/Source/SFLocator.h>
+#include <Source/SFAlbum.h>
+#include <Source/SFAssert.h>
+#include <Source/SFLocator.h>
 }
+
+#include "OpenType/GDEF.h"
+#include "LocatorTester.h"
 
 using namespace SheenFigure::Tester;
 using namespace SheenFigure::Tester::OpenType;
@@ -445,12 +446,15 @@ LocatorTester::LocatorTester()
     markAttachClass.format1.glyphCount = 10;
     markAttachClass.format1.classValueArray = classValueArray;
 
+    Glyph glyphs[5];
+    for (int i = 0; i < 5; i++) {
+        glyphs[i] = (Glyph)(i * 2);
+    }
+
     CoverageTable markGlyphCoverage;
     markGlyphCoverage.coverageFormat = 1;
+    markGlyphCoverage.format1.glyphArray = glyphs;
     markGlyphCoverage.format1.glyphCount = 5;
-    for (int i = 0; i < 5; i++) {
-        markGlyphCoverage.format1.glyphArray[i] = (Glyph)(i * 2);
-    }
 
     MarkGlyphSetsDefTable markGlyphSets;
     markGlyphSets.markSetTableFormat = 1;

@@ -17,12 +17,12 @@
 #include <cstddef>
 #include <cstring>
 
-#include "ListTester.h"
-
 extern "C" {
-#include <SFAssert.h>
-#include <SFList.h>
+#include <Source/SFAssert.h>
+#include <Source/SFList.h>
 }
+
+#include "ListTester.h"
 
 using namespace SheenFigure::Tester;
 

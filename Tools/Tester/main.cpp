@@ -24,6 +24,7 @@
 #include "GeneralCategoryLookupTester.h"
 #include "JoiningTypeLookupTester.h"
 #include "ListTester.h"
+#include "LocatorTester.h"
 #include "PatternTester.h"
 #include "SchemeTester.h"
 #include "TextProcessorTester.h"
@@ -34,29 +35,29 @@ using namespace SheenFigure::Tester;
 
 int main(int argc, const char * argv[])
 {
-    const char *dir = "/path/to/unidata";
+    const char *dir = argv[1];
 
     ArabicShaping arabicShaping(dir);
     UnicodeData unicodeData(dir);
-    AlbumTester albumTester;
     JoiningTypeLookupTester joiningTypeLookuptester(arabicShaping);
     GeneralCategoryLookupTester generalCategoryLookupTester(unicodeData);
     ListTester listTester;
+    AlbumTester albumTester;
+    LocatorTester locatorTester;
     FontTester fontTester;
     PatternTester patternTester;
     SchemeTester schemeTester;
     TextProcessorTester textProcessorTester;
 
     albumTester.test();
-    joiningTypeLookuptester.test();
-    generalCategoryLookupTester.test();
-    listTester.test();
     fontTester.test();
+    generalCategoryLookupTester.test();
+    joiningTypeLookuptester.test();
+    listTester.test();
+    locatorTester.test();
     patternTester.test();
     schemeTester.test();
     textProcessorTester.test();
-    
-    getchar();
-    
+
     return 0;
 }

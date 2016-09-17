@@ -18,8 +18,8 @@
 #define __SHEEN_FIGURE__TESTER__UTILITIES__CONVERTER_H
 
 extern "C" {
-#include <SFJoiningType.h>
-#include <SFGeneralCategory.h>
+#include <Source/SFJoiningType.h>
+#include <Source/SFGeneralCategory.h>
 }
 
 namespace SheenFigure {

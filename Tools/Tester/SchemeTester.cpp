@@ -17,16 +17,16 @@
 #include <cstddef>
 #include <cstring>
 
+extern "C" {
+#include <Source/SFAssert.h>
+#include <Source/SFPattern.h>
+#include <Source/SFScheme.h>
+}
+
 #include "OpenType/Common.h"
 #include "OpenType/GSUB.h"
 #include "Utilities/SFPattern+Testing.h"
 #include "SchemeTester.h"
-
-extern "C" {
-#include <SheenFigure/Source/SFAssert.h>
-#include <SheenFigure/Source/SFPattern.h>
-#include <SheenFigure/Source/SFScheme.h>
-}
 
 using namespace SheenFigure::Tester;
 using namespace SheenFigure::Tester::OpenType;

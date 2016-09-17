@@ -18,7 +18,7 @@
 #define __SHEEN_FIGURE__TESTER__UTILITIES__SF_PATTERN_TESTING_H
 
 extern "C" {
-#include <SheenFigure/Source/SFPattern.h>
+#include <Source/SFPattern.h>
 }
 
 SFBoolean SFPatternEqualToPattern(SFPatternRef pattern1, SFPatternRef pattern2);

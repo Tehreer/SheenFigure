@@ -17,12 +17,12 @@
 #include <cstddef>
 #include <cstring>
 
-#include "FontTester.h"
-
 extern "C" {
-#include <SheenFigure/Source/SFAssert.h>
-#include <SheenFigure/Source/SFFont.h>
+#include <Source/SFAssert.h>
+#include <Source/SFFont.h>
 }
+
+#include "FontTester.h"
 
 using namespace SheenFigure::Tester;
 

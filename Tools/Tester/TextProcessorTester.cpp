@@ -18,10 +18,10 @@
 #include <iostream>
 
 extern "C" {
-#include <SheenFigure/Source/SFAlbum.h>
-#include <SheenFigure/Source/SFPattern.h>
-#include <SheenFigure/Source/SFPatternBuilder.h>
-#include <SheenFigure/Source/SFTextProcessor.h>
+#include <Source/SFAlbum.h>
+#include <Source/SFPattern.h>
+#include <Source/SFPatternBuilder.h>
+#include <Source/SFTextProcessor.h>
 }
 
 #include "OpenType/GSUB.h"

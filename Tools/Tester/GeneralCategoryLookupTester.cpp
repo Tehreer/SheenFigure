@@ -17,17 +17,17 @@
 #include <cstdint>
 #include <iostream>
 
-#include "GeneralCategoryLookupTester.h"
-
 extern "C" {
-#include <SFAssert.h>
-#include <SFGeneralCategoryLookup.h>
+#include <Source/SFAssert.h>
+#include <Source/SFGeneralCategoryLookup.h>
 }
 
 #include <Parser/UnicodeData.h>
 
 #include "Utilities/Convert.h"
 #include "Utilities/Unicode.h"
+
+#include "GeneralCategoryLookupTester.h"
 
 using namespace std;
 using namespace SheenFigure::Parser;

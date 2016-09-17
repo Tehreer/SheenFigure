@@ -16,14 +16,14 @@
 
 #include <cstddef>
 
+extern "C" {
+#include <Source/SFAssert.h>
+#include <Source/SFPattern.h>
+#include <Source/SFPatternBuilder.h>
+}
+
 #include "Utilities/SFPattern+Testing.h"
 #include "PatternTester.h"
-
-extern "C" {
-#include <SheenFigure/Source/SFAssert.h>
-#include <SheenFigure/Source/SFPattern.h>
-#include <SheenFigure/Source/SFPatternBuilder.h>
-}
 
 using namespace SheenFigure::Tester;
 

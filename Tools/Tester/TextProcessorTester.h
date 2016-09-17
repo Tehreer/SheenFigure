@@ -18,7 +18,7 @@
 #define __SHEENFIGURE_TESTER__TEXT_PROCESSOR_TESTER_H
 
 extern "C" {
-#include <SheenFigure/Source/SFAlbum.h>
+#include <Source/SFAlbum.h>
 }
 
 #include "OpenType/Common.h"

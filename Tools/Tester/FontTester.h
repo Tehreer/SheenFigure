@@ -17,10 +17,6 @@
 #ifndef __SHEENFIGURE_TESTER__FONT_TESTER_H
 #define __SHEENFIGURE_TESTER__FONT_TESTER_H
 
-extern "C" {
-#include <SheenFigure/Source/SFFont.h>
-}
-
 namespace SheenFigure {
 namespace Tester {
 

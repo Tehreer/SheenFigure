@@ -18,13 +18,13 @@
 #include <cstdlib>
 #include <cstring>
 
-#include "AlbumTester.h"
-
 extern "C" {
-#include <SheenBidi/SBCodepointSequence.h>
-#include <SheenFigure/Source/SFAlbum.h>
-#include <SheenFigure/Source/SFAssert.h>
+#include <SBCodepointSequence.h>
+#include <Source/SFAlbum.h>
+#include <Source/SFAssert.h>
 }
+
+#include "AlbumTester.h"
 
 using namespace SheenFigure::Tester;
 
