@@ -15,6 +15,7 @@
  */
 
 #include <cstdint>
+#include <cstring>
 #include <iostream>
 
 extern "C" {
@@ -159,6 +160,7 @@ static void processSubtable(SFAlbumRef album,
 
     /* Create the font with protocol. */
     SFFontProtocol protocol = {
+        .finalize = NULL,
         .loadTable = &loadTable,
         .getGlyphIDForCodepoint = &getGlyphID,
         .getAdvanceForGlyph = &getGlyphAdvance,

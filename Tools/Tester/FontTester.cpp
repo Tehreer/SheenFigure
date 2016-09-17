@@ -116,8 +116,10 @@ static SFFontRef SFFontCreateWithCompleteFunctionality(void)
 static SFFontRef SFFontCreateWithRequiredFunctionality(void)
 {
     const SFFontProtocol protocol = {
+        .finalize = NULL,
         .loadTable = &loadTable,
         .getGlyphIDForCodepoint = &getGlyphIDForCodepoint,
+        .getAdvanceForGlyph = NULL,
     };
     return SFFontCreateWithProtocol(&protocol, (void *)OBJECT_FONT);
 }
@@ -138,6 +140,8 @@ void FontTester::testBadProtocol()
     {
         const SFFontProtocol protocol = {
             .finalize = &finalize,
+            .loadTable = NULL,
+            .getGlyphIDForCodepoint = NULL,
             .getAdvanceForGlyph = &getAdvanceForGlyph,
         };
         SFFontRef font = SFFontCreateWithProtocol(&protocol, NULL);

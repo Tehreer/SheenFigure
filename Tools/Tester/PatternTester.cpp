@@ -295,11 +295,11 @@ void PatternTester::testLookupIndexSorting()
         };
         SFPattern expectedPattern = {
             .font = NULL,
+            .featureTags = { expectedTags, sizeof(expectedTags) / sizeof(SFTag) },
+            .featureUnits = { expectedUnits, 1, 1 },
             .scriptTag = 0,
             .languageTag = 0,
             .defaultDirection = SFTextDirectionLeftToRight,
-            .featureTags = { expectedTags, sizeof(expectedTags) / sizeof(SFTag) },
-            .featureUnits = { expectedUnits, 1, 1 },
         };
         SFAssert(SFPatternEqualToPattern(pattern, &expectedPattern));
 
@@ -349,11 +349,11 @@ void PatternTester::testLookupIndexSorting()
         };
         SFPattern expectedPattern = {
             .font = NULL,
+            .featureTags = { expectedTags, sizeof(expectedTags) / sizeof(SFTag) },
+            .featureUnits = { expectedUnits, 1, 0 },
             .scriptTag = 0,
             .languageTag = 0,
             .defaultDirection = SFTextDirectionLeftToRight,
-            .featureTags = { expectedTags, sizeof(expectedTags) / sizeof(SFTag) },
-            .featureUnits = { expectedUnits, 1, 0 },
         };
         SFAssert(SFPatternEqualToPattern(pattern, &expectedPattern));
         

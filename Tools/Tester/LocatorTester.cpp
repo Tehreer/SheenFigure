@@ -15,6 +15,7 @@
  */
 
 #include <cstdlib>
+#include <cstring>
 
 extern "C" {
 #include <Source/SFAlbum.h>
