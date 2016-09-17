@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-#ifndef _SF_JOINING_TYPE_H
-#define _SF_JOINING_TYPE_H
+#ifndef _SF_INTERNAL_JOINING_TYPE_H
+#define _SF_INTERNAL_JOINING_TYPE_H
 
 #include "SFBase.h"
 

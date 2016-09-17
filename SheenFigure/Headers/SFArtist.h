@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-#ifndef _SF_ARTIST_H
-#define _SF_ARTIST_H
+#ifndef _SF_PUBLIC_ARTIST_H
+#define _SF_PUBLIC_ARTIST_H
 
 #include "SFAlbum.h"
 #include "SFBase.h"

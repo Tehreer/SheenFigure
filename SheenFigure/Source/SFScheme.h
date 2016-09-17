@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-#ifndef _SF_SCHEME_INTERNAL_H
-#define _SF_SCHEME_INTERNAL_H
+#ifndef _SF_INTERNAL_SCHEME_H
+#define _SF_INTERNAL_SCHEME_H
 
 #include <SFScheme.h>
 

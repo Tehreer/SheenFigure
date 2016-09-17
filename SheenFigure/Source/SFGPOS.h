@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-#ifndef _SF_GPOS_INTERNAL_H
-#define _SF_GPOS_INTERNAL_H
+#ifndef _SF_INTERNAL_GPOS_H
+#define _SF_INTERNAL_GPOS_H
 
 #include "SFData.h"
 

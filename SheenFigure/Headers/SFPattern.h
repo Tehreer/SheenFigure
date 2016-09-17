@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-#ifndef _SF_PATTERN_H
-#define _SF_PATTERN_H
+#ifndef _SF_PUBLIC_PATTERN_H
+#define _SF_PUBLIC_PATTERN_H
 
 #include "SFBase.h"
 #include "SFFont.h"

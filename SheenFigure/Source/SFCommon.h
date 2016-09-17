@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-#ifndef _SF_COMMON_INTERNAL_H
-#define _SF_COMMON_INTERNAL_H
+#ifndef _SF_INTERNAL_COMMON_H
+#define _SF_INTERNAL_COMMON_H
 
 #include "SFBase.h"
 #include "SFData.h"

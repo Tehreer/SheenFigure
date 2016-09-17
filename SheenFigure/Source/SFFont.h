@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-#ifndef _SF_FONT_INTERNAL_H
-#define _SF_FONT_INTERNAL_H
+#ifndef _SF_INTERNAL_FONT_H
+#define _SF_INTERNAL_FONT_H
 
 #include <SFConfig.h>
 #include <SFFont.h>

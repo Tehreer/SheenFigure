@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-#ifndef _SF_ALBUM_INTERNAL_H
-#define _SF_ALBUM_INTERNAL_H
+#ifndef _SF_INTERNAL_ALBUM_H
+#define _SF_INTERNAL_ALBUM_H
 
 #include <SFAlbum.h>
 #include <SFConfig.h>

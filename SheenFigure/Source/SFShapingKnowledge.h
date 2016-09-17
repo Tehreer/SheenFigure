@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-#ifndef _SF_SHAPING_KNOWLEDGE_INTERNAL_H
-#define _SF_SHAPING_KNOWLEDGE_INTERNAL_H
+#ifndef _SF_INTERNAL_SHAPING_KNOWLEDGE_H
+#define _SF_INTERNAL_SHAPING_KNOWLEDGE_H
 
 #include <SFConfig.h>
 

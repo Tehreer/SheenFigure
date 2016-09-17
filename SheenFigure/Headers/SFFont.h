@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-#ifndef _SF_FONT_H
-#define _SF_FONT_H
+#ifndef _SF_PUBLIC_FONT_H
+#define _SF_PUBLIC_FONT_H
 
 #include "SFBase.h"
 

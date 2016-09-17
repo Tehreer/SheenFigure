@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-#ifndef _SF_ALBUM_H
-#define _SF_ALBUM_H
+#ifndef _SF_PUBLIC_ALBUM_H
+#define _SF_PUBLIC_ALBUM_H
 
 #include "SFBase.h"
 

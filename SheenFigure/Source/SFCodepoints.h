@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-#ifndef _SF_CODEPOINTS_INTERNAL_H
-#define _SF_CODEPOINTS_INTERNAL_H
+#ifndef _SF_INTERNAL_CODEPOINTS_H
+#define _SF_INTERNAL_CODEPOINTS_H
 
 #include <SFConfig.h>
 #include <SBCodepointSequence.h>

@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-#ifndef _SF_PATTERN_INTERNAL_H
-#define _SF_PATTERN_INTERNAL_H
+#ifndef _SF_INTERNAL_PATTERN_H
+#define _SF_INTERNAL_PATTERN_H
 
 #include <SFConfig.h>
 #include <SFPattern.h>

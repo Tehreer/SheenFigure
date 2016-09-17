@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-#ifndef _SF_GENERAL_CATEGORY_H
-#define _SF_GENERAL_CATEGORY_H
+#ifndef _SF_INTERNAL_GENERAL_CATEGORY_H
+#define _SF_INTERNAL_GENERAL_CATEGORY_H
 
 #include "SFBase.h"
 

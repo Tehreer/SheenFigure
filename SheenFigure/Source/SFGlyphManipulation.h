@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-#ifndef _SF_GLYPH_MANIPULATION_INTERNAL_H
-#define _SF_GLYPH_MANIPULATION_INTERNAL_H
+#ifndef _SF_INTERNAL_GLYPH_MANIPULATION_H
+#define _SF_INTERNAL_GLYPH_MANIPULATION_H
 
 /*
  * NOTE:

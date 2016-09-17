@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-#ifndef _SF_TEXT_PROCESSOR_INTERNAL_H
-#define _SF_TEXT_PROCESSOR_INTERNAL_H
+#ifndef _SF_INTERNAL_TEXT_PROCESSOR_H
+#define _SF_INTERNAL_TEXT_PROCESSOR_H
 
 #include <SFConfig.h>
 

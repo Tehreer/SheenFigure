@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-#ifndef _SF_CONFIG_H
-#define _SF_CONFIG_H
+#ifndef _SF_PUBLIC_CONFIG_H
+#define _SF_PUBLIC_CONFIG_H
 
 #define SF_CONFIG_UNITY
 

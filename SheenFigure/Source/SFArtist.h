@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-#ifndef _SF_ARTIST_INTERNAL_H
-#define _SF_ARTIST_INTERNAL_H
+#ifndef _SF_INTERNAL_ARTIST_H
+#define _SF_INTERNAL_ARTIST_H
 
 #include <SFArtist.h>
 #include <SFConfig.h>

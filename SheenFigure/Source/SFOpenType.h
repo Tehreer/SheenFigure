@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-#ifndef _SF_OPEN_TYPE_INTERNAL_H
-#define _SF_OPEN_TYPE_INTERNAL_H
+#ifndef _SF_INTERNAL_OPEN_TYPE_H
+#define _SF_INTERNAL_OPEN_TYPE_H
 
 #include <SFConfig.h>
 

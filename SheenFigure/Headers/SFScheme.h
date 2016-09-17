@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-#ifndef _SF_SCHEME_H
-#define _SF_SCHEME_H
+#ifndef _SF_PUBLIC_SCHEME_H
+#define _SF_PUBLIC_SCHEME_H
 
 #include "SFBase.h"
 #include "SFFont.h"

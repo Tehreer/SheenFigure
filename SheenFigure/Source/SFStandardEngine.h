@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-#ifndef _SF_STANDARD_ENGINE_INTERNAL_H
-#define _SF_STANDARD_ENGINE_INTERNAL_H
+#ifndef _SF_INTERNAL_STANDARD_ENGINE_H
+#define _SF_INTERNAL_STANDARD_ENGINE_H
 
 #include <SFConfig.h>
 
