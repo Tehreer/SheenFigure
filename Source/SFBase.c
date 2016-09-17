@@ -20,28 +20,6 @@
 
 const SFRange SFRangeEmpty = { 0, 0 };
 
-SF_INTERNAL SFBoolean SFRangeFallsInLength(SFRange range, SFUInteger maxLength)
-{
-    SFUInteger possibleLimit = range.start + range.count;
-
-    return range.start < maxLength && range.start <= possibleLimit && possibleLimit <= maxLength;
-}
-
-SF_INTERNAL void SFRangeReduceToLength(SFRange *refRange, SFUInteger maxLength)
-{
-    if (refRange->start < maxLength) {
-        SFUInteger possibleLimit = refRange->start + refRange->count;
-
-        if (refRange->start <= possibleLimit && possibleLimit <= maxLength) {
-            /* The range is valid. Nothing to do here. */
-        } else {
-            refRange->count = maxLength - refRange->start;
-        }
-    } else {
-        *refRange = SFRangeEmpty;
-    }
-}
-
 SFTextDirection SFScriptGetDefaultDirection(SFTag scriptTag)
 {
     SFScriptKnowledgeRef knowledge = SFShapingKnowledgeSeekScript(&SFUnifiedKnowledgeInstance, scriptTag);

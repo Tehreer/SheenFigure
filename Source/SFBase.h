@@ -50,7 +50,4 @@ typedef struct _SFRange {
 
 extern const SFRange SFRangeEmpty;
 
-SF_INTERNAL SFBoolean SFRangeFallsInLength(SFRange range, SFUInteger maxLength);
-SF_INTERNAL void SFRangeReduceToLength(SFRange *refRange, SFUInteger maxLength);
-
 #endif
