@@ -241,6 +241,7 @@ SFPatternRef SFSchemeBuildPattern(SFSchemeRef scheme)
             }
 
             SFPatternBuilderBuild(&state.builder);
+            SFPatternBuilderFinalize(&state.builder);
 
             return pattern;
         }
