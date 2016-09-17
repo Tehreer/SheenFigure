@@ -48,16 +48,6 @@ SFArtistRef SFArtistCreate(void)
     return artist;
 }
 
-SFTextDirection SFArtistGetDefaultDirectionForScript(SFArtistRef artist, SFTag scriptTag)
-{
-    SFScriptKnowledgeRef knowledge = SFShapingKnowledgeSeekScript(&SFUnifiedKnowledgeInstance, scriptTag);
-    if (knowledge != NULL) {
-        return knowledge->defaultDirection;
-    }
-
-    return SFTextModeForward;
-}
-
 void SFArtistSetString(SFArtistRef artist, SFStringEncoding stringEncoding, void *stringBuffer, SFUInteger stringLength)
 {
     _SFLoadCodepointSequence(&artist->codepointSequence, stringEncoding, stringBuffer, stringLength);

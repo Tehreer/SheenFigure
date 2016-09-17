@@ -18,6 +18,7 @@
 
 #include <stddef.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "SFBase.h"
 #include "SFPattern.h"
@@ -58,6 +59,31 @@ static void _SFPatternFinalize(SFPatternRef pattern)
     }
 
     free(pattern->featureUnits.items);
+}
+
+SFFontRef SFPatternGetFont(SFPatternRef pattern)
+{
+    return pattern->font;
+}
+
+SFTag SFPatternGetScriptTag(SFPatternRef pattern)
+{
+    return pattern->scriptTag;
+}
+
+SFTag SFPatternGetLanguageTag(SFPatternRef pattern)
+{
+    return pattern->languageTag;
+}
+
+SFUInteger SFPatternGetFeatureCount(SFPatternRef pattern)
+{
+    return pattern->featureTags.count;
+}
+
+void SFPatternGetFeatureTags(SFPatternRef pattern, SFTag *buffer)
+{
+    memcpy(buffer, pattern->featureTags.items, sizeof(SFTag) * pattern->featureTags.count);
 }
 
 SFPatternRef SFPatternRetain(SFPatternRef pattern)

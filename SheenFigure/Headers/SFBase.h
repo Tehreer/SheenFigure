@@ -111,4 +111,31 @@ typedef struct SFPoint {
     SFInt32 y; /**< The y-coordinate of the point. */
 } SFPoint;
 
+enum {
+    SFStringEncodingUTF8 = 0,  /**< An 8-bit representation of Unicode code points. */
+    SFStringEncodingUTF16 = 1, /**< 16-bit UTF encoding in native endianness. */
+    SFStringEncodingUTF32 = 2  /**< 32-bit UTF encoding in native endianness. */
+};
+typedef SFUInt32 SFStringEncoding;
+
+enum {
+    SFTextDirectionLeftToRight = 0,
+    SFTextDirectionRightToLeft = 1
+};
+typedef SFUInt32 SFTextDirection;
+
+enum {
+    SFTextModeForward = 0,
+    SFTextModeBackward = 1
+};
+typedef SFUInt32 SFTextMode;
+
+/**
+ * Returns the default direction of a script.
+ *
+ * @param scriptTag
+ *      The tag of the script whose default direction is returned.
+ */
+SFTextDirection SFScriptGetDefaultDirection(SFTag scriptTag);
+
 #endif

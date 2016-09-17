@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+#include "SFShapingKnowledge.h"
+#include "SFUnifiedEngine.h"
 #include "SFBase.h"
 
 const SFRange SFRangeEmpty = { 0, 0 };
@@ -38,4 +40,14 @@ SF_INTERNAL void SFRangeReduceToLength(SFRange *refRange, SFUInteger maxLength)
     } else {
         *refRange = SFRangeEmpty;
     }
+}
+
+SFTextDirection SFScriptGetDefaultDirection(SFTag scriptTag)
+{
+    SFScriptKnowledgeRef knowledge = SFShapingKnowledgeSeekScript(&SFUnifiedKnowledgeInstance, scriptTag);
+    if (knowledge != NULL) {
+        return knowledge->defaultDirection;
+    }
+
+    return SFTextDirectionLeftToRight;
 }

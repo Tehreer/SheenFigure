@@ -444,7 +444,11 @@ static void _SFAlbumBuildCodeunitToGlyphMap(SFAlbumRef album)
 
             for (j = 0; j < count; j++) {
                 association = array[j];
-                mapArray[association] = index;
+
+                /* Ignore if already assigned. */
+                if (mapArray[association] == SFInvalidIndex) {
+                    mapArray[association] = index;
+                }
             }
         } else {
             association = SFAlbumGetSingleAssociation(album, index);

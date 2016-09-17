@@ -20,64 +20,85 @@
 #include "SFBase.h"
 
 /**
- * The type used to represent a glyph set.
+ * The type used to represent an open type album.
  */
 typedef struct _SFAlbum *SFAlbumRef;
 
+/**
+ * Creates an instance of an open type album.
+ *
+ * @return
+ *      A reference to an album object. 
+ */
 SFAlbumRef SFAlbumCreate(void);
 
 /**
- * Provides the number of processed code units.
+ * Returns the number of code units processed by the shaping engine.
+ *
  * @param album
- *      The album whose character count you want to obtain.
+ *      The album for which to return the number of code units.
  * @return
- *      The number of characters analyzed by the shaping process.
+ *      The number of code units analyzed by the shaping engine.
  */
 SFUInteger SFAlbumGetCodeunitCount(SFAlbumRef album);
 
 /**
- * Provides the number of produced glyphs.
+ * Returns the number of glyphs produced by the shaping engine.
+ *
  * @param album
- *      The album whose number of glyphs you want to obtain.
+ *      The album for which to return the number of glyphs.
  * @return
- *      The number of glyphs kept by the album.
+ *      The number of glyphs produced by the shaping engine.
  */
 SFUInteger SFAlbumGetGlyphCount(SFAlbumRef album);
 
 /**
- * Provides an array of glyphs corresponding to the input text.
+ * Returns a direct pointer for the glyph IDs produced by the shaping engine.
+ *
  * @param album
- *      The album whose glyphs you want to obtain.
+ *      The album from which to access the glyph IDs.
  * @return
- *      An array of glyphs produced as part of shaping process.
+ *      A valid pointer to an array of glyph IDs.
  */
 const SFGlyphID *SFAlbumGetGlyphIDsPtr(SFAlbumRef album);
 
 /**
- * Provides an array of glyph offsets in font units where each glyph is positioned with respect to
- * zero origin.
+ * Returns a direct pointer for the glyph offsets produced by the shaping engine. Each offset
+ * describes the position of a glyph with respect to zero origin.
+ *
  * @param album
- *      The album whose glyph positions you want to obtain.
+ *      The album from which to access the glyph offsets.
  * @return
- *      An array of glyph positions produced as part of shaping process.
+ *      A valid pointer to an array of SFPoint structures.
  */
 const SFPoint *SFAlbumGetGlyphOffsetsPtr(SFAlbumRef album);
 
 /**
- * Provides an array of glyph advances in font units.
+ * Returns a direct pointer for the glyph advances produced by the shaping engine.
+ *
  * @param album
- *      The album whose glyph advances you want to obtain.
+ *      The album from which to access the glyph advances.
  * @return
- *      An array of glyph advances produced as part of shaping process.
+ *      A valid pointer to an array of glyph advances.
  */
 const SFAdvance *SFAlbumGetGlyphAdvancesPtr(SFAlbumRef album);
 
 /**
- * Provides an array, mapping each code unit in the input string to corresponding glyph index.
+ * Returns a direct pointer to an array of indexes, mapping each code unit in the source string to
+ * corresponding glyph.
+ *
+ * The map is produced according to the following rules.
+ * - If a single code unit translates into multiple glyphs, then it maps to the first glyph in the
+ *   sequence.
+ * - If multiple code units combine to make a single code point which in turn translates into
+ *   multiple glyphs, then each code unit maps to the first glyph in the sequence.
+ * - If multiple code units translate to a single glyph or ligature, then each participating code
+ *   unit, whether consecutive or not, maps to this glyph or ligature.
+ *
  * @param album
- *      The album whose charater to glyph map you want to obtain.
+ *      The album from which to access the glyph map.
  * @return
- *      An array of indexes mapping characters to glyphs.
+ *      A valid pointer to an array of glyph map.
  */
 const SFUInteger *SFAlbumGetCodeunitToGlyphMapPtr(SFAlbumRef album);
 

@@ -28,10 +28,44 @@ typedef struct _SFScheme *SFSchemeRef;
 
 SFSchemeRef SFSchemeCreate(void);
 
+/**
+ * Sets the font in a scheme.
+ *
+ * @param scheme
+ *      The scheme for which to set the font.
+ * @param font
+ *      A font.
+ */
 void SFSchemeSetFont(SFSchemeRef scheme, SFFontRef font);
+
+/**
+ * Sets the script tag in a scheme.
+ *
+ * @param scheme
+ *      The scheme for which to set the script tag.
+ * @param scriptTag
+ *      A script tag.
+ */
 void SFSchemeSetScriptTag(SFSchemeRef scheme, SFTag scriptTag);
+
+/**
+ * Sets the language tag in a scheme.
+ *
+ * @param scheme
+ *      The scheme for which to set the language tag.
+ * @param languageTag
+ *      A language tag.
+ */
 void SFSchemeSetLanguageTag(SFSchemeRef scheme, SFTag languageTag);
 
+/**
+ * Builds a pattern for the scheme.
+ *
+ * @param scheme
+ *      The scheme for which to build the pattern.
+ * @return
+ *      A reference to a pattern object if the call was successful, NULL otherwise.
+ */
 SFPatternRef SFSchemeBuildPattern(SFSchemeRef scheme);
 
 SFSchemeRef SFSchemeRetain(SFSchemeRef scheme);
