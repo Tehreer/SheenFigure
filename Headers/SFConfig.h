@@ -17,9 +17,14 @@
 #ifndef _SF_PUBLIC_CONFIG_H
 #define _SF_PUBLIC_CONFIG_H
 
-#define SF_CONFIG_UNITY
+/* #define SF_CONFIG_UNITY */
 
+#ifdef SF_CONFIG_UNITY
+#define SF_INTERNAL static
+#define SF_PRIVATE  static
+#else
 #define SF_INTERNAL
 #define SF_PRIVATE
+#endif
 
 #endif
