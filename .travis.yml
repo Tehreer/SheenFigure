@@ -1,0 +1,23 @@
+sudo: required
+os:
+  - linux
+  - osx
+dist: trusty
+language: c
+compiler:
+  - clang
+  - gcc
+env:
+  global:
+    - SHEENBIDI_ROOT=SheenBidi
+    - LIBRARIES_ROOT=Libraries
+    - SHEENBIDI_DIR=$SHEENBIDI_ROOT/Headers
+    - EXTRA_LIBS="-L$LIBRARIES_ROOT"
+before_install:
+  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then pip install --user cpp-coveralls; fi
+  - if [ "$TRAVIS_OS_NAME" == "linux" -a "$CC" == "gcc" ]; then export EXTRA_FLAGS="--coverage"; fi
+script:
+  - bash .ci/libs.sh
+  - make
+  - make check
+  - if [ "$TRAVIS_OS_NAME" == "linux" -a "$CC" == "gcc" -a "$TRAVIS_REPO_SLUG" == "mta452/SheenFigure" ]; then coveralls -e $SHEENBIDI_ROOT -e Debug/Tester -e Debug/Parser; fi
