@@ -20,7 +20,6 @@
 #include <list>
 #include <memory>
 #include <set>
-#include <tuple>
 #include <utility>
 #include <vector>
 
@@ -199,7 +198,7 @@ static ChainContextSubtable &createChainContext(ObjectPool &pool,
     const vector<const vector<Glyph>> backtrack,
     const vector<const vector<Glyph>> input,
     const vector<const vector<Glyph>> lookahead,
-    const vector<const tuple<UInt16, UInt16>> lookups)
+    const vector<const pair<UInt16, UInt16>> lookups)
 {
     ChainContextSubtable &subtable = createObject<ChainContextSubtable>(pool);
     subtable.format = 3;
@@ -229,8 +228,8 @@ static ChainContextSubtable &createChainContext(ObjectPool &pool,
 
     for (size_t i = 0; i < lookups.size(); i++) {
         LookupRecord &lookupRecord = subtable.format3.lookupRecord[i];
-        lookupRecord.sequenceIndex = get<0>(lookups[i]);
-        lookupRecord.lookupListIndex = get<1>(lookups[i]);
+        lookupRecord.sequenceIndex = lookups[i].first;
+        lookupRecord.lookupListIndex = lookups[i].second;
     }
 
     return subtable;
