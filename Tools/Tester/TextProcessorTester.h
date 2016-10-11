@@ -17,7 +17,10 @@
 #ifndef __SHEENFIGURE_TESTER__TEXT_PROCESSOR_TESTER_H
 #define __SHEENFIGURE_TESTER__TEXT_PROCESSOR_TESTER_H
 
+#include <vector>
+
 extern "C" {
+#include <Source/SFBase.h>
 #include <Source/SFAlbum.h>
 }
 
@@ -45,6 +48,11 @@ public:
     void test();
 
 private:
+    void testSubstitution(OpenType::LookupSubtable &subtable,
+                          const std::vector<SFCodepoint> codepoints,
+                          const std::vector<OpenType::Glyph> glyphs,
+                          OpenType::LookupSubtable *referrals[] = NULL, SFUInteger count = 0);
+
     void processGSUB(SFAlbumRef album,
                      SFCodepoint *input, SFUInteger length, OpenType::LookupSubtable &subtable,
                      OpenType::LookupSubtable *referrals[] = NULL, SFUInteger count = 0);

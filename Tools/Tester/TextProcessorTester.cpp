@@ -145,7 +145,7 @@ static void writeTable(Writer &writer,
 }
 
 static void processSubtable(SFAlbumRef album,
-    SFCodepoint *input, SFUInteger length, SFBoolean positioning,
+    const SFCodepoint *input, SFUInteger length, SFBoolean positioning,
     LookupSubtable &subtable, LookupSubtable *referrals[], SFUInteger count)
 {
     /* Write the table for the given lookup. */
@@ -186,7 +186,7 @@ static void processSubtable(SFAlbumRef album,
     /* Create the codepoint sequence. */
     SBCodepointSequence sequence;
     sequence.stringEncoding = SBStringEncodingUTF32;
-    sequence.stringBuffer = input;
+    sequence.stringBuffer = (void *)input;
     sequence.stringLength = length;
 
     /* Reset the album for given codepoints. */
@@ -223,6 +223,18 @@ void TextProcessorTester::processGPOS(SFAlbumRef album,
     LookupSubtable &subtable, LookupSubtable *referrals[], SFUInteger count)
 {
     processSubtable(album, input, length, SFTrue, subtable, referrals, count);
+}
+
+void TextProcessorTester::testSubstitution(LookupSubtable &subtable,
+    const vector<SFCodepoint> codepoints, const vector<Glyph> glyphs,
+    LookupSubtable *referrals[], SFUInteger count)
+{
+    SFAlbum album;
+    SFAlbumInitialize(&album);
+    processSubtable(&album, &codepoints[0], codepoints.size(), SFFalse, subtable, referrals, count);
+
+    SFAssert(SFAlbumGetGlyphCount(&album) == glyphs.size());
+    SFAssert(memcmp(SFAlbumGetGlyphIDsPtr(&album), glyphs.data(), sizeof(SFGlyphID) * glyphs.size()) == 0);
 }
 
 void TextProcessorTester::test()
