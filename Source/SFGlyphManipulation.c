@@ -84,6 +84,7 @@ SF_PRIVATE SFBoolean _SFApplyChainContextSubtable(SFTextProcessorRef processor, 
 
                 if (coverageIndex < chainRuleSetCount) {
                     SFUInt16 chainRuleCount;
+                    SFData chainRule;
                     SFUInteger ruleIndex;
 
                     offset = SFChainContextF1_ChainRuleSetOffset(chainContext, coverageIndex);
@@ -92,7 +93,10 @@ SF_PRIVATE SFBoolean _SFApplyChainContextSubtable(SFTextProcessorRef processor, 
 
                     /* Match each rule sequentially as they are ordered by preference. */
                     for (ruleIndex = 0; ruleIndex < chainRuleCount; ruleIndex++) {
-                        if (_SFApplyChainRule(processor, featureKind, chainRuleSet)) {
+                        offset = SFChainRuleSet_ChainRuleOffset(chainRuleSet, ruleIndex);
+                        chainRule = SFData_Subdata(chainRuleSet, offset);
+
+                        if (_SFApplyChainRule(processor, featureKind, chainRule)) {
                             return SFTrue;
                         }
                     }
@@ -114,12 +118,12 @@ static SFBoolean _SFApplyChainRule(SFTextProcessorRef processor, SFFeatureKind f
     SFUInt16 backtrackCount = SFBacktrackRecord_GlyphCount(backtrackRecord);
     SFData inputRecord = SFBacktrackRecord_InputRecord(backtrackRecord, backtrackCount);
     SFUInt16 inputCount = SFInputRecord_GlyphCount(inputRecord);
-    SFData lookaheadRecord = SFInputRecord_LookaheadRecord(inputRecord, inputCount);
-    SFUInt16 lookaheadCount = SFInputRecord_GlyphCount(lookaheadRecord);
-    SFData contextRecord = SFLookaheadRecord_ContextRecord(lookaheadRecord, lookaheadCount);
 
     /* Make sure that input record has at least one input glyph. */
     if (inputCount > 0) {
+        SFData lookaheadRecord = SFInputRecord_LookaheadRecord(inputRecord, inputCount - 1);
+        SFUInt16 lookaheadCount = SFInputRecord_GlyphCount(lookaheadRecord);
+        SFData contextRecord = SFLookaheadRecord_ContextRecord(lookaheadRecord, lookaheadCount);
         SFAlbumRef album = processor->_album;
         SFLocatorRef locator = &processor->_locator;
         SFUInteger backtrackIndex;
@@ -153,7 +157,7 @@ static SFBoolean _SFApplyChainRule(SFTextProcessorRef processor, SFFeatureKind f
 
             if (backtrackIndex != SFInvalidIndex) {
                 SFGlyphID inputGlyph = SFAlbumGetGlyph(album, backtrackIndex);
-                SFGlyphID matchingGlyph = SFBacktrackRecord_Value(inputRecord, recordIndex - 1);
+                SFGlyphID matchingGlyph = SFBacktrackRecord_Value(backtrackRecord, recordIndex);
 
                 if (inputGlyph != matchingGlyph) {
                     goto NotMatched;
@@ -171,7 +175,7 @@ static SFBoolean _SFApplyChainRule(SFTextProcessorRef processor, SFFeatureKind f
 
             if (lookaheadIndex != SFInvalidIndex) {
                 SFGlyphID inputGlyph = SFAlbumGetGlyph(album, lookaheadIndex);
-                SFGlyphID matchingGlyph = SFLookaheadRecord_Value(inputRecord, recordIndex - 1);
+                SFGlyphID matchingGlyph = SFLookaheadRecord_Value(lookaheadRecord, recordIndex);
 
                 if (inputGlyph != matchingGlyph) {
                     goto NotMatched;

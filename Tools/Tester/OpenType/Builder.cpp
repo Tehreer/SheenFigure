@@ -192,8 +192,7 @@ LigatureSubstSubtable &Builder::createLigatureSubst(const map<vector<Glyph>, Gly
     return subtable;
 }
 
-ChainContextSubtable &Builder::createChainContext(const vector<
-    tuple<vector<Glyph>, vector<Glyph>, vector<Glyph>, vector<pair<UInt16, UInt16>>>> rules)
+ChainContextSubtable &Builder::createChainContext(const vector<rule_chain_context> rules)
 {
     map<Glyph, vector<size_t>> ruleSets;
 
@@ -206,7 +205,7 @@ ChainContextSubtable &Builder::createChainContext(const vector<
         if (entry != ruleSets.end()) {
             ruleIndexes = &entry->second;
         } else {
-            ruleSets[ruleInitial] = vector<size_t>();
+            ruleIndexes = &(*ruleSets.insert({ ruleInitial, vector<size_t>() }).first).second;
         }
 
         ruleIndexes->push_back(i);
@@ -233,7 +232,7 @@ ChainContextSubtable &Builder::createChainContext(const vector<
         chainRuleSet.chainRule = createArray<ChainRule>(ruleIndexes.size());
 
         for (size_t i = 0; i < ruleIndexes.size(); i++) {
-            const auto &currentRule = rules[i];
+            const rule_chain_context &currentRule = rules[i];
             const vector<Glyph> &backtrack = get<0>(currentRule);
             const vector<Glyph> &input = get<1>(currentRule);
             const vector<Glyph> &lookahead = get<2>(currentRule);

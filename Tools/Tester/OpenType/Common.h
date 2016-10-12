@@ -387,7 +387,7 @@ struct ChainRule : public Table {
         writer.write(backtrackGlyphCount);
         writer.write(backtrack, backtrackGlyphCount);
         writer.write(inputGlyphCount);
-        writer.write(input, inputGlyphCount);
+        writer.write(input, inputGlyphCount - 1);
         writer.write(lookaheadGlyphCount);
         writer.write(lookAhead, lookaheadGlyphCount);
         writer.write(recordCount);

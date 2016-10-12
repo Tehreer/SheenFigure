@@ -37,6 +37,12 @@ namespace OpenType {
 
 typedef std::list<std::shared_ptr<void>> ObjectPool;
 
+typedef std::tuple<
+         std::vector<Glyph>,
+         std::vector<Glyph>,
+         std::vector<Glyph>,
+         std::vector<std::pair<UInt16, UInt16>>> rule_chain_context;
+
 class Builder {
 public:
     Builder();
@@ -47,12 +53,7 @@ public:
     MultipleSubstSubtable &createMultipleSubst(const std::map<Glyph, std::vector<Glyph>> glyphs);
     LigatureSubstSubtable &createLigatureSubst(const std::map<std::vector<Glyph>, Glyph> glyphs);
 
-    ChainContextSubtable &createChainContext(const std::vector<
-                                                    std::tuple<
-                                                     std::vector<Glyph>,
-                                                     std::vector<Glyph>,
-                                                     std::vector<Glyph>,
-                                                     std::vector<std::pair<UInt16, UInt16>>>> rules);
+    ChainContextSubtable &createChainContext(const std::vector<rule_chain_context> rules);
     ChainContextSubtable &createChainContext(const std::vector<std::vector<Glyph>> backtrack,
                                              const std::vector<std::vector<Glyph>> input,
                                              const std::vector<std::vector<Glyph>> lookahead,

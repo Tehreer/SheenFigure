@@ -20,6 +20,7 @@
 #include <list>
 #include <memory>
 #include <set>
+#include <tuple>
 #include <utility>
 #include <vector>
 
@@ -139,37 +140,81 @@ void TextProcessorTester::testChainContextSubstitution()
 {
     Builder builder;
 
-    /* Test with simple substitution. */
+    /* Test the format 1. */
     {
-        vector<LookupSubtable *> referrals = {
-            &builder.createSingleSubst({ 2 }, 1)
-        };
-        ChainContextSubtable &subtable = builder.createChainContext(
-            { { 1 }, { 1 }, { 1 } },
-            { { 1 }, { 2 }, { 3 } },
-            { { 3 }, { 3 }, { 3 } },
-            { { 1, 1 } }
-        );
-        testSubstitution(subtable,
-                         { 1, 1, 1, 1, 2, 3, 3, 3, 3 }, { 1, 1, 1, 1, 3, 3, 3, 3, 3 },
-                         referrals.data(), referrals.size());
+        /* Test with simple substitution. */
+        {
+            vector<LookupSubtable *> referrals = {
+                &builder.createSingleSubst({ 2 }, 1)
+            };
+            ChainContextSubtable &subtable = builder.createChainContext({
+                rule_chain_context {
+                    { 1, 1, 1 },
+                    { 1, 2, 3 },
+                    { 3, 3, 3 },
+                    { { 1, 1 } }
+                }
+            });
+            testSubstitution(subtable,
+                             { 1, 1, 1, 1, 2, 3, 3, 3, 3 }, { 1, 1, 1, 1, 3, 3, 3, 3, 3 },
+                             referrals.data(), referrals.size());
+        }
+
+        /* Test with complex substitutions. */
+        {
+            vector<LookupSubtable *> referrals = {
+                &builder.createSingleSubst({ 1, 2, 3, 4, 5, 6 }, 1),
+                &builder.createMultipleSubst({ {2, { 4, 5, 6 }} }),
+                &builder.createLigatureSubst({ {{ 1, 4 }, 10}, {{ 6, 4 }, 20} })
+            };
+            ChainContextSubtable &subtable = builder.createChainContext({
+                rule_chain_context {
+                    { 1, 1, 1 },
+                    { 1, 2, 3 },
+                    { 3, 3, 3 },
+                    { { 2, 1 }, { 1, 2 }, { 3, 3 }, { 0, 3 }, { 1, 1 } }
+                }
+            });
+            testSubstitution(subtable,
+                             {  1, 1, 1, 1, 2, 3, 3, 3, 3 }, { 1, 1, 1, 10, 6, 20, 3, 3, 3 },
+                             referrals.data(), referrals.size());
+        }
     }
 
-    /* Test with complex substitutions. */
+    /* Test the format 3. */
     {
-        vector<LookupSubtable *> referrals = {
-            &builder.createSingleSubst({ 1, 2, 3, 4, 5, 6 }, 1),
-            &builder.createMultipleSubst({ {2, { 4, 5, 6 }} }),
-            &builder.createLigatureSubst({ {{ 1, 4 }, 10}, {{ 6, 4 }, 20} })
-        };
-        ChainContextSubtable &subtable = builder.createChainContext(
-            { { 1 }, { 1 }, { 1 } },
-            { { 1 }, { 2 }, { 3 } },
-            { { 3 }, { 3 }, { 3 } },
-            { { 2, 1 }, { 1, 2 }, { 3, 3 }, { 0, 3 }, { 1, 1 } }
-        );
-        testSubstitution(subtable,
-                         {  1, 1, 1, 1, 2, 3, 3, 3, 3 }, { 1, 1, 1, 10, 6, 20, 3, 3, 3 },
-                         referrals.data(), referrals.size());
+        /* Test with simple substitution. */
+        {
+            vector<LookupSubtable *> referrals = {
+                &builder.createSingleSubst({ 2 }, 1)
+            };
+            ChainContextSubtable &subtable = builder.createChainContext(
+                { { 1 }, { 1 }, { 1 } },
+                { { 1 }, { 2 }, { 3 } },
+                { { 3 }, { 3 }, { 3 } },
+                { { 1, 1 } }
+            );
+            testSubstitution(subtable,
+                             { 1, 1, 1, 1, 2, 3, 3, 3, 3 }, { 1, 1, 1, 1, 3, 3, 3, 3, 3 },
+                             referrals.data(), referrals.size());
+        }
+
+        /* Test with complex substitutions. */
+        {
+            vector<LookupSubtable *> referrals = {
+                &builder.createSingleSubst({ 1, 2, 3, 4, 5, 6 }, 1),
+                &builder.createMultipleSubst({ {2, { 4, 5, 6 }} }),
+                &builder.createLigatureSubst({ {{ 1, 4 }, 10}, {{ 6, 4 }, 20} })
+            };
+            ChainContextSubtable &subtable = builder.createChainContext(
+                { { 1 }, { 1 }, { 1 } },
+                { { 1 }, { 2 }, { 3 } },
+                { { 3 }, { 3 }, { 3 } },
+                { { 2, 1 }, { 1, 2 }, { 3, 3 }, { 0, 3 }, { 1, 1 } }
+            );
+            testSubstitution(subtable,
+                             {  1, 1, 1, 1, 2, 3, 3, 3, 3 }, { 1, 1, 1, 10, 6, 20, 3, 3, 3 },
+                             referrals.data(), referrals.size());
+        }
     }
 }
