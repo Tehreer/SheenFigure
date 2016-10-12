@@ -175,7 +175,7 @@ SF_PRIVATE SFBoolean _SFApplyChainContextSubtable(SFTextProcessorRef processor, 
                 SFUInt16 chainRuleSetCount = SFChainContextF2_ChainRuleSetCount(chainContext);
 
                 if (coverageIndex < chainRuleSetCount) {
-                    SFOffset chainRuleSetOffset = SFChainContextF1_ChainRuleSetOffset(chainContext, coverageIndex);
+                    SFOffset chainRuleSetOffset = SFChainContextF2_ChainRuleSetOffset(chainContext, coverageIndex);
                     SFData chainRuleSetTable = SFData_Subdata(chainContext, chainRuleSetOffset);
                     SFData classDefTables[3];
                     SFUInt16 chainRuleCount;
