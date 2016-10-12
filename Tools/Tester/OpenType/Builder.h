@@ -22,6 +22,7 @@
 #include <map>
 #include <memory>
 #include <set>
+#include <tuple>
 #include <utility>
 #include <vector>
 
@@ -43,13 +44,19 @@ public:
 
     SingleSubstSubtable &createSingleSubst(const std::set<Glyph> glyphs, Int16 delta);
     SingleSubstSubtable &createSingleSubst(const std::map<Glyph, Glyph> glyphs);
-    MultipleSubstSubtable &createMultipleSubst(const std::map<Glyph, const std::vector<Glyph>> glyphs);
-    LigatureSubstSubtable &createLigatureSubst(const std::map<const std::vector<Glyph>, Glyph> glyphs);
+    MultipleSubstSubtable &createMultipleSubst(const std::map<Glyph, std::vector<Glyph>> glyphs);
+    LigatureSubstSubtable &createLigatureSubst(const std::map<std::vector<Glyph>, Glyph> glyphs);
 
-    ChainContextSubtable &createChainContext(const std::vector<const std::vector<Glyph>> backtrack,
-                                             const std::vector<const std::vector<Glyph>> input,
-                                             const std::vector<const std::vector<Glyph>> lookahead,
-                                             const std::vector<const std::pair<UInt16, UInt16>> lookups);
+    ChainContextSubtable &createChainContext(const std::vector<
+                                                    std::tuple<
+                                                     std::vector<Glyph>,
+                                                     std::vector<Glyph>,
+                                                     std::vector<Glyph>,
+                                                     std::vector<std::pair<UInt16, UInt16>>>> rules);
+    ChainContextSubtable &createChainContext(const std::vector<std::vector<Glyph>> backtrack,
+                                             const std::vector<std::vector<Glyph>> input,
+                                             const std::vector<std::vector<Glyph>> lookahead,
+                                             const std::vector<std::pair<UInt16, UInt16>> lookups);
 
 private:
     ObjectPool m_pool;

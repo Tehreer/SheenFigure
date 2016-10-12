@@ -19,6 +19,7 @@
 #include <map>
 #include <memory>
 #include <set>
+#include <tuple>
 #include <utility>
 #include <vector>
 
@@ -115,7 +116,7 @@ SingleSubstSubtable &Builder::createSingleSubst(const map<Glyph, Glyph> glyphs)
     return subtable;
 }
 
-MultipleSubstSubtable &Builder::createMultipleSubst(const map<Glyph, const vector<Glyph>> glyphs)
+MultipleSubstSubtable &Builder::createMultipleSubst(const map<Glyph, vector<Glyph>> glyphs)
 {
     Glyph *input = createGlyphs(glyphs.begin(), glyphs.end(),
                                 [](const decltype(glyphs)::value_type &pair) {
@@ -140,7 +141,7 @@ MultipleSubstSubtable &Builder::createMultipleSubst(const map<Glyph, const vecto
     return subtable;
 }
 
-LigatureSubstSubtable &Builder::createLigatureSubst(const map<const vector<Glyph>, Glyph> glyphs)
+LigatureSubstSubtable &Builder::createLigatureSubst(const map<vector<Glyph>, Glyph> glyphs)
 {
     set<Glyph> initials;
     vector<size_t> components;
@@ -191,11 +192,80 @@ LigatureSubstSubtable &Builder::createLigatureSubst(const map<const vector<Glyph
     return subtable;
 }
 
+ChainContextSubtable &Builder::createChainContext(const vector<
+    tuple<vector<Glyph>, vector<Glyph>, vector<Glyph>, vector<pair<UInt16, UInt16>>>> rules)
+{
+    map<Glyph, vector<size_t>> ruleSets;
+
+    /* Extract all initial glyphs with their rules. */
+    for (size_t i = 0; i < rules.size(); i++) {
+        Glyph ruleInitial = get<0>(rules[i])[0];
+        vector<size_t> *ruleIndexes = nullptr;
+
+        auto entry = ruleSets.find(ruleInitial);
+        if (entry != ruleSets.end()) {
+            ruleIndexes = &entry->second;
+        } else {
+            ruleSets[ruleInitial] = vector<size_t>();
+        }
+
+        ruleIndexes->push_back(i);
+    }
+
+    Glyph *initials = createGlyphs(ruleSets.begin(), ruleSets.end(),
+                                   [](const decltype(ruleSets)::value_type &pair) {
+                                       return pair.first;
+                                   });
+
+    ChainContextSubtable &subtable = createObject<ChainContextSubtable>();
+    subtable.format = 1;
+    subtable.format1.coverage = &createCoverage(initials, (UInt16)ruleSets.size());
+    subtable.format1.chainRuleSetCount = (UInt16)ruleSets.size();
+    subtable.format1.chainRuleSet = createArray<ChainRuleSet>(ruleSets.size());
+
+    size_t ruleSetIndex = 0;
+
+    for (const auto &entry : ruleSets) {
+        const vector<size_t> &ruleIndexes = entry.second;
+
+        ChainRuleSet &chainRuleSet = subtable.format1.chainRuleSet[ruleSetIndex++];
+        chainRuleSet.chainRuleCount = (UInt16)ruleIndexes.size();
+        chainRuleSet.chainRule = createArray<ChainRule>(ruleIndexes.size());
+
+        for (size_t i = 0; i < ruleIndexes.size(); i++) {
+            const auto &currentRule = rules[i];
+            const vector<Glyph> &backtrack = get<0>(currentRule);
+            const vector<Glyph> &input = get<1>(currentRule);
+            const vector<Glyph> &lookahead = get<2>(currentRule);
+            const vector<pair<UInt16, UInt16>> &lookups = get<3>(currentRule);
+
+            ChainRule &chainRule = chainRuleSet.chainRule[i];
+            chainRule.backtrackGlyphCount = (UInt16)backtrack.size();
+            chainRule.backtrack = createGlyphs(backtrack);
+            chainRule.inputGlyphCount = (UInt16)input.size();
+            chainRule.input = createGlyphs(input.begin() + 1, input.end(),
+                                           [](Glyph glyph) { return glyph; });
+            chainRule.lookaheadGlyphCount = (UInt16)lookahead.size();
+            chainRule.lookAhead = createGlyphs(lookahead);
+            chainRule.recordCount = (UInt16)lookups.size();
+            chainRule.lookupRecord = createArray<LookupRecord>(lookups.size());
+
+            for (size_t j = 0; j < lookups.size(); j++) {
+                LookupRecord &lookupRecord = chainRule.lookupRecord[j];
+                lookupRecord.sequenceIndex = lookups[j].first;
+                lookupRecord.lookupListIndex = lookups[j].second;
+            }
+        }
+    }
+    
+    return subtable;
+}
+
 ChainContextSubtable &Builder::createChainContext(
-    const vector<const vector<Glyph>> backtrack,
-    const vector<const vector<Glyph>> input,
-    const vector<const vector<Glyph>> lookahead,
-    const vector<const pair<UInt16, UInt16>> lookups)
+    const vector<vector<Glyph>> backtrack,
+    const vector<vector<Glyph>> input,
+    const vector<vector<Glyph>> lookahead,
+    const vector<pair<UInt16, UInt16>> lookups)
 {
     ChainContextSubtable &subtable = createObject<ChainContextSubtable>();
     subtable.format = 3;
