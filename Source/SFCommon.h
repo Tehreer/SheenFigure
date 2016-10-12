@@ -185,8 +185,8 @@ typedef SFUInt16 SFLookupFlag;
 #define SFChainContextF2_BacktrackClassDefOffset(data)  SFData_UInt16(data, 4)
 #define SFChainContextF2_InputClassDefOffset(data)      SFData_UInt16(data, 6)
 #define SFChainContextF2_LookaheadClassDefOffset(data)  SFData_UInt16(data, 8)
-#define SFChainContextF2_ChainClassSetCount(data)       SFData_UInt16(data, 10)
-#define SFChainContextF2_ChainClassSetOffset(data, index) \
+#define SFChainContextF2_ChainRuleSetCount(data)        SFData_UInt16(data, 10)
+#define SFChainContextF2_ChainRuleSetOffset(data, index) \
                                                         SFData_UInt16(data, 12 + ((index) * 2))
 
 #define SFChainContextF3_ChainRule(data)                SFData_Subdata(data, 2)
@@ -195,12 +195,6 @@ typedef SFUInt16 SFLookupFlag;
 #define SFChainRuleSet_ChainRuleOffset(data, index)     SFData_UInt16(data, 2 + ((index) * 2))
 
 #define SFChainRule_BacktrackRecord(data)               SFData_Subdata(data, 0)
-
-#define SFChainClassSet_ChainClassRuleCount(data)       SFData_UInt16(data, 0)
-#define SFChainClassSet_ChainClassRuleOffset(data, index) \
-                                                        SFData_UInt16(data, 2 + ((index) * 2))
-
-#define SFChainClassRule_BacktrackRecord(data)          SFData_Subdata(data, 0)
 
 #define SFBacktrackRecord_GlyphCount(data)              SFData_UInt16(data, 0)
 #define SFBacktrackRecord_Value(data, index)            SFData_UInt16(data, 2 + ((index)  * 2))
