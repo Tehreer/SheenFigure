@@ -33,6 +33,7 @@
 #include "SFGlyphSubstitution.h"
 #include "SFShapingEngine.h"
 
+static SFBoolean _SFApplyChainRule(SFTextProcessorRef processor, SFFeatureKind featureKind, SFData chainRule);
 static SFBoolean _SFApplyChainContextF3(SFTextProcessorRef processor, SFFeatureKind featureKind, SFData chainContext);
 static void _SFApplyContextRecord(SFTextProcessorRef processor, SFFeatureKind featureKind, SFData contextRecord, SFUInteger startIndex, SFUInteger endIndex);
 
@@ -62,13 +63,129 @@ SF_PRIVATE SFBoolean _SFApplyExtensionSubtable(SFTextProcessorRef processor, SFF
 
 SF_PRIVATE SFBoolean _SFApplyChainContextSubtable(SFTextProcessorRef processor, SFFeatureKind featureKind, SFData chainContext)
 {
-    SFUInt16 format = SFChainContext_Format(chainContext);
+    SFAlbumRef album = processor->_album;
+    SFLocatorRef locator = &processor->_locator;
+    SFGlyphID inputGlyph = SFAlbumGetGlyph(album, locator->index);
+    SFUInt16 format;
+    
+    format = SFChainContext_Format(chainContext);
 
     switch (format) {
+        case 1: {
+            SFOffset offset = SFChainContextF1_CoverageOffset(chainContext);
+            SFData coverage = SFData_Subdata(chainContext, offset);
+            SFUInteger coverageIndex;
+
+            coverageIndex = SFOpenTypeSearchCoverageIndex(coverage, inputGlyph);
+
+            if (coverageIndex != SFInvalidIndex) {
+                SFUInt16 chainRuleSetCount = SFChainContextF1_ChainRuleSetCount(chainContext);
+                SFData chainRuleSet;
+
+                if (coverageIndex < chainRuleSetCount) {
+                    SFUInt16 chainRuleCount;
+                    SFUInteger ruleIndex;
+
+                    offset = SFChainContextF1_ChainRuleSetOffset(chainContext, coverageIndex);
+                    chainRuleSet = SFData_Subdata(chainContext, offset);
+                    chainRuleCount = SFChainRuleSet_ChainRuleCount(chainRuleSet);
+
+                    /* Match each rule sequentially as they are ordered by preference. */
+                    for (ruleIndex = 0; ruleIndex < chainRuleCount; ruleIndex++) {
+                        if (_SFApplyChainRule(processor, featureKind, chainRuleSet)) {
+                            return SFTrue;
+                        }
+                    }
+                }
+            }
+            break;
+        }
+
         case 3:
             return _SFApplyChainContextF3(processor, featureKind, chainContext);
     }
 
+    return SFFalse;
+}
+
+static SFBoolean _SFApplyChainRule(SFTextProcessorRef processor, SFFeatureKind featureKind, SFData chainRule)
+{
+    SFData backtrackRecord = SFChainRule_BacktrackRecord(chainRule);
+    SFUInt16 backtrackCount = SFBacktrackRecord_GlyphCount(backtrackRecord);
+    SFData inputRecord = SFBacktrackRecord_InputRecord(backtrackRecord, backtrackCount);
+    SFUInt16 inputCount = SFInputRecord_GlyphCount(inputRecord);
+    SFData lookaheadRecord = SFInputRecord_LookaheadRecord(inputRecord, inputCount);
+    SFUInt16 lookaheadCount = SFInputRecord_GlyphCount(lookaheadRecord);
+    SFData contextRecord = SFLookaheadRecord_ContextRecord(lookaheadRecord, lookaheadCount);
+
+    /* Make sure that input record has at least one input glyph. */
+    if (inputCount > 0) {
+        SFAlbumRef album = processor->_album;
+        SFLocatorRef locator = &processor->_locator;
+        SFUInteger backtrackIndex;
+        SFUInteger inputIndex;
+        SFUInteger lookaheadIndex;
+        SFUInteger recordIndex;
+
+        inputIndex = locator->index;
+
+        /* Match the remaining input glyphs. */
+        for (recordIndex = 1; recordIndex < inputCount; recordIndex++) {
+            inputIndex = SFLocatorGetAfter(locator, inputIndex);
+
+            if (inputIndex != SFInvalidIndex) {
+                SFGlyphID inputGlyph = SFAlbumGetGlyph(album, inputIndex);
+                SFGlyphID matchingGlyph = SFInputRecord_Value(inputRecord, recordIndex - 1);
+
+                if (inputGlyph != matchingGlyph) {
+                    goto NotMatched;
+                }
+            } else {
+                goto NotMatched;
+            }
+        }
+
+        backtrackIndex = locator->index;
+
+        /* Match the backtrack glyphs. */
+        for (recordIndex = 0; recordIndex < backtrackCount; recordIndex++) {
+            backtrackIndex = SFLocatorGetBefore(locator, backtrackIndex);
+
+            if (backtrackIndex != SFInvalidIndex) {
+                SFGlyphID inputGlyph = SFAlbumGetGlyph(album, backtrackIndex);
+                SFGlyphID matchingGlyph = SFBacktrackRecord_Value(inputRecord, recordIndex - 1);
+
+                if (inputGlyph != matchingGlyph) {
+                    goto NotMatched;
+                }
+            } else {
+                goto NotMatched;
+            }
+        }
+
+        lookaheadIndex = inputIndex;
+
+        /* Match the lookahead glyphs. */
+        for (recordIndex = 0; recordIndex < lookaheadCount; recordIndex++) {
+            lookaheadIndex = SFLocatorGetAfter(locator, lookaheadIndex);
+
+            if (lookaheadIndex != SFInvalidIndex) {
+                SFGlyphID inputGlyph = SFAlbumGetGlyph(album, lookaheadIndex);
+                SFGlyphID matchingGlyph = SFLookaheadRecord_Value(inputRecord, recordIndex - 1);
+
+                if (inputGlyph != matchingGlyph) {
+                    goto NotMatched;
+                }
+            } else {
+                goto NotMatched;
+            }
+        }
+
+        _SFApplyContextRecord(processor, featureKind, contextRecord, locator->index, (inputIndex - locator->index) + 1);
+        return SFTrue;
+    }
+
+NotMatched:
     return SFFalse;
 }
 
