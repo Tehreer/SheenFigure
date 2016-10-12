@@ -18,6 +18,7 @@ TESTER_SRCS = $(TESTER_DIR)/AlbumTester.cpp \
               $(TESTER_DIR)/TextProcessorTester_GPOS.cpp \
               $(TESTER_DIR)/TextProcessorTester_GSUB.cpp \
               $(TESTER_DIR)/TextProcessorTester.cpp \
+              $(TESTER_DIR)/OpenType/Builder.cpp \
               $(TESTER_DIR)/OpenType/Writer.cpp \
               $(TESTER_DIR)/Utilities/Convert.cpp \
               $(TESTER_DIR)/Utilities/SFPattern+Testing.cpp \
