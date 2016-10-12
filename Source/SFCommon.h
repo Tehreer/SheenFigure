@@ -189,7 +189,7 @@ typedef SFUInt16 SFLookupFlag;
 #define SFChainContextF2_ChainClassSetOffset(data, index) \
                                                         SFData_UInt16(data, 12 + ((index) * 2))
 
-#define SFChainContextF3_BacktrackRecord(data)          SFData_Subdata(data, 2)
+#define SFChainContextF3_ChainRule(data)                SFData_Subdata(data, 2)
 
 #define SFChainRuleSet_ChainRuleCount(data)             SFData_UInt16(data, 0)
 #define SFChainRuleSet_ChainRuleOffset(data, index)     SFData_UInt16(data, 2 + ((index) * 2))
