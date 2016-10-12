@@ -48,6 +48,9 @@ public:
     Builder();
     ~Builder();
 
+    ClassDefTable &createClassDef(Glyph startGlyph, UInt16 glyphCount, const std::vector<UInt16> classValues);
+    ClassDefTable &createClassDef(const std::vector<std::tuple<Glyph, Glyph, UInt16>> classRanges);
+
     SingleSubstSubtable &createSingleSubst(const std::set<Glyph> glyphs, Int16 delta);
     SingleSubstSubtable &createSingleSubst(const std::map<Glyph, Glyph> glyphs);
     MultipleSubstSubtable &createMultipleSubst(const std::map<Glyph, std::vector<Glyph>> glyphs);

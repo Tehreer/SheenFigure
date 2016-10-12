@@ -240,17 +240,17 @@ struct ClassRangeRecord : public Table {
 };
 
 struct ClassDefTable : public Table {
-    UInt16 classFormat;             // Format identifier
+    UInt16 classFormat;                         // Format identifier
 
     union {
         struct {
-            UInt16 startGlyph;      // First GlyphID of the ClassValueArray
-            UInt16 glyphCount;      // Size of the ClassValueArray
-            UInt16 *classValueArray;// Array of Class Values-one per GlyphID
+            Glyph startGlyph;                   // First GlyphID of the ClassValueArray
+            UInt16 glyphCount;                  // Size of the ClassValueArray
+            UInt16 *classValueArray;            // Array of Class Values-one per GlyphID
         } format1;
 
         struct {
-            UInt16 classRangeCount; // Number of ClassRangeRecords
+            UInt16 classRangeCount;             // Number of ClassRangeRecords
             ClassRangeRecord *classRangeRecord; //Array of ClassRangeRecords-ordered by Start GlyphID
         } format2;
     };

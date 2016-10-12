@@ -86,6 +86,36 @@ CoverageTable &Builder::createCoverage(Glyph *glyphs, UInt16 count)
     return coverage;
 }
 
+ClassDefTable &Builder::createClassDef(Glyph startGlyph, UInt16 glyphCount, const vector<UInt16> classValues)
+{
+    ClassDefTable &classDef = createObject<ClassDefTable>();
+    classDef.classFormat = 1;
+    classDef.format1.startGlyph = startGlyph;
+    classDef.format1.glyphCount = glyphCount;
+    classDef.format1.classValueArray = createGlyphs(classValues);
+
+    return classDef;
+}
+
+ClassDefTable &Builder::createClassDef(const vector<tuple<Glyph, Glyph, UInt16>> classRanges)
+{
+    ClassDefTable &classDef = createObject<ClassDefTable>();
+    classDef.classFormat = 2;
+    classDef.format2.classRangeCount = (UInt16)classRanges.size();
+    classDef.format2.classRangeRecord = createArray<ClassRangeRecord>(classRanges.size());
+
+    for (size_t i = 0; i < classRanges.size(); i++) {
+        const auto &value = classRanges[i];
+
+        ClassRangeRecord &record = classDef.format2.classRangeRecord[i];
+        record.start = get<0>(value);
+        record.end = get<1>(value);
+        record.clazz = get<2>(value);
+    }
+
+    return classDef;
+}
+
 SingleSubstSubtable &Builder::createSingleSubst(const set<Glyph> glyphs, Int16 delta)
 {
     SingleSubstSubtable &subtable = createObject<SingleSubstSubtable>();
