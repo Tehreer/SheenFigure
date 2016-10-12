@@ -17,6 +17,7 @@
 #ifndef __SHEEN_FIGURE__TESTER__OPEN_TYPE__BUILDER_H
 #define __SHEEN_FIGURE__TESTER__OPEN_TYPE__BUILDER_H
 
+#include <array>
 #include <cstddef>
 #include <list>
 #include <map>
@@ -56,7 +57,8 @@ public:
     MultipleSubstSubtable &createMultipleSubst(const std::map<Glyph, std::vector<Glyph>> glyphs);
     LigatureSubstSubtable &createLigatureSubst(const std::map<std::vector<Glyph>, Glyph> glyphs);
 
-    ChainContextSubtable &createChainContext(const std::vector<rule_chain_context> rules);
+    ChainContextSubtable &createChainContext(const std::vector<rule_chain_context> rules,
+                                             const std::array<ClassDefTable *, 3> classDefs = { NULL, NULL, NULL });
     ChainContextSubtable &createChainContext(const std::vector<std::vector<Glyph>> backtrack,
                                              const std::vector<std::vector<Glyph>> input,
                                              const std::vector<std::vector<Glyph>> lookahead,

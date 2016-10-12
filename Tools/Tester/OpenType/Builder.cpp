@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+#include <array>
 #include <cstddef>
 #include <list>
 #include <map>
@@ -222,7 +223,8 @@ LigatureSubstSubtable &Builder::createLigatureSubst(const map<vector<Glyph>, Gly
     return subtable;
 }
 
-ChainContextSubtable &Builder::createChainContext(const vector<rule_chain_context> rules)
+ChainContextSubtable &Builder::createChainContext(const vector<rule_chain_context> rules,
+    const std::array<ClassDefTable *, 3> classDefs)
 {
     map<Glyph, vector<size_t>> ruleSets;
 
@@ -247,17 +249,33 @@ ChainContextSubtable &Builder::createChainContext(const vector<rule_chain_contex
                                    });
 
     ChainContextSubtable &subtable = createObject<ChainContextSubtable>();
-    subtable.format = 1;
-    subtable.format1.coverage = &createCoverage(initials, (UInt16)ruleSets.size());
-    subtable.format1.chainRuleSetCount = (UInt16)ruleSets.size();
-    subtable.format1.chainRuleSet = createArray<ChainRuleSet>(ruleSets.size());
+    ChainRuleSet *ruleSetArray;
+
+    if (classDefs[0] && classDefs[1] && classDefs[2]) {
+        subtable.format = 2;
+        subtable.format2.coverage = &createCoverage(initials, (UInt16)ruleSets.size());
+        subtable.format2.backtrackClassDef = classDefs[0];
+        subtable.format2.inputClassDef = classDefs[1];
+        subtable.format2.lookaheadClassDef = classDefs[2];
+        subtable.format2.chainClassSetCnt = (UInt16)ruleSets.size();
+        subtable.format2.chainClassSet = createArray<ChainRuleSet>(ruleSets.size());
+
+        ruleSetArray = subtable.format2.chainClassSet;
+    } else {
+        subtable.format = 1;
+        subtable.format1.coverage = &createCoverage(initials, (UInt16)ruleSets.size());
+        subtable.format1.chainRuleSetCount = (UInt16)ruleSets.size();
+        subtable.format1.chainRuleSet = createArray<ChainRuleSet>(ruleSets.size());
+
+        ruleSetArray = subtable.format1.chainRuleSet;
+    }
 
     size_t ruleSetIndex = 0;
 
     for (const auto &entry : ruleSets) {
         const vector<size_t> &ruleIndexes = entry.second;
 
-        ChainRuleSet &chainRuleSet = subtable.format1.chainRuleSet[ruleSetIndex++];
+        ChainRuleSet &chainRuleSet = ruleSetArray[ruleSetIndex++];
         chainRuleSet.chainRuleCount = (UInt16)ruleIndexes.size();
         chainRuleSet.chainRule = createArray<ChainRule>(ruleIndexes.size());
 
