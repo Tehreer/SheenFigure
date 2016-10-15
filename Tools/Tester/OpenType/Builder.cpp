@@ -98,7 +98,7 @@ ClassDefTable &Builder::createClassDef(Glyph startGlyph, UInt16 glyphCount, cons
     return classDef;
 }
 
-ClassDefTable &Builder::createClassDef(const vector<tuple<Glyph, Glyph, UInt16>> classRanges)
+ClassDefTable &Builder::createClassDef(const vector<class_range> classRanges)
 {
     ClassDefTable &classDef = createObject<ClassDefTable>();
     classDef.classFormat = 2;

@@ -179,7 +179,7 @@ void TextProcessorTester::testContextSubstitution()
 
     /* Test the format 2. */
     {
-        ClassDefTable *classDef = &builder.createClassDef({ { 1, 10, 1 } });
+        ClassDefTable *classDef = &builder.createClassDef({ class_range { 1, 10, 1 } });
 
         /* Test with simple substitution. */
         {
@@ -298,9 +298,9 @@ void TextProcessorTester::testChainContextSubstitution()
     /* Test the format 2. */
     {
         array<ClassDefTable *, 3> classDefs = {
-            &builder.createClassDef({ { 1, 10, 1 } }),
-            &builder.createClassDef({ { 1, 10, 1 } }),
-            &builder.createClassDef({ { 1, 10, 1 } }),
+            &builder.createClassDef({ class_range { 1, 10, 1 } }),
+            &builder.createClassDef({ class_range { 1, 10, 1 } }),
+            &builder.createClassDef({ class_range { 1, 10, 1 } }),
         };
 
         /* Test with simple substitution. */

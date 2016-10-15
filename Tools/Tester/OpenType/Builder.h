@@ -38,9 +38,11 @@ namespace OpenType {
 
 typedef std::list<std::shared_ptr<void>> ObjectPool;
 
+typedef std::tuple<Glyph, Glyph, UInt16> class_range;
+
 typedef std::tuple<
-    std::vector<Glyph>,
-    std::vector<std::pair<UInt16, UInt16>>> rule_context;
+         std::vector<Glyph>,
+         std::vector<std::pair<UInt16, UInt16>>> rule_context;
 
 typedef std::tuple<
          std::vector<Glyph>,
@@ -54,7 +56,7 @@ public:
     ~Builder();
 
     ClassDefTable &createClassDef(Glyph startGlyph, UInt16 glyphCount, const std::vector<UInt16> classValues);
-    ClassDefTable &createClassDef(const std::vector<std::tuple<Glyph, Glyph, UInt16>> classRanges);
+    ClassDefTable &createClassDef(const std::vector<class_range> classRanges);
 
     SingleSubstSubtable &createSingleSubst(const std::set<Glyph> glyphs, Int16 delta);
     SingleSubstSubtable &createSingleSubst(const std::map<Glyph, Glyph> glyphs);
