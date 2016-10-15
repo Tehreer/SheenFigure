@@ -172,6 +172,33 @@ typedef SFUInt16 SFLookupFlag;
 
 /**************************************************************************************************/
 
+/***************************************CONTEXTUAL SUBTABLE****************************************/
+
+#define SFContext_Format(data)                          SFData_UInt16(data, 0)
+
+#define SFContextF1_CoverageOffset(data)                SFData_UInt16(data, 2)
+#define SFContextF1_RuleSetCount(data)                  SFData_UInt16(data, 4)
+#define SFContextF1_RuleSetOffset(data, index)          SFData_UInt16(data, 6 + ((index) * 2))
+
+#define SFContextF2_CoverageOffset(data)                SFData_UInt16(data, 2)
+#define SFContextF2_ClassDefOffset(data)                SFData_UInt16(data, 4)
+#define SFContextF2_RuleSetCount(data)                  SFData_UInt16(data, 6)
+#define SFContextF2_RuleSetOffset(data, index)          SFData_UInt16(data, 8 + ((index) * 2))
+
+#define SFContextF3_Rule(data)                          SFData_Subdata(data, 2)
+
+#define SFRuleSet_RuleCount(data)                       SFData_UInt16(data, 0)
+#define SFRuleSet_RuleOffset(data, index)               SFData_UInt16(data, 2 + ((index) * 2))
+
+#define SFRule_GlyphCount(data)                         SFData_UInt16(data, 0)
+#define SFRule_LookupCount(data)                        SFData_UInt16(data, 2)
+#define SFRule_Value(data, index)                       SFData_UInt16(data, 4 + ((index)  * 2))
+#define SFRule_LookupRecordArray(data, glyphCount)      SFData_Subdata(data, 4 + ((glyphCount) * 2))
+
+#define SFLookupRecordArray_Value(data, index)          SFData_Subdata(data, (index) * 4)
+
+/**************************************************************************************************/
+
 /***********************************CHAINING CONTEXTUAL SUBTABLE***********************************/
 
 #define SFChainContext_Format(data)                     SFData_UInt16(data, 0)
