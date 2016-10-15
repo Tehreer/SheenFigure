@@ -382,7 +382,7 @@ struct Rule : public Table {
 
         writer.write(glyphCount);
         writer.write(recordCount);
-        writer.write(recordCount);
+        writer.write(input, glyphCount - 1);
         for (int i = 0; i < recordCount; i++) {
             writer.write(&lookupRecord[i]);
         }

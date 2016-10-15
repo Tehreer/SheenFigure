@@ -284,9 +284,9 @@ ContextSubtable &Builder::createContext(const vector<rule_context> rules,
 
             Rule &rule = ruleSet.rule[i];
             rule.glyphCount = (UInt16)input.size();
+            rule.recordCount = (UInt16)lookups.size();
             rule.input = createGlyphs(input.begin() + 1, input.end(),
                                       [](Glyph glyph) { return glyph; });
-            rule.recordCount = (UInt16)lookups.size();
             rule.lookupRecord = createArray<LookupRecord>(lookups.size());
 
             for (size_t j = 0; j < lookups.size(); j++) {
