@@ -232,8 +232,6 @@ SF_PRIVATE SFBoolean _SFApplyContextSubtable(SFTextProcessorRef processor, SFFea
                 if (coverageIndex < chainRuleSetCount) {
                     SFOffset ruleSetOffset = SFContextF1_RuleSetOffset(contextSubtable, coverageIndex);
                     SFData ruleSetTable = SFData_Subdata(contextSubtable, ruleSetOffset);
-                    SFUInt16 ruleCount;
-                    SFUInteger ruleIndex;
 
                     return _SFApplyRuleSetTable(processor, featureKind, ruleSetTable, _SFAssessGlyphByEquality, NULL);
                 }
@@ -258,9 +256,9 @@ SF_PRIVATE SFBoolean _SFApplyContextSubtable(SFTextProcessorRef processor, SFFea
                     /* The offset might be NULL if no contexts begin with this class. */
                     if (ruleSetOffset) {
                         SFData ruleSetTable = SFData_Subdata(contextSubtable, ruleSetOffset);
-                        SFData classDefTables[] = {
-                            SFData_Subdata(contextSubtable, classDefOffset)
-                        };
+                        SFData classDefTables[1];
+
+                        classDefTables[0] = SFData_Subdata(contextSubtable, classDefOffset);
 
                         return _SFApplyRuleSetTable(processor, featureKind, ruleSetTable, _SFAssessGlyphByClass, classDefTables);
                     }
@@ -271,7 +269,7 @@ SF_PRIVATE SFBoolean _SFApplyContextSubtable(SFTextProcessorRef processor, SFFea
 
         case 3: {
             SFData ruleTable = SFContextF3_Rule(contextSubtable);
-            return _SFApplyRuleTable(processor, featureKind, ruleTable, SFTrue, _SFAssessGlyphByCoverage, contextSubtable);
+            return _SFApplyRuleTable(processor, featureKind, ruleTable, SFTrue, _SFAssessGlyphByCoverage, (void *)contextSubtable);
         }
     }
     
@@ -368,11 +366,11 @@ SF_PRIVATE SFBoolean _SFApplyChainContextSubtable(SFTextProcessorRef textProcess
                     /* The offset might be NULL if no contexts begin with this class. */
                     if (chainRuleSetOffset) {
                         SFData chainRuleSetTable = SFData_Subdata(chainContextSubtable, chainRuleSetOffset);
-                        SFData classDefTables[] = {
-                            SFData_Subdata(chainContextSubtable, inputClassDefOffset),
-                            SFData_Subdata(chainContextSubtable, backtrackClassDefOffset),
-                            SFData_Subdata(chainContextSubtable, lookaheadClassDefOffset)
-                        };
+                        SFData classDefTables[3];
+
+                        classDefTables[0] = SFData_Subdata(chainContextSubtable, inputClassDefOffset);
+                        classDefTables[1] = SFData_Subdata(chainContextSubtable, backtrackClassDefOffset);
+                        classDefTables[2] = SFData_Subdata(chainContextSubtable, lookaheadClassDefOffset);
 
                         return _SFApplyChainRuleSetTable(textProcessor, featureKind, chainRuleSetTable, _SFAssessGlyphByClass, classDefTables);
                     }
@@ -383,7 +381,7 @@ SF_PRIVATE SFBoolean _SFApplyChainContextSubtable(SFTextProcessorRef textProcess
 
         case 3: {
             SFData chainRuleTable = SFChainContextF3_ChainRule(chainContextSubtable);
-            return _SFApplyChainRuleTable(textProcessor, featureKind, chainRuleTable, SFTrue, _SFAssessGlyphByCoverage, chainContextSubtable);
+            return _SFApplyChainRuleTable(textProcessor, featureKind, chainRuleTable, SFTrue, _SFAssessGlyphByCoverage, (void *)chainContextSubtable);
         }
     }
 
