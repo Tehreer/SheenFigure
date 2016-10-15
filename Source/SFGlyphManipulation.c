@@ -34,8 +34,8 @@
 #include "SFShapingEngine.h"
 
 enum {
-    _SFGlyphZoneBacktrack = 0,
-    _SFGlyphZoneInput = 1,
+    _SFGlyphZoneInput = 0,
+    _SFGlyphZoneBacktrack = 1,
     _SFGlyphZoneLookahead = 2
 };
 typedef SFUInt8 _SFGlyphZone;
@@ -49,10 +49,15 @@ typedef struct {
 
 typedef SFBoolean (*_SFGlyphAssessment)(_SFGlyphAgent *glyphAgent);
 
+static SFBoolean _SFApplyRuleSetTable(SFTextProcessorRef processor, SFFeatureKind featureKind,
+                                      SFData ruleSetTable, SFBoolean firstGlyphAssessed, _SFGlyphAssessment glyphAsessment, void *helperPtr);
+static SFBoolean _SFApplyRuleTable(SFTextProcessorRef processor, SFFeatureKind featureKind,
+                                   SFData ruleTable, SFBoolean firstGlyphAssessed, _SFGlyphAssessment glyphAsessment, void *helperPtr);
+
 static SFBoolean _SFApplyChainRule(SFTextProcessorRef processor, SFFeatureKind featureKind,
     SFData chainRule, SFBoolean firstGlyphAssessed, _SFGlyphAssessment glyphAsessment, void *helperPtr);
-static SFBoolean _SFApplyChainContextF3(SFTextProcessorRef processor, SFFeatureKind featureKind, SFData chainContext);
-static void _SFApplyContextRecord(SFTextProcessorRef processor, SFFeatureKind featureKind, SFData contextRecord, SFUInteger startIndex, SFUInteger endIndex);
+static SFBoolean _SFApplyContextLookups(SFTextProcessorRef processor, SFFeatureKind featureKind,
+                                   SFData lookupArray, SFUInteger lookupCount, SFUInteger contextStart, SFUInteger contextLength);
 
 SF_PRIVATE SFBoolean _SFApplyExtensionSubtable(SFTextProcessorRef processor, SFFeatureKind featureKind, SFData extension)
 {
@@ -89,11 +94,11 @@ static SFBoolean _SFAssessGlyphByClass(_SFGlyphAgent *glyphAgent)
     SFUInt16 glyphClass;
 
     switch (glyphAgent->glyphZone) {
-        case _SFGlyphZoneBacktrack:
+        case _SFGlyphZoneInput:
             classDefTable = ((SFData *)glyphAgent->helperPtr)[0];
             break;
 
-        case _SFGlyphZoneInput:
+        case _SFGlyphZoneBacktrack:
             classDefTable = ((SFData *)glyphAgent->helperPtr)[1];
             break;
 
@@ -117,6 +122,142 @@ static SFBoolean _SFAssessGlyphByCoverage(_SFGlyphAgent *glyphAgent)
     coverageIndex = SFOpenTypeSearchCoverageIndex(coverageTable, glyphAgent->glyphID);
 
     return (coverageIndex != SFInvalidIndex);
+}
+
+SF_PRIVATE SFBoolean _SFApplyContextSubtable(SFTextProcessorRef processor, SFFeatureKind featureKind, SFData contextSubtable)
+{
+    SFAlbumRef album = processor->_album;
+    SFLocatorRef locator = &processor->_locator;
+    SFGlyphID inputGlyph = SFAlbumGetGlyph(album, locator->index);
+    SFUInt16 format;
+
+    format = SFContext_Format(contextSubtable);
+
+    switch (format) {
+        case 1: {
+            SFOffset coverageOffset = SFContextF1_CoverageOffset(contextSubtable);
+            SFData coverageTable = SFData_Subdata(contextSubtable, coverageOffset);
+            SFUInteger coverageIndex;
+
+            coverageIndex = SFOpenTypeSearchCoverageIndex(coverageTable, inputGlyph);
+
+            if (coverageIndex != SFInvalidIndex) {
+                SFUInt16 chainRuleSetCount = SFContextF1_RuleSetCount(contextSubtable);
+
+                if (coverageIndex < chainRuleSetCount) {
+                    SFOffset ruleSetOffset = SFContextF1_RuleSetOffset(contextSubtable, coverageIndex);
+                    SFData ruleSetTable = SFData_Subdata(contextSubtable, ruleSetOffset);
+                    SFUInt16 ruleCount;
+                    SFUInteger ruleIndex;
+
+                    return _SFApplyRuleSetTable(processor, featureKind, ruleSetTable, SFTrue, _SFAssessGlyphByEquality, NULL);
+                }
+            }
+            break;
+        }
+
+        case 2: {
+            SFOffset coverageOffset = SFContextF2_CoverageOffset(contextSubtable);
+            SFData coverageTable = SFData_Subdata(contextSubtable, coverageOffset);
+            SFUInteger coverageIndex;
+
+            coverageIndex = SFOpenTypeSearchCoverageIndex(coverageTable, inputGlyph);
+
+            if (coverageIndex != SFInvalidIndex) {
+                SFOffset classDefOffset = SFContextF2_ClassDefOffset(contextSubtable);
+                SFUInt16 ruleSetCount = SFContextF2_RuleSetCount(contextSubtable);
+
+                if (coverageIndex < ruleSetCount) {
+                    SFOffset ruleSetOffset = SFChainContextF2_ChainRuleSetOffset(contextSubtable, coverageIndex);
+
+                    /* The offset might be NULL if no contexts begin with this class. */
+                    if (ruleSetOffset) {
+                        SFData ruleSetTable = SFData_Subdata(contextSubtable, ruleSetOffset);
+                        SFData classDefTables[] = {
+                            SFData_Subdata(contextSubtable, classDefOffset)
+                        };
+
+                        return _SFApplyRuleSetTable(processor, featureKind, ruleSetTable, SFTrue, _SFAssessGlyphByClass, classDefTables);
+                    }
+                }
+            }
+            break;
+        }
+
+        case 3: {
+            SFData ruleTable = SFContextF3_Rule(contextSubtable);
+            return _SFApplyChainRule(processor, featureKind, ruleTable, SFFalse, _SFAssessGlyphByCoverage, contextSubtable);
+        }
+    }
+    
+    return SFFalse;
+}
+
+static SFBoolean _SFApplyRuleSetTable(SFTextProcessorRef processor, SFFeatureKind featureKind,
+    SFData ruleSetTable, SFBoolean firstGlyphAssessed, _SFGlyphAssessment glyphAsessment, void *helperPtr)
+{
+    SFUInt16 ruleCount = SFRuleSet_RuleCount(ruleSetTable);
+    SFUInteger ruleIndex;
+
+    /* Match each rule sequentially as they are ordered by preference. */
+    for (ruleIndex = 0; ruleIndex < ruleCount; ruleIndex++) {
+        SFOffset ruleOffset = SFRuleSet_RuleOffset(ruleSetTable, ruleIndex);
+
+        if (ruleOffset) {
+            SFData ruleTable = SFData_Subdata(ruleSetTable, ruleOffset);
+
+            if (_SFApplyRuleTable(processor, featureKind, ruleTable, firstGlyphAssessed, _SFAssessGlyphByClass, helperPtr)) {
+                return SFTrue;
+            }
+        }
+    }
+
+    return SFFalse;
+}
+
+static SFBoolean _SFApplyRuleTable(SFTextProcessorRef processor, SFFeatureKind featureKind,
+    SFData ruleTable, SFBoolean firstGlyphAssessed, _SFGlyphAssessment glyphAsessment, void *helperPtr)
+{
+    SFUInt16 glyphCount = SFRule_GlyphCount(ruleTable);
+
+    /* Make sure that rule table contains at least one glyph. */
+    if (glyphCount > 0) {
+        SFUInt16 lookupCount = SFRule_LookupCount(ruleTable);
+        SFData lookupArray = SFRule_LookupArray(ruleTable, glyphCount - firstGlyphAssessed);
+        SFAlbumRef album;
+        SFLocatorRef locator;
+        _SFGlyphAgent glyphAgent;
+        SFUInteger inputIndex;
+        SFUInteger recordIndex;
+
+        album = processor->_album;
+        locator = &processor->_locator;
+        glyphAgent.helperPtr = helperPtr;
+        glyphAgent.glyphZone = _SFGlyphZoneInput;
+
+        inputIndex = locator->index;
+
+        /* Match the remaining input glyphs. */
+        for (recordIndex = 1; recordIndex < glyphCount; recordIndex++) {
+            inputIndex = SFLocatorGetAfter(locator, inputIndex);
+
+            if (inputIndex != SFInvalidIndex) {
+                glyphAgent.glyphID = SFAlbumGetGlyph(album, inputIndex);
+                glyphAgent.recordValue = SFRule_Value(ruleTable, recordIndex - firstGlyphAssessed);
+
+                if (!glyphAsessment(&glyphAgent)) {
+                    goto NotMatched;
+                }
+            } else {
+                goto NotMatched;
+            }
+        }
+
+        return _SFApplyContextLookups(processor, featureKind, lookupArray, lookupCount, locator->index, (inputIndex - locator->index) + 1);
+    }
+    
+NotMatched:
+    return SFFalse;
 }
 
 SF_PRIVATE SFBoolean _SFApplyChainContextSubtable(SFTextProcessorRef processor, SFFeatureKind featureKind, SFData chainContext)
@@ -181,8 +322,8 @@ SF_PRIVATE SFBoolean _SFApplyChainContextSubtable(SFTextProcessorRef processor, 
                     SFUInt16 chainRuleCount;
                     SFUInteger ruleIndex;
 
-                    classDefTables[0] = SFData_Subdata(chainContext, backtrackClassDefOffset);
-                    classDefTables[1] = SFData_Subdata(chainContext, inputClassDefOffset);
+                    classDefTables[0] = SFData_Subdata(chainContext, inputClassDefOffset);
+                    classDefTables[1] = SFData_Subdata(chainContext, backtrackClassDefOffset);
                     classDefTables[2] = SFData_Subdata(chainContext, lookaheadClassDefOffset);
 
                     chainRuleCount = SFChainRuleSet_ChainRuleCount(chainRuleSetTable);
@@ -223,6 +364,8 @@ static SFBoolean _SFApplyChainRule(SFTextProcessorRef processor, SFFeatureKind f
         SFData lookaheadRecord = SFInputRecord_LookaheadRecord(inputRecord, inputCount - firstGlyphAssessed);
         SFUInt16 lookaheadCount = SFInputRecord_GlyphCount(lookaheadRecord);
         SFData contextRecord = SFLookaheadRecord_ContextRecord(lookaheadRecord, lookaheadCount);
+        SFUInteger lookupCount = SFContextRecord_LookupCount(contextRecord);
+        SFData lookupArray = SFContextRecord_LookupRecord(contextRecord, 0);
         SFAlbumRef album;
         SFLocatorRef locator;
         _SFGlyphAgent glyphAgent;
@@ -292,33 +435,31 @@ static SFBoolean _SFApplyChainRule(SFTextProcessorRef processor, SFFeatureKind f
             }
         }
 
-        _SFApplyContextRecord(processor, featureKind, contextRecord, locator->index, (inputIndex - locator->index) + 1);
-        return SFTrue;
+        return _SFApplyContextLookups(processor, featureKind, lookupArray, lookupCount, locator->index, (inputIndex - locator->index) + 1);
     }
 
 NotMatched:
     return SFFalse;
 }
 
-static void _SFApplyContextRecord(SFTextProcessorRef processor, SFFeatureKind featureKind, SFData contextRecord, SFUInteger index, SFUInteger count) {
+static SFBoolean _SFApplyContextLookups(SFTextProcessorRef processor, SFFeatureKind featureKind,
+    SFData lookupArray, SFUInteger lookupCount, SFUInteger contextStart, SFUInteger contextLength)
+{
     SFLocatorRef contextLocator = &processor->_locator;
     SFLocator originalLocator = *contextLocator;
-    SFUInt16 lookupCount;
     SFUInteger lookupIndex;
 
-    lookupCount = SFContextRecord_LookupCount(contextRecord);
-
     /* Make the context locator cover only context range. */
-    SFLocatorReset(contextLocator, index, count);
+    SFLocatorReset(contextLocator, contextStart, contextLength);
 
     /* Apply the lookup records sequentially as they are ordered by preference. */
     for (lookupIndex = 0; lookupIndex < lookupCount; lookupIndex++) {
-        SFData lookupRecord = SFContextRecord_LookupRecord(contextRecord, lookupIndex);
+        SFData lookupRecord = SFLookupArray_Value(lookupArray, lookupIndex);
         SFUInt16 sequenceIndex = SFLookupRecord_SequenceIndex(lookupRecord);
         SFUInt16 lookupListIndex = SFLookupRecord_LookupListIndex(lookupRecord);
 
         /* Jump the locator to context index. */
-        SFLocatorJumpTo(contextLocator, index);
+        SFLocatorJumpTo(contextLocator, contextStart);
         
         if (SFLocatorMoveNext(contextLocator)) {
             /* Skip the glyphs till sequence index and apply the lookup. */
@@ -332,4 +473,6 @@ static void _SFApplyContextRecord(SFTextProcessorRef processor, SFFeatureKind fe
     SFLocatorTakeState(&originalLocator, contextLocator);
     /* Switch back to the original locator. */
     processor->_locator = originalLocator;
+
+    return SFTrue;
 }

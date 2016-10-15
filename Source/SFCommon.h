@@ -193,9 +193,9 @@ typedef SFUInt16 SFLookupFlag;
 #define SFRule_GlyphCount(data)                         SFData_UInt16(data, 0)
 #define SFRule_LookupCount(data)                        SFData_UInt16(data, 2)
 #define SFRule_Value(data, index)                       SFData_UInt16(data, 4 + ((index)  * 2))
-#define SFRule_LookupRecordArray(data, glyphCount)      SFData_Subdata(data, 4 + ((glyphCount) * 2))
+#define SFRule_LookupArray(data, glyphCount)            SFData_Subdata(data, 4 + ((glyphCount) * 2))
 
-#define SFLookupRecordArray_Value(data, index)          SFData_Subdata(data, (index) * 4)
+#define SFLookupArray_Value(data, index)                SFData_Subdata(data, (index) * 4)
 
 /**************************************************************************************************/
 
