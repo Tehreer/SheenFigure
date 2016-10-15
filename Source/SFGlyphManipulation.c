@@ -305,13 +305,13 @@ static SFBoolean _SFApplyRuleTable(SFTextProcessorRef textProcessor, SFFeatureKi
 
     /* Make sure that rule table contains at least one glyph. */
     if (glyphCount > 0) {
-        SFData valueArray = SFRule_ValueArray(ruleTable);
         SFUInt16 lookupCount = SFRule_LookupCount(ruleTable);
+        SFData valueArray = SFRule_ValueArray(ruleTable);
         SFData lookupArray = SFRule_LookupArray(ruleTable, glyphCount - !includeFirst);
         SFUInteger contextStart = textProcessor->_locator.index;
         SFUInteger contextEnd;
 
-        return (_SFAssessInputGlyphs(textProcessor, valueArray, glyphCount, includeFirst, glyphAsessment, helperPtr, NULL)
+        return (_SFAssessInputGlyphs(textProcessor, valueArray, glyphCount, includeFirst, glyphAsessment, helperPtr, &contextEnd)
                 && _SFApplyContextLookups(textProcessor, featureKind, lookupArray, lookupCount, contextStart, contextEnd));
     }
 

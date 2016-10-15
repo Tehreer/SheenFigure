@@ -116,7 +116,7 @@ SF_PRIVATE SFBoolean _SFApplyPositioningSubtable(SFTextProcessorRef processor, S
             return _SFApplyMarkToMarkPos(processor, subtable);
 
         case SFLookupTypeContextPositioning:
-            break;
+            return _SFApplyContextSubtable(processor, SFFeatureKindPositioning, subtable);
 
         case SFLookupTypeChainedContextPositioning:
             return _SFApplyChainContextSubtable(processor, SFFeatureKindPositioning, subtable);
