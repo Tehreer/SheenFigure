@@ -223,8 +223,109 @@ LigatureSubstSubtable &Builder::createLigatureSubst(const map<vector<Glyph>, Gly
     return subtable;
 }
 
+ContextSubtable &Builder::createContext(const vector<rule_context> rules,
+    ClassDefTable *classDef)
+{
+    map<Glyph, vector<size_t>> ruleSets;
+
+    /* Extract all initial glyphs with their rules. */
+    for (size_t i = 0; i < rules.size(); i++) {
+        Glyph ruleInitial = get<0>(rules[i])[0];
+        vector<size_t> *ruleIndexes = nullptr;
+
+        auto entry = ruleSets.find(ruleInitial);
+        if (entry != ruleSets.end()) {
+            ruleIndexes = &entry->second;
+        } else {
+            ruleIndexes = &(*ruleSets.insert({ ruleInitial, vector<size_t>() }).first).second;
+        }
+
+        ruleIndexes->push_back(i);
+    }
+
+    Glyph *initials = createGlyphs(ruleSets.begin(), ruleSets.end(),
+                                   [](const decltype(ruleSets)::value_type &pair) {
+                                       return pair.first;
+                                   });
+
+    ContextSubtable &subtable = createObject<ContextSubtable>();
+    RuleSet *ruleSetArray;
+
+    if (classDef) {
+        subtable.format = 2;
+        subtable.format2.coverage = &createCoverage(initials, (UInt16)ruleSets.size());
+        subtable.format2.classDef = classDef;
+        subtable.format2.classSetCnt = (UInt16)ruleSets.size();
+        subtable.format2.classSet = createArray<RuleSet>(ruleSets.size());
+
+        ruleSetArray = subtable.format2.classSet;
+    } else {
+        subtable.format = 1;
+        subtable.format1.coverage = &createCoverage(initials, (UInt16)ruleSets.size());
+        subtable.format1.ruleSetCount = (UInt16)ruleSets.size();
+        subtable.format1.ruleSet = createArray<RuleSet>(ruleSets.size());
+
+        ruleSetArray = subtable.format1.ruleSet;
+    }
+
+    size_t ruleSetIndex = 0;
+
+    for (const auto &entry : ruleSets) {
+        const vector<size_t> &ruleIndexes = entry.second;
+
+        RuleSet &ruleSet = ruleSetArray[ruleSetIndex++];
+        ruleSet.ruleCount = (UInt16)ruleIndexes.size();
+        ruleSet.rule = createArray<Rule>(ruleIndexes.size());
+
+        for (size_t i = 0; i < ruleIndexes.size(); i++) {
+            const rule_context &currentRule = rules[i];
+            const vector<Glyph> &input = get<0>(currentRule);
+            const vector<pair<UInt16, UInt16>> &lookups = get<1>(currentRule);
+
+            Rule &rule = ruleSet.rule[i];
+            rule.glyphCount = (UInt16)input.size();
+            rule.input = createGlyphs(input.begin() + 1, input.end(),
+                                      [](Glyph glyph) { return glyph; });
+            rule.recordCount = (UInt16)lookups.size();
+            rule.lookupRecord = createArray<LookupRecord>(lookups.size());
+
+            for (size_t j = 0; j < lookups.size(); j++) {
+                LookupRecord &lookupRecord = rule.lookupRecord[j];
+                lookupRecord.sequenceIndex = lookups[j].first;
+                lookupRecord.lookupListIndex = lookups[j].second;
+            }
+        }
+    }
+    
+    return subtable;
+}
+
+ContextSubtable &Builder::createContext(const vector<vector<Glyph>> input,
+    const vector<pair<UInt16, UInt16>> lookups)
+{
+    ContextSubtable &subtable = createObject<ContextSubtable>();
+    subtable.format = 3;
+    subtable.format3.glyphCount = (UInt16)input.size();
+    subtable.format3.recordCount = (UInt16)lookups.size();
+    subtable.format3.coverage = createArray<CoverageTable>(input.size());
+    subtable.format3.lookupRecord = createArray<LookupRecord>(lookups.size());
+
+    for (size_t i = 0; i < input.size(); i++) {
+        initCoverage(subtable.format3.coverage[i],
+                     createGlyphs(input[i]), (UInt16)input[i].size());
+    }
+
+    for (size_t i = 0; i < lookups.size(); i++) {
+        LookupRecord &lookupRecord = subtable.format3.lookupRecord[i];
+        lookupRecord.sequenceIndex = lookups[i].first;
+        lookupRecord.lookupListIndex = lookups[i].second;
+    }
+
+    return subtable;
+}
+
 ChainContextSubtable &Builder::createChainContext(const vector<rule_chain_context> rules,
-    const std::array<ClassDefTable *, 3> classDefs)
+    const array<ClassDefTable *, 3> classDefs)
 {
     map<Glyph, vector<size_t>> ruleSets;
 

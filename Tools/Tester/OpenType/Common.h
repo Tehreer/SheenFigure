@@ -374,7 +374,7 @@ struct LookupRecord : public Table {
 struct Rule : public Table {
     UInt16 glyphCount;              // Total number of glyphs in input glyph sequence-includes the first glyph
     UInt16 recordCount;             // Number of LookupRecords
-    Glyph input;                    // Array of input GlyphIDs-start with second glyph
+    Glyph *input;                   // Array of input GlyphIDs-start with second glyph
     LookupRecord *lookupRecord;     // Array of LookupRecords-in design order
 
     void write(Writer &writer) override {
