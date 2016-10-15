@@ -17,20 +17,14 @@
 #ifndef _SF_INTERNAL_GLYPH_MANIPULATION_H
 #define _SF_INTERNAL_GLYPH_MANIPULATION_H
 
-/*
- * NOTE:
- *      This file is part of SFTextProcessor class. It handles common aspects of substitution and
- *      positioning of glyphs.
- */
-
 #include <SFConfig.h>
 
 #include "SFData.h"
 #include "SFPattern.h"
 #include "SFTextProcessor.h"
 
-SF_PRIVATE SFBoolean _SFApplyExtensionSubtable(SFTextProcessorRef processor, SFFeatureKind featureKind, SFData extension);
-SF_PRIVATE SFBoolean _SFApplyContextSubtable(SFTextProcessorRef processor, SFFeatureKind featureKind, SFData contextSubtable);
-SF_PRIVATE SFBoolean _SFApplyChainContextSubtable(SFTextProcessorRef processor, SFFeatureKind featureKind, SFData chainContext);
+SF_PRIVATE SFBoolean _SFApplyContextSubtable(SFTextProcessorRef textProcessor, SFFeatureKind featureKind, SFData contextSubtable);
+SF_PRIVATE SFBoolean _SFApplyChainContextSubtable(SFTextProcessorRef textProcessor, SFFeatureKind featureKind, SFData chainContextSubtable);
+SF_PRIVATE SFBoolean _SFApplyExtensionSubtable(SFTextProcessorRef textProcessor, SFFeatureKind featureKind, SFData extensionSubtable);
 
 #endif

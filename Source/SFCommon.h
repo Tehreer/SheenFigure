@@ -192,7 +192,7 @@ typedef SFUInt16 SFLookupFlag;
 
 #define SFRule_GlyphCount(data)                         SFData_UInt16(data, 0)
 #define SFRule_LookupCount(data)                        SFData_UInt16(data, 2)
-#define SFRule_Value(data, index)                       SFData_UInt16(data, 4 + ((index)  * 2))
+#define SFRule_ValueArray(data)                         SFData_Subdata(data, 4)
 #define SFRule_LookupArray(data, glyphCount)            SFData_Subdata(data, 4 + ((glyphCount) * 2))
 
 #define SFLookupArray_Value(data, index)                SFData_Subdata(data, (index) * 4)
@@ -224,20 +224,20 @@ typedef SFUInt16 SFLookupFlag;
 #define SFChainRule_BacktrackRecord(data)               SFData_Subdata(data, 0)
 
 #define SFBacktrackRecord_GlyphCount(data)              SFData_UInt16(data, 0)
-#define SFBacktrackRecord_Value(data, index)            SFData_UInt16(data, 2 + ((index)  * 2))
+#define SFBacktrackRecord_ValueArray(data)              SFData_Subdata(data, 2)
 #define SFBacktrackRecord_InputRecord(data, glyphCount) SFData_Subdata(data, 2 + ((glyphCount) * 2))
 
 #define SFInputRecord_GlyphCount(data)                  SFData_UInt16(data, 0)
-#define SFInputRecord_Value(data, index)                SFData_UInt16(data, 2 + ((index)  * 2))
+#define SFInputRecord_ValueArray(data)                  SFData_Subdata(data, 2)
 #define SFInputRecord_LookaheadRecord(data, glyphCount) SFData_Subdata(data, 2 + ((glyphCount) * 2))
 
 #define SFLookaheadRecord_GlyphCount(data)              SFData_UInt16(data, 0)
-#define SFLookaheadRecord_Value(data, index)            SFData_UInt16(data, 2 + ((index)  * 2))
+#define SFLookaheadRecord_ValueArray(data)              SFData_Subdata(data, 2)
 #define SFLookaheadRecord_ContextRecord(data, glyphCount) \
                                                         SFData_Subdata(data, 2 + ((glyphCount) * 2))
 
 #define SFContextRecord_LookupCount(data)               SFData_UInt16(data, 0)
-#define SFContextRecord_LookupRecord(data, index)       SFData_Subdata(data, 2 + ((index) * 4))
+#define SFContextRecord_LookupArray(data)               SFData_Subdata(data, 2)
 
 /**************************************************************************************************/
 
