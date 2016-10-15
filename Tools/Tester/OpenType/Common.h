@@ -371,6 +371,119 @@ struct LookupRecord : public Table {
     }
 };
 
+struct Rule : public Table {
+    UInt16 glyphCount;              // Total number of glyphs in input glyph sequence-includes the first glyph
+    UInt16 recordCount;             // Number of LookupRecords
+    Glyph input;                    // Array of input GlyphIDs-start with second glyph
+    LookupRecord *lookupRecord;     // Array of LookupRecords-in design order
+
+    void write(Writer &writer) override {
+        writer.enter();
+
+        writer.write(glyphCount);
+        writer.write(recordCount);
+        writer.write(recordCount);
+        for (int i = 0; i < recordCount; i++) {
+            writer.write(&lookupRecord[i]);
+        }
+
+        writer.exit();
+    }
+};
+
+struct RuleSet : public Table {
+    UInt16 ruleCount;               // Number of Rule tables.
+    Rule *rule;                     // Array of offsets to Rule tables-from beginning of RuleSet table-ordered by preference
+
+    void write(Writer &writer) override {
+        writer.enter();
+
+        writer.write(ruleCount);
+        for (int i = 0; i < ruleCount; i++) {
+            writer.defer(&rule[i]);
+        }
+        
+        writer.exit();
+    }
+};
+
+struct ContextSubtable : public LookupSubtable {
+    UInt16 format;                      // Format identifier
+
+    union {
+        struct {
+            CoverageTable *coverage;    // Offset to Coverage table-from beginning of Substitution table
+            UInt16 ruleSetCount;        // Number of RuleSet tables-must equal GlyphCount in Coverage table
+            RuleSet *ruleSet;           // Array of offsets to RuleSet tables-from beginning of Substitution table-ordered by Coverage Index
+        } format1;
+
+        struct {
+            CoverageTable *coverage;    // Offset to Coverage table-from beginning of Substitution table
+            ClassDefTable *classDef;    // Offset to glyph ClassDef table-from beginning of Substitution table
+            UInt16 classSetCnt;         // Number of ClassSet tables
+            RuleSet *classSet;          // Array of offsets to ClassSet tables-from beginning of Substitution table-ordered by class-may be NULL
+        } format2;
+
+        struct {
+            UInt16 glyphCount;          // Number of glyphs in the input glyph sequence
+            UInt16 recordCount;         // Number of LookupRecords
+            CoverageTable *coverage;    // Array of offsets to Coverage table-from beginning of Substitution table-in glyph sequence order
+            LookupRecord *lookupRecord; // Array of LookupRecords-in design order
+        } format3;
+    };
+
+    LookupType lookupType() override {
+        return LookupType::sContext;
+    }
+
+    void write(Writer &writer) override {
+        switch (format) {
+            case 1:
+                writer.enter();
+
+                writer.write(format);
+                writer.defer(format1.coverage);
+                writer.write(format1.ruleSetCount);
+                for (int i = 0; i < format1.ruleSetCount; i++) {
+                    writer.defer(&format1.ruleSet[i]);
+                }
+
+                writer.exit();
+                break;
+
+            case 2:
+                writer.enter();
+
+                writer.write(format);
+                writer.defer(format2.coverage);
+                writer.defer(format2.classDef);
+                writer.write(format2.classSetCnt);
+                for (int i = 0; i < format2.classSetCnt; i++) {
+                    writer.defer(&format2.classSet[i]);
+                }
+
+                writer.exit();
+                break;
+
+            case 3:
+                writer.enter();
+
+                writer.write(format);
+                writer.write(format3.glyphCount);
+                writer.write(format3.recordCount);
+                for (int i = 0; i < format3.glyphCount; i++) {
+                    writer.defer(&format3.coverage[i]);
+                }
+                for (int i = 0; i < format3.recordCount; i++) {
+                    writer.write(&format3.lookupRecord[i]);
+                }
+
+                writer.exit();
+                break;
+        }
+    }
+};
+
 struct ChainRule : public Table {
     UInt16 backtrackGlyphCount;     // Total number of glyphs in the backtrack sequence (number of glyphs to be matched before the first glyph)
     Glyph *backtrack;               // Array of backtracking GlyphID's (to be matched before the input sequence)
