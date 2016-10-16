@@ -248,20 +248,20 @@ SF_PRIVATE SFBoolean _SFApplyContextSubtable(SFTextProcessorRef processor, SFFea
 
             if (coverageIndex != SFInvalidIndex) {
                 SFOffset classDefOffset = SFContextF2_ClassDefOffset(contextSubtable);
+                SFData classDefTable = SFData_Subdata(contextSubtable, classDefOffset);
                 SFUInt16 ruleSetCount = SFContextF2_RuleSetCount(contextSubtable);
+                SFUInt16 inputClass;
 
-                if (coverageIndex < ruleSetCount) {
-                    SFOffset ruleSetOffset = SFChainContextF2_ChainRuleSetOffset(contextSubtable, coverageIndex);
+                inputClass = SFOpenTypeSearchGlyphClass(classDefTable, inputGlyph);
 
-                    /* The offset might be NULL if no contexts begin with this class. */
-                    if (ruleSetOffset) {
-                        SFData ruleSetTable = SFData_Subdata(contextSubtable, ruleSetOffset);
-                        SFData classDefTables[1];
+                if (inputClass < ruleSetCount) {
+                    SFOffset ruleSetOffset = SFContextF2_RuleSetOffset(contextSubtable, inputClass);
+                    SFData ruleSetTable = SFData_Subdata(contextSubtable, ruleSetOffset);
+                    SFData helperTables[1];
 
-                        classDefTables[0] = SFData_Subdata(contextSubtable, classDefOffset);
+                    helperTables[0] = classDefTable;
 
-                        return _SFApplyRuleSetTable(processor, featureKind, ruleSetTable, _SFAssessGlyphByClass, classDefTables);
-                    }
+                    return _SFApplyRuleSetTable(processor, featureKind, ruleSetTable, _SFAssessGlyphByClass, helperTables);
                 }
             }
             break;
