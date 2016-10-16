@@ -109,13 +109,21 @@ void Writer::writeTable(Table *table, int reference, bool largeOffset)
 
 void Writer::defer(Table *table, bool largeOffset)
 {
-    Deferral deferral;
-    deferral.entryIndex = m_enteries.size();
-    deferral.largeOffset = largeOffset;
-    deferral.reference = reserveOffset(largeOffset);
-    deferral.table = table;
+    if (table) {
+        Deferral deferral;
+        deferral.entryIndex = m_enteries.size();
+        deferral.largeOffset = largeOffset;
+        deferral.reference = reserveOffset(largeOffset);
+        deferral.table = table;
 
-    m_deferrals.push(deferral);
+        m_deferrals.push(deferral);
+    } else {
+        if (largeOffset) {
+            write((UInt32)0);
+        } else {
+            write((UInt16)0);
+        }
+    }
 }
 
 void Writer::write(UInt8 value)

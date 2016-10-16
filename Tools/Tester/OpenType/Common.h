@@ -407,6 +407,42 @@ struct RuleSet : public Table {
     }
 };
 
+struct ClassRule : public Table {
+    UInt16 glyphCount;              // Total number of classes specified for the context in the rule-includes the first class
+    UInt16 recordCount;             // Number of LookupRecords
+    UInt16 *clazz;                  // Array of classes-beginning with the second class-to be matched to the input glyph class sequence
+    LookupRecord *lookupRecord;     // Array of lookups-in design order
+
+    void write(Writer &writer) override {
+        writer.enter();
+
+        writer.write(glyphCount);
+        writer.write(recordCount);
+        writer.write(clazz, glyphCount - 1);
+        for (int i = 0; i < recordCount; i++) {
+            writer.write(&lookupRecord[i]);
+        }
+
+        writer.exit();
+    }
+};
+
+struct ClassSet : public Table {
+    UInt16 classRuleCnt;            // Number of ClassRule tables.
+    ClassRule *classRule;           // Array of offsets to ClassRule tables-from beginning of ClassSet-ordered by preference
+
+    void write(Writer &writer) override {
+        writer.enter();
+
+        writer.write(classRuleCnt);
+        for (int i = 0; i < classRuleCnt; i++) {
+            writer.defer(&classRule[i]);
+        }
+        
+        writer.exit();
+    }
+};
+
 struct ContextSubtable : public LookupSubtable {
     UInt16 format;                      // Format identifier
 
@@ -414,20 +450,20 @@ struct ContextSubtable : public LookupSubtable {
         struct {
             CoverageTable *coverage;    // Offset to Coverage table-from beginning of Substitution table
             UInt16 ruleSetCount;        // Number of RuleSet tables-must equal GlyphCount in Coverage table
-            RuleSet *ruleSet;           // Array of offsets to RuleSet tables-from beginning of Substitution table-ordered by Coverage Index
+            RuleSet *ruleSet;           // Array of offsets to RuleSet tables-from beginning of subtable-ordered by Coverage Index
         } format1;
 
         struct {
             CoverageTable *coverage;    // Offset to Coverage table-from beginning of Substitution table
             ClassDefTable *classDef;    // Offset to glyph ClassDef table-from beginning of Substitution table
             UInt16 classSetCnt;         // Number of ClassSet tables
-            RuleSet *classSet;          // Array of offsets to ClassSet tables-from beginning of Substitution table-ordered by class-may be NULL
+            ClassSet **classSet;        // Array of offsets to ClassSet tables-from beginning of subtable-ordered by class-may be NULL
         } format2;
 
         struct {
             UInt16 glyphCount;          // Number of glyphs in the input glyph sequence
             UInt16 recordCount;         // Number of LookupRecords
-            CoverageTable *coverage;    // Array of offsets to Coverage table-from beginning of Substitution table-in glyph sequence order
+            CoverageTable *coverage;    // Array of offsets to Coverage table-from beginning of subtable-in glyph sequence order
             LookupRecord *lookupRecord; // Array of LookupRecords-in design order
         } format3;
     };
@@ -459,7 +495,7 @@ struct ContextSubtable : public LookupSubtable {
                 writer.defer(format2.classDef);
                 writer.write(format2.classSetCnt);
                 for (int i = 0; i < format2.classSetCnt; i++) {
-                    writer.defer(&format2.classSet[i]);
+                    writer.defer(format2.classSet[i]);
                 }
 
                 writer.exit();

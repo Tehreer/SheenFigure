@@ -223,8 +223,7 @@ LigatureSubstSubtable &Builder::createLigatureSubst(const map<vector<Glyph>, Gly
     return subtable;
 }
 
-ContextSubtable &Builder::createContext(const vector<rule_context> rules,
-    ClassDefTable *classDef)
+ContextSubtable &Builder::createContext(const vector<rule_context> rules)
 {
     map<Glyph, vector<size_t>> ruleSets;
 
@@ -249,31 +248,17 @@ ContextSubtable &Builder::createContext(const vector<rule_context> rules,
                                    });
 
     ContextSubtable &subtable = createObject<ContextSubtable>();
-    RuleSet *ruleSetArray;
-
-    if (classDef) {
-        subtable.format = 2;
-        subtable.format2.coverage = &createCoverage(initials, (UInt16)ruleSets.size());
-        subtable.format2.classDef = classDef;
-        subtable.format2.classSetCnt = (UInt16)ruleSets.size();
-        subtable.format2.classSet = createArray<RuleSet>(ruleSets.size());
-
-        ruleSetArray = subtable.format2.classSet;
-    } else {
-        subtable.format = 1;
-        subtable.format1.coverage = &createCoverage(initials, (UInt16)ruleSets.size());
-        subtable.format1.ruleSetCount = (UInt16)ruleSets.size();
-        subtable.format1.ruleSet = createArray<RuleSet>(ruleSets.size());
-
-        ruleSetArray = subtable.format1.ruleSet;
-    }
+    subtable.format = 1;
+    subtable.format1.coverage = &createCoverage(initials, (UInt16)ruleSets.size());
+    subtable.format1.ruleSetCount = (UInt16)ruleSets.size();
+    subtable.format1.ruleSet = createArray<RuleSet>(ruleSets.size());
 
     size_t ruleSetIndex = 0;
 
     for (const auto &entry : ruleSets) {
         const vector<size_t> &ruleIndexes = entry.second;
 
-        RuleSet &ruleSet = ruleSetArray[ruleSetIndex++];
+        RuleSet &ruleSet = subtable.format1.ruleSet[ruleSetIndex++];
         ruleSet.ruleCount = (UInt16)ruleIndexes.size();
         ruleSet.rule = createArray<Rule>(ruleIndexes.size());
 
@@ -294,6 +279,87 @@ ContextSubtable &Builder::createContext(const vector<rule_context> rules,
                 lookupRecord.sequenceIndex = lookups[j].first;
                 lookupRecord.lookupListIndex = lookups[j].second;
             }
+        }
+    }
+
+    return subtable;
+}
+
+ContextSubtable &Builder::createContext(const vector<Glyph> initialGlyphs,
+    const ClassDefTable &classDef,
+    const vector<rule_context> rules)
+{
+    map<UInt16, vector<size_t>> classSets;
+
+    /* Extract all initial classes with their rules. */
+    for (size_t i = 0; i < rules.size(); i++) {
+        UInt16 initialClass = get<0>(rules[i])[0];
+        vector<size_t> *ruleIndexes = nullptr;
+
+        auto classEntry = classSets.find(initialClass);
+        if (classEntry != classSets.end()) {
+            ruleIndexes = &classEntry->second;
+        } else {
+            ruleIndexes = &(*classSets.insert({ initialClass, vector<size_t>() }).first).second;
+        }
+
+        ruleIndexes->push_back(i);
+    }
+
+    /* Add rule sets for empty classes. */
+    if (!classSets.empty()) {
+        int previousClass = -1;
+
+        for (auto entry = classSets.begin(); entry != classSets.end(); entry++) {
+            UInt16 currentClass = entry->first;
+            UInt16 emptyClass = (UInt16)(previousClass + 1);
+
+            for (; emptyClass < currentClass; emptyClass++) {
+                entry = classSets.insert({ emptyClass, vector<size_t>() }).first;
+            }
+
+            previousClass = currentClass;
+        }
+    }
+
+    ContextSubtable &subtable = createObject<ContextSubtable>();
+    subtable.format = 2;
+    subtable.format2.coverage = &createCoverage(createGlyphs(initialGlyphs), (UInt16)initialGlyphs.size());
+    subtable.format2.classDef = (ClassDefTable *)(&classDef);
+    subtable.format2.classSetCnt = (UInt16)classSets.size();
+    subtable.format2.classSet = createArray<ClassSet *>(classSets.size());
+
+    size_t classSetIndex = 0;
+
+    for (const auto &entry : classSets) {
+        const vector<size_t> &ruleIndexes = entry.second;
+
+        ClassSet *&classSet = subtable.format2.classSet[classSetIndex++];
+        if (ruleIndexes.size() > 0) {
+            classSet = &createObject<ClassSet>();
+            classSet->classRuleCnt = (UInt16)ruleIndexes.size();
+            classSet->classRule = createArray<ClassRule>(ruleIndexes.size());
+
+            for (size_t i = 0; i < ruleIndexes.size(); i++) {
+                const rule_context &currentRule = rules[ruleIndexes[i]];
+                const vector<UInt16> &clazz = get<0>(currentRule);
+                const vector<pair<UInt16, UInt16>> &lookups = get<1>(currentRule);
+
+                ClassRule &classRule = classSet->classRule[i];
+                classRule.glyphCount = (UInt16)clazz.size();
+                classRule.recordCount = (UInt16)lookups.size();
+                classRule.clazz = createGlyphs(clazz.begin() + 1, clazz.end(),
+                                               [](Glyph glyph) { return glyph; });
+                classRule.lookupRecord = createArray<LookupRecord>(lookups.size());
+
+                for (size_t j = 0; j < lookups.size(); j++) {
+                    LookupRecord &lookupRecord = classRule.lookupRecord[j];
+                    lookupRecord.sequenceIndex = lookups[j].first;
+                    lookupRecord.lookupListIndex = lookups[j].second;
+                }
+            }
+        } else {
+            classSet = NULL;
         }
     }
     
