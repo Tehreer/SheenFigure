@@ -278,7 +278,7 @@ ContextSubtable &Builder::createContext(const vector<rule_context> rules,
         ruleSet.rule = createArray<Rule>(ruleIndexes.size());
 
         for (size_t i = 0; i < ruleIndexes.size(); i++) {
-            const rule_context &currentRule = rules[i];
+            const rule_context &currentRule = rules[ruleIndexes[i]];
             const vector<Glyph> &input = get<0>(currentRule);
             const vector<pair<UInt16, UInt16>> &lookups = get<1>(currentRule);
 

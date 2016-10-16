@@ -52,7 +52,7 @@ private:
     void testSubstitution(OpenType::LookupSubtable &subtable,
                           const std::vector<SFCodepoint> codepoints,
                           const std::vector<OpenType::Glyph> glyphs,
-                          OpenType::LookupSubtable *referrals[] = NULL, SFUInteger count = 0);
+                          const std::vector<OpenType::LookupSubtable *> referrals = { });
 
     void processGSUB(SFAlbumRef album,
                      SFCodepoint *input, SFUInteger length, OpenType::LookupSubtable &subtable,

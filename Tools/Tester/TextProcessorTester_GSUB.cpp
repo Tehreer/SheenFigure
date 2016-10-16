@@ -138,47 +138,98 @@ void TextProcessorTester::testLigatureSubstitution()
 
 void TextProcessorTester::testContextSubstitution()
 {
-    Builder builder;
-
     /* Test the format 1. */
     {
-        /* Test with simple substitution. */
-        {
-            vector<LookupSubtable *> referrals = {
-                &builder.createSingleSubst({ 2 }, 1)
-            };
-            ContextSubtable &subtable = builder.createContext({
-                rule_context {
-                    { 1, 2, 3 },
-                    { { 1, 1 } }
-                }
-            });
-            testSubstitution(subtable,
-                             { 1, 2, 3 }, { 1, 3, 3 },
-                             referrals.data(), referrals.size());
-        }
+        Builder builder;
 
-        /* Test with complex substitutions. */
-        {
-            vector<LookupSubtable *> referrals = {
-                &builder.createSingleSubst({ 1, 2, 3, 4, 5, 6 }, 1),
-                &builder.createMultipleSubst({ {2, { 4, 5, 6 }} }),
-                &builder.createLigatureSubst({ {{ 1, 4 }, 10}, {{ 6, 4 }, 20} })
-            };
-            ContextSubtable &subtable = builder.createContext({
-                rule_context {
-                    { 1, 2, 3 },
-                    { { 2, 1 }, { 1, 2 }, { 3, 3 }, { 0, 3 }, { 1, 1 } }
-                }
-            });
-            testSubstitution(subtable,
-                             {  1, 2, 3 }, { 10, 6, 20 },
-                             referrals.data(), referrals.size());
-        }
+        vector<LookupSubtable *> simpleReferral = {
+            &builder.createSingleSubst({ 1, 2, 3, 4, 5, 6, 7, 8, 9 }, 10)
+        };
+        vector<LookupSubtable *> complexReferral = {
+            &builder.createSingleSubst({ 1, 2, 3, 4, 5, 6 }, 1),
+            &builder.createMultipleSubst({ {2, { 4, 5, 6 }} }),
+            &builder.createLigatureSubst({ {{ 1, 4 }, 10}, {{ 6, 4 }, 20} })
+        };
+
+        /* Test with unmatching first input glyph. */
+        testSubstitution(builder.createContext({
+                            rule_context { { 1, 2, 3 }, { {1, 1} } }
+                         }),
+                         { 0, 2, 3 }, { 0, 2, 3 }, simpleReferral);
+        /* Test with unmatching middle input glyph. */
+        testSubstitution(builder.createContext({
+                            rule_context { { 1, 2, 3 }, { {1, 1} } }
+                         }),
+                         { 1, 0, 3 }, { 1, 0, 3 }, simpleReferral);
+        /* Test with unmatching last input glyph. */
+        testSubstitution(builder.createContext({
+                            rule_context { { 1, 2, 3 }, { {1, 1} } }
+                         }),
+                         { 1, 2, 0 }, { 1, 2, 0 }, simpleReferral);
+        /* Test with single input. */
+        testSubstitution(builder.createContext({
+                            rule_context { { 1 }, { {0, 1} } }
+                         }),
+                         { 1 }, { 11 }, simpleReferral);
+        /* Test by applying lookup on first input glyph. */
+        testSubstitution(builder.createContext({
+                            rule_context { { 1, 2, 3 }, { {0, 1} } }
+                         }),
+                         { 1, 2, 3 }, { 11, 2, 3 }, simpleReferral);
+        /* Test by applying lookup on middle input glyph. */
+        testSubstitution(builder.createContext({
+                            rule_context { { 1, 2, 3 }, { {1, 1} } }
+                         }),
+                         { 1, 2, 3 }, { 1, 12, 3 }, simpleReferral);
+        /* Test by applying lookup on last input glyph. */
+        testSubstitution(builder.createContext({
+                            rule_context { { 1, 2, 3 }, { {2, 1} } }
+                         }),
+                         { 1, 2, 3 }, { 1, 2, 13 }, simpleReferral);
+        /* Test by applying lookup on each input glyph. */
+        testSubstitution(builder.createContext({
+                            rule_context { { 1, 2, 3 }, { {0, 1}, {1, 1}, {2, 1} } }
+                         }),
+                         { 1, 2, 3 }, { 11, 12, 13 }, simpleReferral);
+        /* Test by letting middle rule match in a single rule set. */
+        testSubstitution(builder.createContext({
+                            rule_context { { 1, 2, 3 }, { {1, 1} } },
+                            rule_context { { 1, 2, 4 }, { {1, 1} } },
+                            rule_context { { 1, 2, 5 }, { {1, 1} } },
+                         }),
+                         { 1, 2, 4 }, { 1, 12, 4 }, simpleReferral);
+        /* Test by letting last rule match in a single rule set. */
+        testSubstitution(builder.createContext({
+                            rule_context { { 1, 2, 3 }, { {1, 1} } },
+                            rule_context { { 1, 2, 4 }, { {1, 1} } },
+                            rule_context { { 1, 2, 5 }, { {1, 1} } },
+                         }),
+                         { 1, 2, 5 }, { 1, 12, 5 }, simpleReferral);
+        /* Test by letting middle rule match in multiple rule sets. */
+        testSubstitution(builder.createContext({
+                            rule_context { { 1, 2, 3 }, { {1, 1} } },
+                            rule_context { { 4, 5, 6 }, { {1, 1} } },
+                            rule_context { { 7, 8, 9 }, { {1, 1} } },
+                         }),
+                         { 4, 5, 6 }, { 4, 15, 6 }, simpleReferral);
+        /* Test by letting last rule match in multiple rule sets. */
+        testSubstitution(builder.createContext({
+                            rule_context { { 1, 2, 3 }, { {1, 1} } },
+                            rule_context { { 4, 5, 6 }, { {1, 1} } },
+                            rule_context { { 7, 8, 9 }, { {1, 1} } },
+                         }),
+                         { 7, 8, 9 }, { 7, 18, 9 }, simpleReferral);
+        /* Test by applying complex lookups on input glyphs. */
+        testSubstitution(builder.createContext({
+                            rule_context { { 1, 2, 3 }, { {2, 1}, {1, 2}, {3, 3}, {0, 3}, {1, 1} } }
+                         }),
+                         {  1, 2, 3 }, { 10, 6, 20 }, complexReferral);
     }
 
     /* Test the format 2. */
     {
+        Builder builder;
+
         ClassDefTable *classDef = &builder.createClassDef({ class_range { 1, 10, 1 } });
 
         /* Test with simple substitution. */
@@ -194,7 +245,7 @@ void TextProcessorTester::testContextSubstitution()
             }, classDef);
             testSubstitution(subtable,
                              { 1, 2, 3 }, { 1, 3, 3 },
-                             referrals.data(), referrals.size());
+                             referrals);
         }
 
         /* Test with complex substitutions. */
@@ -212,12 +263,14 @@ void TextProcessorTester::testContextSubstitution()
             }, classDef);
             testSubstitution(subtable,
                              { 1, 2, 3 }, { 10, 6, 20 },
-                             referrals.data(), referrals.size());
+                             referrals);
         }
     }
 
     /* Test the format 3. */
     {
+        Builder builder;
+
         /* Test with simple substitution. */
         {
             vector<LookupSubtable *> referrals = {
@@ -229,7 +282,7 @@ void TextProcessorTester::testContextSubstitution()
             );
             testSubstitution(subtable,
                              { 1, 2, 3 }, { 1, 3, 3 },
-                             referrals.data(), referrals.size());
+                             referrals);
         }
 
         /* Test with complex substitutions. */
@@ -245,7 +298,7 @@ void TextProcessorTester::testContextSubstitution()
             );
             testSubstitution(subtable,
                              {  1, 1, 1, 1, 2, 3, 3, 3, 3 }, { 1, 1, 1, 10, 6, 20, 3, 3, 3 },
-                             referrals.data(), referrals.size());
+                             referrals);
         }
     }
 }
@@ -271,7 +324,7 @@ void TextProcessorTester::testChainContextSubstitution()
             });
             testSubstitution(subtable,
                              { 1, 1, 1, 1, 2, 3, 3, 3, 3 }, { 1, 1, 1, 1, 3, 3, 3, 3, 3 },
-                             referrals.data(), referrals.size());
+                             referrals);
         }
 
         /* Test with complex substitutions. */
@@ -291,7 +344,7 @@ void TextProcessorTester::testChainContextSubstitution()
             });
             testSubstitution(subtable,
                              {  1, 1, 1, 1, 2, 3, 3, 3, 3 }, { 1, 1, 1, 10, 6, 20, 3, 3, 3 },
-                             referrals.data(), referrals.size());
+                             referrals);
         }
     }
 
@@ -318,7 +371,7 @@ void TextProcessorTester::testChainContextSubstitution()
             }, classDefs);
             testSubstitution(subtable,
                              { 1, 1, 1, 1, 2, 3, 3, 3, 3 }, { 1, 1, 1, 1, 3, 3, 3, 3, 3 },
-                             referrals.data(), referrals.size());
+                             referrals);
         }
 
         /* Test with complex substitutions. */
@@ -338,7 +391,7 @@ void TextProcessorTester::testChainContextSubstitution()
             }, classDefs);
             testSubstitution(subtable,
                              {  1, 1, 1, 1, 2, 3, 3, 3, 3 }, { 1, 1, 1, 10, 6, 20, 3, 3, 3 },
-                             referrals.data(), referrals.size());
+                             referrals);
         }
     }
 
@@ -357,7 +410,7 @@ void TextProcessorTester::testChainContextSubstitution()
             );
             testSubstitution(subtable,
                              { 1, 1, 1, 1, 2, 3, 3, 3, 3 }, { 1, 1, 1, 1, 3, 3, 3, 3, 3 },
-                             referrals.data(), referrals.size());
+                             referrals);
         }
 
         /* Test with complex substitutions. */
@@ -375,7 +428,7 @@ void TextProcessorTester::testChainContextSubstitution()
             );
             testSubstitution(subtable,
                              {  1, 1, 1, 1, 2, 3, 3, 3, 3 }, { 1, 1, 1, 10, 6, 20, 3, 3, 3 },
-                             referrals.data(), referrals.size());
+                             referrals);
         }
     }
 }

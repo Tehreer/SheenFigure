@@ -63,7 +63,7 @@ static SFAdvance getGlyphAdvance(void *object, SFFontLayout fontLayout, SFGlyphI
 }
 
 static void writeTable(Writer &writer,
-    LookupSubtable &subtable, LookupSubtable *referrals[], SFUInteger count)
+    LookupSubtable &subtable, LookupSubtable **referrals, SFUInteger count)
 {
     UInt16 lookupCount = (UInt16)(count + 1);
 
@@ -146,7 +146,7 @@ static void writeTable(Writer &writer,
 
 static void processSubtable(SFAlbumRef album,
     const SFCodepoint *input, SFUInteger length, SFBoolean positioning,
-    LookupSubtable &subtable, LookupSubtable *referrals[], SFUInteger count)
+    LookupSubtable &subtable, LookupSubtable **referrals, SFUInteger count)
 {
     /* Write the table for the given lookup. */
     Writer writer;
@@ -227,11 +227,12 @@ void TextProcessorTester::processGPOS(SFAlbumRef album,
 
 void TextProcessorTester::testSubstitution(LookupSubtable &subtable,
     const vector<SFCodepoint> codepoints, const vector<Glyph> glyphs,
-    LookupSubtable *referrals[], SFUInteger count)
+    const vector<LookupSubtable *> referrals)
 {
     SFAlbum album;
     SFAlbumInitialize(&album);
-    processSubtable(&album, &codepoints[0], codepoints.size(), SFFalse, subtable, referrals, count);
+    processSubtable(&album, &codepoints[0], codepoints.size(), SFFalse, subtable,
+                    (LookupSubtable **)referrals.data(), referrals.size());
 
     SFAssert(SFAlbumGetGlyphCount(&album) == glyphs.size());
     SFAssert(memcmp(SFAlbumGetGlyphIDsPtr(&album), glyphs.data(), sizeof(SFGlyphID) * glyphs.size()) == 0);
