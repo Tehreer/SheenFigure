@@ -166,11 +166,16 @@ void TextProcessorTester::testContextSubstitution()
                             rule_context { { 1, 2, 3 }, { {1, 1} } }
                          }),
                          { 1, 2, 0 }, { 1, 2, 0 }, simpleReferral);
-        /* Test with single input. */
+        /* Test by providing single input glyph. */
         testSubstitution(builder.createContext({
                             rule_context { { 1 }, { {0, 1} } }
                          }),
                          { 1 }, { 11 }, simpleReferral);
+        /* Test by providing same input glyph sequence. */
+        testSubstitution(builder.createContext({
+                            rule_context { { 1, 1, 1 }, { {1, 1} } }
+                         }),
+                         { 1, 1, 1 }, { 1, 11, 1 }, simpleReferral);
         /* Test by applying lookup on first input glyph. */
         testSubstitution(builder.createContext({
                             rule_context { { 1, 2, 3 }, { {0, 1} } }
@@ -259,7 +264,7 @@ void TextProcessorTester::testContextSubstitution()
                             rule_context { { 1, 1, 1 }, { {1, 1} } }
                          }),
                          { 1, 2, 0 }, { 1, 2, 0 }, simpleReferral);
-        /* Test with single input. */
+        /* Test by providing single input glyph. */
         testSubstitution(builder.createContext({ 1 }, classDef, {
                             rule_context { { 1 }, { {0, 1} } }
                          }),
@@ -323,35 +328,45 @@ void TextProcessorTester::testContextSubstitution()
     {
         Builder builder;
 
-        /* Test with simple substitution. */
-        {
-            vector<LookupSubtable *> referrals = {
-                &builder.createSingleSubst({ 2 }, 1)
-            };
-            ContextSubtable &subtable = builder.createContext(
-                { { 1 }, { 2 }, { 3 } },
-                { { 1, 1 } }
-            );
-            testSubstitution(subtable,
-                             { 1, 2, 3 }, { 1, 3, 3 },
-                             referrals);
-        }
+        vector<LookupSubtable *> simpleReferral = {
+            &builder.createSingleSubst({ 1, 2, 3, 4, 5, 6, 7, 8, 9 }, 10)
+        };
+        vector<LookupSubtable *> complexReferral = {
+            &builder.createSingleSubst({ 1, 2, 3, 4, 5, 6 }, 1),
+            &builder.createMultipleSubst({ {2, { 4, 5, 6 }} }),
+            &builder.createLigatureSubst({ {{ 1, 4 }, 10}, {{ 6, 4 }, 20} })
+        };
 
-        /* Test with complex substitutions. */
-        {
-            vector<LookupSubtable *> referrals = {
-                &builder.createSingleSubst({ 1, 2, 3, 4, 5, 6 }, 1),
-                &builder.createMultipleSubst({ {2, { 4, 5, 6 }} }),
-                &builder.createLigatureSubst({ {{ 1, 4 }, 10}, {{ 6, 4 }, 20} })
-            };
-            ContextSubtable &subtable = builder.createContext(
-                { { 1 }, { 2 }, { 3 } },
-                { { 2, 1 }, { 1, 2 }, { 3, 3 }, { 0, 3 }, { 1, 1 } }
-            );
-            testSubstitution(subtable,
-                             {  1, 1, 1, 1, 2, 3, 3, 3, 3 }, { 1, 1, 1, 10, 6, 20, 3, 3, 3 },
-                             referrals);
-        }
+        /* Test with unmatching first input glyph. */
+        testSubstitution(builder.createContext({ { 1 }, { 2 }, { 3 } }, { {1, 1} }),
+                         { 0, 2, 3 }, { 0, 2, 3 }, simpleReferral);
+        /* Test with unmatching middle input glyph. */
+        testSubstitution(builder.createContext({ { 1 }, { 2 }, { 3 } }, { {1, 1} }),
+                         { 1, 0, 3 }, { 1, 0, 3 }, simpleReferral);
+        /* Test with unmatching last input glyph. */
+        testSubstitution(builder.createContext({ { 1 }, { 2 }, { 3 } }, { {1, 1} }),
+                         { 1, 2, 0 }, { 1, 2, 0 }, simpleReferral);
+        /* Test by providing single input glyph. */
+        testSubstitution(builder.createContext({ { 1 } }, { {0, 1} }),
+                         { 1 }, { 11 }, simpleReferral);
+        /* Test by providing same input glyph sequence. */
+        testSubstitution(builder.createContext({ { 1 }, { 1 }, { 1 } }, { {1, 1} }),
+                         { 1, 1, 1 }, { 1, 11, 1 }, simpleReferral);
+        /* Test by applying lookup on first input glyph. */
+        testSubstitution(builder.createContext({ { 1 }, { 2 }, { 3 } }, { {0, 1} }),
+                         { 1, 2, 3 }, { 11, 2, 3 }, simpleReferral);
+        /* Test by applying lookup on middle input glyph. */
+        testSubstitution(builder.createContext({ { 1 }, { 2 }, { 3 } }, { {1, 1} }),
+                         { 1, 2, 3 }, { 1, 12, 3 }, simpleReferral);
+        /* Test by applying lookup on last input glyph. */
+        testSubstitution(builder.createContext({ { 1 }, { 2 }, { 3 } }, { {2, 1} }),
+                         { 1, 2, 3 }, { 1, 2, 13 }, simpleReferral);
+        /* Test by applying lookup on each input glyph. */
+        testSubstitution(builder.createContext({ { 1 }, { 2 }, { 3 } }, { {0, 1}, {1, 1}, {2, 1} }),
+                         { 1, 2, 3 }, { 11, 12, 13 }, simpleReferral);
+        /* Test by applying complex lookups on input glyphs. */
+        testSubstitution(builder.createContext({ { 1 }, { 2 }, { 3 } }, { {2, 1}, {1, 2}, {3, 3}, {0, 3}, {1, 1} }),
+                         {  1, 2, 3 }, { 10, 6, 20 }, complexReferral);
     }
 }
 
