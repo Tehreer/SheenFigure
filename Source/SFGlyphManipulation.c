@@ -356,24 +356,26 @@ SF_PRIVATE SFBoolean _SFApplyChainContextSubtable(SFTextProcessorRef textProcess
 
             if (coverageIndex != SFInvalidIndex) {
                 SFOffset backtrackClassDefOffset = SFChainContextF2_BacktrackClassDefOffset(chainContextSubtable);
+                SFData backtrackClassDefTable = SFData_Subdata(chainContextSubtable, backtrackClassDefOffset);
                 SFOffset inputClassDefOffset = SFChainContextF2_InputClassDefOffset(chainContextSubtable);
+                SFData inputClassDefTable = SFData_Subdata(chainContextSubtable, inputClassDefOffset);
                 SFOffset lookaheadClassDefOffset = SFChainContextF2_LookaheadClassDefOffset(chainContextSubtable);
+                SFData lookaheadClassDefTable = SFData_Subdata(chainContextSubtable, lookaheadClassDefOffset);
                 SFUInt16 chainRuleSetCount = SFChainContextF2_ChainRuleSetCount(chainContextSubtable);
+                SFUInt16 inputClass;
 
-                if (coverageIndex < chainRuleSetCount) {
-                    SFOffset chainRuleSetOffset = SFChainContextF2_ChainRuleSetOffset(chainContextSubtable, coverageIndex);
+                inputClass = SFOpenTypeSearchGlyphClass(inputClassDefTable, inputGlyph);
 
-                    /* The offset might be NULL if no contexts begin with this class. */
-                    if (chainRuleSetOffset) {
-                        SFData chainRuleSetTable = SFData_Subdata(chainContextSubtable, chainRuleSetOffset);
-                        SFData classDefTables[3];
+                if (inputClass < chainRuleSetCount) {
+                    SFOffset chainRuleSetOffset = SFChainContextF2_ChainRuleSetOffset(chainContextSubtable, inputClass);
+                    SFData chainRuleSetTable = SFData_Subdata(chainContextSubtable, chainRuleSetOffset);
+                    SFData helperTables[3];
 
-                        classDefTables[0] = SFData_Subdata(chainContextSubtable, inputClassDefOffset);
-                        classDefTables[1] = SFData_Subdata(chainContextSubtable, backtrackClassDefOffset);
-                        classDefTables[2] = SFData_Subdata(chainContextSubtable, lookaheadClassDefOffset);
+                    helperTables[0] = backtrackClassDefTable;
+                    helperTables[1] = inputClassDefTable;
+                    helperTables[2] = lookaheadClassDefTable;
 
-                        return _SFApplyChainRuleSetTable(textProcessor, featureKind, chainRuleSetTable, _SFAssessGlyphByClass, classDefTables);
-                    }
+                    return _SFApplyChainRuleSetTable(textProcessor, featureKind, chainRuleSetTable, _SFAssessGlyphByClass, helperTables);
                 }
             }
             break;
