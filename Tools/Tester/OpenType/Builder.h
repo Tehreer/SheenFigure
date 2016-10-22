@@ -17,8 +17,8 @@
 #ifndef __SHEEN_FIGURE__TESTER__OPEN_TYPE__BUILDER_H
 #define __SHEEN_FIGURE__TESTER__OPEN_TYPE__BUILDER_H
 
-#include <array>
 #include <cstddef>
+#include <functional>
 #include <list>
 #include <map>
 #include <memory>
@@ -70,8 +70,10 @@ public:
     ContextSubtable &createContext(const std::vector<std::vector<Glyph>> input,
                                    const std::vector<std::pair<UInt16, UInt16>> lookups);
 
-    ChainContextSubtable &createChainContext(const std::vector<rule_chain_context> rules,
-                                             const std::array<ClassDefTable *, 3> classDefs = { NULL, NULL, NULL });
+    ChainContextSubtable &createChainContext(const std::vector<rule_chain_context> rules);
+    ChainContextSubtable &createChainContext(const std::vector<Glyph> initialGlyphs,
+                                             const std::reference_wrapper<ClassDefTable> classDefs[3],
+                                             const std::vector<rule_chain_context> rules);
     ChainContextSubtable &createChainContext(const std::vector<std::vector<Glyph>> backtrack,
                                              const std::vector<std::vector<Glyph>> input,
                                              const std::vector<std::vector<Glyph>> lookahead,

@@ -564,6 +564,50 @@ struct ChainRuleSet : public Table {
     }
 };
 
+struct ChainClassRule : public Table {
+    UInt16 backtrackGlyphCount;     // Total number of glyphs in the backtrack sequence (number of glyphs to be matched before the first glyph)
+    UInt16 *backtrack;              // Array of backtracking classes(to be matched before the input sequence)
+    UInt16 inputGlyphCount;         // Total number of classes in the input sequence (includes the first class)
+    UInt16 *input;                  // Array of input classes(start with second class; to be matched with the input glyph sequence)
+    UInt16 lookaheadGlyphCount;     // Total number of classes in the look ahead sequence (number of classes to be matched after the input sequence)
+    UInt16 *lookAhead;              // Array of lookahead classes(to be matched after the input sequence)
+    UInt16 recordCount;             // Number of LookupRecords
+    LookupRecord *lookupRecord;     // Array of LookupRecords (in design order)
+
+    void write(Writer &writer) override {
+        writer.enter();
+
+        writer.write(backtrackGlyphCount);
+        writer.write(backtrack, backtrackGlyphCount);
+        writer.write(inputGlyphCount);
+        writer.write(input, inputGlyphCount - 1);
+        writer.write(lookaheadGlyphCount);
+        writer.write(lookAhead, lookaheadGlyphCount);
+        writer.write(recordCount);
+        for (int i = 0; i < recordCount; i++) {
+            writer.write(&lookupRecord[i]);
+        }
+
+        writer.exit();
+    }
+};
+
+struct ChainClassSet : public Table {
+    UInt16 chainClassRuleCnt;       // Number of ChainSubClassRule tables
+    ChainClassRule *chainClassRule; // Array of offsets to ChainClassRule tables-from beginning of ChainClassSet-ordered by preference
+
+    void write(Writer &writer) override {
+        writer.enter();
+
+        writer.write(chainClassRuleCnt);
+        for (int i = 0; i < chainClassRuleCnt; i++) {
+            writer.defer(&chainClassRule[i]);
+        }
+        
+        writer.exit();
+    }
+};
+
 struct ChainContextSubtable : public LookupSubtable {
     UInt16 format;                                  // Format identifier
 
@@ -580,7 +624,7 @@ struct ChainContextSubtable : public LookupSubtable {
             ClassDefTable *inputClassDef;           // Offset to glyph ClassDef table containing input sequence data-from beginning of Substitution table
             ClassDefTable *lookaheadClassDef;       // Offset to glyph ClassDef table containing lookahead sequence data-from beginning of Substitution table
             UInt16 chainClassSetCnt;                // Number of ChainClassSet tables
-            ChainRuleSet *chainClassSet;            // Array of offsets to ChainClassSet tables-from beginning of Substitution table-ordered by input class-may be NULL
+            ChainClassSet **chainClassSet;          // Array of offsets to ChainClassSet tables-from beginning of Substitution table-ordered by input class-may be NULL
         } format2;
 
         struct {
@@ -624,7 +668,7 @@ struct ChainContextSubtable : public LookupSubtable {
             writer.defer(format2.lookaheadClassDef);
             writer.write(format2.chainClassSetCnt);
             for (int i = 0; i < format2.chainClassSetCnt; i++) {
-                writer.defer(&format2.chainClassSet[i]);
+                writer.defer(format2.chainClassSet[i]);
             }
 
             writer.exit();

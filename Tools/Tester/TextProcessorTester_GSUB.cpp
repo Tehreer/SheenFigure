@@ -16,9 +16,11 @@
 
 #include <cstdint>
 #include <cstring>
+#include <functional>
 #include <iostream>
 #include <list>
 #include <memory>
+#include <map>
 #include <set>
 #include <tuple>
 #include <utility>
@@ -417,10 +419,10 @@ void TextProcessorTester::testChainContextSubstitution()
 
     /* Test the format 2. */
     {
-        array<ClassDefTable *, 3> classDefs = {
-            &builder.createClassDef({ class_range { 1, 10, 1 } }),
-            &builder.createClassDef({ class_range { 1, 10, 1 } }),
-            &builder.createClassDef({ class_range { 1, 10, 1 } }),
+        reference_wrapper<ClassDefTable> classDefs[] = {
+            builder.createClassDef({ class_range { 1, 10, 1 } }),
+            builder.createClassDef({ class_range { 1, 10, 1 } }),
+            builder.createClassDef({ class_range { 1, 10, 1 } }),
         };
 
         /* Test with simple substitution. */
@@ -428,14 +430,14 @@ void TextProcessorTester::testChainContextSubstitution()
             vector<LookupSubtable *> referrals = {
                 &builder.createSingleSubst({ 2 }, 1)
             };
-            ChainContextSubtable &subtable = builder.createChainContext({
+            ChainContextSubtable &subtable = builder.createChainContext({ 1 }, classDefs, {
                 rule_chain_context {
                     { 1, 1, 1 },
                     { 1, 1, 1 },
                     { 1, 1, 1 },
                     { { 1, 1 } }
                 }
-            }, classDefs);
+            });
             testSubstitution(subtable,
                              { 1, 1, 1, 1, 2, 3, 3, 3, 3 }, { 1, 1, 1, 1, 3, 3, 3, 3, 3 },
                              referrals);
@@ -448,14 +450,14 @@ void TextProcessorTester::testChainContextSubstitution()
                 &builder.createMultipleSubst({ {2, { 4, 5, 6 }} }),
                 &builder.createLigatureSubst({ {{ 1, 4 }, 10}, {{ 6, 4 }, 20} })
             };
-            ChainContextSubtable &subtable = builder.createChainContext({
+            ChainContextSubtable &subtable = builder.createChainContext({ 1 }, classDefs, {
                 rule_chain_context {
                     { 1, 1, 1 },
                     { 1, 1, 1 },
                     { 1, 1, 1 },
                     { { 2, 1 }, { 1, 2 }, { 3, 3 }, { 0, 3 }, { 1, 1 } }
                 }
-            }, classDefs);
+            });
             testSubstitution(subtable,
                              {  1, 1, 1, 1, 2, 3, 3, 3, 3 }, { 1, 1, 1, 10, 6, 20, 3, 3, 3 },
                              referrals);

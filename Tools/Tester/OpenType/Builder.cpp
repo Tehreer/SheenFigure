@@ -16,6 +16,7 @@
 
 #include <array>
 #include <cstddef>
+#include <functional>
 #include <list>
 #include <map>
 #include <memory>
@@ -390,8 +391,7 @@ ContextSubtable &Builder::createContext(const vector<vector<Glyph>> input,
     return subtable;
 }
 
-ChainContextSubtable &Builder::createChainContext(const vector<rule_chain_context> rules,
-    const array<ClassDefTable *, 3> classDefs)
+ChainContextSubtable &Builder::createChainContext(const vector<rule_chain_context> rules)
 {
     map<Glyph, vector<size_t>> ruleSets;
 
@@ -416,33 +416,17 @@ ChainContextSubtable &Builder::createChainContext(const vector<rule_chain_contex
                                    });
 
     ChainContextSubtable &subtable = createObject<ChainContextSubtable>();
-    ChainRuleSet *ruleSetArray;
-
-    if (classDefs[0] && classDefs[1] && classDefs[2]) {
-        subtable.format = 2;
-        subtable.format2.coverage = &createCoverage(initials, (UInt16)ruleSets.size());
-        subtable.format2.backtrackClassDef = classDefs[0];
-        subtable.format2.inputClassDef = classDefs[1];
-        subtable.format2.lookaheadClassDef = classDefs[2];
-        subtable.format2.chainClassSetCnt = (UInt16)ruleSets.size();
-        subtable.format2.chainClassSet = createArray<ChainRuleSet>(ruleSets.size());
-
-        ruleSetArray = subtable.format2.chainClassSet;
-    } else {
-        subtable.format = 1;
-        subtable.format1.coverage = &createCoverage(initials, (UInt16)ruleSets.size());
-        subtable.format1.chainRuleSetCount = (UInt16)ruleSets.size();
-        subtable.format1.chainRuleSet = createArray<ChainRuleSet>(ruleSets.size());
-
-        ruleSetArray = subtable.format1.chainRuleSet;
-    }
+    subtable.format = 1;
+    subtable.format1.coverage = &createCoverage(initials, (UInt16)ruleSets.size());
+    subtable.format1.chainRuleSetCount = (UInt16)ruleSets.size();
+    subtable.format1.chainRuleSet = createArray<ChainRuleSet>(ruleSets.size());
 
     size_t ruleSetIndex = 0;
 
     for (const auto &entry : ruleSets) {
         const vector<size_t> &ruleIndexes = entry.second;
 
-        ChainRuleSet &chainRuleSet = ruleSetArray[ruleSetIndex++];
+        ChainRuleSet &chainRuleSet = subtable.format1.chainRuleSet[ruleSetIndex++];
         chainRuleSet.chainRuleCount = (UInt16)ruleIndexes.size();
         chainRuleSet.chainRule = createArray<ChainRule>(ruleIndexes.size());
 
@@ -469,6 +453,96 @@ ChainContextSubtable &Builder::createChainContext(const vector<rule_chain_contex
                 lookupRecord.sequenceIndex = lookups[j].first;
                 lookupRecord.lookupListIndex = lookups[j].second;
             }
+        }
+    }
+    
+    return subtable;
+}
+
+ChainContextSubtable &Builder::createChainContext(
+    const vector<Glyph> initialGlyphs,
+    const std::reference_wrapper<ClassDefTable> classDefs[3],
+    const vector<rule_chain_context> rules)
+{
+    map<Glyph, vector<size_t>> classSets;
+
+    /* Extract all initial glyphs with their rules. */
+    for (size_t i = 0; i < rules.size(); i++) {
+        UInt16 initialClass = get<0>(rules[i])[0];
+        vector<size_t> *ruleIndexes = nullptr;
+
+        auto classEntry = classSets.find(initialClass);
+        if (classEntry != classSets.end()) {
+            ruleIndexes = &classEntry->second;
+        } else {
+            ruleIndexes = &(*classSets.insert({ initialClass, vector<size_t>() }).first).second;
+        }
+
+        ruleIndexes->push_back(i);
+    }
+
+    /* Add rule sets for empty classes. */
+    if (!classSets.empty()) {
+        int previousClass = -1;
+
+        for (auto entry = classSets.begin(); entry != classSets.end(); entry++) {
+            UInt16 currentClass = entry->first;
+            UInt16 emptyClass = (UInt16)(previousClass + 1);
+
+            for (; emptyClass < currentClass; emptyClass++) {
+                entry = classSets.insert({ emptyClass, vector<size_t>() }).first;
+            }
+
+            previousClass = currentClass;
+        }
+    }
+
+    ChainContextSubtable &subtable = createObject<ChainContextSubtable>();
+    subtable.format = 2;
+    subtable.format2.coverage = &createCoverage(createGlyphs(initialGlyphs), (UInt16)initialGlyphs.size());
+    subtable.format2.backtrackClassDef = &classDefs[0].get();
+    subtable.format2.inputClassDef = &classDefs[1].get();
+    subtable.format2.lookaheadClassDef = &classDefs[2].get();
+    subtable.format2.chainClassSetCnt = (UInt16)classSets.size();
+    subtable.format2.chainClassSet = createArray<ChainClassSet *>(classSets.size());
+
+    size_t classSetIndex = 0;
+
+    for (const auto &entry : classSets) {
+        const vector<size_t> &ruleIndexes = entry.second;
+
+        ChainClassSet *&chainClassSet = subtable.format2.chainClassSet[classSetIndex++];
+        if (ruleIndexes.size() > 0) {
+            chainClassSet = &createObject<ChainClassSet>();
+            chainClassSet->chainClassRuleCnt = (UInt16)ruleIndexes.size();
+            chainClassSet->chainClassRule = createArray<ChainClassRule>(ruleIndexes.size());
+
+            for (size_t i = 0; i < ruleIndexes.size(); i++) {
+                const rule_chain_context &currentRule = rules[i];
+                const vector<Glyph> &backtrack = get<0>(currentRule);
+                const vector<Glyph> &input = get<1>(currentRule);
+                const vector<Glyph> &lookahead = get<2>(currentRule);
+                const vector<pair<UInt16, UInt16>> &lookups = get<3>(currentRule);
+
+                ChainClassRule &chainClassRule = chainClassSet->chainClassRule[i];
+                chainClassRule.backtrackGlyphCount = (UInt16)backtrack.size();
+                chainClassRule.backtrack = createGlyphs(backtrack);
+                chainClassRule.inputGlyphCount = (UInt16)input.size();
+                chainClassRule.input = createGlyphs(input.begin() + 1, input.end(),
+                                                    [](Glyph glyph) { return glyph; });
+                chainClassRule.lookaheadGlyphCount = (UInt16)lookahead.size();
+                chainClassRule.lookAhead = createGlyphs(lookahead);
+                chainClassRule.recordCount = (UInt16)lookups.size();
+                chainClassRule.lookupRecord = createArray<LookupRecord>(lookups.size());
+
+                for (size_t j = 0; j < lookups.size(); j++) {
+                    LookupRecord &lookupRecord = chainClassRule.lookupRecord[j];
+                    lookupRecord.sequenceIndex = lookups[j].first;
+                    lookupRecord.lookupListIndex = lookups[j].second;
+                }
+            }
+        } else {
+            chainClassSet = NULL;
         }
     }
     
