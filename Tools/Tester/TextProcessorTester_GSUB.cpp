@@ -374,8 +374,6 @@ void TextProcessorTester::testContextSubstitution()
 
 void TextProcessorTester::testChainContextSubstitution()
 {
-    Builder builder;
-
     /* Test the format 1. */
     {
         Builder builder;
@@ -640,38 +638,135 @@ void TextProcessorTester::testChainContextSubstitution()
 
     /* Test the format 3. */
     {
-        /* Test with simple substitution. */
-        {
-            vector<LookupSubtable *> referrals = {
-                &builder.createSingleSubst({ 2 }, 1)
-            };
-            ChainContextSubtable &subtable = builder.createChainContext(
-                { { 1 }, { 1 }, { 1 } },
-                { { 1 }, { 2 }, { 3 } },
-                { { 3 }, { 3 }, { 3 } },
-                { { 1, 1 } }
-            );
-            testSubstitution(subtable,
-                             { 1, 1, 1, 1, 2, 3, 3, 3, 3 }, { 1, 1, 1, 1, 3, 3, 3, 3, 3 },
-                             referrals);
-        }
+        Builder builder;
 
-        /* Test with complex substitutions. */
-        {
-            vector<LookupSubtable *> referrals = {
-                &builder.createSingleSubst({ 1, 2, 3, 4, 5, 6 }, 1),
-                &builder.createMultipleSubst({ {2, { 4, 5, 6 }} }),
-                &builder.createLigatureSubst({ {{ 1, 4 }, 10}, {{ 6, 4 }, 20} })
-            };
-            ChainContextSubtable &subtable = builder.createChainContext(
-                { { 1 }, { 1 }, { 1 } },
-                { { 1 }, { 2 }, { 3 } },
-                { { 3 }, { 3 }, { 3 } },
-                { { 2, 1 }, { 1, 2 }, { 3, 3 }, { 0, 3 }, { 1, 1 } }
-            );
-            testSubstitution(subtable,
-                             {  1, 1, 1, 1, 2, 3, 3, 3, 3 }, { 1, 1, 1, 10, 6, 20, 3, 3, 3 },
-                             referrals);
-        }
+        vector<LookupSubtable *> simpleReferral = {
+            &builder.createSingleSubst({ 1, 2, 3, 4, 5, 6, 7, 8, 9 }, 10)
+        };
+        vector<LookupSubtable *> complexReferral = {
+            &builder.createSingleSubst({ 1, 2, 3, 4, 5, 6 }, 1),
+            &builder.createMultipleSubst({ {2, { 4, 5, 6 }} }),
+            &builder.createLigatureSubst({ {{ 1, 4 }, 10}, {{ 6, 4 }, 20} })
+        };
+
+        /* Test with unmatching first input glyph. */
+        testSubstitution(builder.createChainContext(
+                            { { 21 } },
+                            { { 1 }, { 2 }, { 3 } },
+                            { { 31 } },
+                            { {1, 1} }),
+                         { 21, 0, 2, 3, 31 }, { 21, 0, 2, 3, 31 }, simpleReferral);
+        /* Test with unmatching middle input glyph. */
+        testSubstitution(builder.createChainContext(
+                            { { 21 } },
+                            { { 1 }, { 2 }, { 3 } },
+                            { { 31 } },
+                            { {1, 1} }),
+                         { 21, 1, 0, 3, 31 }, { 21, 1, 0, 3, 31 }, simpleReferral);
+        /* Test with unmatching last input glyph. */
+        testSubstitution(builder.createChainContext(
+                            { { 21 } },
+                            { { 1 }, { 2 }, { 3 } },
+                            { { 31 } },
+                            { {1, 1} }),
+                         { 21, 1, 2, 0, 31 }, { 21, 1, 2, 0, 31 }, simpleReferral);
+        /* Test with unmatching first backtrack glyph. */
+        testSubstitution(builder.createChainContext(
+                            { { 21 }, { 22 }, { 23 } },
+                            { { 1 } },
+                            { { 31 } },
+                            { {0, 1} }),
+                         { 0, 22, 23, 1, 31 }, { 0, 22, 23, 1, 31 }, simpleReferral);
+        /* Test with unmatching middle backtrack glyph. */
+        testSubstitution(builder.createChainContext(
+                            { { 21 }, { 22 }, { 23 } },
+                            { { 1 } },
+                            { { 31 } },
+                            { {0, 1} }),
+                         { 21, 0, 23, 1, 31 }, { 21, 0, 23, 1, 31 }, simpleReferral);
+        /* Test with unmatching last backtrack glyph. */
+        testSubstitution(builder.createChainContext(
+                            { { 21 }, { 22 }, { 23 } },
+                            { { 1 } },
+                            { { 31 } },
+                            { {0, 1} }),
+                         { 21, 22, 0, 1, 31 }, { 21, 22, 0, 1, 31 }, simpleReferral);
+        /* Test with unmatching first lookahead glyph. */
+        testSubstitution(builder.createChainContext(
+                            { { 21 } },
+                            { { 1 } },
+                            { { 31 }, { 32 }, { 33 } },
+                            { {0, 1} }),
+                         { 21, 1, 0, 32, 33 }, { 21, 1, 0, 32, 33 }, simpleReferral);
+        /* Test with unmatching middle lookahead glyph. */
+        testSubstitution(builder.createChainContext(
+                            { { 21 } },
+                            { { 1 } },
+                            { { 31 }, { 32 }, { 33 } },
+                            { {0, 1} }),
+                         { 21, 1, 31, 0, 33 }, { 21, 1, 31, 0, 33 }, simpleReferral);
+        /* Test with unmatching last lookahead glyph. */
+        testSubstitution(builder.createChainContext(
+                            { { 21 } },
+                            { { 1 } },
+                            { { 31 }, { 32 }, { 33 } },
+                            { {0, 1} }),
+                         { 21, 1, 31, 32, 0 }, { 21, 1, 31, 32, 0 }, simpleReferral);
+        /* Test by providing single input glyph. */
+        testSubstitution(builder.createChainContext(
+                            { { 21 }, { 22 }, { 23 } },
+                            { { 1 } },
+                            { { 31 }, { 32 }, { 33 } },
+                            { {0, 1} }),
+                         { 21, 22, 23, 1, 31, 32, 33 }, { 21, 22, 23, 11, 31, 32, 33 }, simpleReferral);
+        /* Test by providing same input glyph sequence. */
+        testSubstitution(builder.createChainContext(
+                            { { 21 }, { 22 }, { 23 } },
+                            { { 1 }, { 1 }, { 1 } },
+                            { { 31 }, { 32 }, { 33 } },
+                            { {1, 1} }),
+                         { 21, 22, 23, 1, 1, 1, 31, 32, 33 }, { 21, 22, 23, 1, 11, 1, 31, 32, 33 }, simpleReferral);
+        /* Test by providing no backtrack and lookahead glyph. */
+        testSubstitution(builder.createChainContext(
+                            { },
+                            { { 1 }, { 2 }, { 3 } },
+                            { },
+                            { {1, 1} }),
+                         { 1, 2, 3 }, { 1, 12, 3 }, simpleReferral);
+        /* Test by applying lookup on first input glyph. */
+        testSubstitution(builder.createChainContext(
+                            { { 21 }, { 22 }, { 23 } },
+                            { { 1 }, { 2 }, { 3 } },
+                            { { 31 }, { 32 }, { 33 } },
+                            { {0, 1} }),
+                         { 21, 22, 23, 1, 2, 3, 31, 32, 33 }, { 21, 22, 23, 11, 2, 3, 31, 32, 33 }, simpleReferral);
+        /* Test by applying lookup on middle input glyph. */
+        testSubstitution(builder.createChainContext(
+                            { { 21 }, { 22 }, { 23 } },
+                            { { 1 }, { 2 }, { 3 } },
+                            { { 31 }, { 32 }, { 33 } },
+                            { {1, 1} }),
+                         { 21, 22, 23, 1, 2, 3, 31, 32, 33 }, { 21, 22, 23, 1, 12, 3, 31, 32, 33 }, simpleReferral);
+        /* Test by applying lookup on last input glyph. */
+        testSubstitution(builder.createChainContext(
+                            { { 21 }, { 22 }, { 23 } },
+                            { { 1 }, { 2 }, { 3 } },
+                            { { 31 }, { 32 }, { 33 } },
+                            { {2, 1} }),
+                         { 21, 22, 23, 1, 2, 3, 31, 32, 33 }, { 21, 22, 23, 1, 2, 13, 31, 32, 33 }, simpleReferral);
+        /* Test by applying lookup on each input glyph. */
+        testSubstitution(builder.createChainContext(
+                            { { 21 }, { 22 }, { 23 } },
+                            { { 1 }, { 2 }, { 3 } },
+                            { { 31 }, { 32 }, { 33 } },
+                            { {0, 1}, {1, 1}, {2, 1} }),
+                         { 21, 22, 23, 1, 2, 3, 31, 32, 33 }, { 21, 22, 23, 11, 12, 13, 31, 32, 33 }, simpleReferral);
+        /* Test by applying complex lookups on input glyphs. */
+        testSubstitution(builder.createChainContext(
+                            { { 21 }, { 22 }, { 23 } },
+                            { { 1 }, { 2 }, { 3 } },
+                            { { 31 }, { 32 }, { 33 } },
+                            { {2, 1}, {1, 2}, {3, 3}, {0, 3}, {1, 1} }),
+                         { 21, 22, 23, 1, 2, 3, 31, 32, 33 }, { 21, 22, 23, 10, 6, 20, 31, 32, 33 }, complexReferral);
     }
 }
