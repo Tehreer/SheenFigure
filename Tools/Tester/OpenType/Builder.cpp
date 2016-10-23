@@ -569,7 +569,7 @@ ChainContextSubtable &Builder::createChainContext(
     subtable.format3.lookupRecord = createArray<LookupRecord>(lookups.size());
 
     for (size_t i = 0; i < backtrack.size(); i++) {
-        initCoverage(subtable.format3.backtrackGlyphCoverage[i],
+        initCoverage(subtable.format3.backtrackGlyphCoverage[backtrack.size() - i - 1],
                      createGlyphs(backtrack[i]), (UInt16)backtrack[i].size());
     }
 
