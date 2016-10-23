@@ -469,7 +469,7 @@ ChainContextSubtable &Builder::createChainContext(
 
     /* Extract all initial glyphs with their rules. */
     for (size_t i = 0; i < rules.size(); i++) {
-        UInt16 initialClass = get<0>(rules[i])[0];
+        UInt16 initialClass = get<1>(rules[i])[0];
         vector<size_t> *ruleIndexes = nullptr;
 
         auto classEntry = classSets.find(initialClass);
@@ -519,7 +519,7 @@ ChainContextSubtable &Builder::createChainContext(
             chainClassSet->chainClassRule = createArray<ChainClassRule>(ruleIndexes.size());
 
             for (size_t i = 0; i < ruleIndexes.size(); i++) {
-                const rule_chain_context &currentRule = rules[i];
+                const rule_chain_context &currentRule = rules[ruleIndexes[i]];
                 const vector<Glyph> &backtrack = get<0>(currentRule);
                 const vector<Glyph> &input = get<1>(currentRule);
                 const vector<Glyph> &lookahead = get<2>(currentRule);
@@ -527,7 +527,8 @@ ChainContextSubtable &Builder::createChainContext(
 
                 ChainClassRule &chainClassRule = chainClassSet->chainClassRule[i];
                 chainClassRule.backtrackGlyphCount = (UInt16)backtrack.size();
-                chainClassRule.backtrack = createGlyphs(backtrack);
+                chainClassRule.backtrack = createGlyphs(backtrack.rbegin(), backtrack.rend(),
+                                                        [](Glyph glyph) { return glyph; });
                 chainClassRule.inputGlyphCount = (UInt16)input.size();
                 chainClassRule.input = createGlyphs(input.begin() + 1, input.end(),
                                                     [](Glyph glyph) { return glyph; });
