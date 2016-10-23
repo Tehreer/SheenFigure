@@ -371,8 +371,8 @@ SF_PRIVATE SFBoolean _SFApplyChainContextSubtable(SFTextProcessorRef textProcess
                     SFData chainRuleSetTable = SFData_Subdata(chainContextSubtable, chainRuleSetOffset);
                     SFData helperTables[3];
 
-                    helperTables[0] = backtrackClassDefTable;
-                    helperTables[1] = inputClassDefTable;
+                    helperTables[0] = inputClassDefTable;
+                    helperTables[1] = backtrackClassDefTable;
                     helperTables[2] = lookaheadClassDefTable;
 
                     return _SFApplyChainRuleSetTable(textProcessor, featureKind, chainRuleSetTable, _SFAssessGlyphByClass, helperTables);
