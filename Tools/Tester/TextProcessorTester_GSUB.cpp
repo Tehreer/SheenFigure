@@ -504,13 +504,13 @@ void TextProcessorTester::testChainContextSubstitution()
 
     /* Test the format 2. */
     {
+        Builder builder;
+
         reference_wrapper<ClassDefTable> classDefs[] = {
             builder.createClassDef(21, 9, { 1, 2, 3, 1, 2, 3, 1, 2, 3 }),
             builder.createClassDef(1, 9, { 4, 5, 6, 4, 5, 6, 4, 5, 6 }),
             builder.createClassDef(31, 9, { 7, 8, 9, 7, 8, 9, 7, 8, 9 }),
         };
-
-        Builder builder;
 
         vector<LookupSubtable *> simpleReferral = {
             &builder.createSingleSubst({ 1, 2, 3, 4, 5, 6, 7, 8, 9 }, 10)
