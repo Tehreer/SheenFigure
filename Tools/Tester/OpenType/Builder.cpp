@@ -591,3 +591,83 @@ ChainContextSubtable &Builder::createChainContext(
     
     return subtable;
 }
+
+ValueFormat Builder::findValueFormat(const vector<reference_wrapper<ValueRecord>> &valueRecords)
+{
+    ValueFormat format = ValueFormat::None;
+
+    for (auto &record : valueRecords) {
+        if (record.get().xPlacement != 0) {
+            format = format | ValueFormat::XPlacement;
+        }
+        if (record.get().yPlacement != 0) {
+            format = format | ValueFormat::YPlacement;
+        }
+        if (record.get().xAdvance != 0) {
+            format = format | ValueFormat::XAdvance;
+        }
+        if (record.get().yAdvance != 0) {
+            format = format | ValueFormat::YAdvance;
+        }
+        if (record.get().xPlaDevice != NULL) {
+            format = format | ValueFormat::XPlaDevice;
+        }
+        if (record.get().yPlaDevice != NULL) {
+            format = format | ValueFormat::YPlaDevice;
+        }
+        if (record.get().xAdvDevice != NULL) {
+            format = format | ValueFormat::XAdvDevice;
+        }
+        if (record.get().yAdvDevice != NULL) {
+            format = format | ValueFormat::YAdvDevice;
+        }
+    }
+
+    return format;
+}
+
+ValueRecord &Builder::createValueRecord(
+    const array<Int16, 4> metrics,
+    const array<DeviceTable *, 4> devices)
+{
+    ValueRecord &valueRecord = createObject<ValueRecord>();
+    valueRecord.xPlacement = metrics[0];
+    valueRecord.yPlacement = metrics[1];
+    valueRecord.xAdvance = metrics[2];
+    valueRecord.yAdvance = metrics[3];
+    valueRecord.xPlaDevice = devices[0];
+    valueRecord.yPlaDevice = devices[1];
+    valueRecord.xAdvDevice = devices[2];
+    valueRecord.yAdvDevice = devices[3];
+
+    return valueRecord;
+}
+
+SinglePosSubtable &Builder::createSinglePos(const vector<Glyph> glyphs, ValueRecord &valueRecord)
+{
+    SinglePosSubtable &subtable = createObject<SinglePosSubtable>();
+    subtable.posFormat = 1;
+    subtable.coverage = &createCoverage(createGlyphs(glyphs), (UInt16)glyphs.size());
+    subtable.valueFormat = findValueFormat({ valueRecord });
+    subtable.format1.value = &valueRecord;
+
+    return subtable;
+}
+
+SinglePosSubtable &Builder::createSinglePos(
+    const vector<Glyph> glyphs,
+    const vector<reference_wrapper<ValueRecord>> valueRecords)
+{
+    SinglePosSubtable &subtable = createObject<SinglePosSubtable>();
+    subtable.posFormat = 2;
+    subtable.coverage = &createCoverage(createGlyphs(glyphs), (UInt16)glyphs.size());
+    subtable.valueFormat = findValueFormat(valueRecords);
+    subtable.format2.value = createArray<ValueRecord>(valueRecords.size());
+    subtable.format2.valueCount = (UInt16)valueRecords.size();
+
+    for (size_t i = 0; i < valueRecords.size(); i++) {
+        subtable.format2.value[i] = valueRecords[i];
+    }
+
+    return subtable;
+}

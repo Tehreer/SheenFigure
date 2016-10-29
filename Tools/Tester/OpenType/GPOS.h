@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-#ifndef __SHEENFIGURE_TESTER__OPEN_TYPE__GSUB_H
-#define __SHEENFIGURE_TESTER__OPEN_TYPE__GSUB_H
+#ifndef __SHEENFIGURE_TESTER__OPEN_TYPE__GPOS_H
+#define __SHEENFIGURE_TESTER__OPEN_TYPE__GPOS_H
 
 #include "Common.h"
 #include "DataTypes.h"

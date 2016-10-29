@@ -53,6 +53,11 @@ private:
                           const std::vector<SFCodepoint> codepoints,
                           const std::vector<OpenType::Glyph> glyphs,
                           const std::vector<OpenType::LookupSubtable *> referrals = { });
+    void testPositioning(OpenType::LookupSubtable &subtable,
+                         const std::vector<SFCodepoint> codepoints,
+                         const std::vector<std::pair<int32_t, int32_t>> offsets,
+                         const std::vector<int32_t> advances,
+                         const std::vector<OpenType::LookupSubtable *> referrals = { });
 
     void processGSUB(SFAlbumRef album,
                      SFCodepoint *input, SFUInteger length, OpenType::LookupSubtable &subtable,

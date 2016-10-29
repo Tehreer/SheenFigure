@@ -23,6 +23,7 @@ extern "C" {
 #include <Source/SFAssert.h>
 }
 
+#include "OpenType/Builder.h"
 #include "OpenType/Common.h"
 #include "OpenType/GPOS.h"
 #include "TextProcessorTester.h"
@@ -33,65 +34,42 @@ using namespace SheenFigure::Tester::OpenType;
 
 void TextProcessorTester::testSinglePositioning()
 {
-    Glyph glyphs[] = { 1 };
+    Builder builder;
 
-    /* Create the coverage table. */
-    CoverageTable coverage;
-    coverage.coverageFormat = 1;
-    coverage.format1.glyphCount = sizeof(glyphs) / sizeof(Glyph);
-    coverage.format1.glyphArray = glyphs;
-
-    /* Test with format 1. */
+    /* Test the first format. */
     {
-        ValueRecord record;
-        record.xPlacement = -100;
-        record.yPlacement = -100;
-
-        SinglePosSubtable subtable;
-        subtable.posFormat = 1;
-        subtable.coverage = &coverage;
-        subtable.valueFormat = ValueFormat::XPlacement | ValueFormat::YPlacement;
-        subtable.format1.value = &record;
-
-        SFAlbum album;
-        SFAlbumInitialize(&album);
-
-        SFCodepoint input[] = { 1 };
-        processGPOS(&album, input, sizeof(input) / sizeof(SFCodepoint), subtable);
-
-        /* Test the output offsets. */
-        const SFPoint *actual = SFAlbumGetGlyphOffsetsPtr(&album);
-        const SFPoint expected[] = { { -100, -100, } };
-
-        SFAssert(SFAlbumGetGlyphCount(&album) == (sizeof(expected) / sizeof(SFPoint)));
-        SFAssert(memcmp(actual, expected, sizeof(expected) / sizeof(SFPoint)) == 0);
+        /* Test with unmatching glyph. */
+        testPositioning(builder.createSinglePos({ 0 }, builder.createValueRecord({ -100, -200, -300, 0 })),
+                        { 1 }, { {0, 0} }, { 0 });
+        /* Test with empty value record. */
+        testPositioning(builder.createSinglePos({ 1 }, builder.createValueRecord({ 0, 0, 0, 0 })),
+                        { 1 }, { {0, 0} }, { 0 });
+        /* Test with negative values. */
+        testPositioning(builder.createSinglePos({ 1 }, builder.createValueRecord({ -100, -200, -300, 0 })),
+                        { 1 }, { {-100, -200} }, { -300 });
+        /* Test with positive values. */
+        testPositioning(builder.createSinglePos({ 1 }, builder.createValueRecord({ 100, 200, 300, 0 })),
+                        { 1 }, { {100, 200} }, { 300 });
     }
 
-    /* Test with format 2. */
+    /* Test the second format. */
     {
-        ValueRecord record;
-        record.xPlacement = -100;
-        record.yPlacement = -100;
-
-        SinglePosSubtable subtable;
-        subtable.posFormat = 2;
-        subtable.coverage = &coverage;
-        subtable.valueFormat = ValueFormat::XPlacement | ValueFormat::YPlacement;
-        subtable.format2.valueCount = 1;
-        subtable.format2.value = &record;
-
-        SFAlbum album;
-        SFAlbumInitialize(&album);
-
-        SFCodepoint input[] = { 1 };
-        processGPOS(&album, input, sizeof(input) / sizeof(SFCodepoint), subtable);
-
-        /* Test the output glyphs. */
-        const SFPoint *actual = SFAlbumGetGlyphOffsetsPtr(&album);
-        const SFPoint expected[] = { { -100, -100, } };
-
-        SFAssert(SFAlbumGetGlyphCount(&album) == (sizeof(expected) / sizeof(SFPoint)));
-        SFAssert(memcmp(actual, expected, sizeof(expected) / sizeof(SFPoint)) == 0);
+        /* Test with unmatching glyph. */
+        testPositioning(builder.createSinglePos({ 0 },
+                        { builder.createValueRecord({ -100, -200, -300, 0 }) }),
+                        { 1 }, { {0, 0} }, { 0 });
+        /* Test with empty value record. */
+        testPositioning(builder.createSinglePos({ 1 },
+                        { builder.createValueRecord({ 0, 0, 0, 0 }) }),
+                        { 1 }, { {0, 0} }, { 0 });
+        /* Test with negative values. */
+        testPositioning(builder.createSinglePos({ 1 },
+                        { builder.createValueRecord({ -100, -200, -300, 0 }) }),
+                        { 1 }, { {-100, -200} }, { -300 });
+        /* Test with positive values. */
+        testPositioning(builder.createSinglePos({ 1 },
+                        { builder.createValueRecord({ 100, 200, 300, 0 }) }),
+                        { 1 }, { {100, 200} }, { 300 });
     }
 }
 
@@ -138,7 +116,7 @@ void TextProcessorTester::testPairPositioning()
         const SFPoint *actualOffsets = SFAlbumGetGlyphOffsetsPtr(&album);
         const SFAdvance *actualAdvances = SFAlbumGetGlyphAdvancesPtr(&album);
         const SFPoint expectedOffsets[] = { { 0, 0 }, { -100, 100 } };
-        const SFAdvance expectedAdvances[] = { 100, 100 };
+        const SFAdvance expectedAdvances[] = { 0, 0 };
 
         SFAssert(SFAlbumGetGlyphCount(&album) == (sizeof(expectedOffsets) / sizeof(SFPoint)));
         SFAssert(memcmp(actualOffsets, expectedOffsets, sizeof(expectedOffsets) / sizeof(SFPoint)) == 0);
@@ -195,7 +173,7 @@ void TextProcessorTester::testPairPositioning()
         const SFPoint *actualOffsets = SFAlbumGetGlyphOffsetsPtr(&album);
         const SFAdvance *actualAdvances = SFAlbumGetGlyphAdvancesPtr(&album);
         const SFPoint expectedOffsets[] = { { 0, 0 }, { 0, 0 } };
-        const SFAdvance expectedAdvances[] = { 0, 100 };
+        const SFAdvance expectedAdvances[] = { -100, 0 };
 
         SFAssert(SFAlbumGetGlyphCount(&album) == (sizeof(expectedOffsets) / sizeof(SFPoint)));
         SFAssert(memcmp(actualOffsets, expectedOffsets, sizeof(expectedOffsets) / sizeof(SFPoint)) == 0);
@@ -329,7 +307,7 @@ void TextProcessorTester::testMarkToBasePositioning()
     const SFPoint *actualOffsets = SFAlbumGetGlyphOffsetsPtr(&album);
     const SFAdvance *actualAdvances = SFAlbumGetGlyphAdvancesPtr(&album);
     const SFPoint expectedOffsets[] = { { 0, 0 }, { -100, 100, } };
-    const SFAdvance expectedAdvances[] = { 100, 100 };
+    const SFAdvance expectedAdvances[] = { 0, 0 };
 
     SFAssert(SFAlbumGetGlyphCount(&album) == (sizeof(expectedOffsets) / sizeof(SFPoint)));
     SFAssert(memcmp(actualOffsets, expectedOffsets, sizeof(expectedOffsets) / sizeof(SFPoint)) == 0);
@@ -399,7 +377,7 @@ void TextProcessorTester::testMarkToLigaturePositioning()
     const SFPoint *actualOffsets = SFAlbumGetGlyphOffsetsPtr(&album);
     const SFAdvance *actualAdvances = SFAlbumGetGlyphAdvancesPtr(&album);
     const SFPoint expectedOffsets[] = { { 0, 0 }, { -100, 100, } };
-    const SFAdvance expectedAdvances[] = { 100, 100 };
+    const SFAdvance expectedAdvances[] = { 0, 0 };
 
     SFAssert(SFAlbumGetGlyphCount(&album) == (sizeof(expectedOffsets) / sizeof(SFPoint)));
     SFAssert(memcmp(actualOffsets, expectedOffsets, sizeof(expectedOffsets) / sizeof(SFPoint)) == 0);
@@ -465,7 +443,7 @@ void TextProcessorTester::testMarkToMarkPositioning()
     const SFPoint *actualOffsets = SFAlbumGetGlyphOffsetsPtr(&album);
     const SFAdvance *actualAdvances = SFAlbumGetGlyphAdvancesPtr(&album);
     const SFPoint expectedOffsets[] = { { 0, 0 }, { -100, 100, } };
-    const SFAdvance expectedAdvances[] = { 100, 100 };
+    const SFAdvance expectedAdvances[] = { 0, 0 };
 
     SFAssert(SFAlbumGetGlyphCount(&album) == (sizeof(expectedOffsets) / sizeof(SFPoint)));
     SFAssert(memcmp(actualOffsets, expectedOffsets, sizeof(expectedOffsets) / sizeof(SFPoint)) == 0);

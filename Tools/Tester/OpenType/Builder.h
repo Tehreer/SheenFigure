@@ -17,6 +17,7 @@
 #ifndef __SHEEN_FIGURE__TESTER__OPEN_TYPE__BUILDER_H
 #define __SHEEN_FIGURE__TESTER__OPEN_TYPE__BUILDER_H
 
+#include <array>
 #include <cstddef>
 #include <functional>
 #include <list>
@@ -79,6 +80,13 @@ public:
                                              const std::vector<std::vector<Glyph>> lookahead,
                                              const std::vector<std::pair<UInt16, UInt16>> lookups);
 
+    ValueRecord &createValueRecord(const std::array<Int16, 4> metrics,
+                                   const std::array<DeviceTable *, 4> devices = {});
+
+    SinglePosSubtable &createSinglePos(const std::vector<Glyph> glyphs, ValueRecord &valueRecord);
+    SinglePosSubtable &createSinglePos(const std::vector<Glyph> glyphs,
+                                       const std::vector<std::reference_wrapper<ValueRecord>> valueRecords);
+
 private:
     ObjectPool m_pool;
 
@@ -93,6 +101,8 @@ private:
     Glyph *createGlyphs(const Collection &glyphs);
 
     CoverageTable &createCoverage(Glyph *glyphs, UInt16 count);
+
+    ValueFormat findValueFormat(const std::vector<std::reference_wrapper<ValueRecord>> &valueRecords);
 };
 
 }

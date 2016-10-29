@@ -57,11 +57,6 @@ static SFGlyphID getGlyphID(void *object, SFCodepoint codepoint)
     return (SFGlyphID)codepoint;
 }
 
-static SFAdvance getGlyphAdvance(void *object, SFFontLayout fontLayout, SFGlyphID glyphID)
-{
-    return 100;
-}
-
 static void writeTable(Writer &writer,
     LookupSubtable &subtable, LookupSubtable **referrals, SFUInteger count)
 {
@@ -163,7 +158,7 @@ static void processSubtable(SFAlbumRef album,
         .finalize = NULL,
         .loadTable = &loadTable,
         .getGlyphIDForCodepoint = &getGlyphID,
-        .getAdvanceForGlyph = &getGlyphAdvance,
+        .getAdvanceForGlyph = NULL,
     };
     SFFontRef font = SFFontCreateWithProtocol(&protocol, &object);
 
@@ -236,6 +231,24 @@ void TextProcessorTester::testSubstitution(LookupSubtable &subtable,
 
     SFAssert(SFAlbumGetGlyphCount(&album) == glyphs.size());
     SFAssert(memcmp(SFAlbumGetGlyphIDsPtr(&album), glyphs.data(), sizeof(SFGlyphID) * glyphs.size()) == 0);
+}
+
+void TextProcessorTester::testPositioning(LookupSubtable &subtable,
+    const vector<SFCodepoint> codepoints,
+    const vector<pair<int32_t, int32_t>> offsets,
+    const vector<int32_t> advances,
+    const vector<LookupSubtable *> referrals)
+{
+    SFAssert(offsets.size() == advances.size());
+
+    SFAlbum album;
+    SFAlbumInitialize(&album);
+    processSubtable(&album, &codepoints[0], codepoints.size(), SFTrue, subtable,
+                    (LookupSubtable **)referrals.data(), referrals.size());
+
+    SFAssert(SFAlbumGetGlyphCount(&album) == offsets.size());
+    SFAssert(memcmp(SFAlbumGetGlyphOffsetsPtr(&album), offsets.data(), sizeof(SFPoint) * offsets.size()) == 0);
+    SFAssert(memcmp(SFAlbumGetGlyphAdvancesPtr(&album), advances.data(), sizeof(SFInt32) * advances.size()) == 0);
 }
 
 void TextProcessorTester::test()
