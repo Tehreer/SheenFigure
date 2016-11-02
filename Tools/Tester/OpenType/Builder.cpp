@@ -592,38 +592,50 @@ ChainContextSubtable &Builder::createChainContext(
     return subtable;
 }
 
-ValueFormat Builder::findValueFormat(const vector<reference_wrapper<ValueRecord>> &valueRecords)
+
+template<class InputIt, class Operation>
+ValueFormat Builder::findValueFormat(InputIt begin, InputIt end, Operation operation)
 {
     ValueFormat format = ValueFormat::None;
 
-    for (auto &record : valueRecords) {
-        if (record.get().xPlacement != 0) {
+    while (begin != end) {
+        const ValueRecord &record = operation(*begin++);
+
+        if (record.xPlacement != 0) {
             format = format | ValueFormat::XPlacement;
         }
-        if (record.get().yPlacement != 0) {
+        if (record.yPlacement != 0) {
             format = format | ValueFormat::YPlacement;
         }
-        if (record.get().xAdvance != 0) {
+        if (record.xAdvance != 0) {
             format = format | ValueFormat::XAdvance;
         }
-        if (record.get().yAdvance != 0) {
+        if (record.yAdvance != 0) {
             format = format | ValueFormat::YAdvance;
         }
-        if (record.get().xPlaDevice != NULL) {
+        if (record.xPlaDevice != NULL) {
             format = format | ValueFormat::XPlaDevice;
         }
-        if (record.get().yPlaDevice != NULL) {
+        if (record.yPlaDevice != NULL) {
             format = format | ValueFormat::YPlaDevice;
         }
-        if (record.get().xAdvDevice != NULL) {
+        if (record.xAdvDevice != NULL) {
             format = format | ValueFormat::XAdvDevice;
         }
-        if (record.get().yAdvDevice != NULL) {
+        if (record.yAdvDevice != NULL) {
             format = format | ValueFormat::YAdvDevice;
         }
     }
 
     return format;
+}
+
+ValueFormat Builder::findValueFormat(const vector<reference_wrapper<ValueRecord>> &valueRecords)
+{
+    return findValueFormat(valueRecords.begin(), valueRecords.end(),
+                           [](const reference_wrapper<ValueRecord> &record) {
+                               return record.get();
+                           });
 }
 
 ValueRecord &Builder::createValueRecord(
@@ -667,6 +679,66 @@ SinglePosSubtable &Builder::createSinglePos(
 
     for (size_t i = 0; i < valueRecords.size(); i++) {
         subtable.format2.value[i] = valueRecords[i];
+    }
+
+    return subtable;
+}
+
+PairAdjustmentPosSubtable &Builder::createPairPos(const std::vector<pair_rule> rules)
+{
+    map<Glyph, vector<size_t>> pairSets;
+
+    /* Extract all initial glyphs with their pair sets. */
+    for (size_t i = 0; i < rules.size(); i++) {
+        Glyph pairInitial = get<0>(rules[i]);
+        vector<size_t> *pairIndexes = nullptr;
+
+        auto entry = pairSets.find(pairInitial);
+        if (entry != pairSets.end()) {
+            pairIndexes = &entry->second;
+        } else {
+            pairIndexes = &(*pairSets.insert({ pairInitial, vector<size_t>() }).first).second;
+        }
+
+        pairIndexes->push_back(i);
+    }
+
+    Glyph *initials = createGlyphs(pairSets.begin(), pairSets.end(),
+                                   [](const decltype(pairSets)::value_type &pair) {
+                                       return pair.first;
+                                   });
+
+    PairAdjustmentPosSubtable &subtable = createObject<PairAdjustmentPosSubtable>();
+    subtable.posFormat = 1;
+    subtable.coverage = &createCoverage(initials, (UInt16)pairSets.size());
+    subtable.valueFormat1 = findValueFormat(rules.begin(), rules.end(),
+                                            [](const decltype(rules)::value_type &rule) {
+                                                return get<2>(rule).get();
+                                            });
+    subtable.valueFormat2 = findValueFormat(rules.begin(), rules.end(),
+                                            [](const decltype(rules)::value_type &rule) {
+                                                return get<3>(rule).get();
+                                            });
+    subtable.format1.pairSetCount = (UInt16)pairSets.size();
+    subtable.format1.pairSetTable = createArray<PairSetTable>(pairSets.size());
+
+    size_t pairSetIndex = 0;
+
+    for (const auto &entry : pairSets) {
+        const vector<size_t> &ruleIndexes = entry.second;
+
+        PairSetTable &pairSet = subtable.format1.pairSetTable[pairSetIndex++];
+        pairSet.pairValueCount = (UInt16)ruleIndexes.size();
+        pairSet.pairValueRecord = createArray<PairValueRecord>(ruleIndexes.size());
+
+        for (size_t i = 0; i < ruleIndexes.size(); i++) {
+            const pair_rule &currentRule = rules[ruleIndexes[i]];
+
+            PairValueRecord &pairValueRecord = pairSet.pairValueRecord[i];
+            pairValueRecord.secondGlyph = get<1>(currentRule);
+            pairValueRecord.value1 = &get<2>(currentRule).get();
+            pairValueRecord.value2 = &get<3>(currentRule).get();
+        }
     }
 
     return subtable;
