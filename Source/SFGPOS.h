@@ -45,11 +45,12 @@ enum {
 #define SFValueFormat_XPlacement(format)            ((format) & 0x0001 ? 1 : 0)
 #define SFValueFormat_YPlacement(format)            ((format) & 0x0002 ? 1 : 0)
 #define SFValueFormat_XAdvance(format)              ((format) & 0x0004 ? 1 : 0)
-#define SFValueFormat_YAdvance(format)              ((format) & 0x0010 ? 1 : 0)
-#define SFValueFormat_XPlaDevice(format)            ((format) & 0x0020 ? 1 : 0)
-#define SFValueFormat_YPlaDevice(format)            ((format) & 0x0040 ? 1 : 0)
-#define SFValueFormat_XAdvDevice(format)            ((format) & 0x0080 ? 1 : 0)
-#define SFValueFormat_YAdvDevice(format)            ((format) & 0xF000 ? 1 : 0)
+#define SFValueFormat_YAdvance(format)              ((format) & 0x0008 ? 1 : 0)
+#define SFValueFormat_XPlaDevice(format)            ((format) & 0x0010 ? 1 : 0)
+#define SFValueFormat_YPlaDevice(format)            ((format) & 0x0020 ? 1 : 0)
+#define SFValueFormat_XAdvDevice(format)            ((format) & 0x0040 ? 1 : 0)
+#define SFValueFormat_YAdvDevice(format)            ((format) & 0x0080 ? 1 : 0)
+#define SFValueFormat_Reserved(format)              ((format) & 0xFF00 ? 1 : 0)
 #define SFValueFormat_ValueCount(format)            \
 (                                                   \
    SFValueFormat_XPlacement(format)                 \
@@ -60,6 +61,7 @@ enum {
  + SFValueFormat_YPlaDevice(format)                 \
  + SFValueFormat_XAdvDevice(format)                 \
  + SFValueFormat_YAdvDevice(format)                 \
+ + SFValueFormat_Reserved(format)                   \
 )
 
 #define SFValueRecord_NextValue(data, offset)       SFData_UInt16(data, offset), (offset += 2)
