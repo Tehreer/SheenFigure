@@ -75,6 +75,71 @@ void TextProcessorTester::testSinglePositioning()
 
 void TextProcessorTester::testPairPositioning()
 {
+    Builder builder;
+
+    ValueRecord &empty = builder.createValueRecord({ 0, 0, 0, 0 });
+    ValueRecord &positive1 = builder.createValueRecord({ 100, 200, 300, 400 });
+    ValueRecord &positive2 = builder.createValueRecord({ 600, 700, 800, 900 });
+    ValueRecord &negative1 = builder.createValueRecord({ -900, -800, -700, -600 });
+    ValueRecord &negative2 = builder.createValueRecord({ -400, -300, -200, -100 });
+
+    /* Test the first format. */
+    {
+        /* Test with first unmatching glyph. */
+        testPositioning(builder.createPairPos({
+                            pair_rule { 1, 2, positive1, positive2 }
+                        }),
+                        { 0, 2 }, { {0, 0}, {0, 0} }, { 0, 0 });
+        /* Test with second unmatching glyph. */
+        testPositioning(builder.createPairPos({
+                            pair_rule { 1, 2, positive1, positive2 }
+                        }),
+                        { 1, 0 }, { {0, 0}, {0, 0} }, { 0, 0 });
+        /* Test with empty values. */
+        testPositioning(builder.createPairPos({
+                            pair_rule { 1, 2, empty, empty }
+                        }),
+                        { 1, 2 }, { {0, 0}, {0, 0} }, { 0, 0 });
+        /* Test with positive values. */
+        testPositioning(builder.createPairPos({
+                            pair_rule { 1, 2, positive1, positive2 }
+                        }),
+                        { 1, 2 }, { {100, 200}, {600, 700} }, { 300, 800 });
+        /* Test with negative values. */
+        testPositioning(builder.createPairPos({
+                            pair_rule { 1, 2, negative1, negative2 }
+                        }),
+                        { 1, 2 }, { {-900, -800}, {-400, -300} }, { -700, -200 });
+        /* Test by letting middle pair match in a single pair set. */
+        testPositioning(builder.createPairPos({
+                            pair_rule { 1, 2, positive1, positive2 },
+                            pair_rule { 1, 3, positive2, negative1 },
+                            pair_rule { 1, 4, negative1, negative2 }
+                        }),
+                        { 1, 3 }, { {600, 700}, {-900, -800} }, { 800, -700 });
+        /* Test by letting last pair match in a single pair set. */
+        testPositioning(builder.createPairPos({
+                            pair_rule { 1, 2, positive1, positive2 },
+                            pair_rule { 1, 3, positive2, negative1 },
+                            pair_rule { 1, 4, negative1, negative2 }
+                        }),
+                        { 1, 4 }, { {-900, -800}, {-400, -300} }, { -700, -200 });
+        /* Test by letting middle pair match in multiple pair sets. */
+        testPositioning(builder.createPairPos({
+                            pair_rule { 1, 2, positive1, positive2 },
+                            pair_rule { 3, 4, positive2, negative1 },
+                            pair_rule { 5, 6, negative1, negative2 }
+                        }),
+                        { 3, 4 }, { {600, 700}, {-900, -800} }, { 800, -700 });
+        /* Test by letting last pair match in multiple pair sets. */
+        testPositioning(builder.createPairPos({
+                            pair_rule { 1, 2, positive1, positive2 },
+                            pair_rule { 3, 4, positive2, negative1 },
+                            pair_rule { 5, 6, negative1, negative2 }
+                        }),
+                        { 5, 6 }, { {-900, -800}, {-400, -300} }, { -700, -200 });
+    }
+
     Glyph glyphs[] = { 1 };
 
     /* Create the coverage table. */
@@ -82,46 +147,6 @@ void TextProcessorTester::testPairPositioning()
     coverage.coverageFormat = 1;
     coverage.format1.glyphCount = sizeof(glyphs) / sizeof(Glyph);
     coverage.format1.glyphArray = glyphs;
-
-    /* Test with format 1. */
-    {
-        ValueRecord value2Record;
-        value2Record.xPlacement = -100;
-        value2Record.yPlacement = 100;
-
-        PairValueRecord pairValueRecord;
-        pairValueRecord.secondGlyph = 2;
-        pairValueRecord.value1 = NULL;
-        pairValueRecord.value2 = &value2Record;
-
-        PairSetTable pairSet;
-        pairSet.pairValueCount = 1;
-        pairSet.pairValueRecord = &pairValueRecord;
-
-        PairAdjustmentPosSubtable subtable;
-        subtable.posFormat = 1;
-        subtable.coverage = &coverage;
-        subtable.valueFormat1 = ValueFormat::None;
-        subtable.valueFormat2 = ValueFormat::XPlacement | ValueFormat::YPlacement;
-        subtable.format1.pairSetCount = 1;
-        subtable.format1.pairSetTable = &pairSet;
-
-        SFAlbum album;
-        SFAlbumInitialize(&album);
-
-        SFCodepoint input[] = { 1, 2 };
-        processGPOS(&album, input, sizeof(input) / sizeof(SFCodepoint), subtable);
-
-        /* Test the output. */
-        const SFPoint *actualOffsets = SFAlbumGetGlyphOffsetsPtr(&album);
-        const SFAdvance *actualAdvances = SFAlbumGetGlyphAdvancesPtr(&album);
-        const SFPoint expectedOffsets[] = { { 0, 0 }, { -100, 100 } };
-        const SFAdvance expectedAdvances[] = { 0, 0 };
-
-        SFAssert(SFAlbumGetGlyphCount(&album) == (sizeof(expectedOffsets) / sizeof(SFPoint)));
-        SFAssert(memcmp(actualOffsets, expectedOffsets, sizeof(expectedOffsets) / sizeof(SFPoint)) == 0);
-        SFAssert(memcmp(actualAdvances, expectedAdvances, sizeof(expectedAdvances) / sizeof(SFAdvance)) == 0);
-    }
 
     /* Test with format 2. */
     {
