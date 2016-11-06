@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+#include <algorithm>
 #include <array>
 #include <cstddef>
 #include <functional>
@@ -116,6 +117,27 @@ ClassDefTable &Builder::createClassDef(const vector<class_range> classRanges)
     }
 
     return classDef;
+}
+
+UInt16 Builder::findMaxClass(ClassDefTable &classDef)
+{
+    UInt16 maxClass = 0;
+
+    switch (classDef.classFormat) {
+        case 1:
+            for (size_t i = 0; i < classDef.format1.glyphCount; i++) {
+                maxClass = max(maxClass, classDef.format1.classValueArray[i]);
+            }
+            break;
+
+        case 2:
+            for (size_t i = 0; i < classDef.format2.classRangeCount; i++) {
+                maxClass = max(maxClass, classDef.format2.classRangeRecord[i].clazz);
+            }
+            break;
+    }
+
+    return maxClass;
 }
 
 SingleSubstSubtable &Builder::createSingleSubst(const set<Glyph> glyphs, Int16 delta)
@@ -684,7 +706,7 @@ SinglePosSubtable &Builder::createSinglePos(
     return subtable;
 }
 
-PairAdjustmentPosSubtable &Builder::createPairPos(const std::vector<pair_rule> rules)
+PairAdjustmentPosSubtable &Builder::createPairPos(const vector<pair_rule> rules)
 {
     map<Glyph, vector<size_t>> pairSets;
 
@@ -738,6 +760,81 @@ PairAdjustmentPosSubtable &Builder::createPairPos(const std::vector<pair_rule> r
             pairValueRecord.secondGlyph = get<1>(currentRule);
             pairValueRecord.value1 = &get<2>(currentRule).get();
             pairValueRecord.value2 = &get<3>(currentRule).get();
+        }
+    }
+
+    return subtable;
+}
+
+PairAdjustmentPosSubtable &Builder::createPairPos(
+    const vector<Glyph> initialGlyphs,
+    const reference_wrapper<ClassDefTable> classDefs[2],
+    const vector<pair_rule> rules)
+{
+    map<UInt16, map<UInt16, size_t>> classSets;
+
+    /* Extract all classes with their rules. */
+    for (size_t i = 0; i < rules.size(); i++) {
+        UInt16 class1 = get<0>(rules[i]);
+        UInt16 class2 = get<1>(rules[i]);
+        map<UInt16, size_t> *classRules = nullptr;
+
+        auto classEntry = classSets.find(class1);
+        if (classEntry != classSets.end()) {
+            classRules = &classEntry->second;
+        } else {
+            classRules = &(*classSets.insert({ class1, map<UInt16, size_t>() }).first).second;
+        }
+
+        classRules->insert({class2, i});
+    }
+
+    PairAdjustmentPosSubtable &subtable = createObject<PairAdjustmentPosSubtable>();
+    subtable.posFormat = 2;
+    subtable.coverage = &createCoverage(createGlyphs(initialGlyphs), (UInt16)initialGlyphs.size());
+    subtable.valueFormat1 = findValueFormat(rules.begin(), rules.end(),
+                                            [](const decltype(rules)::value_type &rule) {
+                                                return get<2>(rule).get();
+                                            });
+    subtable.valueFormat2 = findValueFormat(rules.begin(), rules.end(),
+                                            [](const decltype(rules)::value_type &rule) {
+                                                return get<3>(rule).get();
+                                            });
+    subtable.format2.classDef1 = &classDefs[0].get();
+    subtable.format2.classDef2 = &classDefs[1].get();
+    subtable.format2.class1Count = findMaxClass(classDefs[0]) + 1;
+    subtable.format2.class2Count = findMaxClass(classDefs[1]) + 1;
+    subtable.format2.class1Record = createArray<Class1Record>(subtable.format2.class1Count);
+
+    map<UInt16, size_t> emptyRules;
+    ValueRecord &emptyRecord = createValueRecord({ 0, 0, 0, 0 });
+
+    for (UInt16 class1 = 0; class1 < subtable.format2.class1Count; class1++) {
+        const map<UInt16, size_t> *classRules = nullptr;
+
+        auto class1Entry = classSets.find(class1);
+        if (class1Entry == classSets.end()) {
+            classRules = &emptyRules;
+        } else {
+            classRules = &class1Entry->second;
+        }
+
+        Class1Record &class1Record = subtable.format2.class1Record[class1];
+        class1Record.class2Record = createArray<Class2Record>(subtable.format2.class2Count);
+
+        for (UInt16 class2 = 0; class2 < subtable.format2.class2Count; class2++) {
+            Class2Record &class2Record = class1Record.class2Record[class2];
+
+            auto class2Entry = classRules->find(class2);
+            if (class2Entry == classRules->end()) {
+                class2Record.value1 = &emptyRecord;
+                class2Record.value2 = &emptyRecord;
+            } else {
+                const pair_rule &currentRule = rules[class2Entry->second];
+
+                class2Record.value1 = &get<2>(currentRule).get();
+                class2Record.value2 = &get<3>(currentRule).get();
+            }
         }
     }
 

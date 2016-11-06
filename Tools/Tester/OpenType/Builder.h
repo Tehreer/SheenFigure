@@ -52,7 +52,7 @@ typedef std::tuple<
          std::vector<std::pair<UInt16, UInt16>>> rule_chain_context;
 
 typedef std::tuple<
-         Glyph, Glyph,
+         UInt16, UInt16,
          std::reference_wrapper<ValueRecord>, std::reference_wrapper<ValueRecord>> pair_rule;
 
 class Builder {
@@ -92,6 +92,9 @@ public:
                                        const std::vector<std::reference_wrapper<ValueRecord>> valueRecords);
 
     PairAdjustmentPosSubtable &createPairPos(const std::vector<pair_rule> rules);
+    PairAdjustmentPosSubtable &createPairPos(const std::vector<Glyph> initialGlyphs,
+                                             const std::reference_wrapper<ClassDefTable> classDefs[2],
+                                             const std::vector<pair_rule> rules);
 private:
     ObjectPool m_pool;
 
@@ -106,6 +109,8 @@ private:
     Glyph *createGlyphs(const Collection &glyphs);
 
     CoverageTable &createCoverage(Glyph *glyphs, UInt16 count);
+
+    UInt16 findMaxClass(ClassDefTable &classDef);
 
     template<class InputIt, class Operation>
     ValueFormat findValueFormat(InputIt begin, InputIt end, Operation operation);
