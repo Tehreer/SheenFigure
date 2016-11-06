@@ -140,69 +140,66 @@ void TextProcessorTester::testPairPositioning()
                         { 5, 6 }, { {-900, -800}, {-400, -300} }, { -700, -200 });
     }
 
-    Glyph glyphs[] = { 1 };
-
-    /* Create the coverage table. */
-    CoverageTable coverage;
-    coverage.coverageFormat = 1;
-    coverage.format1.glyphCount = sizeof(glyphs) / sizeof(Glyph);
-    coverage.format1.glyphArray = glyphs;
-
-    /* Test with format 2. */
+    /* Test the second format. */
     {
-        UInt16 classValues1[] = { 0 };
+        reference_wrapper<ClassDefTable> classDefs[] = {
+            builder.createClassDef(11, 3, { 1, 2, 3 }),
+            builder.createClassDef(21, 3, { 4, 5, 6 }),
+        };
 
-        ClassDefTable classDef1;
-        classDef1.classFormat = 1;
-        classDef1.format1.startGlyph = 1;
-        classDef1.format1.glyphCount = 1;
-        classDef1.format1.classValueArray = classValues1;
-
-        UInt16 classValues2[] = { 0 };
-
-        ClassDefTable classDef2;
-        classDef2.classFormat = 1;
-        classDef2.format1.startGlyph = 2;
-        classDef2.format1.glyphCount = 1;
-        classDef2.format1.classValueArray = classValues2;
-
-        ValueRecord value1Record;
-        value1Record.xAdvance = -100;
-        value1Record.yAdvance = 100;
-
-        Class2Record class2Record;
-        class2Record.value1 = &value1Record;
-        class2Record.value2 = NULL;
-
-        Class1Record class1Record;
-        class1Record.class2Record = &class2Record;
-
-        PairAdjustmentPosSubtable subtable;
-        subtable.posFormat = 2;
-        subtable.coverage = &coverage;
-        subtable.valueFormat1 = ValueFormat::XAdvance | ValueFormat::YAdvance;
-        subtable.valueFormat2 = ValueFormat::None;
-        subtable.format2.classDef1 = &classDef1;
-        subtable.format2.classDef2 = &classDef2;
-        subtable.format2.class1Count = 1;
-        subtable.format2.class2Count = 1;
-        subtable.format2.class1Record = &class1Record;
-
-        SFAlbum album;
-        SFAlbumInitialize(&album);
-
-        SFCodepoint input[] = { 1, 2 };
-        processGPOS(&album, input, sizeof(input) / sizeof(SFCodepoint), subtable);
-
-        /* Test the output. */
-        const SFPoint *actualOffsets = SFAlbumGetGlyphOffsetsPtr(&album);
-        const SFAdvance *actualAdvances = SFAlbumGetGlyphAdvancesPtr(&album);
-        const SFPoint expectedOffsets[] = { { 0, 0 }, { 0, 0 } };
-        const SFAdvance expectedAdvances[] = { -100, 0 };
-
-        SFAssert(SFAlbumGetGlyphCount(&album) == (sizeof(expectedOffsets) / sizeof(SFPoint)));
-        SFAssert(memcmp(actualOffsets, expectedOffsets, sizeof(expectedOffsets) / sizeof(SFPoint)) == 0);
-        SFAssert(memcmp(actualAdvances, expectedAdvances, sizeof(expectedAdvances) / sizeof(SFAdvance)) == 0);
+        /* Test with first unmatching glyph. */
+        testPositioning(builder.createPairPos({ 11 }, classDefs, {
+                            pair_rule { 1, 4, positive1, positive2 }
+                        }),
+                        { 0, 21 }, { {0, 0}, {0, 0} }, { 0, 0 });
+        /* Test with second unmatching glyph. */
+        testPositioning(builder.createPairPos({ 11 }, classDefs, {
+                            pair_rule { 1, 4, positive1, positive2 }
+                        }),
+                        { 11, 0 }, { {0, 0}, {0, 0} }, { 0, 0 });
+        /* Test with empty values. */
+        testPositioning(builder.createPairPos({ 11 }, classDefs, {
+                            pair_rule { 1, 4, empty, empty }
+                        }),
+                        { 11, 21 }, { {0, 0}, {0, 0} }, { 0, 0 });
+        /* Test with positive values. */
+        testPositioning(builder.createPairPos({ 11 }, classDefs, {
+                            pair_rule { 1, 4, positive1, positive2 }
+                        }),
+                        { 11, 21 }, { {100, 200}, {600, 700} }, { 300, 800 });
+        /* Test with negative values. */
+        testPositioning(builder.createPairPos({ 11 }, classDefs, {
+                            pair_rule { 1, 4, negative1, negative2 }
+                        }),
+                        { 11, 21 }, { {-900, -800}, {-400, -300} }, { -700, -200 });
+        /* Test by letting middle pair match in a single class set. */
+        testPositioning(builder.createPairPos({ 11 }, classDefs, {
+                            pair_rule { 1, 4, positive1, positive2 },
+                            pair_rule { 1, 5, positive2, negative1 },
+                            pair_rule { 1, 6, negative1, negative2 }
+                        }),
+                        { 11, 22 }, { {600, 700}, {-900, -800} }, { 800, -700 });
+        /* Test by letting last pair match in a single class set. */
+        testPositioning(builder.createPairPos({ 11 }, classDefs, {
+                            pair_rule { 1, 4, positive1, positive2 },
+                            pair_rule { 1, 5, positive2, negative1 },
+                            pair_rule { 1, 6, negative1, negative2 }
+                        }),
+                        { 11, 23 }, { {-900, -800}, {-400, -300} }, { -700, -200 });
+        /* Test by letting middle pair match in multiple class sets. */
+        testPositioning(builder.createPairPos({ 11, 12, 13 }, classDefs, {
+                            pair_rule { 1, 4, positive1, positive2 },
+                            pair_rule { 2, 5, positive2, negative1 },
+                            pair_rule { 3, 6, negative1, negative2 }
+                        }),
+                        { 12, 22 }, { {600, 700}, {-900, -800} }, { 800, -700 });
+        /* Test by letting last pair match in multiple pair sets. */
+        testPositioning(builder.createPairPos({ 11, 12, 13 }, classDefs, {
+                            pair_rule { 1, 4, positive1, positive2 },
+                            pair_rule { 2, 5, positive2, negative1 },
+                            pair_rule { 3, 6, negative1, negative2 }
+                        }),
+                        { 13, 23 }, { {-900, -800}, {-400, -300} }, { -700, -200 });
     }
 }
 
