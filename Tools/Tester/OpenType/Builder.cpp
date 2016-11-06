@@ -677,6 +677,41 @@ ValueRecord &Builder::createValueRecord(
     return valueRecord;
 }
 
+AnchorTable &Builder::createAnchor(Int16 xCoordinate, Int16 yCoordinate)
+{
+    AnchorTable &anchor = createObject<AnchorTable>();
+    anchor.anchorFormat = 1;
+    anchor.xCoordinate = xCoordinate;
+    anchor.yCoordinate = yCoordinate;
+
+    return anchor;
+}
+
+AnchorTable &Builder::createAnchor(Int16 xCoordinate, Int16 yCoordinate, UInt16 anchorPoint)
+{
+    AnchorTable &anchor = createObject<AnchorTable>();
+    anchor.anchorFormat = 2;
+    anchor.xCoordinate = xCoordinate;
+    anchor.yCoordinate = yCoordinate;
+    anchor.format2.anchorPoint = anchorPoint;
+
+    return anchor;
+
+}
+
+AnchorTable &Builder::createAnchor(Int16 xCoordinate, Int16 yCoordinate,
+    DeviceTable *xDevice, DeviceTable *yDevice)
+{
+    AnchorTable &anchor = createObject<AnchorTable>();
+    anchor.anchorFormat = 3;
+    anchor.xCoordinate = xCoordinate;
+    anchor.yCoordinate = yCoordinate;
+    anchor.format3.xDeviceTable = xDevice;
+    anchor.format3.yDeviceTable = yDevice;
+
+    return anchor;
+}
+
 SinglePosSubtable &Builder::createSinglePos(const vector<Glyph> glyphs, ValueRecord &valueRecord)
 {
     SinglePosSubtable &subtable = createObject<SinglePosSubtable>();
@@ -836,6 +871,38 @@ PairAdjustmentPosSubtable &Builder::createPairPos(
                 class2Record.value2 = &get<3>(currentRule).get();
             }
         }
+    }
+
+    return subtable;
+}
+
+CursiveAttachmentPosSubtable &Builder::createCursivePos(const std::vector<curs_rule> rules)
+{
+    map<Glyph, size_t> uniqueRules;
+
+    /* Make unique ordered ruless. */
+    for (size_t i = 0; i < rules.size(); i++) {
+        Glyph initialGlyph = get<0>(rules[i]);
+        uniqueRules[initialGlyph] = i;
+    }
+
+    Glyph *glyphs = createGlyphs(uniqueRules.begin(), uniqueRules.end(),
+                                 [](const decltype(uniqueRules)::value_type &rule) {
+                                     return rule.first;
+                                 });
+
+    CursiveAttachmentPosSubtable &subtable = createObject<CursiveAttachmentPosSubtable>();
+    subtable.posFormat = 1;
+    subtable.coverage = &createCoverage(glyphs, (UInt16)rules.size());
+    subtable.entryExitCount = (UInt16)rules.size();
+    subtable.entryExitRecord = createArray<EntryExitRecord>(rules.size());
+
+    size_t recordIndex = 0;
+
+    for (const auto &entry : uniqueRules) {
+        EntryExitRecord &record = subtable.entryExitRecord[recordIndex++];
+        record.entryAnchor = get<1>(rules[entry.second]);
+        record.exitAnchor = get<2>(rules[entry.second]);
     }
 
     return subtable;

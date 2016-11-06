@@ -55,6 +55,10 @@ typedef std::tuple<
          UInt16, UInt16,
          std::reference_wrapper<ValueRecord>, std::reference_wrapper<ValueRecord>> pair_rule;
 
+typedef std::tuple<
+         Glyph,
+         AnchorTable *, AnchorTable *> curs_rule;
+
 class Builder {
 public:
     Builder();
@@ -87,6 +91,11 @@ public:
     ValueRecord &createValueRecord(const std::array<Int16, 4> metrics,
                                    const std::array<DeviceTable *, 4> devices = {});
 
+    AnchorTable &createAnchor(Int16 xCoordinate, Int16 yCoordinate);
+    AnchorTable &createAnchor(Int16 xCoordinate, Int16 yCoordinate, UInt16 anchorPoint);
+    AnchorTable &createAnchor(Int16 xCoordinate, Int16 yCoordinate,
+                              DeviceTable *xDevice, DeviceTable *yDevice);
+
     SinglePosSubtable &createSinglePos(const std::vector<Glyph> glyphs, ValueRecord &valueRecord);
     SinglePosSubtable &createSinglePos(const std::vector<Glyph> glyphs,
                                        const std::vector<std::reference_wrapper<ValueRecord>> valueRecords);
@@ -95,6 +104,9 @@ public:
     PairAdjustmentPosSubtable &createPairPos(const std::vector<Glyph> initialGlyphs,
                                              const std::reference_wrapper<ClassDefTable> classDefs[2],
                                              const std::vector<pair_rule> rules);
+
+    CursiveAttachmentPosSubtable &createCursivePos(const std::vector<curs_rule> rules);
+
 private:
     ObjectPool m_pool;
 
