@@ -58,14 +58,14 @@ static SFGlyphID getGlyphID(void *object, SFCodepoint codepoint)
 }
 
 static void writeTable(Writer &writer,
-    LookupSubtable &subtable, LookupSubtable **referrals, SFUInteger count)
+    LookupSubtable &subtable, LookupSubtable **referrals, SFUInteger count, LookupFlag lookupFlag)
 {
     UInt16 lookupCount = (UInt16)(count + 1);
 
     /* Create the lookup tables. */
     LookupTable *lookups = new LookupTable[lookupCount];
     lookups[0].lookupType = subtable.lookupType();
-    lookups[0].lookupFlag = (LookupFlag)0;
+    lookups[0].lookupFlag = lookupFlag;
     lookups[0].subTableCount = 1;
     lookups[0].subtables = &subtable;
     lookups[0].markFilteringSet = 0;
@@ -73,7 +73,7 @@ static void writeTable(Writer &writer,
     for (SFUInteger i = 1; i < lookupCount; i++) {
         LookupSubtable *other = referrals[i - 1];
         lookups[i].lookupType = other->lookupType();
-        lookups[i].lookupFlag = (LookupFlag)0;
+        lookups[i].lookupFlag = lookupFlag;
         lookups[i].subTableCount = 1;
         lookups[i].subtables = other;
         lookups[i].markFilteringSet = 0;
@@ -146,7 +146,7 @@ static void processSubtable(SFAlbumRef album,
 {
     /* Write the table for the given lookup. */
     Writer writer;
-    writeTable(writer, subtable, referrals, count);
+    writeTable(writer, subtable, referrals, count, isRTL ? LookupFlag::RightToLeft : (LookupFlag)0);
 
     /* Create a font object containing writer and tag. */
     FontObject object = {

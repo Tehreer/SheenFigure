@@ -263,7 +263,7 @@ void TextProcessorTester::testCursivePositioning()
                         curs_rule { 5, &builder.createAnchor(600, 700), nullptr },
                     }),
                     { 1, 2, 3, 4, 5 },
-                    { {800, -200}, {400, -400}, {0, -600}, {-400, -800}, {0, -800} },
+                    { {800, 800}, {400, 600}, {0, 400}, {-400, 200}, {0, 0} },
                     { 800, -200, -200, -200, 600 }, { }, true);
 }
 
