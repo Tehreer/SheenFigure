@@ -141,7 +141,8 @@ static void writeTable(Writer &writer,
 
 static void processSubtable(SFAlbumRef album,
     const SFCodepoint *input, SFUInteger length, SFBoolean positioning,
-    LookupSubtable &subtable, LookupSubtable **referrals, SFUInteger count)
+    LookupSubtable &subtable, LookupSubtable **referrals, SFUInteger count,
+    SFBoolean isRTL = SFFalse)
 {
     /* Write the table for the given lookup. */
     Writer writer;
@@ -161,6 +162,7 @@ static void processSubtable(SFAlbumRef album,
         .getAdvanceForGlyph = NULL,
     };
     SFFontRef font = SFFontCreateWithProtocol(&protocol, &object);
+    SFTextDirection direction = isRTL ? SFTextDirectionRightToLeft : SFTextDirectionLeftToRight;
 
     /* Create a pattern. */
     SFPatternRef pattern = SFPatternCreate();
@@ -169,7 +171,7 @@ static void processSubtable(SFAlbumRef album,
     SFPatternBuilder builder;
     SFPatternBuilderInitialize(&builder, pattern);
     SFPatternBuilderSetFont(&builder, font);
-    SFPatternBuilderSetScript(&builder, SFTagMake('d', 'f', 'l', 't'), SFTextDirectionLeftToRight);
+    SFPatternBuilderSetScript(&builder, SFTagMake('d', 'f', 'l', 't'), direction);
     SFPatternBuilderSetLanguage(&builder, SFTagMake('d', 'f', 'l', 't'));
     SFPatternBuilderBeginFeatures(&builder, positioning ? SFFeatureKindPositioning : SFFeatureKindSubstitution);
     SFPatternBuilderAddFeature(&builder, SFTagMake('t', 'e', 's', 't'), 0);
@@ -191,7 +193,7 @@ static void processSubtable(SFAlbumRef album,
 
     /* Process the album. */
     SFTextProcessor processor;
-    SFTextProcessorInitialize(&processor, pattern, album, SFTextDirectionLeftToRight, SFTextModeForward);
+    SFTextProcessorInitialize(&processor, pattern, album, direction, SFTextModeForward);
     SFTextProcessorDiscoverGlyphs(&processor);
     SFTextProcessorSubstituteGlyphs(&processor);
     SFTextProcessorPositionGlyphs(&processor);
@@ -237,14 +239,15 @@ void TextProcessorTester::testPositioning(LookupSubtable &subtable,
     const vector<SFCodepoint> codepoints,
     const vector<pair<int32_t, int32_t>> offsets,
     const vector<int32_t> advances,
-    const vector<LookupSubtable *> referrals)
+    const vector<LookupSubtable *> referrals,
+    bool isRTL)
 {
     SFAssert(offsets.size() == advances.size());
 
     SFAlbum album;
     SFAlbumInitialize(&album);
     processSubtable(&album, &codepoints[0], codepoints.size(), SFTrue, subtable,
-                    (LookupSubtable **)referrals.data(), referrals.size());
+                    (LookupSubtable **)referrals.data(), referrals.size(), isRTL);
 
     SFAssert(SFAlbumGetGlyphCount(&album) == offsets.size());
     SFAssert(memcmp(SFAlbumGetGlyphOffsetsPtr(&album), offsets.data(), sizeof(SFPoint) * offsets.size()) == 0);

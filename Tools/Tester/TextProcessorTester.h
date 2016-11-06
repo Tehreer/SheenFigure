@@ -57,7 +57,8 @@ private:
                          const std::vector<SFCodepoint> codepoints,
                          const std::vector<std::pair<int32_t, int32_t>> offsets,
                          const std::vector<int32_t> advances,
-                         const std::vector<OpenType::LookupSubtable *> referrals = { });
+                         const std::vector<OpenType::LookupSubtable *> referrals = { },
+                         bool isRTL = false);
 
     void processGSUB(SFAlbumRef album,
                      SFCodepoint *input, SFUInteger length, OpenType::LookupSubtable &subtable,

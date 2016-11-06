@@ -205,69 +205,66 @@ void TextProcessorTester::testPairPositioning()
 
 void TextProcessorTester::testCursivePositioning()
 {
-    Glyph glyphs[] = { 1, 2, 3 };
+    Builder builder;
 
-    /* Create the coverage table. */
-    CoverageTable coverage;
-    coverage.coverageFormat = 1;
-    coverage.format1.glyphCount = sizeof(glyphs) / sizeof(Glyph);
-    coverage.format1.glyphArray = glyphs;
-
-    AnchorTable firstExitAnchor;
-    firstExitAnchor.anchorFormat = 1;
-    firstExitAnchor.xCoordinate = 100;
-    firstExitAnchor.yCoordinate = 0;
-
-    EntryExitRecord firstRecord;
-    firstRecord.entryAnchor = NULL;
-    firstRecord.exitAnchor = &firstExitAnchor;
-
-    AnchorTable secondEntryAnchor;
-    secondEntryAnchor.anchorFormat = 1;
-    secondEntryAnchor.xCoordinate = 10;
-    secondEntryAnchor.yCoordinate = -10;
-
-    AnchorTable secondExitAnchor;
-    secondExitAnchor.anchorFormat = 1;
-    secondExitAnchor.xCoordinate = 90;
-    secondExitAnchor.yCoordinate = -10;
-
-    EntryExitRecord secondRecord;
-    secondRecord.entryAnchor = &secondEntryAnchor;
-    secondRecord.exitAnchor = &secondExitAnchor;
-
-    AnchorTable thirdEntryAnchor;
-    thirdEntryAnchor.anchorFormat = 1;
-    thirdEntryAnchor.xCoordinate = -10;
-    thirdEntryAnchor.yCoordinate = 10;
-
-    EntryExitRecord thirdRecord;
-    thirdRecord.entryAnchor = &thirdEntryAnchor;
-    thirdRecord.exitAnchor = NULL;
-
-    EntryExitRecord allRecords[] = { firstRecord, secondRecord, thirdRecord };
-
-    CursiveAttachmentPosSubtable subtable;
-    subtable.posFormat = 1;
-    subtable.coverage = &coverage;
-    subtable.entryExitCount = sizeof(allRecords) / sizeof(EntryExitRecord);
-    subtable.entryExitRecord = allRecords;
-
-    SFAlbum album;
-    SFAlbumInitialize(&album);
-
-    SFCodepoint input[] = { 1, 2, 3 };
-    processGPOS(&album, input, sizeof(input) / sizeof(SFCodepoint), subtable);
-
-    /* Test the output. */
-    const SFPoint *actualOffsets = SFAlbumGetGlyphOffsetsPtr(&album);
-    const SFAdvance *actualAdvances = SFAlbumGetGlyphAdvancesPtr(&album);
-    const SFPoint expectedOffsets[] = { { 0, 0 }, { -10, 10, }, { 10, -10 } };
-    const SFAdvance expectedAdvances[] = { 100, 80, 100 };
-
-    SFAssert(SFAlbumGetGlyphCount(&album) == (sizeof(expectedOffsets) / sizeof(SFPoint)));
-    SFAssert(memcmp(actualOffsets, expectedOffsets, sizeof(expectedOffsets) / sizeof(SFPoint)) == 0);
-    SFAssert(memcmp(actualAdvances, expectedAdvances, sizeof(expectedAdvances) / sizeof(SFAdvance)) == 0);
+    /* Test with first unmatching glyph. */
+    testPositioning(builder.createCursivePos({
+                        curs_rule { 1, nullptr, &builder.createAnchor(100, 200) },
+                        curs_rule { 2, &builder.createAnchor(300, 400), nullptr }
+                    }),
+                    { 0, 2 }, { {0, 0}, {0, 0} }, { 0, 0 });
+    /* Test with second unmatching glyph. */
+    testPositioning(builder.createCursivePos({
+                        curs_rule { 1, nullptr, &builder.createAnchor(100, 200) },
+                        curs_rule { 2, &builder.createAnchor(300, 400), nullptr }
+                    }),
+                    { 1, 0 }, { {0, 0}, {0, 0} }, { 0, 0 });
+    /* Test with no anchor. */
+    testPositioning(builder.createCursivePos({
+                        curs_rule { 1, nullptr, nullptr },
+                        curs_rule { 2, nullptr, nullptr }
+                    }),
+                    { 1, 2 }, { {0, 0}, {0, 0} }, { 0, 0 });
+    /* Test with non matching anchors. */
+    testPositioning(builder.createCursivePos({
+                        curs_rule { 1, &builder.createAnchor(100, 200), nullptr },
+                        curs_rule { 2, nullptr, &builder.createAnchor(300, 400) }
+                    }),
+                    { 1, 2 }, { {0, 0}, {0, 0} }, { 0, 0 });
+    /* Test with ascending glyph order. */
+    testPositioning(builder.createCursivePos({
+                        curs_rule { 1, nullptr, &builder.createAnchor(100, 200) },
+                        curs_rule { 2, &builder.createAnchor(300, 400), nullptr }
+                    }),
+                    { 1, 2 }, { {0, 0}, {-300, -200} }, { 100, -300 });
+    /* Test with dscending glyph order. */
+    testPositioning(builder.createCursivePos({
+                        curs_rule { 1, &builder.createAnchor(300, 400), nullptr },
+                        curs_rule { 2, nullptr, &builder.createAnchor(100, 200) }
+                    }),
+                    { 2, 1 }, { {0, 0}, {-300, -200} }, { 100, -300 });
+    /* Test with LTR cursive chain. */
+    testPositioning(builder.createCursivePos({
+                        curs_rule { 1, nullptr, &builder.createAnchor(-800, -700) },
+                        curs_rule { 2, &builder.createAnchor(-600, -500), &builder.createAnchor(-400, -300) },
+                        curs_rule { 3, &builder.createAnchor(-200, -100), &builder.createAnchor(0, 100) },
+                        curs_rule { 4, &builder.createAnchor(200, 300), &builder.createAnchor(400, 500) },
+                        curs_rule { 5, &builder.createAnchor(600, 700), nullptr },
+                    }),
+                    { 1, 2, 3, 4, 5 },
+                    { {0, 0}, {600, -200}, {200, -400}, {-200, -600}, {-600, -800} },
+                    { -800, 200, 200, 200, -600 });
+    /* Test with RTL cursive chain. */
+    testPositioning(builder.createCursivePos({
+                        curs_rule { 1, nullptr, &builder.createAnchor(-800, -700) },
+                        curs_rule { 2, &builder.createAnchor(-600, -500), &builder.createAnchor(-400, -300) },
+                        curs_rule { 3, &builder.createAnchor(-200, -100), &builder.createAnchor(0, 100) },
+                        curs_rule { 4, &builder.createAnchor(200, 300), &builder.createAnchor(400, 500) },
+                        curs_rule { 5, &builder.createAnchor(600, 700), nullptr },
+                    }),
+                    { 1, 2, 3, 4, 5 },
+                    { {800, -200}, {400, -400}, {0, -600}, {-400, -800}, {0, -800} },
+                    { 800, -200, -200, -200, 600 }, { }, true);
 }
 
 void TextProcessorTester::testMarkToBasePositioning()
