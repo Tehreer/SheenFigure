@@ -907,3 +907,55 @@ CursiveAttachmentPosSubtable &Builder::createCursivePos(const std::vector<curs_r
 
     return subtable;
 }
+
+MarkToBaseAttachmentPosSubtable &Builder::createMarkToBasePos(
+    UInt16 classCount,
+    const map<Glyph, mark_rule> markRules,
+    const map<Glyph, base_rule> baseRules)
+{
+    Glyph *markGlyphs = createGlyphs(markRules.begin(), markRules.end(),
+                                     [](const decltype(markRules)::value_type &rule) {
+                                         return get<0>(rule);
+                                     });
+    Glyph *baseGlyphs = createGlyphs(baseRules.begin(), baseRules.end(),
+                                     [](const typename decltype(baseRules)::value_type &rule) {
+                                         return get<0>(rule);
+                                     });
+
+    MarkToBaseAttachmentPosSubtable &subtable = createObject<MarkToBaseAttachmentPosSubtable>();
+    subtable.posFormat = 1;
+    subtable.markCoverage = &createCoverage(markGlyphs, (UInt16)markRules.size());
+    subtable.baseCoverage = &createCoverage(baseGlyphs, (UInt16)baseRules.size());
+    subtable.classCount = classCount;
+    subtable.markArray = &createObject<MarkArrayTable>();
+    subtable.baseArray = &createObject<BaseArrayTable>();
+
+    MarkArrayTable &markArray = *subtable.markArray;
+    markArray.markCount = (UInt16)markRules.size();
+    markArray.markRecord = createArray<MarkRecord>(markRules.size());
+
+    size_t markIndex = 0;
+
+    for (const auto &entry : markRules) {
+        MarkRecord &markRecord = markArray.markRecord[markIndex++];
+        markRecord.clazz = get<0>(entry.second);
+        markRecord.markAnchor = &get<1>(entry.second).get();
+    }
+
+    BaseArrayTable &baseArray = *subtable.baseArray;
+    baseArray.baseCount = (UInt16)baseRules.size();
+    baseArray.baseRecord = createArray<BaseRecord>(baseRules.size());
+
+    size_t baseIndex = 0;
+
+    for (const auto &entry : baseRules) {
+        BaseRecord &baseRecord = baseArray.baseRecord[baseIndex++];
+        baseRecord.baseAnchor = createArray<AnchorTable>(classCount);
+
+        for (size_t i = 0; i < classCount; i++) {
+            baseRecord.baseAnchor[i] = entry.second[i];
+        }
+    }
+
+    return subtable;
+}

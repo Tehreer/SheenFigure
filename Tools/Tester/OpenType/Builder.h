@@ -59,6 +59,9 @@ typedef std::tuple<
          Glyph,
          AnchorTable *, AnchorTable *> curs_rule;
 
+using mark_rule = std::tuple<UInt16, std::reference_wrapper<AnchorTable>>;
+using base_rule = std::vector<std::reference_wrapper<AnchorTable>>;
+
 class Builder {
 public:
     Builder();
@@ -106,6 +109,10 @@ public:
                                              const std::vector<pair_rule> rules);
 
     CursiveAttachmentPosSubtable &createCursivePos(const std::vector<curs_rule> rules);
+
+    MarkToBaseAttachmentPosSubtable &createMarkToBasePos(UInt16 classCount,
+                                                         const std::map<Glyph, mark_rule> markRules,
+                                                         const std::map<Glyph, base_rule> baseRules);
 
 private:
     ObjectPool m_pool;

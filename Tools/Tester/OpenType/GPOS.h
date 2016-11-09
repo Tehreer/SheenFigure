@@ -442,7 +442,7 @@ struct BaseArrayTable : public Table {
 
         writer.write(baseCount);
         for (int i = 0; i < baseCount; i++) {
-            writer.write(baseRecord);
+            writer.write(&baseRecord[i]);
         }
 
         writer.exit();
