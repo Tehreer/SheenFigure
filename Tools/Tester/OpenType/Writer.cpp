@@ -14,8 +14,11 @@
  * limitations under the License.
  */
 
+#include <cstddef>
+#include <cstdint>
 #include <cstdlib>
-#include "DataTypes.h"
+
+#include "Base.h"
 #include "Writer.h"
 
 using namespace SheenFigure::Tester::OpenType;
@@ -25,7 +28,6 @@ Writer::Writer()
     m_data = (UInt8 *)malloc(128);
     m_capacity = 128;
     m_size = 0;
-    m_size = 0;
 }
 
 Writer::~Writer()
@@ -33,7 +35,7 @@ Writer::~Writer()
     free((void *)m_data);
 }
 
-void Writer::increaseSize(int size)
+void Writer::increaseSize(size_t size)
 {
     m_size += size;
 
@@ -70,9 +72,10 @@ void Writer::exit()
     m_enteries.pop();
 }
 
-int Writer::reserveOffset(bool large)
+size_t Writer::reserveOffset(bool large)
 {
-    int reference = m_size;
+    size_t reference = m_size;
+
     if (large) {
         write((UInt32)0);
     } else {
@@ -82,19 +85,19 @@ int Writer::reserveOffset(bool large)
     return reference;
 }
 
-void Writer::writeTable(Table *table, int reference, bool largeOffset)
+void Writer::writeTable(Table *table, size_t reference, bool largeOffset)
 {
     Offset value = 0;
 
     if (table) {
-        if (reference > -1) {
+        if (reference != SIZE_MAX) {
             value = (Offset)(m_size - m_enteries.top());
         }
 
         table->write(*this);
     }
 
-    if (reference > -1) {
+    if (reference != SIZE_MAX) {
         if (largeOffset) {
             m_data[reference + 0] = (value >> 24) & 0xFF;
             m_data[reference + 1] = (value >> 16) & 0xFF;
@@ -153,23 +156,23 @@ void Writer::write(Table *table)
     writeTable(table);
 }
 
-void Writer::write(UInt8 *array, int count)
+void Writer::write(UInt8 *array, size_t count)
 {
-    for (int i = 0; i < count; i++) {
+    for (size_t i = 0; i < count; i++) {
         write(array[i]);
     }
 }
 
-void Writer::write(UInt16 *array, int count)
+void Writer::write(UInt16 *array, size_t count)
 {
-    for (int i = 0; i < count; i++) {
+    for (size_t i = 0; i < count; i++) {
         write(array[i]);
     }
 }
 
-void Writer::write(UInt32 *array, int count)
+void Writer::write(UInt32 *array, size_t count)
 {
-    for (int i = 0; i < count; i++) {
+    for (size_t i = 0; i < count; i++) {
         write(array[i]);
     }
 }

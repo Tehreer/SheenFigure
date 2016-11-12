@@ -14,17 +14,20 @@
  * limitations under the License.
  */
 
+#include <cstddef>
 #include <cstdint>
 #include <cstring>
-#include <iostream>
 
 extern "C" {
 #include <Source/SFAlbum.h>
+#include <Source/SFBase.h>
 #include <Source/SFPattern.h>
 #include <Source/SFPatternBuilder.h>
 #include <Source/SFTextProcessor.h>
 }
 
+#include "OpenType/Base.h"
+#include "OpenType/Common.h"
 #include "OpenType/GSUB.h"
 #include "OpenType/Writer.h"
 #include "TextProcessorTester.h"
@@ -208,22 +211,9 @@ TextProcessorTester::TextProcessorTester()
 {
 }
 
-void TextProcessorTester::processGSUB(SFAlbumRef album,
-    SFCodepoint *input, SFUInteger length,
-    LookupSubtable &subtable, LookupSubtable *referrals[], SFUInteger count)
-{
-    processSubtable(album, input, length, SFFalse, subtable, referrals, count);
-}
-
-void TextProcessorTester::processGPOS(SFAlbumRef album,
-    SFCodepoint *input, SFUInteger length,
-    LookupSubtable &subtable, LookupSubtable *referrals[], SFUInteger count)
-{
-    processSubtable(album, input, length, SFTrue, subtable, referrals, count);
-}
-
 void TextProcessorTester::testSubstitution(LookupSubtable &subtable,
-    const vector<SFCodepoint> codepoints, const vector<Glyph> glyphs,
+    const vector<uint32_t> codepoints,
+    const vector<Glyph> glyphs,
     const vector<LookupSubtable *> referrals)
 {
     SFAlbum album;
@@ -236,7 +226,7 @@ void TextProcessorTester::testSubstitution(LookupSubtable &subtable,
 }
 
 void TextProcessorTester::testPositioning(LookupSubtable &subtable,
-    const vector<SFCodepoint> codepoints,
+    const vector<uint32_t> codepoints,
     const vector<pair<int32_t, int32_t>> offsets,
     const vector<int32_t> advances,
     const vector<LookupSubtable *> referrals,
@@ -259,12 +249,12 @@ void TextProcessorTester::test()
     testSingleSubstitution();
     testMultipleSubstitution();
     testLigatureSubstitution();
-    testContextSubstitution();
-    testChainContextSubstitution();
     testSinglePositioning();
     testPairPositioning();
     testCursivePositioning();
     testMarkToBasePositioning();
     testMarkToLigaturePositioning();
     testMarkToMarkPositioning();
+    testContextSubtable();
+    testChainContextSubtable();
 }

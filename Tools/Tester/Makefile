@@ -9,14 +9,15 @@ TESTER_UTIL = $(TESTER)/Utilities
 TESTER_SRCS = $(TESTER_DIR)/AlbumTester.cpp \
               $(TESTER_DIR)/FontTester.cpp \
               $(TESTER_DIR)/GeneralCategoryLookupTester.cpp \
+              $(TESTER_DIR)/GlyphManipulationTester.cpp \
+              $(TESTER_DIR)/GlyphPositioningTester.cpp \
+              $(TESTER_DIR)/GlyphSubstitutionTester.cpp \
               $(TESTER_DIR)/JoiningTypeLookupTester.cpp \
               $(TESTER_DIR)/ListTester.cpp \
               $(TESTER_DIR)/LocatorTester.cpp \
               $(TESTER_DIR)/main.cpp \
               $(TESTER_DIR)/PatternTester.cpp \
               $(TESTER_DIR)/SchemeTester.cpp \
-              $(TESTER_DIR)/TextProcessorTester_GPOS.cpp \
-              $(TESTER_DIR)/TextProcessorTester_GSUB.cpp \
               $(TESTER_DIR)/TextProcessorTester.cpp \
               $(TESTER_DIR)/OpenType/Builder.cpp \
               $(TESTER_DIR)/OpenType/Writer.cpp \

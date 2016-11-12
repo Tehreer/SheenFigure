@@ -28,8 +28,8 @@
 #include <utility>
 #include <vector>
 
+#include "Base.h"
 #include "Common.h"
-#include "DataTypes.h"
 #include "GSUB.h"
 #include "GPOS.h"
 
@@ -106,12 +106,10 @@ public:
         UInt16 classCount,
         const std::map<Glyph, std::pair<UInt16, std::reference_wrapper<AnchorTable>>> markRules,
         const std::map<Glyph, std::vector<std::reference_wrapper<AnchorTable>>> baseRules);
-
     MarkToLigatureAttachmentPosSubtable &createMarkToLigaturePos(
          UInt16 classCount,
          const std::map<Glyph, std::pair<UInt16, std::reference_wrapper<AnchorTable>>> markRules,
          const std::map<Glyph, std::vector<std::vector<std::reference_wrapper<AnchorTable>>>> ligatureRules);
-
     MarkToMarkAttachmentPosSubtable &createMarkToMarkPos(
          UInt16 classCount,
          const std::map<Glyph, std::pair<UInt16, std::reference_wrapper<AnchorTable>>> mark1Rules,

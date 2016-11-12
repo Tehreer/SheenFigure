@@ -43,7 +43,7 @@ Builder::~Builder()
 template<class T, class... Args>
 T &Builder::createObject(Args&&... args)
 {
-    shared_ptr<T> object = make_shared<T>(std::forward<Args>(args)...);
+    shared_ptr<T> object = make_shared<T>(forward<Args>(args)...);
     m_pool.push_back(object);
 
     return *object;
@@ -484,7 +484,7 @@ ChainContextSubtable &Builder::createChainContext(const vector<rule_chain_contex
 
 ChainContextSubtable &Builder::createChainContext(
     const vector<Glyph> initialGlyphs,
-    const std::reference_wrapper<ClassDefTable> classDefs[3],
+    const reference_wrapper<ClassDefTable> classDefs[3],
     const vector<rule_chain_context> rules)
 {
     map<Glyph, vector<size_t>> classSets;
@@ -613,7 +613,6 @@ ChainContextSubtable &Builder::createChainContext(
     
     return subtable;
 }
-
 
 template<class InputIt, class Operation>
 ValueFormat Builder::findValueFormat(InputIt begin, InputIt end, Operation operation)
@@ -955,8 +954,8 @@ MarkToBaseAttachmentPosSubtable &Builder::createMarkToBasePos(
 
 MarkToLigatureAttachmentPosSubtable &Builder::createMarkToLigaturePos(
      UInt16 classCount,
-     const std::map<Glyph, std::pair<UInt16, std::reference_wrapper<AnchorTable>>> markRules,
-     const std::map<Glyph, std::vector<std::vector<std::reference_wrapper<AnchorTable>>>> ligatureRules)
+     const map<Glyph, pair<UInt16, reference_wrapper<AnchorTable>>> markRules,
+     const map<Glyph, vector<vector<reference_wrapper<AnchorTable>>>> ligatureRules)
 {
     Glyph *markGlyphs = createGlyphs(markRules.begin(), markRules.end(),
                                      [](const decltype(markRules)::value_type &rule) {

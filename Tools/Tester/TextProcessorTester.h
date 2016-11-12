@@ -17,13 +17,11 @@
 #ifndef __SHEENFIGURE_TESTER__TEXT_PROCESSOR_TESTER_H
 #define __SHEENFIGURE_TESTER__TEXT_PROCESSOR_TESTER_H
 
+#include <cstdint>
+#include <utility>
 #include <vector>
 
-extern "C" {
-#include <Source/SFBase.h>
-#include <Source/SFAlbum.h>
-}
-
+#include "OpenType/Base.h"
 #include "OpenType/Common.h"
 
 namespace SheenFigure {
@@ -36,8 +34,6 @@ public:
     void testSingleSubstitution();
     void testMultipleSubstitution();
     void testLigatureSubstitution();
-    void testContextSubstitution();
-    void testChainContextSubstitution();
 
     void testSinglePositioning();
     void testPairPositioning();
@@ -46,26 +42,22 @@ public:
     void testMarkToLigaturePositioning();
     void testMarkToMarkPositioning();
 
+    void testContextSubtable();
+    void testChainContextSubtable();
+
     void test();
 
 private:
     void testSubstitution(OpenType::LookupSubtable &subtable,
-                          const std::vector<SFCodepoint> codepoints,
+                          const std::vector<uint32_t> codepoints,
                           const std::vector<OpenType::Glyph> glyphs,
                           const std::vector<OpenType::LookupSubtable *> referrals = { });
     void testPositioning(OpenType::LookupSubtable &subtable,
-                         const std::vector<SFCodepoint> codepoints,
+                         const std::vector<uint32_t> codepoints,
                          const std::vector<std::pair<int32_t, int32_t>> offsets,
                          const std::vector<int32_t> advances,
                          const std::vector<OpenType::LookupSubtable *> referrals = { },
                          bool isRTL = false);
-
-    void processGSUB(SFAlbumRef album,
-                     SFCodepoint *input, SFUInteger length, OpenType::LookupSubtable &subtable,
-                     OpenType::LookupSubtable *referrals[] = NULL, SFUInteger count = 0);
-    void processGPOS(SFAlbumRef album,
-                     SFCodepoint *input, SFUInteger length, OpenType::LookupSubtable &subtable,
-                     OpenType::LookupSubtable *referrals[] = NULL, SFUInteger count = 0);
 };
 
 }

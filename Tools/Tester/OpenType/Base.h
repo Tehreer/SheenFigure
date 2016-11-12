@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-#ifndef __SHEENFIGURE_TESTER__OPEN_TYPE__DATA_TYPES_H
-#define __SHEENFIGURE_TESTER__OPEN_TYPE__DATA_TYPES_H
+#ifndef __SHEENFIGURE_TESTER__OPEN_TYPE__BASE_H
+#define __SHEENFIGURE_TESTER__OPEN_TYPE__BASE_H
 
 #include <cstdint>
 

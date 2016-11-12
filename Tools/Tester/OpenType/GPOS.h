@@ -17,8 +17,8 @@
 #ifndef __SHEENFIGURE_TESTER__OPEN_TYPE__GPOS_H
 #define __SHEENFIGURE_TESTER__OPEN_TYPE__GPOS_H
 
+#include "Base.h"
 #include "Common.h"
-#include "DataTypes.h"
 #include "Writer.h"
 
 namespace SheenFigure {

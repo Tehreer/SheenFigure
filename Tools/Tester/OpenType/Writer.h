@@ -17,9 +17,12 @@
 #ifndef __SHEEN_FIGURE__TESTER__OPEN_TYPE__WRITER_H
 #define __SHEEN_FIGURE__TESTER__OPEN_TYPE__WRITER_H
 
+#include <cstddef>
+#include <cstdint>
 #include <map>
 #include <stack>
-#include "DataTypes.h"
+
+#include "Base.h"
 
 namespace SheenFigure {
 namespace Tester {
@@ -39,31 +42,31 @@ public:
     void write(UInt16 value);
     void write(UInt32 value);
     void write(Table *table);
-    void write(UInt8 *array, int count);
-    void write(UInt16 *array, int count);
-    void write(UInt32 *array, int count);
+    void write(UInt8 *array, size_t count);
+    void write(UInt16 *array, size_t count);
+    void write(UInt32 *array, size_t count);
 
-    int size() { return m_size; }
+    size_t size() { return m_size; }
     UInt8 *data() { return m_data; };
 
 private:
     struct Deferral {
         size_t entryIndex;
         bool largeOffset;
-        int reference;
+        size_t reference;
         Table *table;
     };
 
     UInt8 *m_data;
-    int m_capacity;
-    int m_size;
-    std::stack<int> m_enteries;
+    size_t m_capacity;
+    size_t m_size;
+    std::stack<size_t> m_enteries;
     std::stack<Deferral> m_deferrals;
 
-    void increaseSize(int size);
+    void increaseSize(size_t size);
 
-    int reserveOffset(bool large = false);
-    void writeTable(Table *value, int reference = -1, bool largeOffset = false);
+    size_t reserveOffset(bool large = false);
+    void writeTable(Table *value, size_t reference = SIZE_MAX, bool largeOffset = false);
 
 };
 

@@ -14,14 +14,7 @@
  * limitations under the License.
  */
 
-#include <cstdint>
-#include <cstring>
-#include <iostream>
-
-extern "C" {
-#include <Source/SFAlbum.h>
-#include <Source/SFAssert.h>
-}
+#include <functional>
 
 #include "OpenType/Builder.h"
 #include "OpenType/Common.h"

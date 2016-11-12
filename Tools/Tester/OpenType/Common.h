@@ -17,8 +17,7 @@
 #ifndef __SHEENFIGURE_TESTER__OPENTYPE__COMMON_H
 #define __SHEENFIGURE_TESTER__OPENTYPE__COMMON_H
 
-#include <cstddef>
-#include "DataTypes.h"
+#include "Base.h"
 #include "Writer.h"
 
 namespace SheenFigure {
