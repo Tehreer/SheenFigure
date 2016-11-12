@@ -29,35 +29,35 @@
 #include "SFGlyphSubstitution.h"
 #include "SFTextProcessor.h"
 
-static SFBoolean _SFApplySingleSubst(SFTextProcessorRef processor, SFData singleSubst);
+static SFBoolean _SFApplySingleSubst(SFTextProcessorRef textProcessor, SFData singleSubst);
 
-static SFBoolean _SFApplyMultipleSubst(SFTextProcessorRef processor, SFData multipleSubst);
-static SFBoolean _SFApplySequence(SFTextProcessorRef processor, SFData sequence);
+static SFBoolean _SFApplyMultipleSubst(SFTextProcessorRef textProcessor, SFData multipleSubst);
+static SFBoolean _SFApplySequenceTable(SFTextProcessorRef textProcessor, SFData sequenceTable);
 
-static SFBoolean _SFApplyLigatureSubst(SFTextProcessorRef processor, SFData subtable);
-static SFBoolean _SFApplyLigatureSet(SFTextProcessorRef processor, SFData ligatureSet);
+static SFBoolean _SFApplyLigatureSubst(SFTextProcessorRef textProcessor, SFData subtable);
+static SFBoolean _SFApplyLigatureSetTable(SFTextProcessorRef textProcessor, SFData ligatureSetTable);
 
-SF_PRIVATE void _SFApplySubstitutionLookup(SFTextProcessorRef processor, SFData lookup)
+SF_PRIVATE void _SFApplySubstitutionLookup(SFTextProcessorRef textProcessor, SFData lookupTable)
 {
-    SFLookupType lookupType = SFLookup_LookupType(lookup);
-    SFLookupFlag lookupFlag = SFLookup_LookupFlag(lookup);
-    SFUInt16 subtableCount = SFLookup_SubtableCount(lookup);
+    SFLookupType lookupType = SFLookup_LookupType(lookupTable);
+    SFLookupFlag lookupFlag = SFLookup_LookupFlag(lookupTable);
+    SFUInt16 subtableCount = SFLookup_SubtableCount(lookupTable);
     SFUInt16 subtableIndex;
 
-    SFLocatorSetLookupFlag(&processor->_locator, lookupFlag);
+    SFLocatorSetLookupFlag(&textProcessor->_locator, lookupFlag);
 
     if (lookupFlag & SFLookupFlagUseMarkFilteringSet) {
-        SFUInt16 markFilteringSet = SFLookup_MarkFilteringSet(lookup, subtableCount);
-        SFLocatorSetMarkFilteringSet(&processor->_locator, markFilteringSet);
+        SFUInt16 markFilteringSet = SFLookup_MarkFilteringSet(lookupTable, subtableCount);
+        SFLocatorSetMarkFilteringSet(&textProcessor->_locator, markFilteringSet);
     }
 
     /* Apply subtables in order until one of them performs substitution. */
     for (subtableIndex = 0; subtableIndex < subtableCount; subtableIndex++) {
-        SFOffset offset = SFLookup_SubtableOffset(lookup, subtableIndex);
-        SFData subtable = SFData_Subdata(lookup, offset);
+        SFOffset offset = SFLookup_SubtableOffset(lookupTable, subtableIndex);
+        SFData subtable = SFData_Subdata(lookupTable, offset);
         SFBoolean didSubstitute;
 
-        didSubstitute = _SFApplySubstitutionSubtable(processor, lookupType, subtable);
+        didSubstitute = _SFApplySubstitutionSubtable(textProcessor, lookupType, subtable);
 
         /* A subtable has performed substition, so break the loop. */
         if (didSubstitute) {
@@ -66,29 +66,29 @@ SF_PRIVATE void _SFApplySubstitutionLookup(SFTextProcessorRef processor, SFData 
     }
 }
 
-SF_PRIVATE SFBoolean _SFApplySubstitutionSubtable(SFTextProcessorRef processor, SFLookupType lookupType, SFData subtable)
+SF_PRIVATE SFBoolean _SFApplySubstitutionSubtable(SFTextProcessorRef textProcessor, SFLookupType lookupType, SFData subtable)
 {
     switch (lookupType) {
         case SFLookupTypeSingle:
-            return _SFApplySingleSubst(processor, subtable);
+            return _SFApplySingleSubst(textProcessor, subtable);
 
         case SFLookupTypeMultiple:
-            return _SFApplyMultipleSubst(processor, subtable);
+            return _SFApplyMultipleSubst(textProcessor, subtable);
 
         case SFLookupTypeAlternate:
             break;
 
         case SFLookupTypeLigature:
-            return _SFApplyLigatureSubst(processor, subtable);
+            return _SFApplyLigatureSubst(textProcessor, subtable);
 
         case SFLookupTypeContext:
-            return _SFApplyContextSubtable(processor, SFFeatureKindSubstitution, subtable);
+            return _SFApplyContextSubtable(textProcessor, SFFeatureKindSubstitution, subtable);
 
         case SFLookupTypeChainingContext:
-            return _SFApplyChainContextSubtable(processor, SFFeatureKindSubstitution, subtable);
+            return _SFApplyChainContextSubtable(textProcessor, SFFeatureKindSubstitution, subtable);
 
         case SFLookupTypeExtension:
-            return _SFApplyExtensionSubtable(processor, SFFeatureKindSubstitution, subtable);
+            return _SFApplyExtensionSubtable(textProcessor, SFFeatureKindSubstitution, subtable);
 
         case SFLookupTypeReverseChainingContext:
             break;
@@ -97,10 +97,10 @@ SF_PRIVATE SFBoolean _SFApplySubstitutionSubtable(SFTextProcessorRef processor, 
     return SFFalse;
 }
 
-static SFBoolean _SFApplySingleSubst(SFTextProcessorRef processor, SFData singleSubst)
+static SFBoolean _SFApplySingleSubst(SFTextProcessorRef textProcessor, SFData singleSubst)
 {
-    SFAlbumRef album = processor->_album;
-    SFLocatorRef locator = &processor->_locator;
+    SFAlbumRef album = textProcessor->_album;
+    SFLocatorRef locator = &textProcessor->_locator;
     SFUInteger inputIndex = locator->index;
     SFGlyphID inputGlyph = SFAlbumGetGlyph(album, inputIndex);
     SFUInt16 format;
@@ -109,20 +109,23 @@ static SFBoolean _SFApplySingleSubst(SFTextProcessorRef processor, SFData single
 
     switch (format) {
         case 1: {
-            SFOffset offset = SFSingleSubstF1_CoverageOffset(singleSubst);
-            SFData coverage = SFData_Subdata(singleSubst, offset);
+            SFOffset coverageOffset = SFSingleSubstF1_CoverageOffset(singleSubst);
+            SFData coverageTable = SFData_Subdata(singleSubst, coverageOffset);
             SFUInteger coverageIndex;
 
-            coverageIndex = SFOpenTypeSearchCoverageIndex(coverage, inputGlyph);
+            coverageIndex = SFOpenTypeSearchCoverageIndex(coverageTable, inputGlyph);
 
             if (coverageIndex != SFInvalidIndex) {
-                SFInt16 delta = SFSingleSubstF1_DeltaGlyphID(singleSubst);
-                SFGlyphID substitute = (SFGlyphID)(inputGlyph + delta);
-                SFGlyphTraits traits = _SFGetGlyphTraits(processor, substitute);
+                SFInt16 deltaGlyphID = SFSingleSubstF1_DeltaGlyphID(singleSubst);
+                SFGlyphID substituteGlyph;
+                SFGlyphTraits substituteTraits;
+
+                substituteGlyph = (SFGlyphID)(inputGlyph + deltaGlyphID);
+                substituteTraits = _SFGetGlyphTraits(textProcessor, substituteGlyph);
 
                 /* Substitute the glyph and set its traits. */
-                SFAlbumSetGlyph(album, inputIndex, substitute);
-                SFAlbumSetTraits(album, inputIndex, traits);
+                SFAlbumSetGlyph(album, inputIndex, substituteGlyph);
+                SFAlbumSetTraits(album, inputIndex, substituteTraits);
 
                 return SFTrue;
             }
@@ -130,22 +133,24 @@ static SFBoolean _SFApplySingleSubst(SFTextProcessorRef processor, SFData single
         }
 
         case 2: {
-            SFOffset offset = SFSingleSubstF2_CoverageOffset(singleSubst);
-            SFData coverage = SFData_Subdata(singleSubst, offset);
+            SFOffset coverageOffset = SFSingleSubstF2_CoverageOffset(singleSubst);
+            SFData coverageTable = SFData_Subdata(singleSubst, coverageOffset);
             SFUInteger coverageIndex;
 
-            coverageIndex = SFOpenTypeSearchCoverageIndex(coverage, inputGlyph);
+            coverageIndex = SFOpenTypeSearchCoverageIndex(coverageTable, inputGlyph);
 
             if (coverageIndex != SFInvalidIndex) {
                 SFUInt16 glyphCount = SFSingleSubstF2_GlyphCount(singleSubst);
 
                 if (coverageIndex < glyphCount) {
-                    SFGlyphID substitute = SFSingleSubstF2_Substitute(singleSubst, coverageIndex);
-                    SFGlyphTraits traits = _SFGetGlyphTraits(processor, substitute);
+                    SFGlyphID substituteGlyph = SFSingleSubstF2_Substitute(singleSubst, coverageIndex);
+                    SFGlyphTraits substituteTraits;
+
+                    substituteTraits = _SFGetGlyphTraits(textProcessor, substituteGlyph);
 
                     /* Substitute the glyph and set its traits. */
-                    SFAlbumSetGlyph(album, inputIndex, substitute);
-                    SFAlbumSetTraits(album, inputIndex, traits);
+                    SFAlbumSetGlyph(album, inputIndex, substituteGlyph);
+                    SFAlbumSetTraits(album, inputIndex, substituteTraits);
 
                     return SFTrue;
                 }
@@ -157,10 +162,10 @@ static SFBoolean _SFApplySingleSubst(SFTextProcessorRef processor, SFData single
     return SFFalse;
 }
 
-static SFBoolean _SFApplyMultipleSubst(SFTextProcessorRef processor, SFData multipleSubst)
+static SFBoolean _SFApplyMultipleSubst(SFTextProcessorRef textProcessor, SFData multipleSubst)
 {
-    SFAlbumRef album = processor->_album;
-    SFLocatorRef locator = &processor->_locator;
+    SFAlbumRef album = textProcessor->_album;
+    SFLocatorRef locator = &textProcessor->_locator;
     SFUInteger inputIndex = locator->index;
     SFGlyphID inputGlyph = SFAlbumGetGlyph(album, inputIndex);
     SFUInt16 format;
@@ -169,22 +174,20 @@ static SFBoolean _SFApplyMultipleSubst(SFTextProcessorRef processor, SFData mult
 
     switch (format) {
         case 1: {
-            SFOffset offset = SFMultipleSubstF1_CoverageOffset(multipleSubst);
-            SFData coverage = SFData_Subdata(multipleSubst, offset);
+            SFOffset coverageOffset = SFMultipleSubstF1_CoverageOffset(multipleSubst);
+            SFData coverageTable = SFData_Subdata(multipleSubst, coverageOffset);
             SFUInteger coverageIndex;
 
-            coverageIndex = SFOpenTypeSearchCoverageIndex(coverage, inputGlyph);
+            coverageIndex = SFOpenTypeSearchCoverageIndex(coverageTable, inputGlyph);
 
             if (coverageIndex != SFInvalidIndex) {
                 SFUInt16 sequenceCount = SFMultipleSubstF1_SequenceCount(multipleSubst);
 
                 if (coverageIndex < sequenceCount) {
-                    SFData sequence;
+                    SFOffset sequenceOffset = SFMultipleSubstF1_SequenceOffset(multipleSubst, coverageIndex);
+                    SFData sequenceTable = SFData_Subdata(multipleSubst, sequenceOffset);
 
-                    offset = SFMultipleSubstF1_SequenceOffset(multipleSubst, coverageIndex);
-                    sequence = SFData_Subdata(multipleSubst, offset);
-
-                    return _SFApplySequence(processor, sequence);
+                    return _SFApplySequenceTable(textProcessor, sequenceTable);
                 }
             }
             break;
@@ -194,26 +197,26 @@ static SFBoolean _SFApplyMultipleSubst(SFTextProcessorRef processor, SFData mult
     return SFFalse;
 }
 
-static SFBoolean _SFApplySequence(SFTextProcessorRef processor, SFData sequence)
+static SFBoolean _SFApplySequenceTable(SFTextProcessorRef textProcessor, SFData sequenceTable)
 {
-    SFAlbumRef album = processor->_album;
-    SFLocatorRef locator = &processor->_locator;
+    SFAlbumRef album = textProcessor->_album;
+    SFLocatorRef locator = &textProcessor->_locator;
     SFUInteger inputIndex = locator->index;
     SFUInt16 glyphCount;
 
-    glyphCount = SFSequence_GlyphCount(sequence);
+    glyphCount = SFSequence_GlyphCount(sequenceTable);
 
     if (glyphCount > 0) {
-        SFGlyphID substitute;
-        SFGlyphTraits traits;
+        SFGlyphID substituteGlyph;
+        SFGlyphTraits substituteTraits;
 
         /* Get first substitute and its traits. */
-        substitute = SFSequence_Substitute(sequence, 0);
-        traits = _SFGetGlyphTraits(processor, substitute);
+        substituteGlyph = SFSequence_Substitute(sequenceTable, 0);
+        substituteTraits = _SFGetGlyphTraits(textProcessor, substituteGlyph);
 
         /* Put substitute of first glyph and set its traits. */
-        SFAlbumSetGlyph(album, inputIndex, substitute);
-        SFAlbumSetTraits(album, inputIndex, traits);
+        SFAlbumSetGlyph(album, inputIndex, substituteGlyph);
+        SFAlbumSetTraits(album, inputIndex, substituteTraits);
 
         if (glyphCount != 1) {
             SFUInteger association = SFAlbumGetSingleAssociation(album, inputIndex);
@@ -227,12 +230,12 @@ static SFBoolean _SFApplySequence(SFTextProcessorRef processor, SFData sequence)
                 SFUInteger newIndex = inputIndex + subIndex;
 
                 /* Get substitute along with traits at current index. */
-                substitute = SFSequence_Substitute(sequence, subIndex);
-                traits = _SFGetGlyphTraits(processor, substitute);
+                substituteGlyph = SFSequence_Substitute(sequenceTable, subIndex);
+                substituteTraits = _SFGetGlyphTraits(textProcessor, substituteGlyph);
 
                 /* Initialize the glyph with substitute. */
-                SFAlbumSetGlyph(album, newIndex, substitute);
-                SFAlbumSetTraits(album, newIndex, traits);
+                SFAlbumSetGlyph(album, newIndex, substituteGlyph);
+                SFAlbumSetTraits(album, newIndex, substituteTraits);
                 SFAlbumSetSingleAssociation(album, newIndex, association);
             }
 
@@ -251,10 +254,10 @@ static SFBoolean _SFApplySequence(SFTextProcessorRef processor, SFData sequence)
     return SFFalse;
 }
 
-static SFBoolean _SFApplyLigatureSubst(SFTextProcessorRef processor, SFData ligatureSubst)
+static SFBoolean _SFApplyLigatureSubst(SFTextProcessorRef textProcessor, SFData ligatureSubst)
 {
-    SFAlbumRef album = processor->_album;
-    SFLocatorRef locator = &processor->_locator;
+    SFAlbumRef album = textProcessor->_album;
+    SFLocatorRef locator = &textProcessor->_locator;
     SFUInteger inputIndex = locator->index;
     SFGlyphID inputGlyph = SFAlbumGetGlyph(album, inputIndex);
     SFUInt16 format;
@@ -263,21 +266,20 @@ static SFBoolean _SFApplyLigatureSubst(SFTextProcessorRef processor, SFData liga
 
     switch (format) {
         case 1: {
-            SFOffset offset = SFLigatureSubstF1_CoverageOffset(ligatureSubst);
-            SFData coverage = SFData_Subdata(ligatureSubst, offset);
+            SFOffset coverageOffset = SFLigatureSubstF1_CoverageOffset(ligatureSubst);
+            SFData coverageTable = SFData_Subdata(ligatureSubst, coverageOffset);
             SFUInteger coverageIndex;
 
-            coverageIndex = SFOpenTypeSearchCoverageIndex(coverage, inputGlyph);
+            coverageIndex = SFOpenTypeSearchCoverageIndex(coverageTable, inputGlyph);
 
             if (coverageIndex != SFInvalidIndex) {
                 SFUInt16 ligSetCount = SFLigatureSubstF1_LigSetCount(ligatureSubst);
-                SFData ligatureSet;
 
                 if (coverageIndex < ligSetCount) {
-                    offset = SFLigatureSubstF1_LigatureSetOffset(ligatureSubst, coverageIndex);
-                    ligatureSet = SFData_Subdata(ligatureSubst, offset);
+                    SFOffset ligatureSetOffset = SFLigatureSubstF1_LigatureSetOffset(ligatureSubst, coverageIndex);
+                    SFData ligatureSetTable = SFData_Subdata(ligatureSubst, ligatureSetOffset);
 
-                    return _SFApplyLigatureSet(processor, ligatureSet);
+                    return _SFApplyLigatureSetTable(textProcessor, ligatureSetTable);
                 }
             }
             break;
@@ -287,21 +289,21 @@ static SFBoolean _SFApplyLigatureSubst(SFTextProcessorRef processor, SFData liga
     return SFFalse;
 }
 
-static SFBoolean _SFApplyLigatureSet(SFTextProcessorRef processor, SFData ligatureSet)
+static SFBoolean _SFApplyLigatureSetTable(SFTextProcessorRef textProcessor, SFData ligatureSetTable)
 {
-    SFAlbumRef album = processor->_album;
-    SFLocatorRef locator = &processor->_locator;
+    SFAlbumRef album = textProcessor->_album;
+    SFLocatorRef locator = &textProcessor->_locator;
     SFUInteger inputIndex = locator->index;
     SFUInt16 ligCount;
     SFUInteger ligIndex;
 
-    ligCount = SFLigatureSet_LigatureCount(ligatureSet);
+    ligCount = SFLigatureSet_LigatureCount(ligatureSetTable);
 
     /* Match each ligature sequentially as they are ordered by preference. */
     for (ligIndex = 0; ligIndex < ligCount; ligIndex++) {
-        SFOffset offset = SFLigatureSet_LigatureOffset(ligatureSet, ligIndex);
-        SFData ligature = SFData_Subdata(ligatureSet, offset);
-        SFUInt16 compCount = SFLigature_CompCount(ligature);
+        SFOffset ligatureOffset = SFLigatureSet_LigatureOffset(ligatureSetTable, ligIndex);
+        SFData ligatureTable = SFData_Subdata(ligatureSetTable, ligatureOffset);
+        SFUInt16 compCount = SFLigature_CompCount(ligatureTable);
         SFUInteger prevIndex;
         SFUInteger nextIndex;
         SFUInteger compIndex;
@@ -319,7 +321,7 @@ static SFBoolean _SFApplyLigatureSet(SFTextProcessorRef processor, SFData ligatu
             nextIndex = SFLocatorGetAfter(locator, prevIndex);
 
             if (nextIndex != SFInvalidIndex) {
-                SFGlyphID component = SFLigature_Component(ligature, compIndex - 1);
+                SFGlyphID component = SFLigature_Component(ligatureTable, compIndex - 1);
                 SFGlyphID glyph = SFAlbumGetGlyph(album, nextIndex);
 
                 if (component != glyph) {
@@ -334,14 +336,14 @@ static SFBoolean _SFApplyLigatureSet(SFTextProcessorRef processor, SFData ligatu
 
         /* Do the substitution, if all components are matched. */
         if (compIndex == compCount) {
-            SFGlyphID ligGlyph = SFLigature_LigGlyph(ligature);
-            SFGlyphTraits traits = _SFGetGlyphTraits(processor, ligGlyph);
+            SFGlyphID ligGlyph = SFLigature_LigGlyph(ligatureTable);
+            SFGlyphTraits ligTraits = _SFGetGlyphTraits(textProcessor, ligGlyph);
             SFUInteger firstAssociation;
             SFUInteger *compositeAssociations;
 
             /* Substitute the ligature glyph and set its traits. */
             SFAlbumSetGlyph(album, inputIndex, ligGlyph);
-            SFAlbumSetTraits(album, inputIndex, traits | SFGlyphTraitComposite);
+            SFAlbumSetTraits(album, inputIndex, ligTraits | SFGlyphTraitComposite);
 
             firstAssociation = SFAlbumGetSingleAssociation(album, inputIndex);
             compositeAssociations = SFAlbumMakeCompositeAssociations(album, inputIndex, compCount);

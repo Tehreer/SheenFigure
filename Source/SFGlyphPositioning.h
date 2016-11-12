@@ -17,19 +17,15 @@
 #ifndef _SF_INTERNAL_GLYPH_POSITIONING_H
 #define _SF_INTERNAL_GLYPH_POSITIONING_H
 
-/*
- * NOTE:
- *     This file is part of SFTextProcessor class which handles positioning aspects of glyphs.
- */
-
 #include <SFConfig.h>
 
+#include "SFBase.h"
 #include "SFData.h"
 #include "SFTextProcessor.h"
 
-SF_PRIVATE void _SFApplyPositioningLookup(SFTextProcessorRef processor, SFData lookup);
-SF_PRIVATE SFBoolean _SFApplyPositioningSubtable(SFTextProcessorRef processor, SFLookupType lookupType, SFData subtable);
+SF_PRIVATE void _SFApplyPositioningLookup(SFTextProcessorRef textProcessor, SFData lookupTable);
+SF_PRIVATE SFBoolean _SFApplyPositioningSubtable(SFTextProcessorRef textProcessor, SFLookupType lookupType, SFData subtable);
 
-SF_PRIVATE void _SFResolveAttachments(SFTextProcessorRef processor);
+SF_PRIVATE void _SFResolveAttachments(SFTextProcessorRef textProcessor);
 
 #endif

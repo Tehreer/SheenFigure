@@ -136,11 +136,11 @@ SF_INTERNAL void SFAlbumEndFilling(SFAlbumRef album);
  */
 SF_INTERNAL void SFAlbumBeginArranging(SFAlbumRef album);
 
-SF_INTERNAL SFInteger SFAlbumGetX(SFAlbumRef album, SFUInteger index);
-SF_INTERNAL void SFAlbumSetX(SFAlbumRef album, SFUInteger index, SFInteger x);
+SF_INTERNAL SFInt32 SFAlbumGetX(SFAlbumRef album, SFUInteger index);
+SF_INTERNAL void SFAlbumSetX(SFAlbumRef album, SFUInteger index, SFInt32 x);
 
-SF_INTERNAL SFInteger SFAlbumGetY(SFAlbumRef album, SFUInteger index);
-SF_INTERNAL void SFAlbumSetY(SFAlbumRef album, SFUInteger index, SFInteger y);
+SF_INTERNAL SFInt32 SFAlbumGetY(SFAlbumRef album, SFUInteger index);
+SF_INTERNAL void SFAlbumSetY(SFAlbumRef album, SFUInteger index, SFInt32 y);
 
 SF_INTERNAL SFAdvance SFAlbumGetAdvance(SFAlbumRef album, SFUInteger index);
 SF_INTERNAL void SFAlbumSetAdvance(SFAlbumRef album, SFUInteger index, SFAdvance advance);

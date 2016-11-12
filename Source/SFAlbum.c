@@ -311,12 +311,12 @@ SF_INTERNAL void SFAlbumBeginArranging(SFAlbumRef album)
     album->_state = _SFAlbumStateArranging;
 }
 
-SF_INTERNAL SFInteger SFAlbumGetX(SFAlbumRef album, SFUInteger index)
+SF_INTERNAL SFInt32 SFAlbumGetX(SFAlbumRef album, SFUInteger index)
 {
     return SFListGetRef(&album->_offsets, index)->x;
 }
 
-SF_INTERNAL void SFAlbumSetX(SFAlbumRef album, SFUInteger index, SFInteger x)
+SF_INTERNAL void SFAlbumSetX(SFAlbumRef album, SFUInteger index, SFInt32 x)
 {
     /* The album must be in arranging state. */
     SFAssert(album->_state == _SFAlbumStateArranging);
@@ -324,12 +324,12 @@ SF_INTERNAL void SFAlbumSetX(SFAlbumRef album, SFUInteger index, SFInteger x)
     SFListGetRef(&album->_offsets, index)->x = x;
 }
 
-SF_INTERNAL SFInteger SFAlbumGetY(SFAlbumRef album, SFUInteger index)
+SF_INTERNAL SFInt32 SFAlbumGetY(SFAlbumRef album, SFUInteger index)
 {
     return SFListGetRef(&album->_offsets, index)->y;
 }
 
-SF_INTERNAL void SFAlbumSetY(SFAlbumRef album, SFUInteger index, SFInteger y)
+SF_INTERNAL void SFAlbumSetY(SFAlbumRef album, SFUInteger index, SFInt32 y)
 {
     /* The album must be in arranging state. */
     SFAssert(album->_state == _SFAlbumStateArranging);

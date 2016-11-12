@@ -31,7 +31,7 @@
 #include "SFGlyphManipulation.h"
 #include "SFGlyphPositioning.h"
 #include "SFGlyphSubstitution.h"
-#include "SFShapingEngine.h"
+#include "SFTextProcessor.h"
 
 enum {
     _SFGlyphZoneInput = 0,

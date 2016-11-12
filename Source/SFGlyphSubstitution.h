@@ -17,17 +17,13 @@
 #ifndef _SF_INTERNAL_GLYPH_SUBSTITUTION_H
 #define _SF_INTERNAL_GLYPH_SUBSTITUTION_H
 
-/*
- * NOTE:
- *      This file is part of SFTextProcessor class which handles substitution aspects of glyphs.
- */
-
 #include <SFConfig.h>
 
+#include "SFBase.h"
 #include "SFData.h"
 #include "SFTextProcessor.h"
 
-SF_PRIVATE void _SFApplySubstitutionLookup(SFTextProcessorRef processor, SFData lookup);
-SF_PRIVATE SFBoolean _SFApplySubstitutionSubtable(SFTextProcessorRef processor, SFLookupType lookupType, SFData subtable);
+SF_PRIVATE void _SFApplySubstitutionLookup(SFTextProcessorRef textProcessor, SFData lookupTable);
+SF_PRIVATE SFBoolean _SFApplySubstitutionSubtable(SFTextProcessorRef textProcessor, SFLookupType lookupType, SFData subtable);
 
 #endif
