@@ -196,7 +196,7 @@ enum {
                                                     SFData_Subdata(data, 2 + ((index) * (2 * (classCount))))
 
 #define SFMark2Record_Mark2AnchorOffset(data, index)        \
-                                                    SFData_UInt16(data, 2 + ((index) * 2))
+                                                    SFData_UInt16(data, 0 + ((index) * 2))
 
 /**************************************************************************************************/
 
