@@ -876,18 +876,11 @@ PairAdjustmentPosSubtable &Builder::createPairPos(
     return subtable;
 }
 
-CursiveAttachmentPosSubtable &Builder::createCursivePos(const std::vector<curs_rule> rules)
+CursiveAttachmentPosSubtable &Builder::createCursivePos(
+    const map<Glyph, pair<AnchorTable *, AnchorTable *>> rules)
 {
-    map<Glyph, size_t> uniqueRules;
-
-    /* Make unique ordered ruless. */
-    for (size_t i = 0; i < rules.size(); i++) {
-        Glyph initialGlyph = get<0>(rules[i]);
-        uniqueRules[initialGlyph] = i;
-    }
-
-    Glyph *glyphs = createGlyphs(uniqueRules.begin(), uniqueRules.end(),
-                                 [](const decltype(uniqueRules)::value_type &rule) {
+    Glyph *glyphs = createGlyphs(rules.begin(), rules.end(),
+                                 [](const decltype(rules)::value_type &rule) {
                                      return rule.first;
                                  });
 
@@ -899,10 +892,10 @@ CursiveAttachmentPosSubtable &Builder::createCursivePos(const std::vector<curs_r
 
     size_t recordIndex = 0;
 
-    for (const auto &entry : uniqueRules) {
+    for (const auto &entry : rules) {
         EntryExitRecord &record = subtable.entryExitRecord[recordIndex++];
-        record.entryAnchor = get<1>(rules[entry.second]);
-        record.exitAnchor = get<2>(rules[entry.second]);
+        record.entryAnchor = get<0>(entry.second);
+        record.exitAnchor = get<1>(entry.second);
     }
 
     return subtable;
@@ -910,8 +903,8 @@ CursiveAttachmentPosSubtable &Builder::createCursivePos(const std::vector<curs_r
 
 MarkToBaseAttachmentPosSubtable &Builder::createMarkToBasePos(
     UInt16 classCount,
-    const map<Glyph, mark_rule> markRules,
-    const map<Glyph, base_rule> baseRules)
+    const map<Glyph, pair<UInt16, reference_wrapper<AnchorTable>>> markRules,
+    const map<Glyph, vector<reference_wrapper<AnchorTable>>> baseRules)
 {
     Glyph *markGlyphs = createGlyphs(markRules.begin(), markRules.end(),
                                      [](const decltype(markRules)::value_type &rule) {
@@ -937,11 +930,9 @@ MarkToBaseAttachmentPosSubtable &Builder::createMarkToBasePos(
     size_t markIndex = 0;
 
     for (const auto &entry : markRules) {
-        const auto &value = entry.second;
-
         MarkRecord &markRecord = markArray.markRecord[markIndex++];
-        markRecord.clazz = value.first;
-        markRecord.markAnchor = &value.second.get();
+        markRecord.clazz = get<0>(entry.second);
+        markRecord.markAnchor = &get<1>(entry.second).get();
     }
 
     BaseArrayTable &baseArray = *subtable.baseArray;

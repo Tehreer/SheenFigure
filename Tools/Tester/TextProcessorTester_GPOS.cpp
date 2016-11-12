@@ -209,58 +209,58 @@ void TextProcessorTester::testCursivePositioning()
 
     /* Test with first unmatching glyph. */
     testPositioning(builder.createCursivePos({
-                        curs_rule { 1, nullptr, &builder.createAnchor(100, 200) },
-                        curs_rule { 2, &builder.createAnchor(300, 400), nullptr }
+                        {1, {nullptr, &builder.createAnchor(100, 200)}},
+                        {2, {&builder.createAnchor(300, 400), nullptr}}
                     }),
                     { 0, 2 }, { {0, 0}, {0, 0} }, { 0, 0 });
     /* Test with second unmatching glyph. */
     testPositioning(builder.createCursivePos({
-                        curs_rule { 1, nullptr, &builder.createAnchor(100, 200) },
-                        curs_rule { 2, &builder.createAnchor(300, 400), nullptr }
+                        {1, {nullptr, &builder.createAnchor(100, 200)}},
+                        {2, {&builder.createAnchor(300, 400), nullptr}}
                     }),
                     { 1, 0 }, { {0, 0}, {0, 0} }, { 0, 0 });
     /* Test with no anchor. */
     testPositioning(builder.createCursivePos({
-                        curs_rule { 1, nullptr, nullptr },
-                        curs_rule { 2, nullptr, nullptr }
+                        {1, {nullptr, nullptr}},
+                        {2, {nullptr, nullptr}}
                     }),
                     { 1, 2 }, { {0, 0}, {0, 0} }, { 0, 0 });
     /* Test with non matching anchors. */
     testPositioning(builder.createCursivePos({
-                        curs_rule { 1, &builder.createAnchor(100, 200), nullptr },
-                        curs_rule { 2, nullptr, &builder.createAnchor(300, 400) }
+                        {1, {&builder.createAnchor(100, 200), nullptr}},
+                        {2, {nullptr, &builder.createAnchor(300, 400)}}
                     }),
                     { 1, 2 }, { {0, 0}, {0, 0} }, { 0, 0 });
     /* Test with ascending glyph order. */
     testPositioning(builder.createCursivePos({
-                        curs_rule { 1, nullptr, &builder.createAnchor(100, 200) },
-                        curs_rule { 2, &builder.createAnchor(300, 400), nullptr }
+                        {1, {nullptr, &builder.createAnchor(100, 200)}},
+                        {2, {&builder.createAnchor(300, 400), nullptr}}
                     }),
                     { 1, 2 }, { {0, 0}, {-300, -200} }, { 100, -300 });
     /* Test with dscending glyph order. */
     testPositioning(builder.createCursivePos({
-                        curs_rule { 1, &builder.createAnchor(300, 400), nullptr },
-                        curs_rule { 2, nullptr, &builder.createAnchor(100, 200) }
+                        {1, {&builder.createAnchor(300, 400), nullptr}},
+                        {2, {nullptr, &builder.createAnchor(100, 200)}}
                     }),
                     { 2, 1 }, { {0, 0}, {-300, -200} }, { 100, -300 });
     /* Test with LTR cursive chain. */
     testPositioning(builder.createCursivePos({
-                        curs_rule { 1, nullptr, &builder.createAnchor(-800, -700) },
-                        curs_rule { 2, &builder.createAnchor(-600, -500), &builder.createAnchor(-400, -300) },
-                        curs_rule { 3, &builder.createAnchor(-200, -100), &builder.createAnchor(0, 100) },
-                        curs_rule { 4, &builder.createAnchor(200, 300), &builder.createAnchor(400, 500) },
-                        curs_rule { 5, &builder.createAnchor(600, 700), nullptr },
+                        {1, {nullptr, &builder.createAnchor(-800, -700)}},
+                        {2, {&builder.createAnchor(-600, -500), &builder.createAnchor(-400, -300)}},
+                        {3, {&builder.createAnchor(-200, -100), &builder.createAnchor(0, 100)}},
+                        {4, {&builder.createAnchor(200, 300), &builder.createAnchor(400, 500)}},
+                        {5, {&builder.createAnchor(600, 700), nullptr}},
                     }),
                     { 1, 2, 3, 4, 5 },
                     { {0, 0}, {600, -200}, {200, -400}, {-200, -600}, {-600, -800} },
                     { -800, 200, 200, 200, -600 });
     /* Test with RTL cursive chain. */
     testPositioning(builder.createCursivePos({
-                        curs_rule { 1, nullptr, &builder.createAnchor(-800, -700) },
-                        curs_rule { 2, &builder.createAnchor(-600, -500), &builder.createAnchor(-400, -300) },
-                        curs_rule { 3, &builder.createAnchor(-200, -100), &builder.createAnchor(0, 100) },
-                        curs_rule { 4, &builder.createAnchor(200, 300), &builder.createAnchor(400, 500) },
-                        curs_rule { 5, &builder.createAnchor(600, 700), nullptr },
+                        {1, {nullptr, &builder.createAnchor(-800, -700)}},
+                        {2, {&builder.createAnchor(-600, -500), &builder.createAnchor(-400, -300)}},
+                        {3, {&builder.createAnchor(-200, -100), &builder.createAnchor(0, 100)}},
+                        {4, {&builder.createAnchor(200, 300), &builder.createAnchor(400, 500)}},
+                        {5, {&builder.createAnchor(600, 700), nullptr}},
                     }),
                     { 1, 2, 3, 4, 5 },
                     { {800, 800}, {400, 600}, {0, 400}, {-400, 200}, {0, 0} },

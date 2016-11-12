@@ -53,11 +53,6 @@ using pair_rule = std::tuple<
                     UInt16, UInt16,
                     std::reference_wrapper<ValueRecord>, std::reference_wrapper<ValueRecord>>;
 
-using curs_rule = std::tuple<Glyph, AnchorTable *, AnchorTable *>;
-
-using mark_rule = std::pair<UInt16, std::reference_wrapper<AnchorTable>>;
-using base_rule = std::vector<std::reference_wrapper<AnchorTable>>;
-
 class Builder {
 public:
     Builder();
@@ -104,11 +99,13 @@ public:
                                              const std::reference_wrapper<ClassDefTable> classDefs[2],
                                              const std::vector<pair_rule> rules);
 
-    CursiveAttachmentPosSubtable &createCursivePos(const std::vector<curs_rule> rules);
+    CursiveAttachmentPosSubtable &createCursivePos(
+        const std::map<Glyph, std::pair<AnchorTable *, AnchorTable *>> rules);
 
-    MarkToBaseAttachmentPosSubtable &createMarkToBasePos(UInt16 classCount,
-                                                         const std::map<Glyph, mark_rule> markRules,
-                                                         const std::map<Glyph, base_rule> baseRules);
+    MarkToBaseAttachmentPosSubtable &createMarkToBasePos(
+        UInt16 classCount,
+        const std::map<Glyph, std::pair<UInt16, std::reference_wrapper<AnchorTable>>> markRules,
+        const std::map<Glyph, std::vector<std::reference_wrapper<AnchorTable>>> baseRules);
 
 private:
     std::list<std::shared_ptr<void>> m_pool;
