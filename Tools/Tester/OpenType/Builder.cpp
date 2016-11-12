@@ -953,6 +953,66 @@ MarkToBaseAttachmentPosSubtable &Builder::createMarkToBasePos(
     return subtable;
 }
 
+MarkToLigatureAttachmentPosSubtable &Builder::createMarkToLigaturePos(
+     UInt16 classCount,
+     const std::map<Glyph, std::pair<UInt16, std::reference_wrapper<AnchorTable>>> markRules,
+     const std::map<Glyph, std::vector<std::vector<std::reference_wrapper<AnchorTable>>>> ligatureRules)
+{
+    Glyph *markGlyphs = createGlyphs(markRules.begin(), markRules.end(),
+                                     [](const decltype(markRules)::value_type &rule) {
+                                         return get<0>(rule);
+                                     });
+    Glyph *ligatureGlyphs = createGlyphs(ligatureRules.begin(), ligatureRules.end(),
+                                         [](const typename decltype(ligatureRules)::value_type &rule) {
+                                             return get<0>(rule);
+                                         });
+
+    MarkToLigatureAttachmentPosSubtable &subtable = createObject<MarkToLigatureAttachmentPosSubtable>();
+    subtable.posFormat = 1;
+    subtable.markCoverage = &createCoverage(markGlyphs, (UInt16)markRules.size());
+    subtable.ligatureCoverage = &createCoverage(ligatureGlyphs, (UInt16)ligatureRules.size());
+    subtable.classCount = classCount;
+    subtable.markArray = &createObject<MarkArrayTable>();
+    subtable.ligatureArray = &createObject<LigatureArrayTable>();
+
+    MarkArrayTable &markArray = *subtable.markArray;
+    markArray.markCount = (UInt16)markRules.size();
+    markArray.markRecord = createArray<MarkRecord>(markRules.size());
+
+    size_t markIndex = 0;
+
+    for (const auto &entry : markRules) {
+        MarkRecord &markRecord = markArray.markRecord[markIndex++];
+        markRecord.clazz = get<0>(entry.second);
+        markRecord.markAnchor = &get<1>(entry.second).get();
+    }
+
+    LigatureArrayTable &ligatureArray = *subtable.ligatureArray;
+    ligatureArray.ligatureCount = (UInt16)ligatureRules.size();
+    ligatureArray.ligatureAttach = createArray<LigatureAttachTable>(ligatureRules.size());
+
+    size_t ligatureIndex = 0;
+
+    for (const auto &entry : ligatureRules) {
+        const auto &componentRules = entry.second;
+
+        LigatureAttachTable &ligatureAttach = ligatureArray.ligatureAttach[ligatureIndex++];
+        ligatureAttach.componentCount = (UInt16)componentRules.size();
+        ligatureAttach.componentRecord = createArray<ComponentRecord>(componentRules.size());
+
+        for (size_t i = 0; i < componentRules.size(); i++) {
+            ComponentRecord &componentRecord = ligatureAttach.componentRecord[i];
+            componentRecord.ligatureAnchor = createArray<AnchorTable>(classCount);
+
+            for (size_t j = 0; j < classCount; j++) {
+                componentRecord.ligatureAnchor[j] = componentRules[i][j];
+            }
+        }
+    }
+    
+    return subtable;
+}
+
 MarkToMarkAttachmentPosSubtable &Builder::createMarkToMarkPos(
      UInt16 classCount,
      const map<Glyph, pair<UInt16, reference_wrapper<AnchorTable>>> mark1Rules,

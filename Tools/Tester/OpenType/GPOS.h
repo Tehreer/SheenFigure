@@ -486,7 +486,7 @@ struct ComponentRecord : public Table {
 
     void write(Writer &writer) override {
         for (int i = 0; i < m_classCount; i++) {
-            writer.defer(ligatureAnchor);
+            writer.defer(&ligatureAnchor[i]);
         }
     }
 
