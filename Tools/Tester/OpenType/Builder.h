@@ -37,29 +37,25 @@ namespace SheenFigure {
 namespace Tester {
 namespace OpenType {
 
-typedef std::list<std::shared_ptr<void>> ObjectPool;
+using class_range = std::tuple<Glyph, Glyph, UInt16>;
 
-typedef std::tuple<Glyph, Glyph, UInt16> class_range;
+using rule_context = std::tuple<
+                      std::vector<UInt16>,
+                       std::vector<std::pair<UInt16, UInt16>>>;
 
-typedef std::tuple<
-         std::vector<UInt16>,
-         std::vector<std::pair<UInt16, UInt16>>> rule_context;
+using rule_chain_context = std::tuple<
+                            std::vector<Glyph>,
+                            std::vector<Glyph>,
+                            std::vector<Glyph>,
+                            std::vector<std::pair<UInt16, UInt16>>>;
 
-typedef std::tuple<
-         std::vector<Glyph>,
-         std::vector<Glyph>,
-         std::vector<Glyph>,
-         std::vector<std::pair<UInt16, UInt16>>> rule_chain_context;
+using pair_rule = std::tuple<
+                    UInt16, UInt16,
+                    std::reference_wrapper<ValueRecord>, std::reference_wrapper<ValueRecord>>;
 
-typedef std::tuple<
-         UInt16, UInt16,
-         std::reference_wrapper<ValueRecord>, std::reference_wrapper<ValueRecord>> pair_rule;
+using curs_rule = std::tuple<Glyph, AnchorTable *, AnchorTable *>;
 
-typedef std::tuple<
-         Glyph,
-         AnchorTable *, AnchorTable *> curs_rule;
-
-using mark_rule = std::tuple<UInt16, std::reference_wrapper<AnchorTable>>;
+using mark_rule = std::pair<UInt16, std::reference_wrapper<AnchorTable>>;
 using base_rule = std::vector<std::reference_wrapper<AnchorTable>>;
 
 class Builder {
@@ -115,7 +111,7 @@ public:
                                                          const std::map<Glyph, base_rule> baseRules);
 
 private:
-    ObjectPool m_pool;
+    std::list<std::shared_ptr<void>> m_pool;
 
     template<class T, class... Args>
     T &createObject(Args&&... args);

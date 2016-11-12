@@ -937,9 +937,11 @@ MarkToBaseAttachmentPosSubtable &Builder::createMarkToBasePos(
     size_t markIndex = 0;
 
     for (const auto &entry : markRules) {
+        const auto &value = entry.second;
+
         MarkRecord &markRecord = markArray.markRecord[markIndex++];
-        markRecord.clazz = get<0>(entry.second);
-        markRecord.markAnchor = &get<1>(entry.second).get();
+        markRecord.clazz = value.first;
+        markRecord.markAnchor = &value.second.get();
     }
 
     BaseArrayTable &baseArray = *subtable.baseArray;
