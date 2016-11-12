@@ -271,28 +271,28 @@ void TextProcessorTester::testMarkToBasePositioning()
 {
     Builder builder;
 
-    /* Test with unmatching base glyph. */
+    /* Test with unmatching mark 1 glyph. */
     testPositioning(builder.createMarkToBasePos(1, {
                         {2, {0, builder.createAnchor(100, 200)}}
                     }, {
                         {1, { builder.createAnchor(900, 800) }}
                     }),
                     { 0, 2 }, { {0, 0}, {0, 0} }, { 0, 0 });
-    /* Test with unmatching mark glyph. */
+    /* Test with unmatching mark 2 glyph. */
     testPositioning(builder.createMarkToBasePos(1, {
                         {2, {0, builder.createAnchor(100, 200)}}
                     }, {
                         {1, { builder.createAnchor(900, 800) }}
                     }),
                     { 1, 0 }, { {0, 0}, {0, 0} }, { 0, 0 });
-    /* Test with a mark belonging to zero class. */
+    /* Test with a mark 2 belonging to zero class. */
     testPositioning(builder.createMarkToBasePos(1, {
                         {2, {0, builder.createAnchor(100, 200)}}
                     }, {
                         {1, { builder.createAnchor(900, 800) }}
                     }),
                     { 1, 2 }, { {0, 0}, {800, 600} }, { 0, 0 });
-    /* Test with a mark belonging to a non-zero class. */
+    /* Test with a mark 2 belonging to a non-zero class. */
     testPositioning(builder.createMarkToBasePos(2, {
                         {2, {1, builder.createAnchor(100, 200)}}
                     }, {
@@ -325,72 +325,58 @@ void TextProcessorTester::testMarkToBasePositioning()
 
 void TextProcessorTester::testMarkToLigaturePositioning()
 {
-    Glyph markGlyphs[] = { 2 };
+    Builder builder;
 
-    CoverageTable markCoverage;
-    markCoverage.coverageFormat = 1;
-    markCoverage.format1.glyphCount = sizeof(markGlyphs) / sizeof(Glyph);
-    markCoverage.format1.glyphArray = markGlyphs;
-
-    Glyph ligatureGlyphs[] = { 1 };
-
-    CoverageTable ligatureCoverage;
-    ligatureCoverage.coverageFormat = 1;
-    ligatureCoverage.format1.glyphCount = sizeof(ligatureGlyphs) / sizeof(Glyph);
-    ligatureCoverage.format1.glyphArray = ligatureGlyphs;
-
-    AnchorTable markAnchor;
-    markAnchor.anchorFormat = 1;
-    markAnchor.xCoordinate = 50;
-    markAnchor.yCoordinate = -50;
-
-    MarkRecord markRecord;
-    markRecord.clazz = 0;
-    markRecord.markAnchor = &markAnchor;
-
-    MarkArrayTable markArray;
-    markArray.markCount = 1;
-    markArray.markRecord = &markRecord;
-
-    AnchorTable ligatureAnchor;
-    ligatureAnchor.anchorFormat = 1;
-    ligatureAnchor.xCoordinate = -50;
-    ligatureAnchor.yCoordinate = 50;
-
-    ComponentRecord componentRecord;
-    componentRecord.ligatureAnchor = &ligatureAnchor;
-
-    LigatureAttachTable ligatureAttach;
-    ligatureAttach.componentCount = 1;
-    ligatureAttach.componentRecord = &componentRecord;
-
-    LigatureArrayTable ligatureArray;
-    ligatureArray.ligatureCount = 1;
-    ligatureArray.ligatureAttach = &ligatureAttach;
-
-    MarkToLigatureAttachmentPosSubtable subtable;
-    subtable.posFormat = 1;
-    subtable.markCoverage = &markCoverage;
-    subtable.ligatureCoverage = &ligatureCoverage;
-    subtable.classCount = 1;
-    subtable.markArray = &markArray;
-    subtable.ligatureArray = &ligatureArray;
-
-    SFAlbum album;
-    SFAlbumInitialize(&album);
-
-    SFCodepoint input[] = { 1, 2 };
-    processGPOS(&album, input, sizeof(input) / sizeof(SFCodepoint), subtable);
-
-    /* Test the output. */
-    const SFPoint *actualOffsets = SFAlbumGetGlyphOffsetsPtr(&album);
-    const SFAdvance *actualAdvances = SFAlbumGetGlyphAdvancesPtr(&album);
-    const SFPoint expectedOffsets[] = { { 0, 0 }, { -100, 100, } };
-    const SFAdvance expectedAdvances[] = { 0, 0 };
-
-    SFAssert(SFAlbumGetGlyphCount(&album) == (sizeof(expectedOffsets) / sizeof(SFPoint)));
-    SFAssert(memcmp(actualOffsets, expectedOffsets, sizeof(expectedOffsets) / sizeof(SFPoint)) == 0);
-    SFAssert(memcmp(actualAdvances, expectedAdvances, sizeof(expectedAdvances) / sizeof(SFAdvance)) == 0);
+    /* Test with unmatching ligature glyph. */
+    testPositioning(builder.createMarkToLigaturePos(1, {
+                        {2, {0, builder.createAnchor(100, 200)}}
+                    }, {
+                        {1, { { builder.createAnchor(900, 800) } }}
+                    }),
+                    { 0, 2 }, { {0, 0}, {0, 0} }, { 0, 0 });
+    /* Test with unmatching mark glyph. */
+    testPositioning(builder.createMarkToLigaturePos(1, {
+                        {2, {0, builder.createAnchor(100, 200)}}
+                    }, {
+                        {1, { { builder.createAnchor(900, 800) } }}
+                    }),
+                    { 1, 0 }, { {0, 0}, {0, 0} }, { 0, 0 });
+    /* Test with a mark belonging to zero class. */
+    testPositioning(builder.createMarkToLigaturePos(1, {
+                        {2, {0, builder.createAnchor(100, 200)}}
+                    }, {
+                        {1, { { builder.createAnchor(900, 800) } }}
+                    }),
+                    { 1, 2 }, { {0, 0}, {800, 600} }, { 0, 0 });
+    /* Test with a mark belonging to a non-zero class. */
+    testPositioning(builder.createMarkToLigaturePos(2, {
+                        {2, {1, builder.createAnchor(100, 200)}}
+                    }, {
+                        {1, { { builder.createAnchor(0, 0), builder.createAnchor(900, 800) } }}
+                    }),
+                    { 1, 2 }, { {0, 0}, {800, 600} }, { 0, 0 });
+    /* Test with middle matching rules. */
+    testPositioning(builder.createMarkToLigaturePos(1, {
+                        {2, {0, builder.createAnchor(100, 200)}},
+                        {4, {0, builder.createAnchor(300, 400)}},
+                        {6, {0, builder.createAnchor(450, 475)}},
+                    }, {
+                        {1, { { builder.createAnchor(900, 800) } }},
+                        {3, { { builder.createAnchor(700, 600) } }},
+                        {5, { { builder.createAnchor(550, 525) } }},
+                    }),
+                    { 3, 4 }, { {0, 0}, {400, 200} }, { 0, 0 });
+    /* Test with last matching rules. */
+    testPositioning(builder.createMarkToLigaturePos(1, {
+                        {2, {0, builder.createAnchor(100, 200)}},
+                        {4, {0, builder.createAnchor(300, 400)}},
+                        {6, {0, builder.createAnchor(450, 475)}},
+                    }, {
+                        {1, { { builder.createAnchor(900, 800) } }},
+                        {3, { { builder.createAnchor(700, 600) } }},
+                        {5, { { builder.createAnchor(550, 525) } }},
+                    }),
+                    { 5, 6 }, { {0, 0}, {100, 50} }, { 0, 0 });
 }
 
 void TextProcessorTester::testMarkToMarkPositioning()
