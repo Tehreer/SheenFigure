@@ -952,3 +952,55 @@ MarkToBaseAttachmentPosSubtable &Builder::createMarkToBasePos(
 
     return subtable;
 }
+
+MarkToMarkAttachmentPosSubtable &Builder::createMarkToMarkPos(
+     UInt16 classCount,
+     const map<Glyph, pair<UInt16, reference_wrapper<AnchorTable>>> mark1Rules,
+     const map<Glyph, vector<reference_wrapper<AnchorTable>>> mark2Rules)
+{
+    Glyph *mark1Glyphs = createGlyphs(mark1Rules.begin(), mark1Rules.end(),
+                                     [](const decltype(mark1Rules)::value_type &rule) {
+                                         return get<0>(rule);
+                                     });
+    Glyph *mark2Glyphs = createGlyphs(mark2Rules.begin(), mark2Rules.end(),
+                                     [](const typename decltype(mark2Rules)::value_type &rule) {
+                                         return get<0>(rule);
+                                     });
+
+    MarkToMarkAttachmentPosSubtable &subtable = createObject<MarkToMarkAttachmentPosSubtable>();
+    subtable.posFormat = 1;
+    subtable.mark1Coverage = &createCoverage(mark1Glyphs, (UInt16)mark1Rules.size());
+    subtable.mark2Coverage = &createCoverage(mark2Glyphs, (UInt16)mark2Rules.size());
+    subtable.classCount = classCount;
+    subtable.mark1Array = &createObject<MarkArrayTable>();
+    subtable.mark2Array = &createObject<Mark2ArrayTable>();
+
+    MarkArrayTable &mark1Array = *subtable.mark1Array;
+    mark1Array.markCount = (UInt16)mark1Rules.size();
+    mark1Array.markRecord = createArray<MarkRecord>(mark1Rules.size());
+
+    size_t markIndex = 0;
+
+    for (const auto &entry : mark1Rules) {
+        MarkRecord &markRecord = mark1Array.markRecord[markIndex++];
+        markRecord.clazz = get<0>(entry.second);
+        markRecord.markAnchor = &get<1>(entry.second).get();
+    }
+
+    Mark2ArrayTable &mark2Array = *subtable.mark2Array;
+    mark2Array.mark2Count = (UInt16)mark2Rules.size();
+    mark2Array.mark2Record = createArray<Mark2Record>(mark2Rules.size());
+
+    size_t mark2Index = 0;
+
+    for (const auto &entry : mark2Rules) {
+        Mark2Record &mark2Record = mark2Array.mark2Record[mark2Index++];
+        mark2Record.mark2Anchor = createArray<AnchorTable>(classCount);
+
+        for (size_t i = 0; i < classCount; i++) {
+            mark2Record.mark2Anchor[i] = entry.second[i];
+        }
+    }
+    
+    return subtable;
+}

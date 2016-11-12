@@ -598,7 +598,7 @@ struct Mark2ArrayTable : public Table {
 
         writer.write(mark2Count);
         for (int i = 0; i < mark2Count; i++) {
-            writer.write(mark2Record);
+            writer.write(&mark2Record[i]);
         }
 
         writer.exit();
