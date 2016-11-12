@@ -395,66 +395,56 @@ void TextProcessorTester::testMarkToLigaturePositioning()
 
 void TextProcessorTester::testMarkToMarkPositioning()
 {
-    Glyph mark1Glyphs[] = { 2 };
+    Builder builder;
 
-    CoverageTable mark1Coverage;
-    mark1Coverage.coverageFormat = 1;
-    mark1Coverage.format1.glyphCount = sizeof(mark1Glyphs) / sizeof(Glyph);
-    mark1Coverage.format1.glyphArray = mark1Glyphs;
-
-    Glyph mark2Glyphs[] = { 1 };
-
-    CoverageTable mark2Coverage;
-    mark2Coverage.coverageFormat = 1;
-    mark2Coverage.format1.glyphCount = sizeof(mark2Glyphs) / sizeof(Glyph);
-    mark2Coverage.format1.glyphArray = mark2Glyphs;
-
-    AnchorTable mark1Anchor;
-    mark1Anchor.anchorFormat = 1;
-    mark1Anchor.xCoordinate = 50;
-    mark1Anchor.yCoordinate = -50;
-
-    MarkRecord mark1Record;
-    mark1Record.clazz = 0;
-    mark1Record.markAnchor = &mark1Anchor;
-
-    MarkArrayTable mark1Array;
-    mark1Array.markCount = 1;
-    mark1Array.markRecord = &mark1Record;
-
-    AnchorTable mark2Anchor;
-    mark2Anchor.anchorFormat = 1;
-    mark2Anchor.xCoordinate = -50;
-    mark2Anchor.yCoordinate = 50;
-
-    Mark2Record mark2Record;
-    mark2Record.mark2Anchor = &mark2Anchor;
-
-    Mark2ArrayTable mark2Array;
-    mark2Array.mark2Count = 1;
-    mark2Array.mark2Record = &mark2Record;
-
-    MarkToMarkAttachmentPosSubtable subtable;
-    subtable.posFormat = 1;
-    subtable.mark1Coverage = &mark1Coverage;
-    subtable.mark2Coverage = &mark2Coverage;
-    subtable.classCount = 1;
-    subtable.mark1Array = &mark1Array;
-    subtable.mark2Array = &mark2Array;
-
-    SFAlbum album;
-    SFAlbumInitialize(&album);
-
-    SFCodepoint input[] = { 1, 2 };
-    processGPOS(&album, input, sizeof(input) / sizeof(SFCodepoint), subtable);
-
-    /* Test the output. */
-    const SFPoint *actualOffsets = SFAlbumGetGlyphOffsetsPtr(&album);
-    const SFAdvance *actualAdvances = SFAlbumGetGlyphAdvancesPtr(&album);
-    const SFPoint expectedOffsets[] = { { 0, 0 }, { -100, 100, } };
-    const SFAdvance expectedAdvances[] = { 0, 0 };
-
-    SFAssert(SFAlbumGetGlyphCount(&album) == (sizeof(expectedOffsets) / sizeof(SFPoint)));
-    SFAssert(memcmp(actualOffsets, expectedOffsets, sizeof(expectedOffsets) / sizeof(SFPoint)) == 0);
-    SFAssert(memcmp(actualAdvances, expectedAdvances, sizeof(expectedAdvances) / sizeof(SFAdvance)) == 0);
+    /* Test with unmatching base glyph. */
+    testPositioning(builder.createMarkToMarkPos(1, {
+                        {2, {0, builder.createAnchor(100, 200)}}
+                    }, {
+                        {1, { builder.createAnchor(900, 800) }}
+                    }),
+                    { 0, 2 }, { {0, 0}, {0, 0} }, { 0, 0 });
+    /* Test with unmatching mark glyph. */
+    testPositioning(builder.createMarkToMarkPos(1, {
+                        {2, {0, builder.createAnchor(100, 200)}}
+                    }, {
+                        {1, { builder.createAnchor(900, 800) }}
+                    }),
+                    { 1, 0 }, { {0, 0}, {0, 0} }, { 0, 0 });
+    /* Test with a mark belonging to zero class. */
+    testPositioning(builder.createMarkToMarkPos(1, {
+                        {2, {0, builder.createAnchor(100, 200)}}
+                    }, {
+                        {1, { builder.createAnchor(900, 800) }}
+                    }),
+                    { 1, 2 }, { {0, 0}, {800, 600} }, { 0, 0 });
+    /* Test with a mark belonging to a non-zero class. */
+    testPositioning(builder.createMarkToMarkPos(2, {
+                        {2, {1, builder.createAnchor(100, 200)}}
+                    }, {
+                        {1, { builder.createAnchor(0, 0), builder.createAnchor(900, 800) }}
+                    }),
+                    { 1, 2 }, { {0, 0}, {800, 600} }, { 0, 0 });
+    /* Test with middle matching rules. */
+    testPositioning(builder.createMarkToMarkPos(1, {
+                        {2, {0, builder.createAnchor(100, 200)}},
+                        {4, {0, builder.createAnchor(300, 400)}},
+                        {6, {0, builder.createAnchor(450, 475)}},
+                    }, {
+                        {1, { builder.createAnchor(900, 800) }},
+                        {3, { builder.createAnchor(700, 600) }},
+                        {5, { builder.createAnchor(550, 525) }},
+                    }),
+                    { 3, 4 }, { {0, 0}, {400, 200} }, { 0, 0 });
+    /* Test with last matching rules. */
+    testPositioning(builder.createMarkToMarkPos(1, {
+                        {2, {0, builder.createAnchor(100, 200)}},
+                        {4, {0, builder.createAnchor(300, 400)}},
+                        {6, {0, builder.createAnchor(450, 475)}},
+                    }, {
+                        {1, { builder.createAnchor(900, 800) }},
+                        {3, { builder.createAnchor(700, 600) }},
+                        {5, { builder.createAnchor(550, 525) }},
+                    }),
+                    { 5, 6 }, { {0, 0}, {100, 50} }, { 0, 0 });
 }
