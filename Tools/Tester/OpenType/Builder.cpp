@@ -614,6 +614,16 @@ ChainContextSubtable &Builder::createChainContext(
     return subtable;
 }
 
+ExtensionSubtable &Builder::createExtension(LookupType lookupType, const LookupSubtable &innerTable)
+{
+    ExtensionSubtable &subtable = createObject<ExtensionSubtable>();
+    subtable.format = 1;
+    subtable.extensionLookupType = lookupType;
+    subtable.extensionTable = (LookupSubtable *)(&innerTable);
+
+    return subtable;
+}
+
 template<class InputIt, class Operation>
 ValueFormat Builder::findValueFormat(InputIt begin, InputIt end, Operation operation)
 {

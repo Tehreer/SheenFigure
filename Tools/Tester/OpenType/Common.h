@@ -700,10 +700,14 @@ struct ChainContextSubtable : public LookupSubtable {
     }
 };
 
-struct ExtensionSubtable : public Table {
+struct ExtensionSubtable : public LookupSubtable {
     UInt16 format;                  // Format identifier
     LookupType extensionLookupType; // Lookup type of subtable referenced by ExtensionOffset (i.e. the extension subtable)
-    Table *extensionTable;          // Offset to the extension subtable, of lookup type ExtensionLookupType, relative to the start of the extension subtable
+    LookupSubtable *extensionTable; // Offset to the extension subtable, of lookup type ExtensionLookupType, relative to the start of the extension subtable
+
+    LookupType lookupType() override {
+        return LookupType::sExtensionSubstitution;
+    }
 
     void write(Writer &writer) override {
         writer.enter();

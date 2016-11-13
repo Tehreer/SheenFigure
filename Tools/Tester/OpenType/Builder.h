@@ -82,6 +82,8 @@ public:
                                              const std::vector<std::vector<Glyph>> lookahead,
                                              const std::vector<std::pair<UInt16, UInt16>> lookups);
 
+    ExtensionSubtable &createExtension(LookupType lookupType, const LookupSubtable &innerTable);
+
     ValueRecord &createValueRecord(const std::array<Int16, 4> metrics,
                                    const std::array<DeviceTable *, 4> devices = {});
 
