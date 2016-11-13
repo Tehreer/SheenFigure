@@ -44,6 +44,7 @@ public:
 
     void testContextSubtable();
     void testChainContextSubtable();
+    void testExtensionSubtable();
 
     void test();
 

@@ -614,3 +614,15 @@ void TextProcessorTester::testChainContextSubtable()
                          { 21, 22, 23, 1, 2, 3, 31, 32, 33 }, { 21, 22, 23, 10, 6, 20, 31, 32, 33 }, complexReferral);
     }
 }
+
+void TextProcessorTester::testExtensionSubtable()
+{
+    Builder builder;
+
+    /* Test with an unmatching glyph. */
+    testSubstitution(builder.createExtension(LookupType::sSingle, builder.createSingleSubst({ 1 }, 100)),
+                     { 0 }, { 0 });
+    /* Test with a matching glyph.*/
+    testSubstitution(builder.createExtension(LookupType::sSingle, builder.createSingleSubst({ 1 }, 100)),
+                     { 1 }, { 101 });
+}

@@ -257,4 +257,5 @@ void TextProcessorTester::test()
     testMarkToMarkPositioning();
     testContextSubtable();
     testChainContextSubtable();
+    testExtensionSubtable();
 }
