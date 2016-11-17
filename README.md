@@ -25,6 +25,10 @@ The configuration options are available in `Headers/SFConfig.h`.
 ## Compiling
 SheenFigure can be compiled with any C compiler. The best way for compiling is to add all the files in an IDE and hit build. The only thing to consider however is that if ```SF_CONFIG_UNITY``` is enabled then only ```Source/SheenFigure.c``` should be compiled.
 
+## Public API
+Here is a glimpse of public API in the form of UML class diagram.
+![Public API](https://raw.githubusercontent.com/mta452/SheenFigure/images/PublicAPI.png)
+
 ## Conformance
 Following are the tables implemented by SheenFigure.
 
