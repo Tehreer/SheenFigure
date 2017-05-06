@@ -71,7 +71,8 @@ SF_INTERNAL void _SFDiscoverGlyphs(SFTextProcessorRef processor)
 
             while ((current = SFCodepointsNext(codepoints)) != SFCodepointInvalid) {
                 SFGlyphID glyph = SFFontGetGlyphIDForCodepoint(font, current);
-                SFAlbumAddGlyph(album, glyph, initialIndex);
+                SFGlyphTraits traits = _SFGetGlyphTraits(processor, glyph);
+                SFAlbumAddGlyph(album, glyph, traits, initialIndex);
 
                 initialIndex = codepoints->index;
             }
@@ -83,7 +84,8 @@ SF_INTERNAL void _SFDiscoverGlyphs(SFTextProcessorRef processor)
 
             while ((current = SFCodepointsNext(codepoints)) != SFCodepointInvalid) {
                 SFGlyphID glyph = SFFontGetGlyphIDForCodepoint(font, current);
-                SFAlbumAddGlyph(album, glyph, codepoints->index);
+                SFGlyphTraits traits = _SFGetGlyphTraits(processor, glyph);
+                SFAlbumAddGlyph(album, glyph, traits, codepoints->index);
             }
             break;
         }

@@ -144,7 +144,7 @@ SF_INTERNAL void SFAlbumBeginFilling(SFAlbumRef album)
 	album->_state = _SFAlbumStateFilling;
 }
 
-SF_INTERNAL void SFAlbumAddGlyph(SFAlbumRef album, SFGlyphID glyph, SFUInteger association)
+SF_INTERNAL void SFAlbumAddGlyph(SFAlbumRef album, SFGlyphID glyph, SFGlyphTraits traits, SFUInteger association)
 {
     SFUInteger index;
 
@@ -156,7 +156,8 @@ SF_INTERNAL void SFAlbumAddGlyph(SFAlbumRef album, SFGlyphID glyph, SFUInteger a
 
     /* Initialize the glyph along with its details. */
     SFAlbumSetGlyph(album, index, glyph);
-    _SFAlbumSetGlyphMask(album, index, _SFGlyphMaskEmpty);
+    SFAlbumSetFeatureMask(album, index, SFUInt16Max);
+    SFAlbumSetTraits(album, index, traits);
     SFAlbumSetSingleAssociation(album, index, association);
 }
 
