@@ -101,11 +101,11 @@ void AlbumTester::testAddGlyph()
         SFAlbumReset(&album, NULL, 5);
 
         SFAlbumBeginFilling(&album);
-        SFAlbumAddGlyph(&album, 100, 0);
-        SFAlbumAddGlyph(&album, 200, 1);
-        SFAlbumAddGlyph(&album, 300, 2);
-        SFAlbumAddGlyph(&album, 400, 3);
-        SFAlbumAddGlyph(&album, 500, 4);
+        SFAlbumAddGlyph(&album, 100, SFGlyphTraitNone, 0);
+        SFAlbumAddGlyph(&album, 200, SFGlyphTraitNone, 1);
+        SFAlbumAddGlyph(&album, 300, SFGlyphTraitNone, 2);
+        SFAlbumAddGlyph(&album, 400, SFGlyphTraitNone, 3);
+        SFAlbumAddGlyph(&album, 500, SFGlyphTraitNone, 4);
         SFAlbumEndFilling(&album);
 
         SFAlbumBeginArranging(&album);
@@ -132,11 +132,11 @@ void AlbumTester::testAddGlyph()
         SFAlbumReset(&album, NULL, 5);
 
         SFAlbumBeginFilling(&album);
-        SFAlbumAddGlyph(&album, 100, 4);
-        SFAlbumAddGlyph(&album, 200, 3);
-        SFAlbumAddGlyph(&album, 300, 2);
-        SFAlbumAddGlyph(&album, 400, 1);
-        SFAlbumAddGlyph(&album, 500, 0);
+        SFAlbumAddGlyph(&album, 100, SFGlyphTraitNone, 4);
+        SFAlbumAddGlyph(&album, 200, SFGlyphTraitNone, 3);
+        SFAlbumAddGlyph(&album, 300, SFGlyphTraitNone, 2);
+        SFAlbumAddGlyph(&album, 400, SFGlyphTraitNone, 1);
+        SFAlbumAddGlyph(&album, 500, SFGlyphTraitNone, 0);
         SFAlbumEndFilling(&album);
 
         SFAlbumBeginArranging(&album);
@@ -163,11 +163,11 @@ void AlbumTester::testAddGlyph()
         SFAlbumReset(&album, NULL, 15);
 
         SFAlbumBeginFilling(&album);
-        SFAlbumAddGlyph(&album, 100, 0);
-        SFAlbumAddGlyph(&album, 200, 1);
-        SFAlbumAddGlyph(&album, 300, 3);
-        SFAlbumAddGlyph(&album, 400, 6);
-        SFAlbumAddGlyph(&album, 500, 10);
+        SFAlbumAddGlyph(&album, 100, SFGlyphTraitNone, 0);
+        SFAlbumAddGlyph(&album, 200, SFGlyphTraitNone, 1);
+        SFAlbumAddGlyph(&album, 300, SFGlyphTraitNone, 3);
+        SFAlbumAddGlyph(&album, 400, SFGlyphTraitNone, 6);
+        SFAlbumAddGlyph(&album, 500, SFGlyphTraitNone, 10);
         SFAlbumEndFilling(&album);
 
         SFAlbumBeginArranging(&album);
@@ -277,8 +277,8 @@ void AlbumTester::testGetGlyph()
 
     /* Test by adding some glyphs. */
     {
-        SFAlbumAddGlyph(&album, 100, 0);
-        SFAlbumAddGlyph(&album, 200, 0);
+        SFAlbumAddGlyph(&album, 100, SFGlyphTraitNone, 0);
+        SFAlbumAddGlyph(&album, 200, SFGlyphTraitNone, 0);
 
         SFAssert(SFAlbumGetGlyph(&album, 0) == 100);
         SFAssert(SFAlbumGetGlyph(&album, 1) == 200);
@@ -387,8 +387,8 @@ void AlbumTester::testGetSingleAssociation()
 
     /* Test by adding some glyphs. */
     {
-        SFAlbumAddGlyph(&album, 0, 0);
-        SFAlbumAddGlyph(&album, 0, 1);
+        SFAlbumAddGlyph(&album, 0, SFGlyphTraitNone, 0);
+        SFAlbumAddGlyph(&album, 0, SFGlyphTraitNone, 1);
 
         /* Test with get single association. */
         SFAssert(SFAlbumGetSingleAssociation(&album, 0) == 0);
@@ -421,9 +421,9 @@ void AlbumTester::testMakeCompositeAssociations()
     SFAlbumBeginFilling(&album);
 
     /* Add some glyphs with associations. */
-    SFAlbumAddGlyph(&album, 0, 1);
-    SFAlbumAddGlyph(&album, 0, 2);
-    SFAlbumAddGlyph(&album, 0, 3);
+    SFAlbumAddGlyph(&album, 0, SFGlyphTraitNone, 1);
+    SFAlbumAddGlyph(&album, 0, SFGlyphTraitNone, 2);
+    SFAlbumAddGlyph(&album, 0, SFGlyphTraitNone, 3);
 
     /* Make the second glyph composite. */
     SFAlbumSetTraits(&album, 1, SFGlyphTraitComposite);
