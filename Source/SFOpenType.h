@@ -22,7 +22,7 @@
 #include "SFBase.h"
 #include "SFData.h"
 
-SF_INTERNAL SFUInteger SFOpenTypeSearchCoverageIndex(SFData coverage, SFGlyphID glyph);
-SF_INTERNAL SFUInt16 SFOpenTypeSearchGlyphClass(SFData classDef, SFGlyphID glyph);
+SF_INTERNAL SFUInteger SFOpenTypeSearchCoverageIndex(SFData coverageTable, SFGlyphID glyphID);
+SF_INTERNAL SFUInt16 SFOpenTypeSearchGlyphClass(SFData classDefTable, SFGlyphID glyphID);
 
 #endif

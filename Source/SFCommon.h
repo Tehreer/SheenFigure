@@ -37,10 +37,10 @@ typedef SFUInt16 SFLookupFlag;
 #define SFTagRecord_Tag(data)                           SFData_UInt32(data, 0)
 #define SFTagRecord_Offset(data)                        SFData_UInt16(data, 4)
 
-#define _SFGlyphRange_Size()                            (6)
-#define _SFGlyphRange_Start(data)                       SFData_UInt16(data, 0)
-#define _SFGlyphRange_End(data)                         SFData_UInt16(data, 2)
-#define _SFGlyphRange_Value(data)                       SFData_UInt16(data, 4)
+#define SFGlyphRange_Size()                             (6)
+#define SFGlyphRange_Start(data)                        SFData_UInt16(data, 0)
+#define SFGlyphRange_End(data)                          SFData_UInt16(data, 2)
+#define SFGlyphRange_Value(data)                        SFData_UInt16(data, 4)
 
 /**********************************************ARRAYS**********************************************/
 
@@ -130,11 +130,12 @@ typedef SFUInt16 SFLookupFlag;
 #define SFCoverageF1_GlyphArray(data)                   SFData_Subdata(data, 4)
 
 #define SFCoverageF2_RangeCount(data)                   SFData_UInt16(data, 2)
-#define SFCoverageF2_RangeRecord(data, index)           SFData_Subdata(data, 4 + ((index) * _SFGlyphRange_Size()))
+#define SFCoverageF2_RangeRecord(data, index)           SFData_Subdata(data, 4 + ((index) * SFGlyphRange_Size()))
+#define SFCoverageF2_GlyphRangeArray(data)              SFCoverageF2_RangeRecord(data, 0)
 
-#define SFRangeRecord_Start(data)                       _SFGlyphRange_Start(data)
-#define SFRangeRecord_End(data)                         _SFGlyphRange_End(data)
-#define SFRangeRecord_StartCoverageIndex(data)          _SFGlyphRange_Value(data)
+#define SFRangeRecord_StartGlyphID(data)                SFGlyphRange_Start(data)
+#define SFRangeRecord_EndGlyphID(data)                  SFGlyphRange_End(data)
+#define SFRangeRecord_StartCoverageIndex(data)          SFGlyphRange_Value(data)
 
 /**************************************************************************************************/
 
@@ -142,17 +143,17 @@ typedef SFUInt16 SFLookupFlag;
 
 #define SFClassDef_Format(data)                         SFData_UInt16(data, 0)
 
-#define SFClassDefF1_StartGlyph(data)                   SFData_UInt16(data, 2)
+#define SFClassDefF1_StartGlyphID(data)                 SFData_UInt16(data, 2)
 #define SFClassDefF1_GlyphCount(data)                   SFData_UInt16(data, 4)
 #define SFClassDefF1_ClassValueArray(data)              SFData_Subdata(data, 6)
 
 #define SFClassDefF2_ClassRangeCount(data)              SFData_UInt16(data, 2)
-#define SFClassDefF2_ClassRangeRecord(data, index)      SFData_Subdata(data, 4 + ((index) * _SFGlyphRange_Size()))
-#define SFClassDefF2_RangeRecordArray(data)             SFClassDefF2_ClassRangeRecord(data, 0)
+#define SFClassDefF2_ClassRangeRecord(data, index)      SFData_Subdata(data, 4 + ((index) * SFGlyphRange_Size()))
+#define SFClassDefF2_GlyphRangeArray(data)              SFClassDefF2_ClassRangeRecord(data, 0)
 
-#define SFClassRangeRecord_Start(data)                  _SFGlyphRange_Start(data)
-#define SFClassRangeRecord_End(data)                    _SFGlyphRange_End(data)
-#define SFClassRangeRecord_Class(data)                  _SFGlyphRange_Value(data)
+#define SFClassRangeRecord_Start(data)                  SFGlyphRange_Start(data)
+#define SFClassRangeRecord_End(data)                    SFGlyphRange_End(data)
+#define SFClassRangeRecord_Class(data)                  SFGlyphRange_Value(data)
 
 /**************************************************************************************************/
 
