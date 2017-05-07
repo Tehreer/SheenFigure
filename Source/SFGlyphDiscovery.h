@@ -17,14 +17,8 @@
 #ifndef _SF_INTERNAL_GLYPH_DISCOVERY_H
 #define _SF_INTERNAL_GLYPH_DISCOVERY_H
 
-/*
- * NOTE:
- *      This file is part of SFTextProcessor class whose purpose is to discover character glyphs.
- */
-
 #include <SFConfig.h>
 
-#include "SFAlbum.h"
 #include "SFBase.h"
 #include "SFTextProcessor.h"
 
