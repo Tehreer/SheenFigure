@@ -23,8 +23,8 @@
 #include "SFPattern.h"
 #include "SFTextProcessor.h"
 
-SF_PRIVATE SFBoolean _SFApplyContextSubtable(SFTextProcessorRef textProcessor, SFFeatureKind featureKind, SFData contextSubtable);
-SF_PRIVATE SFBoolean _SFApplyChainContextSubtable(SFTextProcessorRef textProcessor, SFFeatureKind featureKind, SFData chainContextSubtable);
-SF_PRIVATE SFBoolean _SFApplyExtensionSubtable(SFTextProcessorRef textProcessor, SFFeatureKind featureKind, SFData extensionSubtable);
+SF_PRIVATE SFBoolean _SFApplyContextSubtable(SFTextProcessorRef textProcessor, SFData contextSubtable);
+SF_PRIVATE SFBoolean _SFApplyChainContextSubtable(SFTextProcessorRef textProcessor, SFData chainContextSubtable);
+SF_PRIVATE SFBoolean _SFApplyExtensionSubtable(SFTextProcessorRef textProcessor, SFData extensionSubtable);
 
 #endif

@@ -49,17 +49,17 @@ typedef struct {
 
 typedef SFBoolean (*_SFGlyphAssessment)(_SFGlyphAgent *glyphAgent);
 
-static SFBoolean _SFApplyRuleSetTable(SFTextProcessorRef textProcessor, SFFeatureKind featureKind,
+static SFBoolean _SFApplyRuleSetTable(SFTextProcessorRef textProcessor,
     SFData ruleSetTable, _SFGlyphAssessment glyphAsessment, void *helperPtr);
-static SFBoolean _SFApplyRuleTable(SFTextProcessorRef textProcessor, SFFeatureKind featureKind,
+static SFBoolean _SFApplyRuleTable(SFTextProcessorRef textProcessor,
     SFData ruleTable, SFBoolean includeFirst, _SFGlyphAssessment glyphAsessment, void *helperPtr);
 
-static SFBoolean _SFApplyChainRuleSetTable(SFTextProcessorRef textProcessor, SFFeatureKind featureKind,
+static SFBoolean _SFApplyChainRuleSetTable(SFTextProcessorRef textProcessor,
     SFData chainRuleSetTable, _SFGlyphAssessment glyphAsessment, void *helperPtr);
-static SFBoolean _SFApplyChainRuleTable(SFTextProcessorRef textProcessor, SFFeatureKind featureKind,
+static SFBoolean _SFApplyChainRuleTable(SFTextProcessorRef textProcessor,
     SFData chainRuleTable, SFBoolean includeFirst, _SFGlyphAssessment glyphAsessment, void *helperPtr);
 
-static SFBoolean _SFApplyContextLookups(SFTextProcessorRef textProcessor, SFFeatureKind featureKind,
+static SFBoolean _SFApplyContextLookups(SFTextProcessorRef textProcessor,
     SFData lookupArray, SFUInteger lookupCount, SFUInteger contextStart, SFUInteger contextEnd);
 
 static SFBoolean _SFAssessGlyphByEquality(_SFGlyphAgent *glyphAgent)
@@ -209,7 +209,7 @@ static SFBoolean _SFAssessLookaheadGlyphs(SFTextProcessorRef textProcessor,
     return SFTrue;
 }
 
-SF_PRIVATE SFBoolean _SFApplyContextSubtable(SFTextProcessorRef processor, SFFeatureKind featureKind, SFData contextSubtable)
+SF_PRIVATE SFBoolean _SFApplyContextSubtable(SFTextProcessorRef processor, SFData contextSubtable)
 {
     SFAlbumRef album = processor->_album;
     SFLocatorRef locator = &processor->_locator;
@@ -233,7 +233,7 @@ SF_PRIVATE SFBoolean _SFApplyContextSubtable(SFTextProcessorRef processor, SFFea
                     SFOffset ruleSetOffset = SFContextF1_RuleSetOffset(contextSubtable, coverageIndex);
                     SFData ruleSetTable = SFData_Subdata(contextSubtable, ruleSetOffset);
 
-                    return _SFApplyRuleSetTable(processor, featureKind, ruleSetTable, _SFAssessGlyphByEquality, NULL);
+                    return _SFApplyRuleSetTable(processor, ruleSetTable, _SFAssessGlyphByEquality, NULL);
                 }
             }
             break;
@@ -261,7 +261,7 @@ SF_PRIVATE SFBoolean _SFApplyContextSubtable(SFTextProcessorRef processor, SFFea
 
                     helperTables[0] = classDefTable;
 
-                    return _SFApplyRuleSetTable(processor, featureKind, ruleSetTable, _SFAssessGlyphByClass, helperTables);
+                    return _SFApplyRuleSetTable(processor, ruleSetTable, _SFAssessGlyphByClass, helperTables);
                 }
             }
             break;
@@ -269,14 +269,14 @@ SF_PRIVATE SFBoolean _SFApplyContextSubtable(SFTextProcessorRef processor, SFFea
 
         case 3: {
             SFData ruleTable = SFContextF3_Rule(contextSubtable);
-            return _SFApplyRuleTable(processor, featureKind, ruleTable, SFTrue, _SFAssessGlyphByCoverage, (void *)contextSubtable);
+            return _SFApplyRuleTable(processor, ruleTable, SFTrue, _SFAssessGlyphByCoverage, (void *)contextSubtable);
         }
     }
     
     return SFFalse;
 }
 
-static SFBoolean _SFApplyRuleSetTable(SFTextProcessorRef textProcessor, SFFeatureKind featureKind,
+static SFBoolean _SFApplyRuleSetTable(SFTextProcessorRef textProcessor,
     SFData ruleSetTable, _SFGlyphAssessment glyphAsessment, void *helperPtr)
 {
     SFUInt16 ruleCount = SFRuleSet_RuleCount(ruleSetTable);
@@ -289,7 +289,7 @@ static SFBoolean _SFApplyRuleSetTable(SFTextProcessorRef textProcessor, SFFeatur
         if (ruleOffset) {
             SFData ruleTable = SFData_Subdata(ruleSetTable, ruleOffset);
 
-            if (_SFApplyRuleTable(textProcessor, featureKind, ruleTable, SFFalse, glyphAsessment, helperPtr)) {
+            if (_SFApplyRuleTable(textProcessor, ruleTable, SFFalse, glyphAsessment, helperPtr)) {
                 return SFTrue;
             }
         }
@@ -298,7 +298,7 @@ static SFBoolean _SFApplyRuleSetTable(SFTextProcessorRef textProcessor, SFFeatur
     return SFFalse;
 }
 
-static SFBoolean _SFApplyRuleTable(SFTextProcessorRef textProcessor, SFFeatureKind featureKind,
+static SFBoolean _SFApplyRuleTable(SFTextProcessorRef textProcessor,
     SFData ruleTable, SFBoolean includeFirst, _SFGlyphAssessment glyphAsessment, void *helperPtr)
 {
     SFUInt16 glyphCount = SFRule_GlyphCount(ruleTable);
@@ -312,14 +312,14 @@ static SFBoolean _SFApplyRuleTable(SFTextProcessorRef textProcessor, SFFeatureKi
         SFUInteger contextEnd;
 
         return (_SFAssessInputGlyphs(textProcessor, valueArray, glyphCount, includeFirst, glyphAsessment, helperPtr, &contextEnd)
-                && _SFApplyContextLookups(textProcessor, featureKind, lookupArray, lookupCount, contextStart, contextEnd));
+                && _SFApplyContextLookups(textProcessor, lookupArray, lookupCount, contextStart, contextEnd));
     }
 
     return SFFalse;
 }
 
 SF_PRIVATE SFBoolean _SFApplyChainContextSubtable(SFTextProcessorRef textProcessor,
-    SFFeatureKind featureKind, SFData chainContextSubtable)
+    SFData chainContextSubtable)
 {
     SFGlyphID inputGlyph = SFAlbumGetGlyph(textProcessor->_album, textProcessor->_locator.index);
     SFUInt16 format;
@@ -341,7 +341,7 @@ SF_PRIVATE SFBoolean _SFApplyChainContextSubtable(SFTextProcessorRef textProcess
                     SFOffset chainRuleSetOffset = SFChainContextF1_ChainRuleSetOffset(chainContextSubtable, coverageIndex);
                     SFData chainRuleSetTable = SFData_Subdata(chainContextSubtable, chainRuleSetOffset);
 
-                    return _SFApplyChainRuleSetTable(textProcessor, featureKind, chainRuleSetTable, _SFAssessGlyphByEquality, NULL);
+                    return _SFApplyChainRuleSetTable(textProcessor, chainRuleSetTable, _SFAssessGlyphByEquality, NULL);
                 }
             }
             break;
@@ -375,7 +375,7 @@ SF_PRIVATE SFBoolean _SFApplyChainContextSubtable(SFTextProcessorRef textProcess
                     helperTables[1] = backtrackClassDefTable;
                     helperTables[2] = lookaheadClassDefTable;
 
-                    return _SFApplyChainRuleSetTable(textProcessor, featureKind, chainRuleSetTable, _SFAssessGlyphByClass, helperTables);
+                    return _SFApplyChainRuleSetTable(textProcessor, chainRuleSetTable, _SFAssessGlyphByClass, helperTables);
                 }
             }
             break;
@@ -383,14 +383,14 @@ SF_PRIVATE SFBoolean _SFApplyChainContextSubtable(SFTextProcessorRef textProcess
 
         case 3: {
             SFData chainRuleTable = SFChainContextF3_ChainRule(chainContextSubtable);
-            return _SFApplyChainRuleTable(textProcessor, featureKind, chainRuleTable, SFTrue, _SFAssessGlyphByCoverage, (void *)chainContextSubtable);
+            return _SFApplyChainRuleTable(textProcessor, chainRuleTable, SFTrue, _SFAssessGlyphByCoverage, (void *)chainContextSubtable);
         }
     }
 
     return SFFalse;
 }
 
-static SFBoolean _SFApplyChainRuleSetTable(SFTextProcessorRef textProcessor, SFFeatureKind featureKind,
+static SFBoolean _SFApplyChainRuleSetTable(SFTextProcessorRef textProcessor,
     SFData chainRuleSetTable, _SFGlyphAssessment glyphAsessment, void *helperPtr)
 {
     SFUInt16 chainRuleCount = SFChainRuleSet_ChainRuleCount(chainRuleSetTable);
@@ -401,7 +401,7 @@ static SFBoolean _SFApplyChainRuleSetTable(SFTextProcessorRef textProcessor, SFF
         SFOffset chainRuleOffset = SFChainRuleSet_ChainRuleOffset(chainRuleSetTable, chainRuleIndex);
         SFData chainRuleTable = SFData_Subdata(chainRuleSetTable, chainRuleOffset);
 
-        if (_SFApplyChainRuleTable(textProcessor, featureKind, chainRuleTable, SFFalse, glyphAsessment, helperPtr)) {
+        if (_SFApplyChainRuleTable(textProcessor, chainRuleTable, SFFalse, glyphAsessment, helperPtr)) {
             return SFTrue;
         }
     }
@@ -409,7 +409,7 @@ static SFBoolean _SFApplyChainRuleSetTable(SFTextProcessorRef textProcessor, SFF
     return SFFalse;
 }
 
-static SFBoolean _SFApplyChainRuleTable(SFTextProcessorRef textProcessor, SFFeatureKind featureKind,
+static SFBoolean _SFApplyChainRuleTable(SFTextProcessorRef textProcessor,
     SFData chainRuleTable, SFBoolean includeFirst, _SFGlyphAssessment glyphAsessment, void *helperPtr)
 {
     SFData backtrackRecord = SFChainRule_BacktrackRecord(chainRuleTable);
@@ -433,13 +433,13 @@ static SFBoolean _SFApplyChainRuleTable(SFTextProcessorRef textProcessor, SFFeat
         return (_SFAssessInputGlyphs(textProcessor, inputArray, inputCount, includeFirst, glyphAsessment, helperPtr, &contextEnd)
                 && _SFAssessBacktrackGlyphs(textProcessor, backtrackArray, backtrackCount,glyphAsessment, helperPtr)
                 && _SFAssessLookaheadGlyphs(textProcessor, lookaheadArray, lookaheadCount, glyphAsessment, helperPtr, contextEnd)
-                && _SFApplyContextLookups(textProcessor, featureKind, lookupArray, lookupCount, contextStart, contextEnd));
+                && _SFApplyContextLookups(textProcessor, lookupArray, lookupCount, contextStart, contextEnd));
     }
 
     return SFFalse;
 }
 
-static SFBoolean _SFApplyContextLookups(SFTextProcessorRef textProcessor, SFFeatureKind featureKind,
+static SFBoolean _SFApplyContextLookups(SFTextProcessorRef textProcessor,
     SFData lookupArray, SFUInteger lookupCount, SFUInteger contextStart, SFUInteger contextEnd)
 {
     SFLocatorRef contextLocator = &textProcessor->_locator;
@@ -461,7 +461,7 @@ static SFBoolean _SFApplyContextLookups(SFTextProcessorRef textProcessor, SFFeat
         if (SFLocatorMoveNext(contextLocator)) {
             /* Skip the glyphs till sequence index and apply the lookup. */
             if (SFLocatorSkip(contextLocator, sequenceIndex)) {
-                _SFApplyLookup(textProcessor, featureKind, lookupListIndex);
+                _SFApplyLookup(textProcessor, lookupListIndex);
             }
         }
     }
@@ -475,7 +475,7 @@ static SFBoolean _SFApplyContextLookups(SFTextProcessorRef textProcessor, SFFeat
 }
 
 SF_PRIVATE SFBoolean _SFApplyExtensionSubtable(SFTextProcessorRef textProcessor,
-    SFFeatureKind featureKind, SFData extensionSubtable)
+    SFData extensionSubtable)
 {
     SFUInt16 format = SFExtension_Format(extensionSubtable);
 
@@ -485,14 +485,7 @@ SF_PRIVATE SFBoolean _SFApplyExtensionSubtable(SFTextProcessorRef textProcessor,
             SFUInt32 extensionOffset = SFExtensionF1_ExtensionOffset(extensionSubtable);
             SFData innerSubtable = SFData_Subdata(extensionSubtable, extensionOffset);
 
-            switch (featureKind) {
-                case SFFeatureKindSubstitution:
-                    return _SFApplySubstitutionSubtable(textProcessor, lookupType, innerSubtable);
-
-                case SFFeatureKindPositioning:
-                    return _SFApplyPositioningSubtable(textProcessor, lookupType, innerSubtable);
-            }
-            break;
+            return textProcessor->_lookupOperation(textProcessor, lookupType, innerSubtable);
         }
     }
     

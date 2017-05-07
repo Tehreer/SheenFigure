@@ -30,6 +30,8 @@ typedef struct _SFTextProcessor {
     SFPatternRef _pattern;
     SFAlbumRef _album;
     SFData _glyphClassDef;
+    SFData _lookupList;
+    SFBoolean (*_lookupOperation)(struct _SFTextProcessor *, SFLookupType, SFData);
     SFTextDirection _textDirection;
     SFTextMode _textMode;
     SFLocator _locator;
@@ -42,6 +44,6 @@ SF_INTERNAL void SFTextProcessorSubstituteGlyphs(SFTextProcessorRef textProcesso
 SF_INTERNAL void SFTextProcessorPositionGlyphs(SFTextProcessorRef textProcessor);
 SF_INTERNAL void SFTextProcessorWrapUp(SFTextProcessorRef textProcessor);
 
-SF_PRIVATE void _SFApplyLookup(SFTextProcessorRef processor, SFFeatureKind featureKind, SFUInt16 lookupIndex);
+SF_PRIVATE void _SFApplyLookup(SFTextProcessorRef processor, SFUInt16 lookupIndex);
 
 #endif

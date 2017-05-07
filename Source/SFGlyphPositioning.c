@@ -67,35 +67,6 @@ static void _SFResolveRightCursiveSegment(SFTextProcessorRef textProcessor, SFUI
 static void _SFResolveCursivePositions(SFTextProcessorRef textProcessor, SFLocatorRef locator);
 static void _SFResolveMarkPositions(SFTextProcessorRef textProcessor, SFLocatorRef locator);
 
-SF_PRIVATE void _SFApplyPositioningLookup(SFTextProcessorRef textProcessor, SFData lookupTable)
-{
-    SFLookupType lookupType = SFLookup_LookupType(lookupTable);
-    SFLookupFlag lookupFlag = SFLookup_LookupFlag(lookupTable);
-    SFUInt16 subtableCount = SFLookup_SubtableCount(lookupTable);
-    SFUInteger subtableIndex;
-
-    SFLocatorSetLookupFlag(&textProcessor->_locator, lookupFlag);
-
-    if (lookupFlag & SFLookupFlagUseMarkFilteringSet) {
-        SFUInt16 markFilteringSet = SFLookup_MarkFilteringSet(lookupTable, subtableCount);
-        SFLocatorSetMarkFilteringSet(&textProcessor->_locator, markFilteringSet);
-    }
-
-    /* Apply subtables in order until one of them performs positioning. */
-    for (subtableIndex = 0; subtableIndex < subtableCount; subtableIndex++) {
-        SFOffset subtableOffset = SFLookup_SubtableOffset(lookupTable, subtableIndex);
-        SFData subtable = SFData_Subdata(lookupTable, subtableOffset);
-        SFBoolean didPosition;
-
-        didPosition = _SFApplyPositioningSubtable(textProcessor, lookupType, subtable);
-
-        /* A subtable has performed positioning, so break the loop. */
-        if (didPosition) {
-            break;
-        }
-    }
-}
-
 SF_PRIVATE SFBoolean _SFApplyPositioningSubtable(SFTextProcessorRef textProcessor, SFLookupType lookupType, SFData subtable)
 {
     switch (lookupType) {
@@ -118,13 +89,13 @@ SF_PRIVATE SFBoolean _SFApplyPositioningSubtable(SFTextProcessorRef textProcesso
             return _SFApplyMarkToMarkPos(textProcessor, subtable);
 
         case SFLookupTypeContextPositioning:
-            return _SFApplyContextSubtable(textProcessor, SFFeatureKindPositioning, subtable);
+            return _SFApplyContextSubtable(textProcessor, subtable);
 
         case SFLookupTypeChainedContextPositioning:
-            return _SFApplyChainContextSubtable(textProcessor, SFFeatureKindPositioning, subtable);
+            return _SFApplyChainContextSubtable(textProcessor, subtable);
 
         case SFLookupTypeExtensionPositioning:
-            return _SFApplyExtensionSubtable(textProcessor, SFFeatureKindPositioning, subtable);
+            return _SFApplyExtensionSubtable(textProcessor, subtable);
     }
 
     return SFFalse;

@@ -20,12 +20,11 @@
 #include <SFConfig.h>
 
 #include "SFBase.h"
+#include "SFCommon.h"
 #include "SFData.h"
 #include "SFTextProcessor.h"
 
-SF_PRIVATE void _SFApplyPositioningLookup(SFTextProcessorRef textProcessor, SFData lookupTable);
 SF_PRIVATE SFBoolean _SFApplyPositioningSubtable(SFTextProcessorRef textProcessor, SFLookupType lookupType, SFData subtable);
-
 SF_PRIVATE void _SFResolveAttachments(SFTextProcessorRef textProcessor);
 
 #endif

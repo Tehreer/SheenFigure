@@ -20,10 +20,10 @@
 #include <SFConfig.h>
 
 #include "SFBase.h"
+#include "SFCommon.h"
 #include "SFData.h"
 #include "SFTextProcessor.h"
 
-SF_PRIVATE void _SFApplySubstitutionLookup(SFTextProcessorRef textProcessor, SFData lookupTable);
 SF_PRIVATE SFBoolean _SFApplySubstitutionSubtable(SFTextProcessorRef textProcessor, SFLookupType lookupType, SFData subtable);
 
 #endif

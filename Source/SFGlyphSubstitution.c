@@ -37,35 +37,6 @@ static SFBoolean _SFApplySequenceTable(SFTextProcessorRef textProcessor, SFData 
 static SFBoolean _SFApplyLigatureSubst(SFTextProcessorRef textProcessor, SFData subtable);
 static SFBoolean _SFApplyLigatureSetTable(SFTextProcessorRef textProcessor, SFData ligatureSetTable);
 
-SF_PRIVATE void _SFApplySubstitutionLookup(SFTextProcessorRef textProcessor, SFData lookupTable)
-{
-    SFLookupType lookupType = SFLookup_LookupType(lookupTable);
-    SFLookupFlag lookupFlag = SFLookup_LookupFlag(lookupTable);
-    SFUInt16 subtableCount = SFLookup_SubtableCount(lookupTable);
-    SFUInt16 subtableIndex;
-
-    SFLocatorSetLookupFlag(&textProcessor->_locator, lookupFlag);
-
-    if (lookupFlag & SFLookupFlagUseMarkFilteringSet) {
-        SFUInt16 markFilteringSet = SFLookup_MarkFilteringSet(lookupTable, subtableCount);
-        SFLocatorSetMarkFilteringSet(&textProcessor->_locator, markFilteringSet);
-    }
-
-    /* Apply subtables in order until one of them performs substitution. */
-    for (subtableIndex = 0; subtableIndex < subtableCount; subtableIndex++) {
-        SFOffset offset = SFLookup_SubtableOffset(lookupTable, subtableIndex);
-        SFData subtable = SFData_Subdata(lookupTable, offset);
-        SFBoolean didSubstitute;
-
-        didSubstitute = _SFApplySubstitutionSubtable(textProcessor, lookupType, subtable);
-
-        /* A subtable has performed substition, so break the loop. */
-        if (didSubstitute) {
-            break;
-        }
-    }
-}
-
 SF_PRIVATE SFBoolean _SFApplySubstitutionSubtable(SFTextProcessorRef textProcessor, SFLookupType lookupType, SFData subtable)
 {
     switch (lookupType) {
@@ -82,13 +53,13 @@ SF_PRIVATE SFBoolean _SFApplySubstitutionSubtable(SFTextProcessorRef textProcess
             return _SFApplyLigatureSubst(textProcessor, subtable);
 
         case SFLookupTypeContext:
-            return _SFApplyContextSubtable(textProcessor, SFFeatureKindSubstitution, subtable);
+            return _SFApplyContextSubtable(textProcessor, subtable);
 
         case SFLookupTypeChainingContext:
-            return _SFApplyChainContextSubtable(textProcessor, SFFeatureKindSubstitution, subtable);
+            return _SFApplyChainContextSubtable(textProcessor, subtable);
 
         case SFLookupTypeExtension:
-            return _SFApplyExtensionSubtable(textProcessor, SFFeatureKindSubstitution, subtable);
+            return _SFApplyExtensionSubtable(textProcessor, subtable);
 
         case SFLookupTypeReverseChainingContext:
             break;
