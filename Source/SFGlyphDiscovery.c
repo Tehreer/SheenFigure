@@ -63,26 +63,15 @@ SF_INTERNAL void _SFDiscoverGlyphs(SFTextProcessorRef processor)
     SFCodepointsReset(album->codepoints);
 
     switch (processor->_textMode) {
-        case SFTextModeForward: {
-            SFUInteger initialIndex = codepoints->index;
-            SFCodepoint current;
-
-            while ((current = SFCodepointsNext(codepoints)) != SFCodepointInvalid) {
-                SFGlyphID glyph = SFFontGetGlyphIDForCodepoint(font, current);
-                SFGlyphTraits traits = _SFGetGlyphTraits(processor, glyph);
-                SFAlbumAddGlyph(album, glyph, traits, initialIndex);
-
-                initialIndex = codepoints->index;
-            }
-            break;
-        }
-
+        case SFTextModeForward:
         case SFTextModeBackward: {
             SFCodepoint current;
 
             while ((current = SFCodepointsNext(codepoints)) != SFCodepointInvalid) {
-                SFGlyphID glyph = SFFontGetGlyphIDForCodepoint(font, current);
+                SFCodepoint mirror = SFCodepointsGetMirror(current);
+                SFGlyphID glyph = SFFontGetGlyphIDForCodepoint(font, mirror);
                 SFGlyphTraits traits = _SFGetGlyphTraits(processor, glyph);
+
                 SFAlbumAddGlyph(album, glyph, traits, codepoints->index);
             }
             break;

@@ -17,16 +17,19 @@
 #ifndef _SF_INTERNAL_CODEPOINTS_H
 #define _SF_INTERNAL_CODEPOINTS_H
 
-#include <SFConfig.h>
 #include <SBCodepointSequence.h>
+#include <SFConfig.h>
 
 #include "SFBase.h"
 
 typedef struct _SFCodepoints {
-    const SBCodepointSequence *referral;
+    const SBCodepointSequence *_referral;
+    SFUInteger _token;
     SFUInteger index;
     SFBoolean backward;
 } SFCodepoints, *SFCodepointsRef;
+
+SF_INTERNAL SFCodepoint SFCodepointsGetMirror(SFCodepoint codepoint);
 
 SF_INTERNAL void SFCodepointsInitialize(SFCodepointsRef codepoints, const SBCodepointSequence *referral, SFBoolean backward);
 SF_INTERNAL void SFCodepointsReset(SFCodepointsRef codepoints);

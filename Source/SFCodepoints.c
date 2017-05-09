@@ -14,30 +14,48 @@
  * limitations under the License.
  */
 
+#include <SBBase.h>
+#include <SBCodepointSequence.h>
 #include <SFConfig.h>
-#include <stddef.h>
 
 #include "SFAssert.h"
 #include "SFBase.h"
 #include "SFCodepoints.h"
 
+SF_INTERNAL SFCodepoint SFCodepointsGetMirror(SFCodepoint codepoint)
+{
+    SFCodepoint mirror = SBCodepointGetMirror(codepoint);
+    if (!mirror) {
+        return codepoint;
+    }
+
+    return mirror;
+}
+
 SF_INTERNAL void SFCodepointsInitialize(SFCodepointsRef codepoints, const SBCodepointSequence *referral, SFBoolean backward)
 {
-    codepoints->referral = referral;
+    codepoints->_referral = referral;
+    codepoints->_token = SFInvalidIndex;
     codepoints->index = SFInvalidIndex;
     codepoints->backward = backward;
 }
 
 SF_INTERNAL void SFCodepointsReset(SFCodepointsRef codepoints)
 {
-    codepoints->index = (!codepoints->backward ? 0 : codepoints->referral->stringLength);
+    codepoints->_token = (!codepoints->backward ? 0 : codepoints->_referral->stringLength);
 }
 
 SF_INTERNAL SFCodepoint SFCodepointsNext(SFCodepointsRef codepoints)
 {
+    SFCodepoint current;
+
     if (!codepoints->backward) {
-        return SBCodepointSequenceGetCodepointAt(codepoints->referral, &codepoints->index);
+        codepoints->index = codepoints->_token;
+        current = SBCodepointSequenceGetCodepointAt(codepoints->_referral, &codepoints->_token);
+    } else {
+        current = SBCodepointSequenceGetCodepointBefore(codepoints->_referral, &codepoints->_token);
+        codepoints->index = codepoints->_token;
     }
 
-    return SBCodepointSequenceGetCodepointBefore(codepoints->referral, &codepoints->index);
+    return current;
 }
