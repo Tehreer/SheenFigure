@@ -37,15 +37,18 @@ using namespace SheenFigure::Generator::Utilities;
 static const char UNAVAILABLE_JOINING_TYPE = 'F';
 
 static const string BYTE_MACRO = "BYTE";
+static const string IN_RANGE_MACRO = "IN_RANGE";
 static const string JOINING_TYPE_ARRAY_TYPE = "static const SFUInt8";
 static const string JOINING_TYPE_ARRAY_NAME = "_SFJoiningTypeData";
+static const string JOINING_RANGES_ARRAY_TYPE = "static const SFUInt16";
+static const string JOINING_RANGES_ARRAY_NAME = "_SFJoiningTypeRanges";
 
-static inline string joiningTypeDataMacro(size_t index) {
-    return JOINING_TYPE_ARRAY_NAME + "_" + Converter::toHex(index, 4);
+static inline string joiningTypeDataMacro(uint32_t codepoint) {
+    return "JOINING_OFFSET_" + Converter::toHex(codepoint, 4);
 }
 
-static inline string joiningTypeDataMacroLine(size_t index) {
-    return "#define " + joiningTypeDataMacro(index) + " 0x" + Converter::toHex(index, 4);
+static inline string joiningTypeDataMacroLine(uint32_t codepoint, size_t index) {
+    return "#define " + joiningTypeDataMacro(codepoint) + " 0x" + Converter::toHex(index, 4);
 }
 
 class ByteElement {
@@ -111,30 +114,6 @@ private:
     const vector<Range> &_ranges;
     const ArabicShaping &_arabicShaping;
 
-    bool write(int min, int max, size_t tabs) {
-        if (min < max) {
-            int mid = (min + max) / 2;
-            const Range &range = _ranges[mid];
-
-            _builder.appendTabs(tabs).append("if (codepoint < 0x" + Converter::toHex(range.start, 4) + ") {").newLine();
-            if (!write(min, mid, tabs + 1)) {
-                _builder.appendTabs(tabs + 1).append("goto NotFound;").newLine();
-            }
-            _builder.appendTabs(tabs).append("} else if (codepoint > 0x" + Converter::toHex(range.end, 4) + ") {").newLine();
-            if (!write(mid + 1, max, tabs + 1)) {
-                _builder.appendTabs(tabs + 1).append("goto NotFound;").newLine();
-            }
-            _builder.appendTabs(tabs).append("} else {").newLine();
-            _builder.appendTabs(tabs + 1).append("diff = codepoint - 0x" + Converter::toHex(range.start, 4) + ";").newLine();
-            _builder.appendTabs(tabs + 1).append("block = " + joiningTypeDataMacro(range.index) + " * 2;").newLine();
-            _builder.appendTabs(tabs).append("}").newLine();
-
-            return true;
-        }
-
-        return false;
-    }
-
 public:
     Lookup(TextBuilder &builder, const vector<Range> &ranges, const ArabicShaping &arabicShaping) :
         _builder(builder),
@@ -144,21 +123,58 @@ public:
     }
 
     void write(size_t tabs) {
-        _builder.appendTabs(tabs).append("SFUInteger diff;").newLine();
+        uint8_t previous = UINT8_MAX;
+        bool linear = false;
+
+        _builder.appendTabs(tabs).append("SFUInteger offset = SFInvalidIndex;").newLine();
         _builder.appendTabs(tabs).append("SFUInteger block;").newLine();
-        _builder.appendTabs(tabs).append("SFUInt8 value;").newLine();
         _builder.newLine();
-        write(0, (int)_ranges.size(), tabs);
+
+        _builder.appendTabs(tabs).append("switch (codepoint >> 12) {").newLine();
+        for (size_t i = 0; i < _ranges.size(); i++) {
+            auto &range = _ranges[i];
+            uint8_t current = range.start >> 12;
+            uint8_t next = i < _ranges.size() - 1 ? _ranges[i + 1].start >> 12 : UINT8_MAX;
+            string value = Converter::toHex(current);
+            string start = "0x" + Converter::toHex(range.start, 4);
+            string end = "0x" + Converter::toHex(range.end, 4);
+            string block = joiningTypeDataMacro(range.start);
+
+            if (!linear && current != previous) {
+                if (current > previous + 1) {
+                    linear = true;
+                    _builder.appendTabs(tabs + 1).append("default:").newLine();
+                } else {
+                    _builder.appendTabs(tabs + 1).append("case 0x" + value + ":").newLine();
+                }
+                _builder.appendTabs(tabs + 2).append("if (" + IN_RANGE_MACRO + "(codepoint, " + start + ", " + end + ")) {").newLine();
+            } else {
+                _builder.appendTabs(tabs + 2).append("} else if (" + IN_RANGE_MACRO + "(codepoint, " + start + ", " + end + ")) {").newLine();
+            }
+            _builder.appendTabs(tabs + 3).append("offset = codepoint - " + start + ";").newLine();
+            _builder.appendTabs(tabs + 3).append("block = " + block + ";").newLine();
+
+            if ((!linear && current != next) || (linear && next == UINT8_MAX)) {
+                _builder.appendTabs(tabs + 2).append("}").newLine();
+                _builder.appendTabs(tabs + 2).append("break;").newLine();
+                _builder.newLine();
+            }
+
+            previous = current;
+        }
+        _builder.appendTabs(tabs).append("}").newLine();
+
         _builder.newLine();
-        _builder.appendTabs(tabs).append("value = " + JOINING_TYPE_ARRAY_NAME + "[(block + diff) >> 1];").newLine();
+        _builder.appendTabs(tabs).append("if (offset != SFInvalidIndex) {").newLine();
+        _builder.appendTabs(tabs + 1).append("SFUInt8 value = " + JOINING_TYPE_ARRAY_NAME + "[block + (offset >> 1)];").newLine();
         _builder.newLine();
-        _builder.appendTabs(tabs++).append("if (diff & 1) {").newLine();
-        _builder.appendTabs(tabs).append("return (SFJoiningType)(value & 0xF);").newLine();
-        _builder.appendTabs(--tabs).append("}").newLine();
+        _builder.appendTabs(tabs + 1).append("if (offset & 1) {").newLine();
+        _builder.appendTabs(tabs + 2).append("return (SFJoiningType)(value & 0xF);").newLine();
+        _builder.appendTabs(tabs + 1).append("}").newLine();
         _builder.newLine();
-        _builder.appendTabs(tabs).append("return (SFJoiningType)(value >> 4);").newLine();
+        _builder.appendTabs(tabs + 1).append("return (SFJoiningType)(value >> 4);").newLine();
+        _builder.appendTabs(tabs).append("}").newLine();
         _builder.newLine();
-        _builder.appendTabs(tabs - 1).append("NotFound:").newLine();
         _builder.appendTabs(tabs).append("return SFJoiningTypeF;").newLine();
     }
 };
@@ -199,6 +215,12 @@ void JoiningTypeLookupGenerator::generateFile(const std::string &directory) {
     byteMacro.append(" | ((h & 0xF) << 0) \\").newLine();
     byteMacro.append(")").newLine();
 
+    TextBuilder inRangeMacro;
+    inRangeMacro.append("#define " + IN_RANGE_MACRO + "(c, l, h)        \\").newLine();
+    inRangeMacro.append("(                                \\").newLine();
+    inRangeMacro.append(" (SFCodepoint)(c - l) <= (h - l) \\").newLine();
+    inRangeMacro.append(")").newLine();
+
     ArrayBuilder arrJoiningTypes;
     arrJoiningTypes.setDataType(JOINING_TYPE_ARRAY_TYPE);
     arrJoiningTypes.setName(JOINING_TYPE_ARRAY_NAME);
@@ -214,7 +236,7 @@ void JoiningTypeLookupGenerator::generateFile(const std::string &directory) {
     size_t block = 0;
     ByteElement element(arrJoiningTypes);
 
-    arrJoiningTypes.append(joiningTypeDataMacroLine(element.index())).newLine();
+    arrJoiningTypes.append(joiningTypeDataMacroLine(first, 0)).newLine();
 
     for (uint32_t codepoint = previous + 1; codepoint <= last; codepoint++) {
         char joiningType = m_arabicShaping.joiningTypeForCodePoint(codepoint);
@@ -238,7 +260,7 @@ void JoiningTypeLookupGenerator::generateFile(const std::string &directory) {
                     block = element.index();
 
                     arrJoiningTypes.newLine();
-                    arrJoiningTypes.append(joiningTypeDataMacroLine(element.index())).newLine();
+                    arrJoiningTypes.append(joiningTypeDataMacroLine(codepoint, element.index())).newLine();
 
                     start = codepoint;
                 }
@@ -271,8 +293,8 @@ void JoiningTypeLookupGenerator::generateFile(const std::string &directory) {
     header.append("#define _SF_JOINING_TYPE_LOOKUP_H").newLine();
     header.newLine();
     header.append("#include <SFConfig.h>").newLine();
-    header.append("#include <SFTypes.h>").newLine();
     header.newLine();
+    header.append("#include \"SFBase.h\"").newLine();
     header.append("#include \"SFJoiningType.h\"").newLine();
     header.newLine();
     header.append("SF_INTERNAL SFJoiningType SFJoiningTypeDetermine(SFCodepoint codepoint);").newLine();
@@ -286,12 +308,13 @@ void JoiningTypeLookupGenerator::generateFile(const std::string &directory) {
     source.append(" */").newLine();
     source.newLine();
     source.append("#include <SFConfig.h>").newLine();
-    source.append("#include <SFTypes.h>").newLine();
     source.newLine();
+    source.append("#include \"SFBase.h\"").newLine();
     source.append("#include \"SFJoiningType.h\"").newLine();
     source.append("#include \"SFJoiningTypeLookup.h\"").newLine();
     source.newLine();
     source.append(byteMacro).newLine();
+    source.append(inRangeMacro).newLine();
 
     for (char n : joiningTypes) {
         string upper(1, toupper(n));
@@ -303,6 +326,7 @@ void JoiningTypeLookupGenerator::generateFile(const std::string &directory) {
     source.append(lookupFunction).newLine();
 
     source.append("#undef " + BYTE_MACRO).newLine();
+    source.append("#undef " + IN_RANGE_MACRO).newLine();
     for (char n : joiningTypes) {
         string upper(1, toupper(n));
         source.append("#undef " + upper).newLine();
