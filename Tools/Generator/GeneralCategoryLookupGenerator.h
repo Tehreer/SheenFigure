@@ -49,8 +49,7 @@ private:
         const MainDataSet dataset;
 
         MainDataSegment(size_t index, MainDataSet dataset);
-        const std::string macroName() const;
-        const std::string macroLine() const;
+        const std::string hintLine() const;
     };
 
     typedef std::vector<MainDataSegment *> UnsafeBranchDataSet;
@@ -61,8 +60,7 @@ private:
         const BranchDataSet dataset;
 
         BranchDataSegment(size_t index, BranchDataSet dataset);
-        const std::string macroName() const;
-        const std::string macroLine() const;
+        const std::string hintLine() const;
     };
 
     const Utilities::GeneralCategoryDetector m_generalCategoryDetector;

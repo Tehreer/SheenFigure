@@ -56,12 +56,8 @@ GeneralCategoryLookupGenerator::MainDataSegment::MainDataSegment(size_t index, M
 {
 }
 
-const string GeneralCategoryLookupGenerator::MainDataSegment::macroLine() const {
-    return ("#define " + macroName() + " 0x" + Converter::toHex(index, 4));
-}
-
-const string GeneralCategoryLookupGenerator::MainDataSegment::macroName() const {
-    return (DATA_ARRAY_NAME + "_" + Converter::toHex(index, 4));
+const string GeneralCategoryLookupGenerator::MainDataSegment::hintLine() const {
+    return ("/* DATA_BLOCK: -- 0x" + Converter::toHex(index, 4) + "..0x" + Converter::toHex(index + dataset->size() - 1, 4) + " -- */");
 }
 
 GeneralCategoryLookupGenerator::BranchDataSegment::BranchDataSegment(size_t index, BranchDataSet dataset)
@@ -70,12 +66,8 @@ GeneralCategoryLookupGenerator::BranchDataSegment::BranchDataSegment(size_t inde
 {
 }
 
-const string GeneralCategoryLookupGenerator::BranchDataSegment::macroLine() const {
-    return ("#define " + macroName() + " 0x" + Converter::toHex(index, 4));
-}
-
-const string GeneralCategoryLookupGenerator::BranchDataSegment::macroName() const {
-    return (MAIN_INDEXES_ARRAY_NAME + "_" + Converter::toHex(index, 4));
+const string GeneralCategoryLookupGenerator::BranchDataSegment::hintLine() const {
+    return ("/* INDEX_BLOCK: -- 0x" + Converter::toHex(index, 4) + "..0x" + Converter::toHex(index + dataset->size() - 1, 4) + " -- */");
 }
 
 GeneralCategoryLookupGenerator::GeneralCategoryLookupGenerator(const UnicodeData &unicodeData)
@@ -279,7 +271,7 @@ void GeneralCategoryLookupGenerator::generateFile(const std::string &directory) 
         const MainDataSegment &segment = *dataPtr;
         bool isLast = (dataPtr == (dataEnd - 1));
 
-        arrData.append(segment.macroLine());
+        arrData.append(segment.hintLine());
         arrData.newLine();
 
         size_t length = segment.dataset->size();
@@ -308,18 +300,22 @@ void GeneralCategoryLookupGenerator::generateFile(const std::string &directory) 
         const BranchDataSegment &segment = *mainIndexPtr;
         bool isLast = (mainIndexPtr == (mainIndexEnd - 1));
 
-        arrMainIndexes.append(segment.macroLine());
+        arrMainIndexes.append(segment.hintLine());
         arrMainIndexes.newLine();
 
         size_t length = segment.dataset->size();
 
         for (size_t j = 0; j < length; j++) {
-            arrMainIndexes.appendElement(segment.dataset->at(j)->macroName());
+            string element = "0x" + Converter::toHex(segment.dataset->at(j)->index, 4);
+            arrMainIndexes.appendElement(element);
 
             if (!isLast || j != (length - 1)) {
                 arrMainIndexes.newElement();
-                arrMainIndexes.newLine();
             }
+        }
+
+        if (!isLast) {
+            arrMainIndexes.newLine();
         }
 
         segmentStart += m_mainSegmentSize;
@@ -335,11 +331,11 @@ void GeneralCategoryLookupGenerator::generateFile(const std::string &directory) 
     for (; branchIndexPtr != branchIndexEnd; branchIndexPtr++) {
         const BranchDataSegment &segment = **branchIndexPtr;
         bool isLast = (branchIndexPtr == (branchIndexEnd - 1));
+        string element = "0x" + Converter::toHex(segment.index, 4);
 
-        arrBranchIndexes.appendElement(segment.macroName());
+        arrBranchIndexes.appendElement(element);
         if (!isLast) {
             arrBranchIndexes.newElement();
-            arrBranchIndexes.newLine();
         }
 
         segmentStart += m_branchSegmentSize;
@@ -359,8 +355,8 @@ void GeneralCategoryLookupGenerator::generateFile(const std::string &directory) 
     header.append("#define _SF_GENERAL_CATEGORY_LOOKUP_H").newLine();
     header.newLine();
     header.append("#include <SFConfig.h>").newLine();
-    header.append("#include <SFTypes.h>").newLine();
     header.newLine();
+    header.append("#include \"SFBase.h\"").newLine();
     header.append("#include \"SFGeneralCategory.h\"").newLine();
     header.newLine();
     header.append("SF_INTERNAL SFGeneralCategory SFGeneralCategoryDetermine(SFCodepoint codepoint);").newLine();
@@ -374,8 +370,8 @@ void GeneralCategoryLookupGenerator::generateFile(const std::string &directory) 
     source.append(" */").newLine();
     source.newLine();
     source.append("#include <SFConfig.h>").newLine();
-    source.append("#include <SFTypes.h>").newLine();
     source.newLine();
+    source.append("#include \"SFBase.h\"").newLine();
     source.append("#include \"SFGeneralCategory.h\"").newLine();
     source.append("#include \"SFGeneralCategoryLookup.h\"").newLine();
     source.newLine();
