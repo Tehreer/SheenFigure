@@ -44,7 +44,7 @@ static const string JOINING_RANGES_ARRAY_TYPE = "static const SFUInt16";
 static const string JOINING_RANGES_ARRAY_NAME = "_SFJoiningTypeRanges";
 
 static inline string joiningTypeDataMacro(uint32_t codepoint) {
-    return "JOINING_OFFSET_" + Converter::toHex(codepoint, 4);
+    return "JOINING_BLOCK_" + Converter::toHex(codepoint, 4);
 }
 
 static inline string joiningTypeDataMacroLine(uint32_t codepoint, size_t index) {
