@@ -80,7 +80,6 @@ private:
     size_t m_mainIndexesSize;
     size_t m_branchIndexesSize;
 
-    size_t analyzeData(bool all);
     void collectMainData();
     void collectBranchData();
 };

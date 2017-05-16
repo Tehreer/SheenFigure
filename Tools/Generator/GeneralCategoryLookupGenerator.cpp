@@ -35,10 +35,10 @@ using namespace SheenFigure::Parser;
 using namespace SheenFigure::Generator;
 using namespace SheenFigure::Generator::Utilities;
 
-static const size_t MIN_MAIN_SEGMENT_SIZE = 32;
+static const size_t MIN_MAIN_SEGMENT_SIZE = 8;
 static const size_t MAX_MAIN_SEGMENT_SIZE = 512;
 
-static const size_t MIN_BRANCH_SEGMENT_SIZE = 32;
+static const size_t MIN_BRANCH_SEGMENT_SIZE = 8;
 static const size_t MAX_BRANCH_SEGMENT_SIZE = 512;
 
 static const string DATA_ARRAY_TYPE = "static const SFUInt8";
@@ -102,64 +102,37 @@ void GeneralCategoryLookupGenerator::displayBidiClassesFrequency() {
 void GeneralCategoryLookupGenerator::analyzeData() {
     cout << "Analyzing data for general category lookup." << endl;
 
-    size_t memory = analyzeData(true);
-
-    cout << "  Main Segment Size: " << m_mainSegmentSize << endl;
-    cout << "  Branch Segment Size: " << m_branchSegmentSize << endl;
-    cout << "  Required Memory: " << memory << " bytes";
-}
-
-size_t GeneralCategoryLookupGenerator::analyzeData(bool all) {
     size_t minMemory = SIZE_MAX;
-    size_t dataSize = 0;
+    size_t mainSegmentSize = 0;
+    size_t branchSegmentSize = 0;
 
-    if (all || m_mainSegmentSize == 0) {
-        size_t minSize = SIZE_MAX;
-        minMemory = SIZE_MAX;
-
-        m_mainSegmentSize = MIN_MAIN_SEGMENT_SIZE;
-        while (m_mainSegmentSize <= MAX_MAIN_SEGMENT_SIZE) {
-            collectMainData();
-
-            size_t memory = m_dataSize + (m_mainIndexesSize * 2);
-            if (memory < minMemory) {
-                minSize = m_mainSegmentSize;
-                minMemory = memory;
-                dataSize = m_dataSize;
-            }
-
-            m_mainSegmentSize++;
-        }
-        m_mainSegmentSize = minSize;
+    m_mainSegmentSize = MIN_MAIN_SEGMENT_SIZE;
+    while (m_mainSegmentSize <= MAX_MAIN_SEGMENT_SIZE) {
         collectMainData();
-    }
-    
-    if (all || m_branchSegmentSize == 0) {
-        size_t minSize = SIZE_MAX;
-        minMemory = SIZE_MAX;
 
         m_branchSegmentSize = MIN_BRANCH_SEGMENT_SIZE;
         while (m_branchSegmentSize <= MAX_BRANCH_SEGMENT_SIZE) {
             collectBranchData();
 
-            size_t branchBytes = m_branchSegments.at(m_branchSegments.size() - 1).index > UINT8_MAX ? 2 : 1;
-            size_t memory = (m_mainIndexesSize * 2) + (m_branchIndexesSize * branchBytes);
+            size_t memory = m_dataSize + ((m_mainIndexesSize + m_branchIndexesSize) * 2);
             if (memory < minMemory) {
-                minSize = m_branchSegmentSize;
+                mainSegmentSize = m_mainSegmentSize;
+                branchSegmentSize = m_branchSegmentSize;
                 minMemory = memory;
             }
 
             m_branchSegmentSize++;
         }
-        m_branchSegmentSize = minSize;
-        collectBranchData();
+
+        m_mainSegmentSize++;
     }
 
-    if (all) {
-        return (dataSize + minMemory);
-    }
+    m_mainSegmentSize = mainSegmentSize;
+    m_branchSegmentSize = branchSegmentSize;
 
-    return 0;
+    cout << "  Main Segment Size: " << mainSegmentSize << endl;
+    cout << "  Branch Segment Size: " << branchSegmentSize << endl;
+    cout << "  Required Memory: " << minMemory << " bytes";
 }
 
 void GeneralCategoryLookupGenerator::collectMainData() {
@@ -256,7 +229,6 @@ void GeneralCategoryLookupGenerator::collectBranchData() {
 }
 
 void GeneralCategoryLookupGenerator::generateFile(const std::string &directory) {
-    analyzeData(false);
     collectMainData();
     collectBranchData();
 
@@ -265,6 +237,7 @@ void GeneralCategoryLookupGenerator::generateFile(const std::string &directory) 
     arrData.setName(DATA_ARRAY_NAME);
     arrData.setElementSpace(3);
 
+    int dataCount = 0;
     auto dataPtr = m_dataSegments.begin();
     auto dataEnd = m_dataSegments.end();
     for (; dataPtr != dataEnd; dataPtr++) {
@@ -278,6 +251,7 @@ void GeneralCategoryLookupGenerator::generateFile(const std::string &directory) 
 
         for (size_t j = 0; j < length; j++) {
             arrData.appendElement(m_generalCategoryDetector.numberToName(segment.dataset->at(j)));
+            dataCount++;
 
             if (!isLast || j != (length - 1)) {
                 arrData.newElement();
@@ -288,12 +262,14 @@ void GeneralCategoryLookupGenerator::generateFile(const std::string &directory) 
             arrData.newLine();
         }
     }
+    arrData.setSizeDescriptor(Converter::toString(dataCount));
 
     ArrayBuilder arrMainIndexes;
     arrMainIndexes.setDataType(MAIN_INDEXES_ARRAY_TYPE);
     arrMainIndexes.setName(MAIN_INDEXES_ARRAY_NAME);
 
     size_t segmentStart = m_firstCodePoint;
+    int mainIndexCount = 0;
     auto mainIndexPtr = m_branchSegments.begin();
     auto mainIndexEnd = m_branchSegments.end();
     for (; mainIndexPtr != mainIndexEnd; mainIndexPtr++) {
@@ -308,6 +284,7 @@ void GeneralCategoryLookupGenerator::generateFile(const std::string &directory) 
         for (size_t j = 0; j < length; j++) {
             string element = "0x" + Converter::toHex(segment.dataset->at(j)->index, 4);
             arrMainIndexes.appendElement(element);
+            mainIndexCount++;
 
             if (!isLast || j != (length - 1)) {
                 arrMainIndexes.newElement();
@@ -320,12 +297,14 @@ void GeneralCategoryLookupGenerator::generateFile(const std::string &directory) 
 
         segmentStart += m_mainSegmentSize;
     }
+    arrMainIndexes.setSizeDescriptor(Converter::toString(mainIndexCount));
 
     ArrayBuilder arrBranchIndexes;
     arrBranchIndexes.setDataType(BRANCH_INDEXES_ARRAY_TYPE);
     arrBranchIndexes.setName(BRANCH_INDEXES_ARRAY_NAME);
 
     segmentStart = 0;
+    int branchIndexCount = 0;
     auto branchIndexPtr = m_branchReferences.begin();
     auto branchIndexEnd = m_branchReferences.end();
     for (; branchIndexPtr != branchIndexEnd; branchIndexPtr++) {
@@ -334,12 +313,15 @@ void GeneralCategoryLookupGenerator::generateFile(const std::string &directory) 
         string element = "0x" + Converter::toHex(segment.index, 4);
 
         arrBranchIndexes.appendElement(element);
+        branchIndexCount++;
+
         if (!isLast) {
             arrBranchIndexes.newElement();
         }
 
         segmentStart += m_branchSegmentSize;
     }
+    arrBranchIndexes.setSizeDescriptor(Converter::toString(branchIndexCount));
 
     set<string> categoryNames;
     string upperName;
@@ -367,6 +349,12 @@ void GeneralCategoryLookupGenerator::generateFile(const std::string &directory) 
     source.append("/*").newLine();
     source.append(" * Automatically generated by SheenFigureGenerator tool. ").newLine();
     source.append(" * DO NOT EDIT!!").newLine();
+    source.append(" *").newLine();
+    source.append(" * REQUIRED MEMORY: " + Converter::toString((int)m_dataSize)
+                  + "+(" + Converter::toString((int)m_mainIndexesSize) + "*2)+("
+                  + Converter::toString((int)m_branchIndexesSize) + "*2) = "
+                  + Converter::toString((int)(m_dataSize + m_mainIndexesSize*2 + m_branchIndexesSize*2))
+                  + " Bytes").newLine();
     source.append(" */").newLine();
     source.newLine();
     source.append("#include <SFConfig.h>").newLine();
