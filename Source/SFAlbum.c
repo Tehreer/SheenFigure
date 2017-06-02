@@ -134,10 +134,8 @@ SF_INTERNAL void SFAlbumReset(SFAlbumRef album, SFCodepointsRef codepoints, SFUI
 
 SF_INTERNAL void SFAlbumBeginFilling(SFAlbumRef album)
 {
-    SFUInteger associatesCapacity = album->codeunitCount >> 1;
-	SFUInteger glyphCapacity = album->codeunitCount << 1;
+	SFUInteger glyphCapacity = album->codeunitCount;
 
-    SFListReserveRange(&album->_associates, 0, associatesCapacity);
     SFListReserveRange(&album->_glyphs, 0, glyphCapacity);
     SFListReserveRange(&album->_details, 0, glyphCapacity);
 
