@@ -26,160 +26,170 @@
 #include "SFUnifiedEngine.h"
 #include "SFScheme.h"
 
-static SFData _SFSearchScriptInList(SFData scriptList, SFTag scriptTag);
-static SFData _SFSearchLangSysInScript(SFData script, SFTag languageTag);
-static SFData _SFSearchFeatureInLangSys(SFData langSys, SFData featureList, SFTag featureTag);
-
-static void _SFAddAllLookups(_SFSchemeStateRef state, SFData feature);
-static void _SFAddFeatureRange(_SFSchemeStateRef state, SFUInteger index, SFUInteger count, SFBoolean simultaneous);
-static void _SFAddAllFeatures(_SFSchemeStateRef state);
-static void _SFAddHeader(_SFSchemeStateRef state, SFData header);
-
-static SFData _SFSearchScriptInList(SFData scriptList, SFTag scriptTag)
+static SFData _SFSearchScriptTable(SFData scriptListTable, SFTag scriptTag)
 {
-    SFUInt16 scriptCount = SFScriptList_ScriptCount(scriptList);
+    SFData scriptTable = NULL;
+    SFUInt16 scriptCount;
     SFUInt16 index;
 
-    for (index = 0; index < scriptCount; index++) {
-        SFData scriptRecord = SFScriptList_ScriptRecord(scriptList, index);
-        SFTag scriptRecordTag = SFScriptRecord_ScriptTag(scriptRecord);
+    scriptCount = SFScriptList_ScriptCount(scriptListTable);
 
-        if (scriptRecordTag == scriptTag) {
-            SFOffset offset = SFScriptRecord_ScriptOffset(scriptRecord);
-            return SFData_Subdata(scriptList, offset);
+    for (index = 0; index < scriptCount; index++) {
+        SFData scriptRecord = SFScriptList_ScriptRecord(scriptListTable, index);
+        SFTag scriptRecTag = SFScriptRecord_ScriptTag(scriptRecord);
+        SFOffset scriptOffset;
+
+        if (scriptRecTag == scriptTag) {
+            scriptOffset = SFScriptRecord_ScriptOffset(scriptRecord);
+            scriptTable = SFData_Subdata(scriptListTable, scriptOffset);
+            break;
         }
     }
 
-    return NULL;
+    return scriptTable;
 }
 
-static SFData _SFSearchLangSysInScript(SFData script, SFTag languageTag)
+static SFData _SFSearchLangSysTable(SFData scriptTable, SFTag languageTag)
 {
+    SFData langSysTable = NULL;
+
     if (languageTag == SFTagMake('d', 'f', 'l', 't')) {
-        SFOffset offset = SFScript_DefaultLangSysOffset(script);
-        if (offset) {
-            return SFData_Subdata(script, offset);
+        SFOffset langSysOffset = SFScript_DefaultLangSysOffset(scriptTable);
+
+        if (langSysOffset) {
+            langSysTable = SFData_Subdata(scriptTable, langSysOffset);
         }
     } else {
-        SFUInt16 langSysCount = SFScript_LangSysCount(script);
+        SFUInt16 langSysCount = SFScript_LangSysCount(scriptTable);
         SFUInt16 index;
 
         for (index = 0; index < langSysCount; index++) {
-            SFData langSysRecord = SFScript_LangSysRecord(script, index);
+            SFData langSysRecord = SFScript_LangSysRecord(scriptTable, index);
             SFTag langSysTag = SFLangSysRecord_LangSysTag(langSysRecord);
-            SFUInt16 offset;
+            SFOffset langSysOffset;
 
             if (langSysTag == languageTag) {
-                offset = SFLangSysRecord_LangSysOffset(langSysRecord);
-                return SFData_Subdata(script, offset);
+                langSysOffset = SFLangSysRecord_LangSysOffset(langSysRecord);
+                langSysTable = SFData_Subdata(scriptTable, langSysOffset);
+                break;
             }
         }
     }
 
-    return NULL;
+    return langSysTable;
 }
 
-static SFData _SFSearchFeatureInLangSys(SFData langSys, SFData featureList, SFTag featureTag)
+static SFData _SFSearchFeatureTable(SFData langSysTable, SFData featureListTable, SFTag featureTag)
 {
-    SFUInt16 featureCount = SFLangSys_FeatureCount(langSys);
+    SFData featureTable = NULL;
+    SFUInt16 featureCount;
     SFUInt16 index;
 
-    for (index = 0; index < featureCount; index++) {
-        SFUInt16 featureIndex = SFLangSys_FeatureIndex(langSys, index);
-        SFData featureRecord = SFFeatureList_FeatureRecord(featureList, featureIndex);
-        SFTag featureRecordTag = SFFeatureRecord_FeatureTag(featureRecord);
+    featureCount = SFLangSys_FeatureCount(langSysTable);
 
-        if (featureRecordTag == featureTag) {
-            SFOffset offset = SFFeatureRecord_FeatureOffset(featureRecord);
-            return SFData_Subdata(featureList, offset);
+    for (index = 0; index < featureCount; index++) {
+        SFUInt16 featureIndex = SFLangSys_FeatureIndex(langSysTable, index);
+        SFData featureRecord = SFFeatureList_FeatureRecord(featureListTable, featureIndex);
+        SFTag featureRecTag = SFFeatureRecord_FeatureTag(featureRecord);
+        SFOffset featureOffset;
+
+        if (featureRecTag == featureTag) {
+            featureOffset = SFFeatureRecord_FeatureOffset(featureRecord);
+            featureTable = SFData_Subdata(featureListTable, featureOffset);
+            break;
         }
     }
 
-    return NULL;
+    return featureTable;
 }
 
-static void _SFAddAllLookups(_SFSchemeStateRef state, SFData feature)
+static void _SFAddFeatureLookups(SFPatternBuilderRef patternBuilder, SFData featureTable)
 {
-    SFUInt16 lookupCount = SFFeature_LookupCount(feature);
-    SFUInt16 lookupIndex;
+    SFUInt16 lookupCount = SFFeature_LookupCount(featureTable);
+    SFUInt16 index;
 
-    for (lookupIndex = 0; lookupIndex < lookupCount; lookupIndex++) {
-        SFUInt16 lookupListIndex = SFFeature_LookupListIndex(feature, lookupIndex);
-        SFPatternBuilderAddLookup(&state->builder, lookupListIndex);
+    for (index = 0; index < lookupCount; index++) {
+        SFUInt16 lookupListIndex = SFFeature_LookupListIndex(featureTable, index);
+        SFPatternBuilderAddLookup(patternBuilder, lookupListIndex);
     }
 }
 
-static void _SFAddFeatureRange(_SFSchemeStateRef state, SFUInteger index, SFUInteger count, SFBoolean simultaneous)
+static void _SFAddFeatureRange(SFPatternBuilderRef patternBuilder,
+    SFData langSysTable, SFData featureListTable,
+    SFFeatureInfo *featureInfos, SFUInteger featureCount, SFBoolean simultaneous)
 {
-    SFUInteger limit = index + count;
+    SFUInteger index;
 
-    for (; index < limit; index++) {
-        SFFeatureInfoRef featureInfo = &state->knowledge->featureInfos.items[index];
+    for (index = 0; index < featureCount; index++) {
+        SFFeatureInfoRef featureInfo = &featureInfos[index];
 
         /* Skip those features which are off by default. */
         if (featureInfo->featureBehaviour != SFFeatureBehaviourOff) {
-            SFData feature = _SFSearchFeatureInLangSys(state->langSys, state->featureList, featureInfo->featureTag);
+            SFData featureTable = _SFSearchFeatureTable(langSysTable, featureListTable, featureInfo->featureTag);
 
             /* Add the feature, if it exists in the language. */
-            if (feature) {
-                SFPatternBuilderAddFeature(&state->builder, featureInfo->featureTag, featureInfo->featureMask);
-                _SFAddAllLookups(state, feature);
+            if (featureTable) {
+                SFPatternBuilderAddFeature(patternBuilder, featureInfo->featureTag, featureInfo->featureMask);
+                _SFAddFeatureLookups(patternBuilder, featureTable);
 
                 if (!simultaneous) {
-                    SFPatternBuilderMakeFeatureUnit(&state->builder);
+                    SFPatternBuilderMakeFeatureUnit(patternBuilder);
                 }
             }
         }
     }
 
     if (simultaneous) {
-        SFPatternBuilderMakeFeatureUnit(&state->builder);
+        SFPatternBuilderMakeFeatureUnit(patternBuilder);
     }
 }
 
-static void _SFAddAllFeatures(_SFSchemeStateRef state)
+static void _SFAddKnownFeatures(SFPatternBuilderRef patternBuilder,
+    SFScriptKnowledgeRef scriptKnowledge, SFData langSysTable, SFData featureListTable)
 {
-    SFUInteger featureCount = state->knowledge->featureInfos.count;
-    SFUInteger unitCount = state->knowledge->featureUnits.count;
+    SFUInteger featureCount = scriptKnowledge->featureInfos.count;
+    SFUInteger unitCount = scriptKnowledge->featureUnits.count;
+    SFFeatureInfo *featureInfos = scriptKnowledge->featureInfos.items;
     SFUInteger featureIndex = 0;
     SFUInteger unitIndex;
 
     for (unitIndex = 0; unitIndex < unitCount; unitIndex++) {
-        SFRange groupRange = state->knowledge->featureUnits.items[unitIndex];
+        SFRange groupRange = scriptKnowledge->featureUnits.items[unitIndex];
 
         if (groupRange.start > featureIndex) {
-            _SFAddFeatureRange(state, featureIndex, groupRange.start - featureIndex, SFFalse);
+            _SFAddFeatureRange(patternBuilder, langSysTable, featureListTable,
+                               featureInfos + featureIndex, groupRange.start - featureIndex, SFFalse);
             featureIndex = groupRange.start;
         } else {
-            _SFAddFeatureRange(state, groupRange.start, groupRange.count, SFTrue);
+            _SFAddFeatureRange(patternBuilder, langSysTable, featureListTable,
+                               featureInfos + groupRange.start, groupRange.count, SFTrue);
             featureIndex += groupRange.count;
         }
     }
 
-    _SFAddFeatureRange(state, featureIndex, featureCount - featureIndex, SFFalse);
+    _SFAddFeatureRange(patternBuilder, langSysTable, featureListTable,
+                       featureInfos + featureIndex, featureCount - featureIndex, SFFalse);
 }
 
-static void _SFAddHeader(_SFSchemeStateRef state, SFData header)
+static void _SFAddHeaderTable(SFSchemeRef scheme,
+    SFPatternBuilderRef patternBuilder, SFScriptKnowledgeRef scriptKnowledge, SFData headerTable)
 {
-    SFSchemeRef scheme = state->scheme;
-    SFOffset offset;
+    SFOffset scriptListOffset = SFHeader_ScriptListOffset(headerTable);
+    SFData scriptListTable = SFData_Subdata(headerTable, scriptListOffset);
+    SFOffset featureListOffset = SFHeader_FeatureListOffset(headerTable);
+    SFData featureListTable = SFData_Subdata(headerTable, featureListOffset);
+    SFData scriptTable;
+    SFData langSysTable;
 
-    /* Get script list table. */
-    offset = SFHeader_ScriptListOffset(header);
-    state->scriptList = SFData_Subdata(header, offset);
-    /* Get feature list table. */
-    offset = SFHeader_FeatureListOffset(header);
-    state->featureList = SFData_Subdata(header, offset);
+    /* Get script table belonging to the desired tag. */
+    scriptTable = _SFSearchScriptTable(scriptListTable, scheme->_scriptTag);
 
-    /* Get script table belonging to desired tag. */
-    state->script = _SFSearchScriptInList(state->scriptList, scheme->_scriptTag);
+    if (scriptTable) {
+        /* Get lang sys table belonging to the desired tag. */
+        langSysTable = _SFSearchLangSysTable(scriptTable, scheme->_languageTag);
 
-    if (state->script) {
-        /* Get lang sys table belonging to desired tag. */
-        state->langSys = _SFSearchLangSysInScript(state->script, scheme->_languageTag);
-
-        if (state->langSys) {
-            _SFAddAllFeatures(state);
+        if (langSysTable) {
+            _SFAddKnownFeatures(patternBuilder, scriptKnowledge, langSysTable, featureListTable);
         }
     }
 }
@@ -212,36 +222,36 @@ void SFSchemeSetLanguageTag(SFSchemeRef scheme, SFTag languageTag)
 
 SFPatternRef SFSchemeBuildPattern(SFSchemeRef scheme)
 {
-    _SFSchemeState state;
-    state.scheme = scheme;
-    state.knowledge = SFShapingKnowledgeSeekScript(&SFUnifiedKnowledgeInstance, scheme->_scriptTag);
+    SFScriptKnowledgeRef scriptKnowledge = SFShapingKnowledgeSeekScript(&SFUnifiedKnowledgeInstance, scheme->_scriptTag);
 
     /* Check whether Sheen Figure has knowledge about this script. */
-    if (state.knowledge) {
+    if (scriptKnowledge) {
         SFData gsub = scheme->_font->tables.gsub;
         SFData gpos = scheme->_font->tables.gpos;
 
         if (gsub || gpos) {
             SFPatternRef pattern = SFPatternCreate();
+            SFPatternBuilder builder;
 
-            SFPatternBuilderInitialize(&state.builder, pattern);
-            SFPatternBuilderSetFont(&state.builder, scheme->_font);
-            SFPatternBuilderSetScript(&state.builder, scheme->_scriptTag, state.knowledge->defaultDirection);
-            SFPatternBuilderSetLanguage(&state.builder, scheme->_languageTag);
+            SFPatternBuilderInitialize(&builder, pattern);
+            SFPatternBuilderSetFont(&builder, scheme->_font);
+            SFPatternBuilderSetScript(&builder, scheme->_scriptTag, scriptKnowledge->defaultDirection);
+            SFPatternBuilderSetLanguage(&builder, scheme->_languageTag);
 
             if (gsub) {
-                SFPatternBuilderBeginFeatures(&state.builder, SFFeatureKindSubstitution);
-                _SFAddHeader(&state, gsub);
-                SFPatternBuilderEndFeatures(&state.builder);
-            }
-            if (gpos) {
-                SFPatternBuilderBeginFeatures(&state.builder, SFFeatureKindPositioning);
-                _SFAddHeader(&state, gpos);
-                SFPatternBuilderEndFeatures(&state.builder);
+                SFPatternBuilderBeginFeatures(&builder, SFFeatureKindSubstitution);
+                _SFAddHeaderTable(scheme, &builder, scriptKnowledge, gsub);
+                SFPatternBuilderEndFeatures(&builder);
             }
 
-            SFPatternBuilderBuild(&state.builder);
-            SFPatternBuilderFinalize(&state.builder);
+            if (gpos) {
+                SFPatternBuilderBeginFeatures(&builder, SFFeatureKindPositioning);
+                _SFAddHeaderTable(scheme, &builder, scriptKnowledge, gpos);
+                SFPatternBuilderEndFeatures(&builder);
+            }
+
+            SFPatternBuilderBuild(&builder);
+            SFPatternBuilderFinalize(&builder);
 
             return pattern;
         }

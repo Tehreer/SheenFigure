@@ -20,20 +20,8 @@
 #include <SFScheme.h>
 
 #include "SFBase.h"
-#include "SFData.h"
 #include "SFFont.h"
-#include "SFPatternBuilder.h"
 #include "SFShapingKnowledge.h"
-
-typedef struct _SFSchemeState {
-    SFSchemeRef scheme;
-    SFScriptKnowledgeRef knowledge;
-    SFPatternBuilder builder;
-    SFData scriptList;              /**< OpenType script list table. */
-    SFData featureList;             /**< OpenType feature list table. */
-    SFData script;                  /**< OpenType script table. */
-    SFData langSys;                 /**< OpenType language system table. */
-} _SFSchemeState, *_SFSchemeStateRef;
 
 typedef struct _SFScheme {
     SFFontRef _font;                /**< Font, whose scheme is being built. */
