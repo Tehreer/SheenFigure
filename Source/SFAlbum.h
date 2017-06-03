@@ -68,7 +68,7 @@ typedef struct _SFAlbum {
     SFUInteger codeunitCount;           /**< Number of code units to process. */
     SFUInteger glyphCount;              /**< Total number of glyphs in the album. */
 
-    SFUInteger *_mapArray;              /**< Code unit index to glyph index mapping array. */
+    SF_LIST(SFUInteger) _indexMap;      /**< Code unit index to glyph index mapping list. */
     SF_LIST(SFUInteger) _associates;    /**< List of associates of composite glyphs. */
     SF_LIST(SFGlyphID) _glyphs;         /**< List of ids of all glyphs in the album. */
     SF_LIST(SFGlyphDetail) _details;    /**< List of details of all glyphs in the album. */

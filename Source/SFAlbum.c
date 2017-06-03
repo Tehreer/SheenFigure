@@ -76,7 +76,7 @@ const SFAdvance *SFAlbumGetGlyphAdvancesPtr(SFAlbumRef album)
 
 const SFUInteger *SFAlbumGetCodeunitToGlyphMapPtr(SFAlbumRef album)
 {
-    return album->_mapArray;
+    return album->_indexMap.items;
 }
 
 SFAlbumRef SFAlbumRetain(SFAlbumRef album)
@@ -100,8 +100,8 @@ SF_INTERNAL void SFAlbumInitialize(SFAlbumRef album)
     album->codepoints = NULL;
     album->codeunitCount = 0;
     album->glyphCount = 0;
-    album->_mapArray = NULL;
 
+    SFListInitialize(&album->_indexMap, sizeof(SFUInteger));
     SFListInitialize(&album->_associates, sizeof(SFUInteger));
     SFListInitialize(&album->_glyphs, sizeof(SFGlyphID));
     SFListInitialize(&album->_details, sizeof(SFGlyphDetail));
@@ -115,13 +115,11 @@ SF_INTERNAL void SFAlbumInitialize(SFAlbumRef album)
 
 SF_INTERNAL void SFAlbumReset(SFAlbumRef album, SFCodepointsRef codepoints, SFUInteger codeunitCount)
 {
-    free(album->_mapArray);
-
     album->codepoints = codepoints;
     album->codeunitCount = codeunitCount;
     album->glyphCount = 0;
-    album->_mapArray = NULL;
 
+    SFListClear(&album->_indexMap);
     SFListClear(&album->_associates);
     SFListClear(&album->_glyphs);
     SFListClear(&album->_details);
@@ -417,17 +415,16 @@ static void _SFAlbumRemovePlaceholders(SFAlbumRef album)
 
 static void _SFAlbumBuildCodeunitToGlyphMap(SFAlbumRef album)
 {
-    SFUInteger *mapArray;
-    SFUInteger association;
     SFUInteger codeunitCount;
+    SFUInteger association;
     SFUInteger index;
 
     codeunitCount = album->codeunitCount;
-    mapArray = malloc(sizeof(SFUInteger) * codeunitCount);
+    SFListReserveRange(&album->_indexMap, 0, codeunitCount);
 
     /* Initialize the map array. */
     for (index = 0; index < codeunitCount; index++) {
-        mapArray[index] = SFInvalidIndex;
+        SFListSetVal(&album->_indexMap, index, SFInvalidIndex);
     }
 
     /* Traverse in reverse order so that first glyph takes priority in case of multiple substitution. */
@@ -444,27 +441,26 @@ static void _SFAlbumBuildCodeunitToGlyphMap(SFAlbumRef album)
             for (j = 0; j < count; j++) {
                 association = array[j];
 
-                /* Ignore if already assigned. */
-                if (mapArray[association] == SFInvalidIndex) {
-                    mapArray[association] = index;
+                if (SFListGetVal(&album->_indexMap, association) == SFInvalidIndex) {
+                    SFListSetVal(&album->_indexMap, association, index);
+                } else {
+                    /* Ignore if already assigned. */
                 }
             }
         } else {
             association = SFAlbumGetSingleAssociation(album, index);
-            mapArray[association] = index;
+            SFListSetVal(&album->_indexMap, association, index);
         }
     }
 
     /* Assign the same glyph index to subsequent codeunits. */
     for (index = 0; index < codeunitCount; index++) {
-        if (mapArray[index] == SFInvalidIndex) {
-            mapArray[index] = association;
+        if (SFListGetVal(&album->_indexMap, index) == SFInvalidIndex) {
+            SFListSetVal(&album->_indexMap, index, association);
         }
 
-        association = mapArray[index];
+        association = SFListGetVal(&album->_indexMap, index);
     }
-
-    album->_mapArray = mapArray;
 }
 
 SF_INTERNAL void SFAlbumWrapUp(SFAlbumRef album)
@@ -479,6 +475,7 @@ SF_INTERNAL void SFAlbumWrapUp(SFAlbumRef album)
 }
 
 SF_INTERNAL void SFAlbumFinalize(SFAlbumRef album) {
+    SFListFinalize(&album->_indexMap);
     SFListFinalize(&album->_associates);
     SFListFinalize(&album->_glyphs);
     SFListFinalize(&album->_details);
