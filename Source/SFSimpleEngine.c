@@ -27,7 +27,7 @@
 static SFScriptKnowledgeRef _SFSimpleKnowledgeSeekScript(const void *object, SFTag scriptTag);
 static void _SFSimpleEngineProcessAlbum(const void *object, SFAlbumRef album);
 
-static SFScriptKnowledge _SFStandardScriptKnowledge = {
+static SFScriptKnowledge _SFSimpleScriptKnowledge = {
     SFTextDirectionLeftToRight,
     { NULL, 0 },
     { NULL, 0 }
@@ -39,7 +39,7 @@ SFShapingKnowledge SFSimpleKnowledgeInstance = {
 
 static SFScriptKnowledgeRef _SFSimpleKnowledgeSeekScript(const void *object, SFTag scriptTag)
 {
-    return &_SFStandardScriptKnowledge;
+    return &_SFSimpleScriptKnowledge;
 }
 
 static SFShapingEngine _SFSimpleEngineBase = {
