@@ -23,12 +23,14 @@
 #include "SFArtist.h"
 #include "SFShapingEngine.h"
 #include "SFShapingKnowledge.h"
+#include "SFSimpleEngine.h"
 #include "SFStandardEngine.h"
 
 typedef union _SFUnifiedEngine {
     SFShapingEngine _base;
     SFArabicEngine _arabicEngine;
     SFStandardEngine _standardEngine;
+    SFSimpleEngine _simpleEngine;
 } SFUnifiedEngine, *SFUnifiedEngineRef;
 
 extern SFShapingKnowledge SFUnifiedKnowledgeInstance;

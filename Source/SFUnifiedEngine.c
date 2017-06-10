@@ -20,6 +20,7 @@
 #include "SFArtist.h"
 #include "SFStandardEngine.h"
 #include "SFShapingKnowledge.h"
+#include "SFSimpleEngine.h"
 #include "SFStandardEngine.h"
 #include "SFUnifiedEngine.h"
 
@@ -37,6 +38,10 @@ static SFScriptKnowledgeRef _SFUnifiedKnowledgeSeekScript(const void *object, SF
 
     if (!knowledge) {
         knowledge = SFShapingKnowledgeSeekScript(&SFStandardKnowledgeInstance, scriptTag);
+    }
+
+    if (!knowledge) {
+        knowledge = SFShapingKnowledgeSeekScript(&SFSimpleKnowledgeInstance, scriptTag);
     }
 
     return knowledge;
@@ -57,4 +62,6 @@ SF_INTERNAL void SFUnifiedEngineInitialize(SFUnifiedEngineRef unifiedEngine, SFA
         SFStandardEngineInitialize(&unifiedEngine->_standardEngine, artist);
         return;
     }
+
+    SFSimpleEngineInitialize(&unifiedEngine->_simpleEngine, artist);
 }
