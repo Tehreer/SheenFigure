@@ -15,12 +15,12 @@
  */
 
 #include <SFConfig.h>
-
 #include <stddef.h>
 #include <stdlib.h>
 
 #include "SFBase.h"
 #include "SFCommon.h"
+#include "SFFont.h"
 #include "SFPatternBuilder.h"
 #include "SFPattern.h"
 #include "SFUnifiedEngine.h"
@@ -222,39 +222,34 @@ void SFSchemeSetLanguageTag(SFSchemeRef scheme, SFTag languageTag)
 
 SFPatternRef SFSchemeBuildPattern(SFSchemeRef scheme)
 {
-    SFScriptKnowledgeRef scriptKnowledge = SFShapingKnowledgeSeekScript(&SFUnifiedKnowledgeInstance, scheme->_scriptTag);
+    SFFontRef font = scheme->_font;
 
-    /* Check whether Sheen Figure has knowledge about this script. */
-    if (scriptKnowledge) {
-        SFData gsub = scheme->_font->tables.gsub;
-        SFData gpos = scheme->_font->tables.gpos;
+    if (font) {
+        SFScriptKnowledgeRef scriptKnowledge = SFShapingKnowledgeSeekScript(&SFUnifiedKnowledgeInstance, scheme->_scriptTag);
+        SFPatternRef pattern = SFPatternCreate();
+        SFPatternBuilder builder;
 
-        if (gsub || gpos) {
-            SFPatternRef pattern = SFPatternCreate();
-            SFPatternBuilder builder;
+        SFPatternBuilderInitialize(&builder, pattern);
+        SFPatternBuilderSetFont(&builder, scheme->_font);
+        SFPatternBuilderSetScript(&builder, scheme->_scriptTag, scriptKnowledge->defaultDirection);
+        SFPatternBuilderSetLanguage(&builder, scheme->_languageTag);
 
-            SFPatternBuilderInitialize(&builder, pattern);
-            SFPatternBuilderSetFont(&builder, scheme->_font);
-            SFPatternBuilderSetScript(&builder, scheme->_scriptTag, scriptKnowledge->defaultDirection);
-            SFPatternBuilderSetLanguage(&builder, scheme->_languageTag);
-
-            if (gsub) {
-                SFPatternBuilderBeginFeatures(&builder, SFFeatureKindSubstitution);
-                _SFAddHeaderTable(scheme, &builder, scriptKnowledge, gsub);
-                SFPatternBuilderEndFeatures(&builder);
-            }
-
-            if (gpos) {
-                SFPatternBuilderBeginFeatures(&builder, SFFeatureKindPositioning);
-                _SFAddHeaderTable(scheme, &builder, scriptKnowledge, gpos);
-                SFPatternBuilderEndFeatures(&builder);
-            }
-
-            SFPatternBuilderBuild(&builder);
-            SFPatternBuilderFinalize(&builder);
-
-            return pattern;
+        if (font->tables.gsub) {
+            SFPatternBuilderBeginFeatures(&builder, SFFeatureKindSubstitution);
+            _SFAddHeaderTable(scheme, &builder, scriptKnowledge, font->tables.gsub);
+            SFPatternBuilderEndFeatures(&builder);
         }
+
+        if (font->tables.gpos) {
+            SFPatternBuilderBeginFeatures(&builder, SFFeatureKindPositioning);
+            _SFAddHeaderTable(scheme, &builder, scriptKnowledge, font->tables.gpos);
+            SFPatternBuilderEndFeatures(&builder);
+        }
+
+        SFPatternBuilderBuild(&builder);
+        SFPatternBuilderFinalize(&builder);
+
+        return pattern;
     }
 
     return NULL;
