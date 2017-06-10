@@ -59,6 +59,7 @@ SF_INTERNAL void _SFDiscoverGlyphs(SFTextProcessorRef processor)
     SFFontRef font = pattern->font;
     SFAlbumRef album = processor->_album;
     SFCodepointsRef codepoints = album->codepoints;
+    SFBoolean isRTL = processor->_textDirection == SFTextDirectionRightToLeft;
 
     SFCodepointsReset(album->codepoints);
 
@@ -68,10 +69,19 @@ SF_INTERNAL void _SFDiscoverGlyphs(SFTextProcessorRef processor)
             SFCodepoint current;
 
             while ((current = SFCodepointsNext(codepoints)) != SFCodepointInvalid) {
-                SFCodepoint mirror = SFCodepointsGetMirror(current);
-                SFGlyphID glyph = SFFontGetGlyphIDForCodepoint(font, mirror);
-                SFGlyphTraits traits = _SFGetGlyphTraits(processor, glyph);
+                SFGlyphID glyph;
+                SFGlyphTraits traits;
 
+                if (isRTL) {
+                    SFCodepoint mirror = SFCodepointsGetMirror(current);
+
+                    if (mirror) {
+                        current = mirror;
+                    }
+                }
+
+                glyph = SFFontGetGlyphIDForCodepoint(font, current);
+                traits = _SFGetGlyphTraits(processor, glyph);
                 SFAlbumAddGlyph(album, glyph, traits, codepoints->index);
             }
             break;
