@@ -24,12 +24,7 @@
 
 SF_INTERNAL SFCodepoint SFCodepointsGetMirror(SFCodepoint codepoint)
 {
-    SFCodepoint mirror = SBCodepointGetMirror(codepoint);
-    if (!mirror) {
-        return codepoint;
-    }
-
-    return mirror;
+    return SBCodepointGetMirror(codepoint);
 }
 
 SF_INTERNAL void SFCodepointsInitialize(SFCodepointsRef codepoints, const SBCodepointSequence *referral, SFBoolean backward)
