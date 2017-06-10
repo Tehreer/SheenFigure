@@ -51,6 +51,7 @@ DEBUG_SOURCES = $(SOURCE_DIR)/SFAlbum.c \
                 $(SOURCE_DIR)/SFScheme.c \
                 $(SOURCE_DIR)/SFShapingEngine.c \
                 $(SOURCE_DIR)/SFShapingKnowledge.c \
+                $(SOURCE_DIR)/SFSimpleEngine.c \
                 $(SOURCE_DIR)/SFStandardEngine.c \
                 $(SOURCE_DIR)/SFTextProcessor.c \
                 $(SOURCE_DIR)/SFUnifiedEngine.c
