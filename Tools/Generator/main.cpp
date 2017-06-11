@@ -30,28 +30,20 @@ using namespace SheenFigure::Generator;
 
 int main(int argc, const char * argv[])
 {
-    ArabicShaping arabicShaping("/Users/mta/Desktop");
-    UnicodeData unicodeData("/Users/mta/Desktop");
+    const string in = "/path/to/input";
+    const string out = "/path/to/output";
+
+    ArabicShaping arabicShaping(in);
+    UnicodeData unicodeData(in);
 
     JoiningTypeLookupGenerator joiningTypeLookup(arabicShaping);
-    joiningTypeLookup.displayGaps();
-    joiningTypeLookup.setAllowedGap(90);
-    joiningTypeLookup.generateFile("/Users/mta/Desktop");
+    joiningTypeLookup.setAllowedGap(75);
+    joiningTypeLookup.generateFile(out);
 
     GeneralCategoryLookupGenerator generator(unicodeData);
-    generator.setMainSegmentSize(256);
-    generator.setBranchSegmentSize(32);
-    generator.generateFile("/Users/mta/Desktop");
-
-    for (int i = arabicShaping.firstCodePoint(); i < arabicShaping.lastCodePoint(); i++) {
-        char joiningType = arabicShaping.joiningTypeForCodePoint(i);
-        if (joiningType == '\0') {
-            joiningType = 'X';
-        }
-        printf("%c ", joiningType);
-    }
-
-    getchar();
+    generator.setMainSegmentSize(16);
+    generator.setBranchSegmentSize(49);
+    generator.generateFile(out);
 
     return 0;
 }
