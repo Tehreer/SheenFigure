@@ -32,8 +32,6 @@ public:
     void testGetGlyph();
     void testSetSingleAssociation();
     void testGetSingleAssociation();
-    void testMakeCompositeAssociations();
-    void testGetCompositeAssociations();
     void testFeatureMask();
     void testTraits();
     void testOffset();

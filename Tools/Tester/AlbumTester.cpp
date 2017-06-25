@@ -413,107 +413,6 @@ void AlbumTester::testGetSingleAssociation()
     SFAlbumFinalize(&album);
 }
 
-void AlbumTester::testMakeCompositeAssociations()
-{
-    SFAlbum album;
-    SFAlbumInitialize(&album);
-    SFAlbumReset(&album, NULL, 5);
-    SFAlbumBeginFilling(&album);
-
-    /* Add some glyphs with associations. */
-    SFAlbumAddGlyph(&album, 0, SFGlyphTraitNone, 1);
-    SFAlbumAddGlyph(&album, 0, SFGlyphTraitNone, 2);
-    SFAlbumAddGlyph(&album, 0, SFGlyphTraitNone, 3);
-
-    /* Make the second glyph composite. */
-    SFAlbumSetTraits(&album, 1, SFGlyphTraitComposite);
-
-    /* Set the composite associations. */
-    SFUInteger *associations = SFAlbumMakeCompositeAssociations(&album, 1, 3);
-    associations[0] = 0;
-    associations[1] = 2;
-    associations[2] = 4;
-
-    SFAlbumEndFilling(&album);
-    SFAlbumWrapUp(&album);
-
-    /* Test the output map. */
-    const SFUInteger *actual = SFAlbumGetCodeunitToGlyphMapPtr(&album);
-    const SFUInteger expected[] = { 1, 0, 1, 2, 1};
-    SFAssert(memcmp(actual, expected, sizeof(expected)) == 0);
-
-    SFAlbumFinalize(&album);
-}
-
-void AlbumTester::testGetCompositeAssociations()
-{
-    SFAlbum album;
-    SFAlbumInitialize(&album);
-    SFAlbumReset(&album, NULL, 5);
-    SFAlbumBeginFilling(&album);
-
-    /* Add some composite glyphs. */
-    SFAlbumReserveGlyphsInitialized(&album, 0, 5);
-    for (SFUInteger i = 0; i < 5; i++) {
-        SFAlbumSetTraits(&album, i, SFGlyphTraitComposite);
-    }
-
-    /* Make some composite associations. */
-    {
-        SFUInteger *ca1 = SFAlbumMakeCompositeAssociations(&album, 1, 2);
-        for (SFUInteger i = 0; i < 2; i++) {
-            ca1[i] = i;
-        }
-
-        SFUInteger *ca2 = SFAlbumMakeCompositeAssociations(&album, 2, 3);
-        for (SFUInteger i = 0; i < 3; i++) {
-            ca2[i] = i;
-        }
-
-        SFUInteger *ca3 = SFAlbumMakeCompositeAssociations(&album, 3, 4);
-        for (SFUInteger i = 0; i < 4; i++) {
-            ca3[i] = i;
-        }
-
-        SFUInteger *ca4 = SFAlbumMakeCompositeAssociations(&album, 4, 5);
-        for (SFUInteger i = 0; i < 5; i++) {
-            ca4[i] = i;
-        }
-    }
-
-    /* Test the associations. */
-    {
-        SFUInteger count = 0;
-
-        SFUInteger *ca4 = SFAlbumGetCompositeAssociations(&album, 4, &count);
-        SFAssert(count == 5);
-        for (SFUInteger i = 0; i < count; i++) {
-            SFAssert(ca4[i] == i);
-        }
-
-        SFUInteger *ca3 = SFAlbumGetCompositeAssociations(&album, 3, &count);
-        SFAssert(count == 4);
-        for (SFUInteger i = 0; i < count; i++) {
-            SFAssert(ca3[i] == i);
-        }
-
-        SFUInteger *ca2 = SFAlbumGetCompositeAssociations(&album, 2, &count);
-        SFAssert(count == 3);
-        for (SFUInteger i = 0; i < count; i++) {
-            SFAssert(ca2[i] == i);
-        }
-
-        SFUInteger *ca1 = SFAlbumGetCompositeAssociations(&album, 1, &count);
-        SFAssert(count == 2);
-        for (SFUInteger i = 0; i < count; i++) {
-            SFAssert(ca1[i] == i);
-        }
-    }
-
-    SFAlbumEndFilling(&album);
-    SFAlbumFinalize(&album);
-}
-
 void AlbumTester::testFeatureMask()
 {
     SFAlbum album;
@@ -572,13 +471,13 @@ void AlbumTester::testTraits()
 
     /* Test by inserting traits. */
     {
-        SFAlbumInsertTraits(&album, 0, SFGlyphTraitComposite | SFGlyphTraitPlaceholder);
+        SFAlbumInsertTraits(&album, 0, SFGlyphTraitPlaceholder);
         SFAlbumInsertTraits(&album, 1, SFGlyphTraitAttached | SFGlyphTraitResolved);
         SFAlbumInsertTraits(&album, 2, SFGlyphTraitCursive);
         SFAlbumInsertTraits(&album, 3, SFGlyphTraitCursive | SFGlyphTraitRightToLeft);
         SFAlbumInsertTraits(&album, 4, SFGlyphTraitResolved);
 
-        SFAssert(SFAlbumGetTraits(&album, 0) == (SFGlyphTraitComposite | SFGlyphTraitPlaceholder));
+        SFAssert(SFAlbumGetTraits(&album, 0) == (SFGlyphTraitPlaceholder));
         SFAssert(SFAlbumGetTraits(&album, 1) == (SFGlyphTraitBase | SFGlyphTraitAttached | SFGlyphTraitResolved));
         SFAssert(SFAlbumGetTraits(&album, 2) == (SFGlyphTraitLigature | SFGlyphTraitCursive));
         SFAssert(SFAlbumGetTraits(&album, 3) == (SFGlyphTraitMark | SFGlyphTraitCursive | SFGlyphTraitRightToLeft));
@@ -593,7 +492,7 @@ void AlbumTester::testTraits()
         SFAlbumRemoveTraits(&album, 3, SFGlyphTraitRightToLeft);
         SFAlbumRemoveTraits(&album, 4, SFGlyphTraitComponent);
 
-        SFAssert(SFAlbumGetTraits(&album, 0) == (SFGlyphTraitComposite));
+        SFAssert(SFAlbumGetTraits(&album, 0) == (SFGlyphTraitNone));
         SFAssert(SFAlbumGetTraits(&album, 1) == (SFGlyphTraitAttached));
         SFAssert(SFAlbumGetTraits(&album, 2) == (SFGlyphTraitNone));
         SFAssert(SFAlbumGetTraits(&album, 3) == (SFGlyphTraitMark | SFGlyphTraitCursive));
@@ -744,8 +643,6 @@ void AlbumTester::test()
     testGetGlyph();
     testSetSingleAssociation();
     testGetSingleAssociation();
-    testMakeCompositeAssociations();
-    testGetCompositeAssociations();
     testFeatureMask();
     testTraits();
     testOffset();
