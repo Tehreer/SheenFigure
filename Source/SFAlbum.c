@@ -102,7 +102,6 @@ SF_INTERNAL void SFAlbumInitialize(SFAlbumRef album)
     album->glyphCount = 0;
 
     SFListInitialize(&album->_indexMap, sizeof(SFUInteger));
-    SFListInitialize(&album->_associates, sizeof(SFUInteger));
     SFListInitialize(&album->_glyphs, sizeof(SFGlyphID));
     SFListInitialize(&album->_details, sizeof(SFGlyphDetail));
     SFListInitialize(&album->_offsets, sizeof(SFPoint));
@@ -120,7 +119,6 @@ SF_INTERNAL void SFAlbumReset(SFAlbumRef album, SFCodepointsRef codepoints, SFUI
     album->glyphCount = 0;
 
     SFListClear(&album->_indexMap);
-    SFListClear(&album->_associates);
     SFListClear(&album->_glyphs);
     SFListClear(&album->_details);
     SFListClear(&album->_offsets);
@@ -143,18 +141,20 @@ SF_INTERNAL void SFAlbumBeginFilling(SFAlbumRef album)
 SF_INTERNAL void SFAlbumAddGlyph(SFAlbumRef album, SFGlyphID glyph, SFGlyphTraits traits, SFUInteger association)
 {
     SFUInteger index;
+    SFGlyphDetailRef detail;
 
     /* The album must be in filling state. */
     SFAssert(album->_state == _SFAlbumStateFilling);
 
     album->_version++;
     index = album->glyphCount++;
+    detail = SFListGetRef(&album->_details, index);
 
     /* Initialize the glyph along with its details. */
-    SFAlbumSetGlyph(album, index, glyph);
-    SFAlbumSetFeatureMask(album, index, SFUInt16Max);
-    SFAlbumSetTraits(album, index, traits);
-    SFAlbumSetSingleAssociation(album, index, association);
+    SFListSetVal(&album->_glyphs, index, glyph);
+    detail->association = association;
+    detail->mask.section.featureMask = SFUInt16Max;
+    detail->mask.section.glyphTraits = traits;
 }
 
 SF_INTERNAL void SFAlbumReserveGlyphs(SFAlbumRef album, SFUInteger index, SFUInteger count)
@@ -191,47 +191,8 @@ SF_INTERNAL void SFAlbumSetSingleAssociation(SFAlbumRef album, SFUInteger index,
 {
     /* The album must be in filling state. */
     SFAssert(album->_state == _SFAlbumStateFilling);
-    /* The glyph must not be composite. */
-    SFAssert(!(SFAlbumGetTraits(album, index) & SFGlyphTraitComposite));
 
     SFListGetRef(&album->_details, index)->association = association;
-}
-
-SF_INTERNAL SFUInteger *SFAlbumGetCompositeAssociations(SFAlbumRef album, SFUInteger index, SFUInteger *outCount)
-{
-    SFUInteger association;
-    SFUInteger *array;
-
-    /* The glyph must be composite. */
-    SFAssert(SFAlbumGetTraits(album, index) & SFGlyphTraitComposite);
-
-    association = SFListGetRef(&album->_details, index)->association;
-    array = SFListGetRef(&album->_associates, association);
-    *outCount = array[0];
-
-    return &array[1];
-}
-
-SF_INTERNAL SFUInteger *SFAlbumMakeCompositeAssociations(SFAlbumRef album, SFUInteger index, SFUInteger count)
-{
-    SFUInteger association;
-    SFUInteger reference;
-    SFUInteger *array;
-
-    /* The album must be in filling state. */
-    SFAssert(album->_state == _SFAlbumStateFilling);
-    /* The glyph must be composite. */
-    SFAssert(SFAlbumGetTraits(album, index) & SFGlyphTraitComposite);
-
-    association = album->_associates.count;
-    SFListAdd(&album->_associates, count);
-    SFListGetRef(&album->_details, index)->association = association;
-
-    reference = album->_associates.count;
-    SFListReserveRange(&album->_associates, reference, count);
-    array = SFListGetRef(&album->_associates, reference);
-
-    return array;
 }
 
 SF_PRIVATE SFGlyphMask _SFAlbumGetGlyphMask(SFAlbumRef album, SFUInteger index)
@@ -429,28 +390,8 @@ static void _SFAlbumBuildCodeunitToGlyphMap(SFAlbumRef album)
 
     /* Traverse in reverse order so that first glyph takes priority in case of multiple substitution. */
     for (index = album->glyphCount; index--;) {
-        SFGlyphTraits traits = SFAlbumGetTraits(album, index);
-
-        if (traits & SFGlyphTraitComposite) {
-            SFUInteger count;
-            SFUInteger *array;
-            SFUInteger j;
-
-            array = SFAlbumGetCompositeAssociations(album, index, &count);
-
-            for (j = 0; j < count; j++) {
-                association = array[j];
-
-                if (SFListGetVal(&album->_indexMap, association) == SFInvalidIndex) {
-                    SFListSetVal(&album->_indexMap, association, index);
-                } else {
-                    /* Ignore if already assigned. */
-                }
-            }
-        } else {
-            association = SFAlbumGetSingleAssociation(album, index);
-            SFListSetVal(&album->_indexMap, association, index);
-        }
+        association = SFAlbumGetSingleAssociation(album, index);
+        SFListSetVal(&album->_indexMap, association, index);
     }
 
     /* Assign the same glyph index to subsequent codeunits. */
@@ -476,7 +417,6 @@ SF_INTERNAL void SFAlbumWrapUp(SFAlbumRef album)
 
 SF_INTERNAL void SFAlbumFinalize(SFAlbumRef album) {
     SFListFinalize(&album->_indexMap);
-    SFListFinalize(&album->_associates);
     SFListFinalize(&album->_glyphs);
     SFListFinalize(&album->_details);
     SFListFinalize(&album->_offsets);

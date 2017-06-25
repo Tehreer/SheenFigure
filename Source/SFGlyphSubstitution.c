@@ -310,15 +310,12 @@ static SFBoolean _SFApplyLigatureSetTable(SFTextProcessorRef textProcessor, SFDa
             SFGlyphID ligGlyph = SFLigature_LigGlyph(ligatureTable);
             SFGlyphTraits ligTraits = _SFGetGlyphTraits(textProcessor, ligGlyph);
             SFUInteger firstAssociation;
-            SFUInteger *compositeAssociations;
 
             /* Substitute the ligature glyph and set its traits. */
             SFAlbumSetGlyph(album, inputIndex, ligGlyph);
-            SFAlbumSetTraits(album, inputIndex, ligTraits | SFGlyphTraitComposite);
+            SFAlbumSetTraits(album, inputIndex, ligTraits);
 
             firstAssociation = SFAlbumGetSingleAssociation(album, inputIndex);
-            compositeAssociations = SFAlbumMakeCompositeAssociations(album, inputIndex, compCount);
-            compositeAssociations[0] = firstAssociation;
             prevIndex = inputIndex;
 
             /* Initialize component glyphs. */
@@ -327,10 +324,6 @@ static SFBoolean _SFApplyLigatureSetTable(SFTextProcessorRef textProcessor, SFDa
 
                 /* Find the next component. */
                 nextIndex = SFLocatorGetAfter(locator, prevIndex);
-
-                /* Store the association of component. */
-                componentAssociation = SFAlbumGetSingleAssociation(album, nextIndex);
-                compositeAssociations[compIndex] = componentAssociation;
 
                 /* Make the glyph placeholder. */
                 SFAlbumSetGlyph(album, nextIndex, 0);

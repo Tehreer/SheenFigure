@@ -40,11 +40,10 @@ enum {
     SFGlyphTraitLigature    = 1 << 2,   /**< STANDARD: Multiple character, spacing glyph. */
     SFGlyphTraitMark        = 1 << 3,   /**< STANDARD: Non-spacing combining glyph. */
     SFGlyphTraitComponent   = 1 << 4,   /**< STANDARD: Part of single character, spacing glyph. */
-    SFGlyphTraitComposite   = 1 << 5,   /**< HELPER: Multipart, associated glyph. */
-    SFGlyphTraitAttached    = 1 << 6,   /**< HELPER: Attached with a previous glyph. */
-    SFGlyphTraitCursive     = 1 << 7,   /**< HELPER: Cursively connected glyph. */
-    SFGlyphTraitRightToLeft = 1 << 8,   /**< HELPER: Right-to-Left cursive glyph. */
-    SFGlyphTraitResolved    = 1 << 9    /**< HELPER: Resolved cursive glyph. */
+    SFGlyphTraitAttached    = 1 << 5,   /**< HELPER: Attached with a previous glyph. */
+    SFGlyphTraitCursive     = 1 << 6,   /**< HELPER: Cursively connected glyph. */
+    SFGlyphTraitRightToLeft = 1 << 7,   /**< HELPER: Right-to-Left cursive glyph. */
+    SFGlyphTraitResolved    = 1 << 8    /**< HELPER: Resolved cursive glyph. */
 };
 typedef SFUInt16 SFGlyphTraits;
 
@@ -69,7 +68,6 @@ typedef struct _SFAlbum {
     SFUInteger glyphCount;              /**< Total number of glyphs in the album. */
 
     SF_LIST(SFUInteger) _indexMap;      /**< Code unit index to glyph index mapping list. */
-    SF_LIST(SFUInteger) _associates;    /**< List of associates of composite glyphs. */
     SF_LIST(SFGlyphID) _glyphs;         /**< List of ids of all glyphs in the album. */
     SF_LIST(SFGlyphDetail) _details;    /**< List of details of all glyphs in the album. */
     SF_LIST(SFPoint) _offsets;          /**< List of offsets of all glyphs in the album. */
@@ -112,9 +110,6 @@ SF_INTERNAL void SFAlbumSetGlyph(SFAlbumRef album, SFUInteger index, SFGlyphID g
 
 SF_INTERNAL SFUInteger SFAlbumGetSingleAssociation(SFAlbumRef album, SFUInteger index);
 SF_INTERNAL void SFAlbumSetSingleAssociation(SFAlbumRef album, SFUInteger index, SFUInteger association);
-
-SF_INTERNAL SFUInteger *SFAlbumGetCompositeAssociations(SFAlbumRef album, SFUInteger index, SFUInteger *outCount);
-SF_INTERNAL SFUInteger *SFAlbumMakeCompositeAssociations(SFAlbumRef album, SFUInteger index, SFUInteger count);
 
 SF_PRIVATE SFGlyphMask _SFAlbumGetGlyphMask(SFAlbumRef album, SFUInteger index);
 
