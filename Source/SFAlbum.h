@@ -93,6 +93,8 @@ SF_INTERNAL void SFAlbumReset(SFAlbumRef album, SFCodepointsRef codepoints, SFUI
  */
 SF_INTERNAL void SFAlbumBeginFilling(SFAlbumRef album);
 
+SF_INTERNAL SFUInteger *SFAlbumGetTemporaryIndexArray(SFAlbumRef album, SFUInteger count);
+
 /**
  * Adds a new glyph into the album.
  */

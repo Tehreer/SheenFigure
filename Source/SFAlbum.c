@@ -157,6 +157,18 @@ SF_INTERNAL void SFAlbumAddGlyph(SFAlbumRef album, SFGlyphID glyph, SFGlyphTrait
     detail->mask.section.glyphTraits = traits;
 }
 
+SF_INTERNAL SFUInteger *SFAlbumGetTemporaryIndexArray(SFAlbumRef album, SFUInteger count)
+{
+    /* The album must be in filling state. */
+    SFAssert(album->_state == _SFAlbumStateFilling);
+
+    if (album->_indexMap.capacity < count) {
+        SFListSetCapacity(&album->_indexMap, count);
+    }
+
+    return album->_indexMap.items;
+}
+
 SF_INTERNAL void SFAlbumReserveGlyphs(SFAlbumRef album, SFUInteger index, SFUInteger count)
 {
     /* The album must be in filling state. */
@@ -376,11 +388,10 @@ static void _SFAlbumRemovePlaceholders(SFAlbumRef album)
 
 static void _SFAlbumBuildCodeunitToGlyphMap(SFAlbumRef album)
 {
-    SFUInteger codeunitCount;
-    SFUInteger association;
+    SFUInteger codeunitCount = album->codeunitCount;
+    SFUInteger association = 0;
     SFUInteger index;
 
-    codeunitCount = album->codeunitCount;
     SFListReserveRange(&album->_indexMap, 0, codeunitCount);
 
     /* Initialize the map array. */
