@@ -700,23 +700,20 @@ static SFUInteger _SFGetPreviousLigatureGlyphIndex(SFTextProcessorRef textProces
     ligatureIndex = SFLocatorGetBefore(locator, inputIndex);
 
     if (ligatureIndex != SFInvalidIndex) {
-        SFUInteger association = SFAlbumGetSingleAssociation(album, ligatureIndex);
         SFUInteger nextIndex;
 
         /*
          * REMARKS:
          *      The glyphs acting as components of a ligature are not removed from the album, but
-         *      their trait is set to SFGlyphTraitPlaceholder and their association is set to first
-         *      character forming the ligature.
+         *      their trait is set to SFGlyphTraitPlaceholder.
          *
          * PROCESS:
          *      1) Start loop from ligature index to input index.
-         *      2) If association of a glyph matches with the association of ligature, it is a
-         *         component of the ligature.
-         *      3) Increase component counter for each matched association.
+         *      2) If a placeholder glyph is found, it is a component of the ligature.
+         *      3) Increase component counter for each placeholder.
          */
         for (nextIndex = ligatureIndex + 1; nextIndex < inputIndex; nextIndex++) {
-            if (SFAlbumGetSingleAssociation(album, nextIndex) == association) {
+            if (SFAlbumGetTraits(album, nextIndex) & SFGlyphTraitPlaceholder) {
                 (*outComponent)++;
             }
         }
@@ -805,28 +802,33 @@ static SFBoolean _SFApplyMarkToLigArrays(SFTextProcessorRef textProcessor, SFDat
             SFOffset ligAttachOffset = SFLigatureArray_LigatureAttachOffset(ligArrayTable, ligIndex);
             SFData ligAttachTable = SFData_Subdata(ligArrayTable, ligAttachOffset);
             SFUInteger compCount = SFLigatureAttach_ComponentCount(ligAttachTable);
+            SFData compRecord;
+            SFOffset ligAnchorOffset;
+            SFData ligAnchor;
+            SFPoint markPoint;
+            SFPoint ligPoint;
 
-            /* Validate ligature component. */
-            if (ligComponent < compCount) {
-                SFData compRecord = SFLigatureAttach_ComponentRecord(ligAttachTable, ligComponent, classCount);
-                SFOffset ligAnchorOffset = SFComponentRecord_LigatureAnchorOffset(compRecord, classValue);
-                SFData ligAnchor = SFData_Subdata(ligAttachTable, ligAnchorOffset);
-                SFPoint markPoint;
-                SFPoint ligPoint;
-
-                /* Get mark and ligature points from their respective anchors. */
-                markPoint = _SFConvertAnchorToPoint(markAnchorTable);
-                ligPoint = _SFConvertAnchorToPoint(ligAnchor);
-
-                /* Connect mark glyph with ligature glyph. */
-                SFAlbumSetX(album, inputIndex, ligPoint.x - markPoint.x);
-                SFAlbumSetY(album, inputIndex, ligPoint.y - markPoint.y);
-                /* Update the details of mark glyph. */
-                SFAlbumSetAttachmentOffset(album, inputIndex, (SFUInt16)(inputIndex - attachmentIndex));
-                SFAlbumInsertTraits(album, inputIndex, SFGlyphTraitAttached);
-
-                return SFTrue;
+            /* Use last component in case of error. */
+            if (ligComponent >= compCount) {
+                ligComponent = compCount - 1;
             }
+
+            compRecord = SFLigatureAttach_ComponentRecord(ligAttachTable, ligComponent, classCount);
+            ligAnchorOffset = SFComponentRecord_LigatureAnchorOffset(compRecord, classValue);
+            ligAnchor = SFData_Subdata(ligAttachTable, ligAnchorOffset);
+
+            /* Get mark and ligature points from their respective anchors. */
+            markPoint = _SFConvertAnchorToPoint(markAnchorTable);
+            ligPoint = _SFConvertAnchorToPoint(ligAnchor);
+
+            /* Connect mark glyph with ligature glyph. */
+            SFAlbumSetX(album, inputIndex, ligPoint.x - markPoint.x);
+            SFAlbumSetY(album, inputIndex, ligPoint.y - markPoint.y);
+            /* Update the details of mark glyph. */
+            SFAlbumSetAttachmentOffset(album, inputIndex, (SFUInt16)(inputIndex - attachmentIndex));
+            SFAlbumInsertTraits(album, inputIndex, SFGlyphTraitAttached);
+
+            return SFTrue;
         }
     }
 
