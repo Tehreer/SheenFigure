@@ -275,10 +275,12 @@ static SFBoolean _SFApplyLigatureSetTable(SFTextProcessorRef textProcessor, SFDa
         SFOffset ligatureOffset = SFLigatureSet_LigatureOffset(ligatureSetTable, ligIndex);
         SFData ligatureTable = SFData_Subdata(ligatureSetTable, ligatureOffset);
         SFUInt16 compCount = SFLigature_CompCount(ligatureTable);
+        SFUInteger *partIndexes;
         SFUInteger prevIndex;
         SFUInteger nextIndex;
         SFUInteger compIndex;
 
+        partIndexes = SFAlbumGetTemporaryIndexArray(album, compCount);
         prevIndex = inputIndex;
 
         /*
@@ -302,6 +304,7 @@ static SFBoolean _SFApplyLigatureSetTable(SFTextProcessorRef textProcessor, SFDa
                 break;
             }
 
+            partIndexes[compIndex] = nextIndex;
             prevIndex = nextIndex;
         }
 
@@ -309,28 +312,28 @@ static SFBoolean _SFApplyLigatureSetTable(SFTextProcessorRef textProcessor, SFDa
         if (compIndex == compCount) {
             SFGlyphID ligGlyph = SFLigature_LigGlyph(ligatureTable);
             SFGlyphTraits ligTraits = _SFGetGlyphTraits(textProcessor, ligGlyph);
-            SFUInteger firstAssociation;
+            SFUInteger ligAssociation;
 
             /* Substitute the ligature glyph and set its traits. */
             SFAlbumSetGlyph(album, inputIndex, ligGlyph);
             SFAlbumSetTraits(album, inputIndex, ligTraits);
 
-            firstAssociation = SFAlbumGetSingleAssociation(album, inputIndex);
+            ligAssociation = SFAlbumGetSingleAssociation(album, inputIndex);
             prevIndex = inputIndex;
 
             /* Initialize component glyphs. */
             for (compIndex = 1; compIndex < compCount; compIndex++) {
-                SFUInteger componentAssociation;
-
-                /* Find the next component. */
-                nextIndex = SFLocatorGetAfter(locator, prevIndex);
+                /* Get the next component. */
+                nextIndex = partIndexes[compIndex];
 
                 /* Make the glyph placeholder. */
                 SFAlbumSetGlyph(album, nextIndex, 0);
                 SFAlbumSetTraits(album, nextIndex, SFGlyphTraitPlaceholder);
-                SFAlbumSetSingleAssociation(album, nextIndex, firstAssociation);
 
-                prevIndex = nextIndex;
+                /* Form a cluster by setting the association of in-between glyphs. */
+                for (; prevIndex <= nextIndex; prevIndex++) {
+                    SFAlbumSetSingleAssociation(album, nextIndex, ligAssociation);
+                }
             }
 
             return SFTrue;
