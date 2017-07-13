@@ -74,7 +74,7 @@ enum {
                                                         SFData_UInt16(data, 6 + ((index) * 2))
 
 #define SFAlternateSet_GlyphCount(data)                 SFData_UInt16(data, 0)
-#define SFAlternateSet_Alternate(data, index)           SFData_UInt16(data, 2 * ((index) * 2))
+#define SFAlternateSet_Alternate(data, index)           SFData_UInt16(data, 2 + ((index) * 2))
 
 /**************************************************************************************************/
 
