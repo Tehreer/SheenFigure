@@ -64,6 +64,7 @@ public:
     SingleSubstSubtable &createSingleSubst(const std::set<Glyph> glyphs, Int16 delta);
     SingleSubstSubtable &createSingleSubst(const std::map<Glyph, Glyph> glyphs);
     MultipleSubstSubtable &createMultipleSubst(const std::map<Glyph, std::vector<Glyph>> glyphs);
+    AlternateSubstSubtable &createAlternateSubst(const std::map<Glyph, std::vector<Glyph>> glyphs);
     LigatureSubstSubtable &createLigatureSubst(const std::map<std::vector<Glyph>, Glyph> glyphs);
 
     ContextSubtable &createContext(const std::vector<rule_context> rules);

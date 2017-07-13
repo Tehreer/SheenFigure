@@ -87,6 +87,22 @@ void TextProcessorTester::testMultipleSubstitution()
     testSubstitution(builder.createMultipleSubst({ {1, { 0, 0, 0 }} }), { 1 }, { 0, 0, 0 });
 }
 
+void TextProcessorTester::testAlternateSubstitution()
+{
+    Builder builder;
+
+    /* Test with unmatching glyph. */
+    testSubstitution(builder.createAlternateSubst({ {0, { 0 }} }), { 1 }, { 1 });
+    /* Test with zero glyph. */
+    testSubstitution(builder.createAlternateSubst({ {0, { 1 }} }), { 0 }, { 1 });
+    /* Test with zero substitution. */
+    testSubstitution(builder.createAlternateSubst({ {1, { 0 }} }), { 1 }, { 0 });
+    /* Test with same substitution. */
+    testSubstitution(builder.createAlternateSubst({ {1, { 1 }} }), { 1 }, { 1 });
+    /* Test with a different substitution. */
+    testSubstitution(builder.createAlternateSubst({ {1, { 100 }} }), { 1 }, { 100 });
+}
+
 void TextProcessorTester::testLigatureSubstitution()
 {
     Builder builder;

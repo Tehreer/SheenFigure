@@ -195,6 +195,31 @@ MultipleSubstSubtable &Builder::createMultipleSubst(const map<Glyph, vector<Glyp
     return subtable;
 }
 
+AlternateSubstSubtable &Builder::createAlternateSubst(const std::map<Glyph, std::vector<Glyph>> glyphs)
+{
+    Glyph *input = createGlyphs(glyphs.begin(), glyphs.end(),
+                                [](const decltype(glyphs)::value_type &pair) {
+                                    return pair.first;
+                                });
+
+    AlternateSetTable *alternateSets = createArray<AlternateSetTable>(glyphs.size());
+    for (size_t i = 0; i < glyphs.size(); i++) {
+        const vector<Glyph> &substitutes = glyphs.at(input[i]);
+
+        AlternateSetTable &current = alternateSets[i];
+        current.glyphCount = (UInt16)substitutes.size();
+        current.substitute = createGlyphs(substitutes);
+    }
+
+    AlternateSubstSubtable &subtable = createObject<AlternateSubstSubtable>();
+    subtable.substFormat = 1;
+    subtable.coverage = &createCoverage(input, (UInt16)glyphs.size());
+    subtable.alternateSetCount = (UInt16)glyphs.size();
+    subtable.alternateSet = alternateSets;
+
+    return subtable;
+}
+
 LigatureSubstSubtable &Builder::createLigatureSubst(const map<vector<Glyph>, Glyph> glyphs)
 {
     set<Glyph> initials;

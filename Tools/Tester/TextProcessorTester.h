@@ -33,6 +33,7 @@ public:
 
     void testSingleSubstitution();
     void testMultipleSubstitution();
+    void testAlternateSubstitution();
     void testLigatureSubstitution();
 
     void testSinglePositioning();

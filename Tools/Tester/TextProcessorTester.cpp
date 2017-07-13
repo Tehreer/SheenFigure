@@ -248,6 +248,7 @@ void TextProcessorTester::test()
 {
     testSingleSubstitution();
     testMultipleSubstitution();
+    testAlternateSubstitution();
     testLigatureSubstitution();
     testSinglePositioning();
     testPairPositioning();
