@@ -135,11 +135,6 @@ static void _SFApplyValueRecord(SFTextProcessorRef textProcessor,
                 SFAlbumSetAdvance(album, inputIndex, advance + value);
             }
             break;
-
-        default:
-            /* Unsupported direction. */
-            SFAssert(0);
-            break;
     }
 
     /*
@@ -542,11 +537,6 @@ static SFBoolean _SFApplyCursiveAnchors(SFTextProcessorRef textProcessor,
             } else {
                 SFAlbumSetY(album, firstIndex, exitPoint.y - entryPoint.y);
             }
-            break;
-
-        default:
-            /* Unsupported direction. */
-            SFAssert(0);
             break;
     }
 
@@ -999,17 +989,13 @@ static void _SFResolveLeftCursiveSegment(SFTextProcessorRef textProcessor, SFUIn
 
         switch (textProcessor->_textDirection) {
             case SFTextDirectionLeftToRight:
-            case SFTextDirectionRightToLeft:
+            case SFTextDirectionRightToLeft: {
                 inputY = SFAlbumGetY(album, inputIndex);
                 nextY = SFAlbumGetY(album, nextIndex);
 
                 SFAlbumSetY(album, nextIndex, nextY + inputY);
                 break;
-
-            default:
-                /* Unsupported direction. */
-                SFAssert(0);
-                break;
+            }
         }
 
         _SFResolveLeftCursiveSegment(textProcessor, nextIndex);
@@ -1046,17 +1032,13 @@ static void _SFResolveRightCursiveSegment(SFTextProcessorRef textProcessor, SFUI
 
         switch (textProcessor->_textDirection) {
             case SFTextDirectionLeftToRight:
-            case SFTextDirectionRightToLeft:
+            case SFTextDirectionRightToLeft: {
                 inputY = SFAlbumGetY(album, inputIndex);
                 nextY = SFAlbumGetY(album, nextIndex);
 
                 SFAlbumSetY(album, inputIndex, inputY + nextY);
                 break;
-                
-            default:
-                /* Unsupported direction. */
-                SFAssert(0);
-                break;
+            }
         }
 
         /* Mark this glyph as resolved. */
@@ -1115,11 +1097,6 @@ static void _SFResolveMarkPositions(SFTextProcessorRef textProcessor, SFLocatorR
                     for (index = attachmentIndex + 1; index <= inputIndex; index++) {
                         markX += SFAlbumGetAdvance(album, index);
                     }
-                    break;
-
-                default:
-                    /* Unsupported direction. */
-                    SFAssert(0);
                     break;
             }
 

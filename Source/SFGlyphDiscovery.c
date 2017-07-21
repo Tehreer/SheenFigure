@@ -86,10 +86,5 @@ SF_INTERNAL void _SFDiscoverGlyphs(SFTextProcessorRef processor)
             }
             break;
         }
-
-        default:
-            /* Unknown text mode. */
-            SFAssert(0);
-            break;
     }
 }
