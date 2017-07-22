@@ -92,8 +92,8 @@ const SFAdvance *SFAlbumGetGlyphAdvancesPtr(SFAlbumRef album);
  *   sequence.
  * - If multiple code units combine to make a single code point which in turn translates into
  *   multiple glyphs, then each code unit maps to the first glyph in the sequence.
- * - If multiple code units translate to a single glyph or ligature, then each participating code
- *   unit, whether consecutive or not, maps to this glyph or ligature.
+ * - If nonconsecutive code units translate to a single glyph or ligature, then each participating
+ *   code unit, and all in-between code units, map to this glyph or ligature.
  *
  * @param album
  *      The album from which to access the glyph map.
