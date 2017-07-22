@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
+#include <cassert>
 #include <cstdint>
 #include <iostream>
 
 extern "C" {
-#include <Source/SFAssert.h>
 #include <Source/SFJoiningTypeLookup.h>
 }
 

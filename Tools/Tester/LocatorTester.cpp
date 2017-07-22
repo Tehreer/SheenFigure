@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
+#include <cassert>
 #include <cstdlib>
 #include <cstring>
 
 extern "C" {
 #include <Source/SFAlbum.h>
-#include <Source/SFAssert.h>
 #include <Source/SFLocator.h>
 }
 
@@ -271,11 +271,11 @@ static void testMoveNext(const SFGlyphTraits *traits, SFInteger count)
             hasNext = SFLocatorMoveNext(&locator);
 
             if (start > -1) {
-                SFAssert(hasNext == SFTrue);
-                SFAssert(locator.index == (SFUInteger)start);
+                assert(hasNext == SFTrue);
+                assert(locator.index == (SFUInteger)start);
             } else {
-                SFAssert(hasNext == SFFalse);
-                SFAssert(locator.index == SFInvalidIndex);
+                assert(hasNext == SFFalse);
+                assert(locator.index == SFInvalidIndex);
                 break;
             }
         }
@@ -313,11 +313,11 @@ static void testSkip(const SFGlyphTraits *traits, SFInteger count)
             hasNext = SFLocatorSkip(&locator, skipCount);
 
             if (start > -1) {
-                SFAssert(hasNext == SFTrue);
-                SFAssert(locator.index == (SFUInteger)start);
+                assert(hasNext == SFTrue);
+                assert(locator.index == (SFUInteger)start);
             } else {
-                SFAssert(hasNext == SFFalse);
-                SFAssert(locator.index == SFInvalidIndex);
+                assert(hasNext == SFFalse);
+                assert(locator.index == SFInvalidIndex);
                 break;
             }
 
@@ -353,11 +353,11 @@ static void testJumpTo(const SFGlyphTraits *traits, SFInteger count)
             hasNext = SFLocatorMoveNext(&locator);
 
             if (start > -1) {
-                SFAssert(hasNext == SFTrue);
-                SFAssert(locator.index == (SFUInteger)start);
+                assert(hasNext == SFTrue);
+                assert(locator.index == (SFUInteger)start);
             } else {
-                SFAssert(hasNext == SFFalse);
-                SFAssert(locator.index == SFInvalidIndex);
+                assert(hasNext == SFFalse);
+                assert(locator.index == SFInvalidIndex);
                 break;
             }
         }
@@ -389,9 +389,9 @@ static void testGetAfter(const SFGlyphTraits *traits, SFInteger count)
             start = getNext(traits, count, start, lookupFlag);
 
             if (start > -1) {
-                SFAssert(afterIndex == (SFUInteger)start);
+                assert(afterIndex == (SFUInteger)start);
             } else {
-                SFAssert(afterIndex == SFInvalidIndex);
+                assert(afterIndex == SFInvalidIndex);
                 break;
             }
         }
@@ -423,9 +423,9 @@ static void testGetBefore(const SFGlyphTraits *traits, SFInteger count)
             start = getPrevious(traits, count, start, lookupFlag);
 
             if (start > -1) {
-                SFAssert(beforeIndex == (SFUInteger)start);
+                assert(beforeIndex == (SFUInteger)start);
             } else {
-                SFAssert(beforeIndex == SFInvalidIndex);
+                assert(beforeIndex == SFInvalidIndex);
                 break;
             }
         }
@@ -579,7 +579,7 @@ void LocatorTester::testGetBefore()
 
 void LocatorTester::testMarkFilteringSet()
 {
-    int count = 10;
+    const int count = 10;
     SFGlyphTraits traits[count];
     for (int i = 0; i < count; i++) {
         traits[i] = SFGlyphTraitMark;
@@ -596,7 +596,7 @@ void LocatorTester::testMarkFilteringSet()
     /* Zero mark filtering set contains even glyphs, so we should get only those. */
     while (SFLocatorMoveNext(&locator)) {
         SFGlyphID glyph = SFAlbumGetGlyph(album, locator.index);
-        SFAssert((glyph % 2) == 0);
+        assert((glyph % 2) == 0);
     }
 
     SFAlbumRelease(album);
@@ -604,7 +604,7 @@ void LocatorTester::testMarkFilteringSet()
 
 void LocatorTester::testMarkAttachmentType()
 {
-    int count = 10;
+    const int count = 10;
     SFGlyphTraits traits[count];
     for (int i = 0; i < count; i++) {
         traits[i] = SFGlyphTraitMark;
@@ -620,7 +620,7 @@ void LocatorTester::testMarkAttachmentType()
     /* Class 1 contains odd glyphs, so we should get only those. */
     while (SFLocatorMoveNext(&locator)) {
         SFGlyphID glyph = SFAlbumGetGlyph(album, locator.index);
-        SFAssert((glyph % 2) == 1);
+        assert((glyph % 2) == 1);
     }
 
     SFAlbumRelease(album);

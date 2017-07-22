@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
+#include <cassert>
 #include <cstddef>
 #include <cstring>
 
 extern "C" {
-#include <Source/SFAssert.h>
 #include <Source/SFFont.h>
 }
 
@@ -35,13 +35,13 @@ static const char *TABLE_GPOS = "GPOS";
 
 static void finalize(void *object)
 {
-    SFAssert(object == OBJECT_FONT);
+    assert(object == OBJECT_FONT);
     FINALIZE_COUNT++;
 }
 
 static void loadTable(void *object, SFTag tag, SFUInt8 *buffer, SFUInteger *length)
 {
-    SFAssert(object == OBJECT_FONT);
+    assert(object == OBJECT_FONT);
 
     switch (tag) {
     case SFTagMake('G', 'D', 'E', 'F'):
@@ -81,14 +81,14 @@ static void loadTable(void *object, SFTag tag, SFUInt8 *buffer, SFUInteger *leng
 
 static SFGlyphID getGlyphIDForCodepoint(void *object, SFCodepoint codepoint)
 {
-    SFAssert(object == OBJECT_FONT);
+    assert(object == OBJECT_FONT);
 
     return (SFGlyphID)((codepoint >> 16) ^ (codepoint & 0xFFFF));
 }
 
 static SFAdvance getAdvanceForGlyph(void *object, SFFontLayout fontLayout, SFGlyphID glyphID)
 {
-    SFAssert(object == OBJECT_FONT);
+    assert(object == OBJECT_FONT);
 
     switch (fontLayout) {
     case SFFontLayoutHorizontal:
@@ -133,7 +133,7 @@ void FontTester::testBadProtocol()
     /* Test with null protocol. */
     {
         SFFontRef font = SFFontCreateWithProtocol(NULL, NULL);
-        SFAssert(font == NULL);
+        assert(font == NULL);
     }
 
     /* Test with missing required functions. */
@@ -146,7 +146,7 @@ void FontTester::testBadProtocol()
         };
         SFFontRef font = SFFontCreateWithProtocol(&protocol, NULL);
 
-        SFAssert(font == NULL);
+        assert(font == NULL);
     }
 }
 
@@ -155,19 +155,19 @@ void FontTester::testFinalizeCallback()
     FINALIZE_COUNT = 0;
 
     SFFontRef font = SFFontCreateWithCompleteFunctionality();
-    SFAssert(FINALIZE_COUNT == 0);
+    assert(FINALIZE_COUNT == 0);
 
     SFFontRelease(font);
-    SFAssert(FINALIZE_COUNT == 1);
+    assert(FINALIZE_COUNT == 1);
 }
 
 void FontTester::testLoadedTables()
 {
     SFFontRef font = SFFontCreateWithCompleteFunctionality();
 
-    SFAssert(memcmp(font->tables.gdef, TABLE_GDEF, 4) == 0);
-    SFAssert(memcmp(font->tables.gsub, TABLE_GSUB, 4) == 0);
-    SFAssert(memcmp(font->tables.gpos, TABLE_GPOS, 4) == 0);
+    assert(memcmp(font->tables.gdef, TABLE_GDEF, 4) == 0);
+    assert(memcmp(font->tables.gsub, TABLE_GSUB, 4) == 0);
+    assert(memcmp(font->tables.gpos, TABLE_GPOS, 4) == 0);
 
     SFFontRelease(font);
 }
@@ -180,9 +180,9 @@ void FontTester::testGetGlyphIDForCodepoint()
     SFGlyphID glyph2 = SFFontGetGlyphIDForCodepoint(font, 0xFFFF);
     SFGlyphID glyph3 = SFFontGetGlyphIDForCodepoint(font, 0x10FFFF);
 
-    SFAssert(glyph1 == getGlyphIDForCodepoint(OBJECT_FONT, 0));
-    SFAssert(glyph2 == getGlyphIDForCodepoint(OBJECT_FONT, 0xFFFF));
-    SFAssert(glyph3 == getGlyphIDForCodepoint(OBJECT_FONT, 0x10FFFF));
+    assert(glyph1 == getGlyphIDForCodepoint(OBJECT_FONT, 0));
+    assert(glyph2 == getGlyphIDForCodepoint(OBJECT_FONT, 0xFFFF));
+    assert(glyph3 == getGlyphIDForCodepoint(OBJECT_FONT, 0x10FFFF));
 
     SFFontRelease(font);
 }
@@ -200,12 +200,12 @@ void FontTester::testGetAdvanceForGlyph()
         SFAdvance advance5 = SFFontGetAdvanceForGlyph(font, SFFontLayoutVertical, 0x7FFF);
         SFAdvance advance6 = SFFontGetAdvanceForGlyph(font, SFFontLayoutVertical, 0xFFFF);
 
-        SFAssert(advance1 == getAdvanceForGlyph(OBJECT_FONT, SFFontLayoutHorizontal, 0));
-        SFAssert(advance2 == getAdvanceForGlyph(OBJECT_FONT, SFFontLayoutHorizontal, 0x7FFF));
-        SFAssert(advance3 == getAdvanceForGlyph(OBJECT_FONT, SFFontLayoutHorizontal, 0xFFFF));
-        SFAssert(advance4 == getAdvanceForGlyph(OBJECT_FONT, SFFontLayoutVertical, 0));
-        SFAssert(advance5 == getAdvanceForGlyph(OBJECT_FONT, SFFontLayoutVertical, 0x7FFF));
-        SFAssert(advance6 == getAdvanceForGlyph(OBJECT_FONT, SFFontLayoutVertical, 0xFFFF));
+        assert(advance1 == getAdvanceForGlyph(OBJECT_FONT, SFFontLayoutHorizontal, 0));
+        assert(advance2 == getAdvanceForGlyph(OBJECT_FONT, SFFontLayoutHorizontal, 0x7FFF));
+        assert(advance3 == getAdvanceForGlyph(OBJECT_FONT, SFFontLayoutHorizontal, 0xFFFF));
+        assert(advance4 == getAdvanceForGlyph(OBJECT_FONT, SFFontLayoutVertical, 0));
+        assert(advance5 == getAdvanceForGlyph(OBJECT_FONT, SFFontLayoutVertical, 0x7FFF));
+        assert(advance6 == getAdvanceForGlyph(OBJECT_FONT, SFFontLayoutVertical, 0xFFFF));
 
         SFFontRelease(font);
     }
@@ -221,12 +221,12 @@ void FontTester::testGetAdvanceForGlyph()
         SFAdvance advance5 = SFFontGetAdvanceForGlyph(font, SFFontLayoutVertical, 0x7FFF);
         SFAdvance advance6 = SFFontGetAdvanceForGlyph(font, SFFontLayoutVertical, 0xFFFF);
 
-        SFAssert(advance1 == 0);
-        SFAssert(advance2 == 0);
-        SFAssert(advance3 == 0);
-        SFAssert(advance4 == 0);
-        SFAssert(advance5 == 0);
-        SFAssert(advance6 == 0);
+        assert(advance1 == 0);
+        assert(advance2 == 0);
+        assert(advance3 == 0);
+        assert(advance4 == 0);
+        assert(advance5 == 0);
+        assert(advance6 == 0);
 
         SFFontRelease(font);
     }

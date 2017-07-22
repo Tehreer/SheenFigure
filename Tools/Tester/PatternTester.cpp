@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
+#include <cassert>
 #include <cstddef>
 
 extern "C" {
-#include <Source/SFAssert.h>
 #include <Source/SFPattern.h>
 #include <Source/SFPatternBuilder.h>
 }
@@ -54,7 +54,7 @@ void PatternTester::testNoFeatures()
         .languageTag = SFTagMake('U', 'R', 'D', 'U'),
         .defaultDirection = SFTextDirectionRightToLeft,
     };
-    SFAssert(SFPatternEqualToPattern(pattern, &expected));
+    assert(SFPatternEqualToPattern(pattern, &expected));
 
     SFPatternRelease(pattern);
 }
@@ -114,7 +114,7 @@ void PatternTester::testDistinctFeatures()
             .languageTag = 0,
             .defaultDirection = SFTextDirectionLeftToRight,
         };
-        SFAssert(SFPatternEqualToPattern(pattern, &expectedPattern));
+        assert(SFPatternEqualToPattern(pattern, &expectedPattern));
 
         SFPatternRelease(pattern);
     }
@@ -172,7 +172,7 @@ void PatternTester::testDistinctFeatures()
             .languageTag = 0,
             .defaultDirection = SFTextDirectionLeftToRight,
         };
-        SFAssert(SFPatternEqualToPattern(pattern, &expectedPattern));
+        assert(SFPatternEqualToPattern(pattern, &expectedPattern));
 
         SFPatternRelease(pattern);
     }
@@ -234,7 +234,7 @@ void PatternTester::testSimultaneousFeatures()
         .languageTag = 0,
         .defaultDirection = SFTextDirectionLeftToRight,
     };
-    SFAssert(SFPatternEqualToPattern(pattern, &expectedPattern));
+    assert(SFPatternEqualToPattern(pattern, &expectedPattern));
 
     SFPatternRelease(pattern);
 }
@@ -301,7 +301,7 @@ void PatternTester::testLookupIndexSorting()
             .languageTag = 0,
             .defaultDirection = SFTextDirectionLeftToRight,
         };
-        SFAssert(SFPatternEqualToPattern(pattern, &expectedPattern));
+        assert(SFPatternEqualToPattern(pattern, &expectedPattern));
 
         SFPatternRelease(pattern);
     }
@@ -355,7 +355,7 @@ void PatternTester::testLookupIndexSorting()
             .languageTag = 0,
             .defaultDirection = SFTextDirectionLeftToRight,
         };
-        SFAssert(SFPatternEqualToPattern(pattern, &expectedPattern));
+        assert(SFPatternEqualToPattern(pattern, &expectedPattern));
         
         SFPatternRelease(pattern);
     }

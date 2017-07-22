@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+#include <cassert>
 #include <cstddef>
 #include <cstdint>
 #include <cstring>
@@ -221,8 +222,8 @@ void TextProcessorTester::testSubstitution(LookupSubtable &subtable,
     processSubtable(&album, &codepoints[0], codepoints.size(), SFFalse, subtable,
                     (LookupSubtable **)referrals.data(), referrals.size());
 
-    SFAssert(SFAlbumGetGlyphCount(&album) == glyphs.size());
-    SFAssert(memcmp(SFAlbumGetGlyphIDsPtr(&album), glyphs.data(), sizeof(SFGlyphID) * glyphs.size()) == 0);
+    assert(SFAlbumGetGlyphCount(&album) == glyphs.size());
+    assert(memcmp(SFAlbumGetGlyphIDsPtr(&album), glyphs.data(), sizeof(SFGlyphID) * glyphs.size()) == 0);
 }
 
 void TextProcessorTester::testPositioning(LookupSubtable &subtable,
@@ -232,16 +233,16 @@ void TextProcessorTester::testPositioning(LookupSubtable &subtable,
     const vector<LookupSubtable *> referrals,
     bool isRTL)
 {
-    SFAssert(offsets.size() == advances.size());
+    assert(offsets.size() == advances.size());
 
     SFAlbum album;
     SFAlbumInitialize(&album);
     processSubtable(&album, &codepoints[0], codepoints.size(), SFTrue, subtable,
                     (LookupSubtable **)referrals.data(), referrals.size(), isRTL);
 
-    SFAssert(SFAlbumGetGlyphCount(&album) == offsets.size());
-    SFAssert(memcmp(SFAlbumGetGlyphOffsetsPtr(&album), offsets.data(), sizeof(SFPoint) * offsets.size()) == 0);
-    SFAssert(memcmp(SFAlbumGetGlyphAdvancesPtr(&album), advances.data(), sizeof(SFInt32) * advances.size()) == 0);
+    assert(SFAlbumGetGlyphCount(&album) == offsets.size());
+    assert(memcmp(SFAlbumGetGlyphOffsetsPtr(&album), offsets.data(), sizeof(SFPoint) * offsets.size()) == 0);
+    assert(memcmp(SFAlbumGetGlyphAdvancesPtr(&album), advances.data(), sizeof(SFInt32) * advances.size()) == 0);
 }
 
 void TextProcessorTester::test()

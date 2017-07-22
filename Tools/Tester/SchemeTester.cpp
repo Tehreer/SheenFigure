@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
+#include <cassert>
 #include <cstddef>
 #include <cstring>
 
 extern "C" {
-#include <Source/SFAssert.h>
 #include <Source/SFPattern.h>
 #include <Source/SFScheme.h>
 }
@@ -154,7 +154,7 @@ void SchemeTester::test()
             .languageTag = SFTagMake('d', 'f', 'l', 't'),
             .defaultDirection = SFTextDirectionLeftToRight,
         };
-        SFAssert(SFPatternEqualToPattern(pattern, &expectedPattern));
+        assert(SFPatternEqualToPattern(pattern, &expectedPattern));
 
         SFPatternRelease(pattern);
     }
@@ -181,7 +181,7 @@ void SchemeTester::test()
             .languageTag = SFTagMake('E', 'N', 'G', ' '),
             .defaultDirection = SFTextDirectionLeftToRight,
         };
-        SFAssert(SFPatternEqualToPattern(pattern, &expectedPattern));
+        assert(SFPatternEqualToPattern(pattern, &expectedPattern));
 
         SFPatternRelease(pattern);
     }

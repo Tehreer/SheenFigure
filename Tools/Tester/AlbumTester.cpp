@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+#include <cassert>
 #include <cstddef>
 #include <cstdlib>
 #include <cstring>
@@ -21,7 +22,6 @@
 extern "C" {
 #include <SBCodepointSequence.h>
 #include <Source/SFAlbum.h>
-#include <Source/SFAssert.h>
 }
 
 #include "AlbumTester.h"
@@ -52,9 +52,9 @@ void AlbumTester::testInitialize()
     SFAlbum album;
     SFAlbumInitialize(&album);
 
-    SFAssert(album.codepoints == NULL);
-    SFAssert(album.codeunitCount == 0);
-    SFAssert(album.glyphCount == 0);
+    assert(album.codepoints == NULL);
+    assert(album.codeunitCount == 0);
+    assert(album.glyphCount == 0);
 
     SFAlbumFinalize(&album);
 }
@@ -69,9 +69,9 @@ void AlbumTester::testReset()
         SFCodepoints codepoints;
         SFAlbumReset(&album, &codepoints, 1024);
 
-        SFAssert(album.codepoints == &codepoints);
-        SFAssert(album.codeunitCount == 1024);
-        SFAssert(album.glyphCount == 0);
+        assert(album.codepoints == &codepoints);
+        assert(album.codeunitCount == 1024);
+        assert(album.glyphCount == 0);
     }
 
     /* Test reset after some manipulation. */
@@ -83,9 +83,9 @@ void AlbumTester::testReset()
         SFCodepoints codepoints;
         SFAlbumReset(&album, &codepoints, 1024);
 
-        SFAssert(album.codepoints == &codepoints);
-        SFAssert(album.codeunitCount == 1024);
-        SFAssert(album.glyphCount == 0);
+        assert(album.codepoints == &codepoints);
+        assert(album.codeunitCount == 1024);
+        assert(album.glyphCount == 0);
     }
 
     SFAlbumFinalize(&album);
@@ -114,17 +114,17 @@ void AlbumTester::testAddGlyph()
         SFAlbumWrapUp(&album);
 
         /* Test the glyph count. */
-        SFAssert(SFAlbumGetGlyphCount(&album) == 5);
+        assert(SFAlbumGetGlyphCount(&album) == 5);
 
         /* Test the output glyphs. */
         const SFGlyphID *actualGlyphs = SFAlbumGetGlyphIDsPtr(&album);
         const SFGlyphID expectedGlyphs[] = { 100, 200, 300, 400, 500 };
-        SFAssert(memcmp(actualGlyphs, expectedGlyphs, sizeof(expectedGlyphs)) == 0);
+        assert(memcmp(actualGlyphs, expectedGlyphs, sizeof(expectedGlyphs)) == 0);
 
         /* Test the output map. */
         const SFUInteger *actualMap = SFAlbumGetCodeunitToGlyphMapPtr(&album);
         const SFInteger expectedMap[] = { 0, 1, 2, 3, 4 };
-        SFAssert(memcmp(actualMap, expectedMap, sizeof(expectedMap)) == 0);
+        assert(memcmp(actualMap, expectedMap, sizeof(expectedMap)) == 0);
     }
 
     /* Test with backward associations. */
@@ -145,17 +145,17 @@ void AlbumTester::testAddGlyph()
         SFAlbumWrapUp(&album);
 
         /* Test the glyph count. */
-        SFAssert(SFAlbumGetGlyphCount(&album) == 5);
+        assert(SFAlbumGetGlyphCount(&album) == 5);
 
         /* Test the output glyphs. */
         const SFGlyphID *actualGlyphs = SFAlbumGetGlyphIDsPtr(&album);
         const SFGlyphID expectedGlyphs[] = { 100, 200, 300, 400, 500 };
-        SFAssert(memcmp(actualGlyphs, expectedGlyphs, sizeof(expectedGlyphs)) == 0);
+        assert(memcmp(actualGlyphs, expectedGlyphs, sizeof(expectedGlyphs)) == 0);
 
         /* Test the output map. */
         const SFUInteger *actualMap = SFAlbumGetCodeunitToGlyphMapPtr(&album);
         const SFInteger expectedMap[] = { 4, 3, 2, 1, 0 };
-        SFAssert(memcmp(actualMap, expectedMap, sizeof(expectedMap)) == 0);
+        assert(memcmp(actualMap, expectedMap, sizeof(expectedMap)) == 0);
     }
 
     /* Test by mimicing multiple code units per codepoint. */
@@ -176,17 +176,17 @@ void AlbumTester::testAddGlyph()
         SFAlbumWrapUp(&album);
 
         /* Test the glyph count. */
-        SFAssert(SFAlbumGetGlyphCount(&album) == 5);
+        assert(SFAlbumGetGlyphCount(&album) == 5);
 
         /* Test the output glyphs. */
         const SFGlyphID *actualGlyphs = SFAlbumGetGlyphIDsPtr(&album);
         const SFGlyphID expectedGlyphs[] = { 100, 200, 300, 400, 500 };
-        SFAssert(memcmp(actualGlyphs, expectedGlyphs, sizeof(expectedGlyphs)) == 0);
+        assert(memcmp(actualGlyphs, expectedGlyphs, sizeof(expectedGlyphs)) == 0);
 
         /* Test the output map. */
         const SFUInteger *actualMap = SFAlbumGetCodeunitToGlyphMapPtr(&album);
         const SFInteger expectedMap[] = { 0, 1, 1, 2, 2, 2, 3, 3, 3, 3, 4, 4, 4, 4, 4 };
-        SFAssert(memcmp(actualMap, expectedMap, sizeof(expectedMap)) == 0);
+        assert(memcmp(actualMap, expectedMap, sizeof(expectedMap)) == 0);
     }
 
     SFAlbumFinalize(&album);
@@ -225,15 +225,15 @@ void AlbumTester::testReserveGlyphs()
     SFAlbumWrapUp(&album);
 
     /* Test the glyph count. */
-    SFAssert(SFAlbumGetGlyphCount(&album) == 25);
+    assert(SFAlbumGetGlyphCount(&album) == 25);
 
     /* Test the expected locations of output glyphs. */
     const SFGlyphID *glyphs = SFAlbumGetGlyphIDsPtr(&album);
-    SFAssert(glyphs[5] == 100);
-    SFAssert(glyphs[9] == 300);
-    SFAssert(glyphs[15] == 400);
-    SFAssert(glyphs[19] == 200);
-    SFAssert(glyphs[24] == 500);
+    assert(glyphs[5] == 100);
+    assert(glyphs[9] == 300);
+    assert(glyphs[15] == 400);
+    assert(glyphs[19] == 200);
+    assert(glyphs[24] == 500);
 
     SFAlbumFinalize(&album);
 }
@@ -258,12 +258,12 @@ void AlbumTester::testSetGlyph()
     SFAlbumWrapUp(&album);
 
     /* Test the glyph count. */
-    SFAssert(SFAlbumGetGlyphCount(&album) == 5);
+    assert(SFAlbumGetGlyphCount(&album) == 5);
 
     /* Test the output glyphs. */
     const SFGlyphID *actual = SFAlbumGetGlyphIDsPtr(&album);
     const SFGlyphID expected[] = { 100, 200, 300, 400, 500 };
-    SFAssert(memcmp(actual, expected, sizeof(expected)) == 0);
+    assert(memcmp(actual, expected, sizeof(expected)) == 0);
 
     SFAlbumFinalize(&album);
 }
@@ -280,8 +280,8 @@ void AlbumTester::testGetGlyph()
         SFAlbumAddGlyph(&album, 100, SFGlyphTraitNone, 0);
         SFAlbumAddGlyph(&album, 200, SFGlyphTraitNone, 0);
 
-        SFAssert(SFAlbumGetGlyph(&album, 0) == 100);
-        SFAssert(SFAlbumGetGlyph(&album, 1) == 200);
+        assert(SFAlbumGetGlyph(&album, 0) == 100);
+        assert(SFAlbumGetGlyph(&album, 1) == 200);
     }
 
     /* Test by reserving and setting some glyphs. */
@@ -291,9 +291,9 @@ void AlbumTester::testGetGlyph()
         SFAlbumSetGlyph(&album, 2, 400);
         SFAlbumSetGlyph(&album, 3, 500);
 
-        SFAssert(SFAlbumGetGlyph(&album, 1) == 300);
-        SFAssert(SFAlbumGetGlyph(&album, 2) == 400);
-        SFAssert(SFAlbumGetGlyph(&album, 3) == 500);
+        assert(SFAlbumGetGlyph(&album, 1) == 300);
+        assert(SFAlbumGetGlyph(&album, 2) == 400);
+        assert(SFAlbumGetGlyph(&album, 3) == 500);
     }
 
     SFAlbumEndFilling(&album);
@@ -301,7 +301,7 @@ void AlbumTester::testGetGlyph()
     SFAlbumFinalize(&album);
 }
 
-void AlbumTester::testSetSingleAssociation()
+void AlbumTester::testSetAssociation()
 {
     SFAlbum album;
     SFAlbumInitialize(&album);
@@ -325,7 +325,7 @@ void AlbumTester::testSetSingleAssociation()
         /* Test the output map. */
         const SFUInteger *actual = SFAlbumGetCodeunitToGlyphMapPtr(&album);
         const SFUInteger expected[] = { 0, 1, 2, 3, 4 };
-        SFAssert(memcmp(actual, expected, sizeof(expected)) == 0);
+        assert(memcmp(actual, expected, sizeof(expected)) == 0);
     }
 
     /* Test with backward associations. */
@@ -347,7 +347,7 @@ void AlbumTester::testSetSingleAssociation()
         /* Test the output map. */
         const SFUInteger *actual = SFAlbumGetCodeunitToGlyphMapPtr(&album);
         const SFUInteger expected[] = { 4, 3, 2, 1, 0 };
-        SFAssert(memcmp(actual, expected, sizeof(expected)) == 0);
+        assert(memcmp(actual, expected, sizeof(expected)) == 0);
     }
 
     /* Test with complex associations. */
@@ -372,13 +372,13 @@ void AlbumTester::testSetSingleAssociation()
         /* Test the output map. */
         const SFUInteger *actual = SFAlbumGetCodeunitToGlyphMapPtr(&album);
         const SFUInteger expected[] = { 7, 6, 5, 3, 0 };
-        SFAssert(memcmp(actual, expected, sizeof(expected)) == 0);
+        assert(memcmp(actual, expected, sizeof(expected)) == 0);
     }
 
     SFAlbumFinalize(&album);
 }
 
-void AlbumTester::testGetSingleAssociation()
+void AlbumTester::testGetAssociation()
 {
     SFAlbum album;
     SFAlbumInitialize(&album);
@@ -391,8 +391,8 @@ void AlbumTester::testGetSingleAssociation()
         SFAlbumAddGlyph(&album, 0, SFGlyphTraitNone, 1);
 
         /* Test with get single association. */
-        SFAssert(SFAlbumGetAssociation(&album, 0) == 0);
-        SFAssert(SFAlbumGetAssociation(&album, 1) == 1);
+        assert(SFAlbumGetAssociation(&album, 0) == 0);
+        assert(SFAlbumGetAssociation(&album, 1) == 1);
     }
 
     /* Test by reserving some glyphs. */
@@ -403,9 +403,9 @@ void AlbumTester::testGetSingleAssociation()
         SFAlbumSetAssociation(&album, 3, 4);
 
         /* Test with get single association. */
-        SFAssert(SFAlbumGetAssociation(&album, 1) == 2);
-        SFAssert(SFAlbumGetAssociation(&album, 2) == 3);
-        SFAssert(SFAlbumGetAssociation(&album, 3) == 4);
+        assert(SFAlbumGetAssociation(&album, 1) == 2);
+        assert(SFAlbumGetAssociation(&album, 2) == 3);
+        assert(SFAlbumGetAssociation(&album, 3) == 4);
     }
 
     SFAlbumEndFilling(&album);
@@ -435,11 +435,11 @@ void AlbumTester::testFeatureMask()
     SFAlbumSetFeatureMask(&album, 4, mask5);
 
     /* Test with get feature mask. */
-    SFAssert(SFAlbumGetFeatureMask(&album, 0) == mask1);
-    SFAssert(SFAlbumGetFeatureMask(&album, 1) == mask2);
-    SFAssert(SFAlbumGetFeatureMask(&album, 2) == mask3);
-    SFAssert(SFAlbumGetFeatureMask(&album, 3) == mask4);
-    SFAssert(SFAlbumGetFeatureMask(&album, 4) == mask5);
+    assert(SFAlbumGetFeatureMask(&album, 0) == mask1);
+    assert(SFAlbumGetFeatureMask(&album, 1) == mask2);
+    assert(SFAlbumGetFeatureMask(&album, 2) == mask3);
+    assert(SFAlbumGetFeatureMask(&album, 3) == mask4);
+    assert(SFAlbumGetFeatureMask(&album, 4) == mask5);
 
     SFAlbumEndFilling(&album);
     SFAlbumFinalize(&album);
@@ -462,11 +462,11 @@ void AlbumTester::testTraits()
         SFAlbumSetTraits(&album, 3, SFGlyphTraitMark);
         SFAlbumSetTraits(&album, 4, SFGlyphTraitComponent);
 
-        SFAssert(SFAlbumGetTraits(&album, 0) == SFGlyphTraitNone);
-        SFAssert(SFAlbumGetTraits(&album, 1) == SFGlyphTraitBase);
-        SFAssert(SFAlbumGetTraits(&album, 2) == SFGlyphTraitLigature);
-        SFAssert(SFAlbumGetTraits(&album, 3) == SFGlyphTraitMark);
-        SFAssert(SFAlbumGetTraits(&album, 4) == SFGlyphTraitComponent);
+        assert(SFAlbumGetTraits(&album, 0) == SFGlyphTraitNone);
+        assert(SFAlbumGetTraits(&album, 1) == SFGlyphTraitBase);
+        assert(SFAlbumGetTraits(&album, 2) == SFGlyphTraitLigature);
+        assert(SFAlbumGetTraits(&album, 3) == SFGlyphTraitMark);
+        assert(SFAlbumGetTraits(&album, 4) == SFGlyphTraitComponent);
     }
 
     /* Test by inserting traits. */
@@ -477,11 +477,11 @@ void AlbumTester::testTraits()
         SFAlbumInsertTraits(&album, 3, SFGlyphTraitCursive | SFGlyphTraitRightToLeft);
         SFAlbumInsertTraits(&album, 4, SFGlyphTraitResolved);
 
-        SFAssert(SFAlbumGetTraits(&album, 0) == (SFGlyphTraitPlaceholder));
-        SFAssert(SFAlbumGetTraits(&album, 1) == (SFGlyphTraitBase | SFGlyphTraitAttached | SFGlyphTraitResolved));
-        SFAssert(SFAlbumGetTraits(&album, 2) == (SFGlyphTraitLigature | SFGlyphTraitCursive));
-        SFAssert(SFAlbumGetTraits(&album, 3) == (SFGlyphTraitMark | SFGlyphTraitCursive | SFGlyphTraitRightToLeft));
-        SFAssert(SFAlbumGetTraits(&album, 4) == (SFGlyphTraitComponent | SFGlyphTraitResolved));
+        assert(SFAlbumGetTraits(&album, 0) == (SFGlyphTraitPlaceholder));
+        assert(SFAlbumGetTraits(&album, 1) == (SFGlyphTraitBase | SFGlyphTraitAttached | SFGlyphTraitResolved));
+        assert(SFAlbumGetTraits(&album, 2) == (SFGlyphTraitLigature | SFGlyphTraitCursive));
+        assert(SFAlbumGetTraits(&album, 3) == (SFGlyphTraitMark | SFGlyphTraitCursive | SFGlyphTraitRightToLeft));
+        assert(SFAlbumGetTraits(&album, 4) == (SFGlyphTraitComponent | SFGlyphTraitResolved));
     }
 
     /* Test by removing traits. */
@@ -492,11 +492,11 @@ void AlbumTester::testTraits()
         SFAlbumRemoveTraits(&album, 3, SFGlyphTraitRightToLeft);
         SFAlbumRemoveTraits(&album, 4, SFGlyphTraitComponent);
 
-        SFAssert(SFAlbumGetTraits(&album, 0) == (SFGlyphTraitNone));
-        SFAssert(SFAlbumGetTraits(&album, 1) == (SFGlyphTraitAttached));
-        SFAssert(SFAlbumGetTraits(&album, 2) == (SFGlyphTraitNone));
-        SFAssert(SFAlbumGetTraits(&album, 3) == (SFGlyphTraitMark | SFGlyphTraitCursive));
-        SFAssert(SFAlbumGetTraits(&album, 4) == (SFGlyphTraitResolved));
+        assert(SFAlbumGetTraits(&album, 0) == (SFGlyphTraitNone));
+        assert(SFAlbumGetTraits(&album, 1) == (SFGlyphTraitAttached));
+        assert(SFAlbumGetTraits(&album, 2) == (SFGlyphTraitNone));
+        assert(SFAlbumGetTraits(&album, 3) == (SFGlyphTraitMark | SFGlyphTraitCursive));
+        assert(SFAlbumGetTraits(&album, 4) == (SFGlyphTraitResolved));
     }
 
     SFAlbumEndFilling(&album);
@@ -521,11 +521,11 @@ void AlbumTester::testOffset()
     SFAlbumSetX(&album, 4, 500), SFAlbumSetY(&album, 4, 550);
 
     /* Test with getters. */
-    SFAssert(SFAlbumGetX(&album, 0) == 100 && SFAlbumGetY(&album, 0) == 150);
-    SFAssert(SFAlbumGetX(&album, 1) == 200 && SFAlbumGetY(&album, 1) == 250);
-    SFAssert(SFAlbumGetX(&album, 2) == 300 && SFAlbumGetY(&album, 2) == 350);
-    SFAssert(SFAlbumGetX(&album, 3) == 400 && SFAlbumGetY(&album, 3) == 450);
-    SFAssert(SFAlbumGetX(&album, 4) == 500 && SFAlbumGetY(&album, 4) == 550);
+    assert(SFAlbumGetX(&album, 0) == 100 && SFAlbumGetY(&album, 0) == 150);
+    assert(SFAlbumGetX(&album, 1) == 200 && SFAlbumGetY(&album, 1) == 250);
+    assert(SFAlbumGetX(&album, 2) == 300 && SFAlbumGetY(&album, 2) == 350);
+    assert(SFAlbumGetX(&album, 3) == 400 && SFAlbumGetY(&album, 3) == 450);
+    assert(SFAlbumGetX(&album, 4) == 500 && SFAlbumGetY(&album, 4) == 550);
 
     SFAlbumEndArranging(&album);
     SFAlbumWrapUp(&album);
@@ -535,7 +535,7 @@ void AlbumTester::testOffset()
     const SFPoint expected[] = {
         { 100, 150 }, { 200, 250 }, { 300, 350 }, { 400, 450 }, { 500, 550 }
     };
-    SFAssert(memcmp(actual, expected, sizeof(expected)) == 0);
+    assert(memcmp(actual, expected, sizeof(expected)) == 0);
 
     SFAlbumFinalize(&album);
 }
@@ -558,11 +558,11 @@ void AlbumTester::testAdvance()
     SFAlbumSetAdvance(&album, 4, 500);
 
     /* Test with getters. */
-    SFAssert(SFAlbumGetAdvance(&album, 0) == 100);
-    SFAssert(SFAlbumGetAdvance(&album, 1) == 200);
-    SFAssert(SFAlbumGetAdvance(&album, 2) == 300);
-    SFAssert(SFAlbumGetAdvance(&album, 3) == 400);
-    SFAssert(SFAlbumGetAdvance(&album, 4) == 500);
+    assert(SFAlbumGetAdvance(&album, 0) == 100);
+    assert(SFAlbumGetAdvance(&album, 1) == 200);
+    assert(SFAlbumGetAdvance(&album, 2) == 300);
+    assert(SFAlbumGetAdvance(&album, 3) == 400);
+    assert(SFAlbumGetAdvance(&album, 4) == 500);
 
     SFAlbumEndArranging(&album);
     SFAlbumWrapUp(&album);
@@ -570,7 +570,7 @@ void AlbumTester::testAdvance()
     /* Test the overall output. */
     const SFAdvance *actual = SFAlbumGetGlyphAdvancesPtr(&album);
     const SFAdvance expected[] = { 100, 200, 300, 400, 500 };
-    SFAssert(memcmp(actual, expected, sizeof(expected)) == 0);
+    assert(memcmp(actual, expected, sizeof(expected)) == 0);
 
     SFAlbumFinalize(&album);
 }
@@ -593,11 +593,11 @@ void AlbumTester::testCursiveOffset()
     SFAlbumSetCursiveOffset(&album, 4, 5);
 
     /* Test with getters. */
-    SFAssert(SFAlbumGetCursiveOffset(&album, 0) == 1);
-    SFAssert(SFAlbumGetCursiveOffset(&album, 1) == 2);
-    SFAssert(SFAlbumGetCursiveOffset(&album, 2) == 3);
-    SFAssert(SFAlbumGetCursiveOffset(&album, 3) == 4);
-    SFAssert(SFAlbumGetCursiveOffset(&album, 4) == 5);
+    assert(SFAlbumGetCursiveOffset(&album, 0) == 1);
+    assert(SFAlbumGetCursiveOffset(&album, 1) == 2);
+    assert(SFAlbumGetCursiveOffset(&album, 2) == 3);
+    assert(SFAlbumGetCursiveOffset(&album, 3) == 4);
+    assert(SFAlbumGetCursiveOffset(&album, 4) == 5);
 
     SFAlbumEndArranging(&album);
     SFAlbumWrapUp(&album);
@@ -622,11 +622,11 @@ void AlbumTester::testAttachmentOffset()
     SFAlbumSetAttachmentOffset(&album, 4, 5);
 
     /* Test with getters. */
-    SFAssert(SFAlbumGetAttachmentOffset(&album, 0) == 1);
-    SFAssert(SFAlbumGetAttachmentOffset(&album, 1) == 2);
-    SFAssert(SFAlbumGetAttachmentOffset(&album, 2) == 3);
-    SFAssert(SFAlbumGetAttachmentOffset(&album, 3) == 4);
-    SFAssert(SFAlbumGetAttachmentOffset(&album, 4) == 5);
+    assert(SFAlbumGetAttachmentOffset(&album, 0) == 1);
+    assert(SFAlbumGetAttachmentOffset(&album, 1) == 2);
+    assert(SFAlbumGetAttachmentOffset(&album, 2) == 3);
+    assert(SFAlbumGetAttachmentOffset(&album, 3) == 4);
+    assert(SFAlbumGetAttachmentOffset(&album, 4) == 5);
 
     SFAlbumEndArranging(&album);
     SFAlbumWrapUp(&album);
@@ -641,8 +641,8 @@ void AlbumTester::test()
     testReserveGlyphs();
     testSetGlyph();
     testGetGlyph();
-    testSetSingleAssociation();
-    testGetSingleAssociation();
+    testSetAssociation();
+    testGetAssociation();
     testFeatureMask();
     testTraits();
     testOffset();

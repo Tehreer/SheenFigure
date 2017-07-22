@@ -30,8 +30,8 @@ public:
     void testReserveGlyphs();
     void testSetGlyph();
     void testGetGlyph();
-    void testSetSingleAssociation();
-    void testGetSingleAssociation();
+    void testSetAssociation();
+    void testGetAssociation();
     void testFeatureMask();
     void testTraits();
     void testOffset();
