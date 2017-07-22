@@ -193,7 +193,7 @@ static SFBoolean _SFApplySequenceTable(SFTextProcessorRef textProcessor, SFData 
         SFAlbumSetTraits(album, inputIndex, substituteTraits);
 
         if (glyphCount != 1) {
-            SFUInteger association = SFAlbumGetSingleAssociation(album, inputIndex);
+            SFUInteger association = SFAlbumGetAssociation(album, inputIndex);
             SFUInteger subIndex;
 
             /* Reserve glyphs for remaining substitutes in the album. */
@@ -210,7 +210,7 @@ static SFBoolean _SFApplySequenceTable(SFTextProcessorRef textProcessor, SFData 
                 /* Initialize the glyph with substitute. */
                 SFAlbumSetGlyph(album, newIndex, substituteGlyph);
                 SFAlbumSetTraits(album, newIndex, substituteTraits);
-                SFAlbumSetSingleAssociation(album, newIndex, association);
+                SFAlbumSetAssociation(album, newIndex, association);
             }
 
             /* Skip added elements in the locator. */
@@ -376,7 +376,7 @@ static SFBoolean _SFApplyLigatureSetTable(SFTextProcessorRef textProcessor, SFDa
             SFAlbumSetGlyph(album, inputIndex, ligGlyph);
             SFAlbumSetTraits(album, inputIndex, ligTraits);
 
-            ligAssociation = SFAlbumGetSingleAssociation(album, inputIndex);
+            ligAssociation = SFAlbumGetAssociation(album, inputIndex);
             prevIndex = inputIndex;
 
             /* Initialize component glyphs. */
@@ -390,7 +390,7 @@ static SFBoolean _SFApplyLigatureSetTable(SFTextProcessorRef textProcessor, SFDa
 
                 /* Form a cluster by setting the association of in-between glyphs. */
                 for (; prevIndex <= nextIndex; prevIndex++) {
-                    SFAlbumSetSingleAssociation(album, nextIndex, ligAssociation);
+                    SFAlbumSetAssociation(album, nextIndex, ligAssociation);
                 }
             }
 

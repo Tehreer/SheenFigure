@@ -110,8 +110,8 @@ SF_INTERNAL void SFAlbumReserveGlyphs(SFAlbumRef album, SFUInteger index, SFUInt
 SF_INTERNAL SFGlyphID SFAlbumGetGlyph(SFAlbumRef album, SFUInteger index);
 SF_INTERNAL void SFAlbumSetGlyph(SFAlbumRef album, SFUInteger index, SFGlyphID glyph);
 
-SF_INTERNAL SFUInteger SFAlbumGetSingleAssociation(SFAlbumRef album, SFUInteger index);
-SF_INTERNAL void SFAlbumSetSingleAssociation(SFAlbumRef album, SFUInteger index, SFUInteger association);
+SF_INTERNAL SFUInteger SFAlbumGetAssociation(SFAlbumRef album, SFUInteger index);
+SF_INTERNAL void SFAlbumSetAssociation(SFAlbumRef album, SFUInteger index, SFUInteger association);
 
 SF_PRIVATE SFGlyphMask _SFAlbumGetGlyphMask(SFAlbumRef album, SFUInteger index);
 

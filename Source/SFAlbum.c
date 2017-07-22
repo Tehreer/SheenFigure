@@ -119,6 +119,8 @@ SF_INTERNAL void SFAlbumReset(SFAlbumRef album, SFCodepointsRef codepoints, SFUI
     album->glyphCount = 0;
 
     SFListClear(&album->_indexMap);
+    SFListReserveRange(&album->_indexMap, 0, codeunitCount);
+
     SFListClear(&album->_glyphs);
     SFListClear(&album->_details);
     SFListClear(&album->_offsets);
@@ -194,12 +196,12 @@ SF_INTERNAL void SFAlbumSetGlyph(SFAlbumRef album, SFUInteger index, SFGlyphID g
     SFListSetVal(&album->_glyphs, index, glyph);
 }
 
-SF_INTERNAL SFUInteger SFAlbumGetSingleAssociation(SFAlbumRef album, SFUInteger index)
+SF_INTERNAL SFUInteger SFAlbumGetAssociation(SFAlbumRef album, SFUInteger index)
 {
     return SFListGetRef(&album->_details, index)->association;
 }
 
-SF_INTERNAL void SFAlbumSetSingleAssociation(SFAlbumRef album, SFUInteger index, SFUInteger association)
+SF_INTERNAL void SFAlbumSetAssociation(SFAlbumRef album, SFUInteger index, SFUInteger association)
 {
     /* The album must be in filling state. */
     SFAssert(album->_state == _SFAlbumStateFilling);
@@ -392,8 +394,6 @@ static void _SFAlbumBuildCodeunitToGlyphMap(SFAlbumRef album)
     SFUInteger association = 0;
     SFUInteger index;
 
-    SFListReserveRange(&album->_indexMap, 0, codeunitCount);
-
     /* Initialize the map array. */
     for (index = 0; index < codeunitCount; index++) {
         SFListSetVal(&album->_indexMap, index, SFInvalidIndex);
@@ -401,7 +401,7 @@ static void _SFAlbumBuildCodeunitToGlyphMap(SFAlbumRef album)
 
     /* Traverse in reverse order so that first glyph takes priority in case of multiple substitution. */
     for (index = album->glyphCount; index--;) {
-        association = SFAlbumGetSingleAssociation(album, index);
+        association = SFAlbumGetAssociation(album, index);
         SFListSetVal(&album->_indexMap, association, index);
     }
 
