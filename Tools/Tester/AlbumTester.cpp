@@ -39,7 +39,7 @@ static void SFAlbumReserveGlyphsInitialized(SFAlbumRef album, SFUInteger index, 
         SFAlbumSetGlyph(album, i, 0);
         SFAlbumSetFeatureMask(album, i, 0);
         SFAlbumSetTraits(album, i, SFGlyphTraitNone);
-        SFAlbumSetSingleAssociation(album, i, 0);
+        SFAlbumSetAssociation(album, i, 0);
     }
 }
 
@@ -219,7 +219,7 @@ void AlbumTester::testReserveGlyphs()
     /* Wrap up the album. */
     for (SFUInteger i = 0; i < 25; i++) {
         SFAlbumSetTraits(&album, i, SFGlyphTraitNone);
-        SFAlbumSetSingleAssociation(&album, i, 0);
+        SFAlbumSetAssociation(&album, i, 0);
     }
     SFAlbumEndFilling(&album);
     SFAlbumWrapUp(&album);
@@ -313,11 +313,11 @@ void AlbumTester::testSetSingleAssociation()
 
         SFAlbumReserveGlyphsInitialized(&album, 0, 5);
 
-        SFAlbumSetSingleAssociation(&album, 0, 0);
-        SFAlbumSetSingleAssociation(&album, 1, 1);
-        SFAlbumSetSingleAssociation(&album, 2, 2);
-        SFAlbumSetSingleAssociation(&album, 3, 3);
-        SFAlbumSetSingleAssociation(&album, 4, 4);
+        SFAlbumSetAssociation(&album, 0, 0);
+        SFAlbumSetAssociation(&album, 1, 1);
+        SFAlbumSetAssociation(&album, 2, 2);
+        SFAlbumSetAssociation(&album, 3, 3);
+        SFAlbumSetAssociation(&album, 4, 4);
 
         SFAlbumEndFilling(&album);
         SFAlbumWrapUp(&album);
@@ -335,11 +335,11 @@ void AlbumTester::testSetSingleAssociation()
 
         SFAlbumReserveGlyphsInitialized(&album, 0, 5);
 
-        SFAlbumSetSingleAssociation(&album, 0, 4);
-        SFAlbumSetSingleAssociation(&album, 1, 3);
-        SFAlbumSetSingleAssociation(&album, 2, 2);
-        SFAlbumSetSingleAssociation(&album, 3, 1);
-        SFAlbumSetSingleAssociation(&album, 4, 0);
+        SFAlbumSetAssociation(&album, 0, 4);
+        SFAlbumSetAssociation(&album, 1, 3);
+        SFAlbumSetAssociation(&album, 2, 2);
+        SFAlbumSetAssociation(&album, 3, 1);
+        SFAlbumSetAssociation(&album, 4, 0);
 
         SFAlbumEndFilling(&album);
         SFAlbumWrapUp(&album);
@@ -357,14 +357,14 @@ void AlbumTester::testSetSingleAssociation()
 
         SFAlbumReserveGlyphsInitialized(&album, 0, 8);
 
-        SFAlbumSetSingleAssociation(&album, 0, 4);
-        SFAlbumSetSingleAssociation(&album, 1, 4);
-        SFAlbumSetSingleAssociation(&album, 2, 4);
-        SFAlbumSetSingleAssociation(&album, 3, 3);
-        SFAlbumSetSingleAssociation(&album, 4, 3);
-        SFAlbumSetSingleAssociation(&album, 5, 2);
-        SFAlbumSetSingleAssociation(&album, 6, 1);
-        SFAlbumSetSingleAssociation(&album, 7, 0);
+        SFAlbumSetAssociation(&album, 0, 4);
+        SFAlbumSetAssociation(&album, 1, 4);
+        SFAlbumSetAssociation(&album, 2, 4);
+        SFAlbumSetAssociation(&album, 3, 3);
+        SFAlbumSetAssociation(&album, 4, 3);
+        SFAlbumSetAssociation(&album, 5, 2);
+        SFAlbumSetAssociation(&album, 6, 1);
+        SFAlbumSetAssociation(&album, 7, 0);
 
         SFAlbumEndFilling(&album);
         SFAlbumWrapUp(&album);
@@ -391,21 +391,21 @@ void AlbumTester::testGetSingleAssociation()
         SFAlbumAddGlyph(&album, 0, SFGlyphTraitNone, 1);
 
         /* Test with get single association. */
-        SFAssert(SFAlbumGetSingleAssociation(&album, 0) == 0);
-        SFAssert(SFAlbumGetSingleAssociation(&album, 1) == 1);
+        SFAssert(SFAlbumGetAssociation(&album, 0) == 0);
+        SFAssert(SFAlbumGetAssociation(&album, 1) == 1);
     }
 
     /* Test by reserving some glyphs. */
     {
         SFAlbumReserveGlyphsInitialized(&album, 1, 3);
-        SFAlbumSetSingleAssociation(&album, 1, 2);
-        SFAlbumSetSingleAssociation(&album, 2, 3);
-        SFAlbumSetSingleAssociation(&album, 3, 4);
+        SFAlbumSetAssociation(&album, 1, 2);
+        SFAlbumSetAssociation(&album, 2, 3);
+        SFAlbumSetAssociation(&album, 3, 4);
 
         /* Test with get single association. */
-        SFAssert(SFAlbumGetSingleAssociation(&album, 1) == 2);
-        SFAssert(SFAlbumGetSingleAssociation(&album, 2) == 3);
-        SFAssert(SFAlbumGetSingleAssociation(&album, 3) == 4);
+        SFAssert(SFAlbumGetAssociation(&album, 1) == 2);
+        SFAssert(SFAlbumGetAssociation(&album, 2) == 3);
+        SFAssert(SFAlbumGetAssociation(&album, 3) == 4);
     }
 
     SFAlbumEndFilling(&album);

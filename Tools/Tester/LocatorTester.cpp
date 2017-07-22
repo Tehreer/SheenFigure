@@ -195,7 +195,7 @@ static SFAlbumRef SFAlbumCreateWithTraits(const SFGlyphTraits *traits, SFUIntege
         SFAlbumSetGlyph(album, i, (SFGlyphID)i);
         SFAlbumSetFeatureMask(album, i, 0);
         SFAlbumSetTraits(album, i, traits[i]);
-        SFAlbumSetSingleAssociation(album, i, 0);
+        SFAlbumSetAssociation(album, i, 0);
     }
 
     SFAlbumEndFilling(album);
