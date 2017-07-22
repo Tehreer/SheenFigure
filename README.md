@@ -71,7 +71,7 @@ Following are the tables implemented by SheenFigure.
 |--------------------------	|:--------:	|:--------:	|:--------:	|
 | Single                   	|     ✔️    	|     ✔️    	|          	|
 | Multiple                 	|     ✔️    	|          	|          	|
-| Alternate                	|     ❌    	|          	|          	|
+| Alternate                	|     ✔️    	|          	|          	|
 | Ligature                 	|     ✔️    	|          	|          	|
 | Context                  	|     ✔️    	|     ✔️    	|     ✔️    	|
 | Chaining Context         	|     ✔️    	|     ✔️    	|     ✔️    	|
