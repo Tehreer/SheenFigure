@@ -71,7 +71,7 @@ static const SFUInt8 _SFJoiningTypeData[608] = {
     BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, F),
     BYTE(R, D), BYTE(D, D), BYTE(D, D), BYTE(R, R), BYTE(D, R), BYTE(D, D), BYTE(D, D), BYTE(D, D),
     BYTE(D, D), BYTE(D, D), BYTE(R, D), BYTE(U, U), BYTE(U, F), BYTE(F, F), BYTE(F, F), BYTE(F, F),
-    BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, F),
+    BYTE(D, U), BYTE(D, D), BYTE(D, D), BYTE(U, R), BYTE(D, R), BYTE(R, F), BYTE(F, F), BYTE(F, F),
     BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, F),
     BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, F),
     BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, F), BYTE(F, F),
