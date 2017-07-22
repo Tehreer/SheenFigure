@@ -42,7 +42,7 @@ int main(int argc, const char * argv[])
 
     GeneralCategoryLookupGenerator generator(unicodeData);
     generator.setMainSegmentSize(16);
-    generator.setBranchSegmentSize(49);
+    generator.setBranchSegmentSize(64);
     generator.generateFile(out);
 
     return 0;
