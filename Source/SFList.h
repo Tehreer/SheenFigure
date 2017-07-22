@@ -18,6 +18,8 @@
 #define _SF_INTERNAL_LIST_H
 
 #include <SFConfig.h>
+
+#include "SFAssert.h"
 #include "SFBase.h"
 
 typedef struct _SFList {
