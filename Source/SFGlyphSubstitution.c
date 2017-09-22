@@ -83,8 +83,7 @@ static SFBoolean _SFApplySingleSubst(SFTextProcessorRef textProcessor, SFData si
 
     switch (format) {
         case 1: {
-            SFOffset coverageOffset = SFSingleSubstF1_CoverageOffset(singleSubst);
-            SFData coverageTable = SFData_Subdata(singleSubst, coverageOffset);
+            SFData coverageTable = SFSingleSubstF1_CoverageTable(singleSubst);
             SFUInteger coverageIndex;
 
             coverageIndex = SFOpenTypeSearchCoverageIndex(coverageTable, inputGlyph);
@@ -107,8 +106,7 @@ static SFBoolean _SFApplySingleSubst(SFTextProcessorRef textProcessor, SFData si
         }
 
         case 2: {
-            SFOffset coverageOffset = SFSingleSubstF2_CoverageOffset(singleSubst);
-            SFData coverageTable = SFData_Subdata(singleSubst, coverageOffset);
+            SFData coverageTable = SFSingleSubstF2_CoverageTable(singleSubst);
             SFUInteger coverageIndex;
 
             coverageIndex = SFOpenTypeSearchCoverageIndex(coverageTable, inputGlyph);
@@ -148,8 +146,7 @@ static SFBoolean _SFApplyMultipleSubst(SFTextProcessorRef textProcessor, SFData 
 
     switch (format) {
         case 1: {
-            SFOffset coverageOffset = SFMultipleSubstF1_CoverageOffset(multipleSubst);
-            SFData coverageTable = SFData_Subdata(multipleSubst, coverageOffset);
+            SFData coverageTable = SFMultipleSubstF1_CoverageTable(multipleSubst);
             SFUInteger coverageIndex;
 
             coverageIndex = SFOpenTypeSearchCoverageIndex(coverageTable, inputGlyph);
@@ -158,8 +155,7 @@ static SFBoolean _SFApplyMultipleSubst(SFTextProcessorRef textProcessor, SFData 
                 SFUInt16 sequenceCount = SFMultipleSubstF1_SequenceCount(multipleSubst);
 
                 if (coverageIndex < sequenceCount) {
-                    SFOffset sequenceOffset = SFMultipleSubstF1_SequenceOffset(multipleSubst, coverageIndex);
-                    SFData sequenceTable = SFData_Subdata(multipleSubst, sequenceOffset);
+                    SFData sequenceTable = SFMultipleSubstF1_SequenceTable(multipleSubst, coverageIndex);
 
                     return _SFApplySequenceTable(textProcessor, sequenceTable);
                 }
@@ -240,8 +236,7 @@ static SFBoolean _SFApplyAlternateSubst(SFTextProcessorRef textProcessor, SFData
 
     switch (format) {
         case 1: {
-            SFOffset coverageOffset = SFAlternateSubstF1_CoverageOffset(alternateSubst);
-            SFData coverageTable = SFData_Subdata(alternateSubst, coverageOffset);
+            SFData coverageTable = SFAlternateSubstF1_CoverageTable(alternateSubst);
             SFUInteger coverageIndex;
 
             coverageIndex = SFOpenTypeSearchCoverageIndex(coverageTable, inputGlyph);
@@ -250,8 +245,7 @@ static SFBoolean _SFApplyAlternateSubst(SFTextProcessorRef textProcessor, SFData
                 SFUInt16 alternateSetCount = SFAlternateSubstF1_AlternateSetCount(alternateSubst);
 
                 if (coverageIndex < alternateSetCount) {
-                    SFOffset alternateSetOffset = SFAlternateSubstF1_AlternateSetOffset(alternateSubst, coverageIndex);
-                    SFData alternateSetTable = SFData_Subdata(alternateSubst, alternateSetOffset);
+                    SFData alternateSetTable = SFAlternateSubstF1_AlternateSetTable(alternateSubst, coverageIndex);
 
                     return _SFApplyAlternateSetTable(textProcessor, alternateSetTable);
                 }
@@ -295,8 +289,7 @@ static SFBoolean _SFApplyLigatureSubst(SFTextProcessorRef textProcessor, SFData 
 
     switch (format) {
         case 1: {
-            SFOffset coverageOffset = SFLigatureSubstF1_CoverageOffset(ligatureSubst);
-            SFData coverageTable = SFData_Subdata(ligatureSubst, coverageOffset);
+            SFData coverageTable = SFLigatureSubstF1_CoverageTable(ligatureSubst);
             SFUInteger coverageIndex;
 
             coverageIndex = SFOpenTypeSearchCoverageIndex(coverageTable, inputGlyph);
@@ -305,8 +298,7 @@ static SFBoolean _SFApplyLigatureSubst(SFTextProcessorRef textProcessor, SFData 
                 SFUInt16 ligSetCount = SFLigatureSubstF1_LigSetCount(ligatureSubst);
 
                 if (coverageIndex < ligSetCount) {
-                    SFOffset ligatureSetOffset = SFLigatureSubstF1_LigatureSetOffset(ligatureSubst, coverageIndex);
-                    SFData ligatureSetTable = SFData_Subdata(ligatureSubst, ligatureSetOffset);
+                    SFData ligatureSetTable = SFLigatureSubstF1_LigatureSetTable(ligatureSubst, coverageIndex);
 
                     return _SFApplyLigatureSetTable(textProcessor, ligatureSetTable);
                 }
@@ -330,8 +322,7 @@ static SFBoolean _SFApplyLigatureSetTable(SFTextProcessorRef textProcessor, SFDa
 
     /* Match each ligature sequentially as they are ordered by preference. */
     for (ligIndex = 0; ligIndex < ligCount; ligIndex++) {
-        SFOffset ligatureOffset = SFLigatureSet_LigatureOffset(ligatureSetTable, ligIndex);
-        SFData ligatureTable = SFData_Subdata(ligatureSetTable, ligatureOffset);
+        SFData ligatureTable = SFLigatureSet_LigatureTable(ligatureSetTable, ligIndex);
         SFUInt16 compCount = SFLigature_CompCount(ligatureTable);
         SFUInteger *partIndexes;
         SFUInteger prevIndex;
