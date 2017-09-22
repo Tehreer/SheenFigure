@@ -46,10 +46,14 @@ enum {
 
 #define SFSingleSubstF1_CoverageOffset(data)            SFData_UInt16(data, 2)
 #define SFSingleSubstF1_DeltaGlyphID(data)              SFData_Int16 (data, 4)
+#define SFSingleSubstF1_CoverageTable(data) \
+    SFData_Subdata(data, SFSingleSubstF1_CoverageOffset(data))
 
 #define SFSingleSubstF2_CoverageOffset(data)            SFData_UInt16(data, 2)
 #define SFSingleSubstF2_GlyphCount(data)                SFData_UInt16(data, 4)
 #define SFSingleSubstF2_Substitute(data, index)         SFData_UInt16(data, 6 + ((index) * 2))
+#define SFSingleSubstF2_CoverageTable(data) \
+    SFData_Subdata(data, SFSingleSubstF2_CoverageOffset(data))
 
 /**************************************************************************************************/
 
@@ -59,6 +63,10 @@ enum {
 #define SFMultipleSubstF1_CoverageOffset(data)          SFData_UInt16(data, 2)
 #define SFMultipleSubstF1_SequenceCount(data)           SFData_UInt16(data, 4)
 #define SFMultipleSubstF1_SequenceOffset(data, index)   SFData_UInt16(data, 6 + ((index) * 2))
+#define SFMultipleSubstF1_CoverageTable(data) \
+    SFData_Subdata(data, SFMultipleSubstF1_CoverageOffset(data))
+#define SFMultipleSubstF1_SequenceTable(data, index) \
+    SFData_Subdata(data, SFMultipleSubstF1_SequenceOffset(data, index))
 
 #define SFSequence_GlyphCount(data)                     SFData_UInt16(data, 0)
 #define SFSequence_Substitute(data, index)              SFData_UInt16(data, 2 + ((index) * 2))
@@ -72,6 +80,10 @@ enum {
 #define SFAlternateSubstF1_AlternateSetCount(data)      SFData_UInt16(data, 4)
 #define SFAlternateSubstF1_AlternateSetOffset(data, index) \
                                                         SFData_UInt16(data, 6 + ((index) * 2))
+#define SFAlternateSubstF1_CoverageTable(data) \
+    SFData_Subdata(data, SFAlternateSubstF1_CoverageOffset(data))
+#define SFAlternateSubstF1_AlternateSetTable(data, index) \
+    SFData_Subdata(data, SFAlternateSubstF1_AlternateSetOffset(data, index))
 
 #define SFAlternateSet_GlyphCount(data)                 SFData_UInt16(data, 0)
 #define SFAlternateSet_Alternate(data, index)           SFData_UInt16(data, 2 + ((index) * 2))
@@ -85,9 +97,15 @@ enum {
 #define SFLigatureSubstF1_LigSetCount(data)             SFData_UInt16(data, 4)
 #define SFLigatureSubstF1_LigatureSetOffset(data, index) \
                                                         SFData_UInt16(data, 6 + ((index) * 2))
+#define SFLigatureSubstF1_CoverageTable(data) \
+    SFData_Subdata(data, SFLigatureSubstF1_CoverageOffset(data))
+#define SFLigatureSubstF1_LigatureSetTable(data, index) \
+    SFData_Subdata(data, SFLigatureSubstF1_LigatureSetOffset(data, index))
 
 #define SFLigatureSet_LigatureCount(data)               SFData_UInt16(data, 0)
 #define SFLigatureSet_LigatureOffset(data, index)       SFData_UInt16(data, 2 + ((index) * 2))
+#define SFLigatureSet_LigatureTable(data, index) \
+    SFData_Subdata(data, SFLigatureSet_LigatureOffset(data, index))
 
 #define SFLigature_LigGlyph(data)                       SFData_UInt16(data, 0)
 #define SFLigature_CompCount(data)                      SFData_UInt16(data, 2)
