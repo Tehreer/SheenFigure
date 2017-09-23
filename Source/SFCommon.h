@@ -56,6 +56,14 @@ typedef SFUInt16 SFLookupFlag;
 #define SFHeader_ScriptListOffset(data)                 SFData_UInt16(data, 4)
 #define SFHeader_FeatureListOffset(data)                SFData_UInt16(data, 6)
 #define SFHeader_LookupListOffset(data)                 SFData_UInt16(data, 8)
+#define SFHeader_ScriptListTable(data) \
+    SFData_Subdata(data, SFHeader_ScriptListOffset(data))
+#define SFHeader_FeatureListTable(data) \
+    SFData_Subdata(data, SFHeader_FeatureListOffset(data))
+#define SFHeader_LookupListTable(data) \
+    SFData_Subdata(data, SFHeader_LookupListOffset(data))
+#define SFHeader_ScriptListTable(data) \
+    SFData_Subdata(data, SFHeader_ScriptListOffset(data))
 
 /****************************************SCRIPT LIST TABLE*****************************************/
 
@@ -109,6 +117,8 @@ typedef SFUInt16 SFLookupFlag;
 
 #define SFLookupList_LookupCount(data)                  SFData_UInt16(data, 0)
 #define SFLookupList_LookupOffset(data, index)          SFData_UInt16(data, 2 + ((index) * 2))
+#define SFLookupList_LookupTable(data, index) \
+    SFData_Subdata(data, SFLookupList_LookupOffset(data, index))
 
 /**************************************************************************************************/
 
@@ -119,6 +129,8 @@ typedef SFUInt16 SFLookupFlag;
 #define SFLookup_SubtableCount(data)                    SFData_UInt16(data, 4)
 #define SFLookup_SubtableOffset(data, index)            SFData_UInt16(data, 6 + ((index) * 2))
 #define SFLookup_MarkFilteringSet(data, subtableCount)  SFData_UInt16(data, 8 + ((subtableCount) * 2))
+#define SFLookup_SubtableData(data, index) \
+    SFData_Subdata(data, SFLookup_SubtableOffset(data, index))
 
 /**************************************************************************************************/
 
@@ -180,11 +192,21 @@ typedef SFUInt16 SFLookupFlag;
 #define SFContextF1_CoverageOffset(data)                SFData_UInt16(data, 2)
 #define SFContextF1_RuleSetCount(data)                  SFData_UInt16(data, 4)
 #define SFContextF1_RuleSetOffset(data, index)          SFData_UInt16(data, 6 + ((index) * 2))
+#define SFContextF1_CoverageTable(data) \
+    SFData_Subdata(data, SFContextF1_CoverageOffset(data))
+#define SFContextF1_RuleSetTable(data, index) \
+    SFData_Subdata(data, SFContextF1_RuleSetOffset(data, index))
 
 #define SFContextF2_CoverageOffset(data)                SFData_UInt16(data, 2)
 #define SFContextF2_ClassDefOffset(data)                SFData_UInt16(data, 4)
 #define SFContextF2_RuleSetCount(data)                  SFData_UInt16(data, 6)
 #define SFContextF2_RuleSetOffset(data, index)          SFData_UInt16(data, 8 + ((index) * 2))
+#define SFContextF2_CoverageTable(data) \
+    SFData_Subdata(data, SFContextF2_CoverageOffset(data))
+#define SFContextF2_ClassDefTable(data) \
+    SFData_Subdata(data, SFContextF2_ClassDefOffset(data))
+#define SFContextF2_RuleSetTable(data, index) \
+    SFData_Subdata(data, SFContextF2_RuleSetOffset(data, index))
 
 #define SFContextF3_Rule(data)                          SFData_Subdata(data, 2)
 
@@ -208,6 +230,10 @@ typedef SFUInt16 SFLookupFlag;
 #define SFChainContextF1_ChainRuleSetCount(data)        SFData_UInt16(data, 4)
 #define SFChainContextF1_ChainRuleSetOffset(data, index) \
                                                         SFData_UInt16(data, 6 + ((index) * 2))
+#define SFChainContextF1_CoverageTable(data) \
+    SFData_Subdata(data, SFChainContextF1_CoverageOffset(data))
+#define SFChainContextF1_ChainRuleSetTable(data, index) \
+    SFData_Subdata(data, SFChainContextF1_ChainRuleSetOffset(data, index))
 
 #define SFChainContextF2_CoverageOffset(data)           SFData_UInt16(data, 2)
 #define SFChainContextF2_BacktrackClassDefOffset(data)  SFData_UInt16(data, 4)
@@ -216,11 +242,23 @@ typedef SFUInt16 SFLookupFlag;
 #define SFChainContextF2_ChainRuleSetCount(data)        SFData_UInt16(data, 10)
 #define SFChainContextF2_ChainRuleSetOffset(data, index) \
                                                         SFData_UInt16(data, 12 + ((index) * 2))
+#define SFChainContextF2_CoverageTable(data) \
+    SFData_Subdata(data, SFChainContextF2_CoverageOffset(data))
+#define SFChainContextF2_BacktrackClassDefTable(data) \
+    SFData_Subdata(data, SFChainContextF2_BacktrackClassDefOffset(data))
+#define SFChainContextF2_InputClassDefTable(data) \
+    SFData_Subdata(data, SFChainContextF2_InputClassDefOffset(data))
+#define SFChainContextF2_LookaheadClassDefTable(data) \
+    SFData_Subdata(data, SFChainContextF2_LookaheadClassDefOffset(data))
+#define SFChainContextF2_ChainRuleSetTable(data, index) \
+    SFData_Subdata(data, SFChainContextF2_ChainRuleSetOffset(data, index))
 
-#define SFChainContextF3_ChainRule(data)                SFData_Subdata(data, 2)
+#define SFChainContextF3_ChainRuleTable(data)           SFData_Subdata(data, 2)
 
 #define SFChainRuleSet_ChainRuleCount(data)             SFData_UInt16(data, 0)
 #define SFChainRuleSet_ChainRuleOffset(data, index)     SFData_UInt16(data, 2 + ((index) * 2))
+#define SFChainRuleSet_ChainRuleTable(data, index) \
+    SFData_Subdata(data, SFChainRuleSet_ChainRuleOffset(data, index))
 
 #define SFChainRule_BacktrackRecord(data)               SFData_Subdata(data, 0)
 
@@ -248,6 +286,8 @@ typedef SFUInt16 SFLookupFlag;
 
 #define SFExtensionF1_LookupType(data)                  SFData_UInt16(data, 2)
 #define SFExtensionF1_ExtensionOffset(data)             SFData_UInt32(data, 4)
+#define SFExtensionF1_ExtensionData(data) \
+    SFData_Subdata(data, SFExtensionF1_ExtensionOffset(data))
 
 /**************************************************************************************************/
 
