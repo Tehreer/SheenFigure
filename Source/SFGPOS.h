@@ -78,15 +78,19 @@ enum {
 
 #define SFSinglePos_Format(data)                    SFData_UInt16(data, 0)
 
-#define SFSinglePosF1_Coverage(data)                SFData_UInt16(data, 2)
+#define SFSinglePosF1_CoverageOffset(data)          SFData_UInt16(data, 2)
 #define SFSinglePosF1_ValueFormat(data)             SFData_UInt16(data, 4)
 #define SFSinglePosF1_ValueRecord(data)             SFData_Subdata(data, 6)
+#define SFSinglePosF1_CoverageTable(data) \
+    SFData_Subdata(data, SFSinglePosF1_CoverageOffset(data))
 
 #define SFSinglePosF2_CoverageOffset(data)          SFData_UInt16(data, 2)
 #define SFSinglePosF2_ValueFormat(data)             SFData_UInt16(data, 4)
 #define SFSinglePosF2_ValueCount(data)              SFData_UInt16(data, 6)
 #define SFSinglePosF2_ValueRecord(data, index, recordSize)  \
                                                     SFData_Subdata(data, 8 + ((index) * (recordSize)))
+#define SFSinglePosF2_CoverageTable(data) \
+    SFData_Subdata(data, SFSinglePosF2_CoverageOffset(data))
 
 #define SFPairSet_PairValueCount(data)              SFData_UInt16(data, 0)
 #define SFPairSet_PairValueRecord(data, index, recordSize)  \
@@ -110,6 +114,10 @@ enum {
 #define SFPairPosF1_ValueFormat2(data)              SFData_UInt16(data, 6)
 #define SFPairPosF1_PairSetCount(data)              SFData_UInt16(data, 8)
 #define SFPairPosF1_PairSetOffset(data, index)      SFData_UInt16(data, 10 + ((index) * 2))
+#define SFPairPosF1_CoverageTable(data) \
+    SFData_Subdata(data, SFPairPosF1_CoverageOffset(data))
+#define SFPairPosF1_PairSetTable(data, index) \
+    SFData_Subdata(data, SFPairPosF1_PairSetOffset(data, index))
 
 #define SFPairPosF2_CoverageOffset(data)            SFData_UInt16(data, 2)
 #define SFPairPosF2_ValueFormat1(data)              SFData_UInt16(data, 4)
@@ -120,6 +128,12 @@ enum {
 #define SFPairPosF2_Class2Count(data)               SFData_UInt16(data, 14)
 #define SFPairPosF2_Class1Record(data, index, c1Size)   \
                                                     SFData_Subdata(data, 16 + ((index) * (c1Size)))
+#define SFPairPosF2_CoverageTable(data) \
+    SFData_Subdata(data, SFPairPosF2_CoverageOffset(data))
+#define SFPairPosF2_ClassDef1Table(data) \
+    SFData_Subdata(data, SFPairPosF2_ClassDef1Offset(data))
+#define SFPairPosF2_ClassDef2Table(data) \
+    SFData_Subdata(data, SFPairPosF2_ClassDef2Offset(data))
 
 #define SFClass1Record_Size(c2Count, c2Size)        ((c2Count) * (c2Size))
 #define SFClass1Record_Class2Record(data, index, c2Size)\
@@ -137,6 +151,8 @@ enum {
 #define SFCursivePos_CoverageOffset(data)           SFData_UInt16(data, 2)
 #define SFCursivePos_EntryExitCount(data)           SFData_UInt16(data, 4)
 #define SFCursivePos_EntryExitRecord(data, index)   SFData_Subdata(data, 6 + ((index) * 4))
+#define SFCursivePos_CoverageTable(data) \
+    SFData_Subdata(data, SFCursivePos_CoverageOffset(data))
 
 #define SFEntryExitRecord_EntryAnchorOffset(data)   SFData_UInt16(data, 0)
 #define SFEntryExitRecord_ExitAnchorOffset(data)    SFData_UInt16(data, 2)
@@ -151,6 +167,14 @@ enum {
 #define SFMarkBasePos_ClassCount(data)              SFData_UInt16(data, 6)
 #define SFMarkBasePos_MarkArrayOffset(data)         SFData_UInt16(data, 8)
 #define SFMarkBasePos_BaseArrayOffset(data)         SFData_UInt16(data, 10)
+#define SFMarkBasePos_MarkCoverageTable(data) \
+    SFData_Subdata(data, SFMarkBasePos_MarkCoverageOffset(data))
+#define SFMarkBasePos_BaseCoverageTable(data) \
+    SFData_Subdata(data, SFMarkBasePos_BaseCoverageOffset(data))
+#define SFMarkBasePos_MarkArrayTable(data) \
+    SFData_Subdata(data, SFMarkBasePos_MarkArrayOffset(data))
+#define SFMarkBasePos_BaseArrayTable(data) \
+    SFData_Subdata(data, SFMarkBasePos_BaseArrayOffset(data))
 
 #define SFBaseArray_BaseCount(data)                 SFData_UInt16(data, 0)
 #define SFBaseArray_BaseRecord(data, index, classCount) \
@@ -168,10 +192,20 @@ enum {
 #define SFMarkLigPos_ClassCount(data)               SFData_UInt16(data, 6)
 #define SFMarkLigPos_MarkArrayOffset(data)          SFData_UInt16(data, 8)
 #define SFMarkLigPos_LigatureArrayOffset(data)      SFData_UInt16(data, 10)
+#define SFMarkLigPos_MarkCoverageTable(data) \
+    SFData_Subdata(data, SFMarkLigPos_MarkCoverageOffset(data))
+#define SFMarkLigPos_LigatureCoverageTable(data) \
+    SFData_Subdata(data, SFMarkLigPos_LigatureCoverageOffset(data))
+#define SFMarkLigPos_MarkArrayTable(data) \
+    SFData_Subdata(data, SFMarkLigPos_MarkArrayOffset(data))
+#define SFMarkLigPos_LigatureArrayTable(data) \
+    SFData_Subdata(data, SFMarkLigPos_LigatureArrayOffset(data))
 
 #define SFLigatureArray_LigatureCount(data)         SFData_UInt16(data, 0)
 #define SFLigatureArray_LigatureAttachOffset(data, index)   \
                                                     SFData_UInt16(data, 2 + ((index) * 2))
+#define SFLigatureArray_LigatureAttachTable(data, index) \
+    SFData_Subdata(data, SFLigatureArray_LigatureAttachOffset(data, index))
 
 #define SFLigatureAttach_ComponentCount(data)       SFData_UInt16(data, 0)
 #define SFLigatureAttach_ComponentRecord(data, index, classCount) \
@@ -190,6 +224,14 @@ enum {
 #define SFMarkMarkPos_ClassCount(data)              SFData_UInt16(data, 6)
 #define SFMarkMarkPos_Mark1ArrayOffset(data)        SFData_UInt16(data, 8)
 #define SFMarkMarkPos_Mark2ArrayOffset(data)        SFData_UInt16(data, 10)
+#define SFMarkMarkPos_Mark1CoverageTable(data) \
+    SFData_Subdata(data, SFMarkMarkPos_Mark1CoverageOffset(data))
+#define SFMarkMarkPos_Mark2CoverageTable(data) \
+    SFData_Subdata(data, SFMarkMarkPos_Mark2CoverageOffset(data))
+#define SFMarkMarkPos_Mark1ArrayTable(data) \
+    SFData_Subdata(data, SFMarkMarkPos_Mark1ArrayOffset(data))
+#define SFMarkMarkPos_Mark2ArrayTable(data) \
+    SFData_Subdata(data, SFMarkMarkPos_Mark2ArrayOffset(data))
 
 #define SFMark2Array_Mark2Count(data)               SFData_UInt16(data, 0)
 #define SFMark2Array_Mark2Record(data, index, classCount)   \
