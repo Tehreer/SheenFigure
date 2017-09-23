@@ -154,8 +154,7 @@ static SFBoolean _SFApplySinglePos(SFTextProcessorRef textProcessor, SFData sing
 
     switch (format) {
         case 1: {
-            SFOffset coverageOffset = SFSinglePosF1_Coverage(singlePos);
-            SFData coverageTable = SFData_Subdata(singlePos, coverageOffset);
+            SFData coverageTable = SFSinglePosF1_CoverageTable(singlePos);
             SFUInteger coverageIndex;
 
             coverageIndex = SFOpenTypeSearchCoverageIndex(coverageTable, inputGlyph);
@@ -172,8 +171,7 @@ static SFBoolean _SFApplySinglePos(SFTextProcessorRef textProcessor, SFData sing
         }
 
         case 2: {
-            SFOffset coverageOffset = SFSinglePosF2_CoverageOffset(singlePos);
-            SFData coverageTable = SFData_Subdata(singlePos, coverageOffset);
+            SFData coverageTable = SFSinglePosF2_CoverageTable(singlePos);
             SFUInt16 valueFormat = SFSinglePosF2_ValueFormat(singlePos);
             SFUInt16 valueCount = SFSinglePosF2_ValueCount(singlePos);
             SFUInteger valueIndex;
@@ -257,14 +255,12 @@ static SFBoolean _SFApplyPairPosF1(SFTextProcessorRef textProcessor, SFData pair
     SFAlbumRef album = textProcessor->_album;
     SFGlyphID firstGlyph = SFAlbumGetGlyph(album, firstIndex);
     SFGlyphID secondGlyph = SFAlbumGetGlyph(album, secondIndex);
-    SFOffset coverageOffset;
     SFData coverageTable;
     SFUInteger coverageIndex;
 
     *outShouldSkip = SFFalse;
 
-    coverageOffset = SFPairPosF1_CoverageOffset(pairPos);
-    coverageTable = SFData_Subdata(pairPos, coverageOffset);
+    coverageTable = SFPairPosF1_CoverageTable(pairPos);
     coverageIndex = SFOpenTypeSearchCoverageIndex(coverageTable, firstGlyph);
 
     if (coverageIndex != SFInvalidIndex) {
@@ -277,8 +273,7 @@ static SFBoolean _SFApplyPairPosF1(SFTextProcessorRef textProcessor, SFData pair
         SFUInteger pairSetIndex;
 
         for (pairSetIndex = 0; pairSetIndex < pairSetCount; pairSetIndex++) {
-            SFOffset pairSetOffset = SFPairPosF1_PairSetOffset(pairPos, pairSetIndex);
-            SFData pairSetTable = SFData_Subdata(pairPos, pairSetOffset);
+            SFData pairSetTable = SFPairPosF1_PairSetTable(pairPos, pairSetIndex);
             SFData pairRecord;
 
             pairRecord = _SFSearchPairRecord(pairSetTable, recordSize, secondGlyph);
@@ -327,10 +322,8 @@ static SFBoolean _SFApplyPairPosF2(SFTextProcessorRef textProcessor, SFData pair
     if (coverageIndex != SFInvalidIndex) {
         SFUInt16 valueFormat1 = SFPairPosF2_ValueFormat1(pairPos);
         SFUInt16 valueFormat2 = SFPairPosF2_ValueFormat2(pairPos);
-        SFOffset classDef1Offset = SFPairPosF2_ClassDef1Offset(pairPos);
-        SFData classDef1Table = SFData_Subdata(pairPos, classDef1Offset);
-        SFOffset classDef2Offset = SFPairPosF2_ClassDef2Offset(pairPos);
-        SFData classDef2Table = SFData_Subdata(pairPos, classDef2Offset);
+        SFData classDef1Table = SFPairPosF2_ClassDef1Table(pairPos);
+        SFData classDef2Table = SFPairPosF2_ClassDef2Table(pairPos);
         SFUInt16 class1Count = SFPairPosF2_Class1Count(pairPos);
         SFUInt16 class2Count = SFPairPosF2_Class2Count(pairPos);
         SFUInt16 class1Value;
@@ -397,8 +390,7 @@ static SFPoint _SFConvertAnchorToPoint(SFData anchorTable)
 static void _SFSearchCursiveAnchors(SFData cursivePos, SFGlyphID inputGlyph,
     SFData *refExitAnchorTable, SFData *refEntryAnchorTable)
 {
-    SFOffset coverageOffset = SFCursivePos_CoverageOffset(cursivePos);
-    SFData coverageTable = SFData_Subdata(cursivePos, coverageOffset);
+    SFData coverageTable = SFCursivePos_CoverageTable(cursivePos);
     SFUInt16 entryExitCount = SFCursivePos_EntryExitCount(cursivePos);
     SFUInteger entryExitIndex;
 
@@ -583,8 +575,7 @@ static SFBoolean _SFApplyMarkToBasePos(SFTextProcessorRef textProcessor, SFData 
 
     switch (format) {
         case 1: {
-            SFOffset markCoverageOffset = SFMarkBasePos_MarkCoverageOffset(markBasePos);
-            SFData markCoverageTable = SFData_Subdata(markBasePos, markCoverageOffset);
+            SFData markCoverageTable = SFMarkBasePos_MarkCoverageTable(markBasePos);
             SFUInteger markIndex;
 
             markIndex = SFOpenTypeSearchCoverageIndex(markCoverageTable, inputGlyph);
@@ -595,8 +586,7 @@ static SFBoolean _SFApplyMarkToBasePos(SFTextProcessorRef textProcessor, SFData 
 
                 /* Proceed only if there is a previous base glyph. */
                 if (prevIndex != SFInvalidIndex) {
-                    SFOffset baseCoverageOffset = SFMarkBasePos_BaseCoverageOffset(markBasePos);
-                    SFData baseCoverageTable = SFData_Subdata(markBasePos, baseCoverageOffset);
+                    SFData baseCoverageTable = SFMarkBasePos_BaseCoverageTable(markBasePos);
                     SFUInteger baseIndex;
 
                     prevGlyph = SFAlbumGetGlyph(album, prevIndex);
@@ -621,7 +611,6 @@ static SFBoolean _SFApplyMarkToBaseArrays(SFTextProcessorRef textProcessor, SFDa
     SFLocatorRef locator = &textProcessor->_locator;
     SFUInteger inputIndex = locator->index;
     SFUInt16 classCount;
-    SFOffset markArrayOffset;
     SFData markArrayTable;
     SFUInt16 classValue;
     SFData markAnchorTable;
@@ -630,15 +619,13 @@ static SFBoolean _SFApplyMarkToBaseArrays(SFTextProcessorRef textProcessor, SFDa
     SFAssert(attachmentIndex < inputIndex);
 
     classCount = SFMarkBasePos_ClassCount(markBasePos);
-    markArrayOffset = SFMarkBasePos_MarkArrayOffset(markBasePos);
-    markArrayTable = SFData_Subdata(markBasePos, markArrayOffset);
+    markArrayTable = SFMarkBasePos_MarkArrayTable(markBasePos);
 
     /* Get mark anchor and its class value. */
     markAnchorTable = _SFMarkArrayGetAnchorTable(markArrayTable, markIndex, &classValue);
     /* Validate mark anchor and its class value. */
     if (markAnchorTable && classValue < classCount) {
-        SFOffset baseArrayOffset = SFMarkBasePos_BaseArrayOffset(markBasePos);
-        SFData baseArrayTable = SFData_Subdata(markBasePos, baseArrayOffset);
+        SFData baseArrayTable = SFMarkBasePos_BaseArrayTable(markBasePos);
         SFUInt16 baseCount;
 
         baseCount = SFBaseArray_BaseCount(baseArrayTable);
@@ -726,8 +713,7 @@ static SFBoolean _SFApplyMarkToLigPos(SFTextProcessorRef textProcessor, SFData m
 
     switch (format) {
         case 1: {
-            SFOffset markCoverageOffset = SFMarkLigPos_MarkCoverageOffset(markLigPos);
-            SFData markCoverageTable = SFData_Subdata(markLigPos, markCoverageOffset);
+            SFData markCoverageTable = SFMarkLigPos_MarkCoverageTable(markLigPos);
             SFUInteger markIndex;
 
             markIndex = SFOpenTypeSearchCoverageIndex(markCoverageTable, inputGlyph);
@@ -741,8 +727,7 @@ static SFBoolean _SFApplyMarkToLigPos(SFTextProcessorRef textProcessor, SFData m
 
                 /* Proceed only if there is a previous ligature glyph. */
                 if (prevIndex != SFInvalidIndex) {
-                    SFOffset ligCoverageOffset = SFMarkLigPos_LigatureCoverageOffset(markLigPos);
-                    SFData ligCoverageTable = SFData_Subdata(markLigPos, ligCoverageOffset);
+                    SFData ligCoverageTable = SFMarkLigPos_LigatureCoverageTable(markLigPos);
                     SFUInteger ligIndex;
 
                     prevGlyph = SFAlbumGetGlyph(album, prevIndex);
@@ -767,7 +752,6 @@ static SFBoolean _SFApplyMarkToLigArrays(SFTextProcessorRef textProcessor, SFDat
     SFLocatorRef locator = &textProcessor->_locator;
     SFUInteger inputIndex = locator->index;
     SFUInt16 classCount;
-    SFOffset markArrayOffset;
     SFData markArrayTable;
     SFUInt16 classValue;
     SFData markAnchorTable;
@@ -776,21 +760,18 @@ static SFBoolean _SFApplyMarkToLigArrays(SFTextProcessorRef textProcessor, SFDat
     SFAssert(attachmentIndex < inputIndex);
 
     classCount = SFMarkLigPos_ClassCount(markLigPos);
-    markArrayOffset = SFMarkLigPos_MarkArrayOffset(markLigPos);
-    markArrayTable = SFData_Subdata(markLigPos, markArrayOffset);
+    markArrayTable = SFMarkLigPos_MarkArrayTable(markLigPos);
 
     /* Get mark anchor and its class value. */
     markAnchorTable = _SFMarkArrayGetAnchorTable(markArrayTable, markIndex, &classValue);
     /* Validate mark anchor and its class value. */
     if (markAnchorTable && classValue < classCount) {
-        SFOffset ligArrayOffset = SFMarkLigPos_LigatureArrayOffset(markLigPos);
-        SFData ligArrayTable = SFData_Subdata(markLigPos, ligArrayOffset);
+        SFData ligArrayTable = SFMarkLigPos_LigatureArrayTable(markLigPos);
         SFUInt16 ligCount = SFLigatureArray_LigatureCount(ligArrayTable);
 
         /* Validate ligature index. */
         if (ligIndex < ligCount) {
-            SFOffset ligAttachOffset = SFLigatureArray_LigatureAttachOffset(ligArrayTable, ligIndex);
-            SFData ligAttachTable = SFData_Subdata(ligArrayTable, ligAttachOffset);
+            SFData ligAttachTable = SFLigatureArray_LigatureAttachTable(ligArrayTable, ligIndex);
             SFUInteger compCount = SFLigatureAttach_ComponentCount(ligAttachTable);
             SFData compRecord;
             SFOffset ligAnchorOffset;
@@ -860,8 +841,7 @@ static SFBoolean _SFApplyMarkToMarkPos(SFTextProcessorRef textProcessor, SFData 
 
     switch (format) {
         case 1: {
-            SFOffset mark1CoverageOffset = SFMarkMarkPos_Mark1CoverageOffset(markMarkPos);
-            SFData mark1CoverageTable = SFData_Subdata(markMarkPos, mark1CoverageOffset);
+            SFData mark1CoverageTable = SFMarkMarkPos_Mark1CoverageTable(markMarkPos);
             SFUInteger mark1Index;
 
             mark1Index = SFOpenTypeSearchCoverageIndex(mark1CoverageTable, inputGlyph);
@@ -872,8 +852,7 @@ static SFBoolean _SFApplyMarkToMarkPos(SFTextProcessorRef textProcessor, SFData 
 
                 /* Proceed only if there is a previous mark glyph. */
                 if (prevIndex != SFInvalidIndex) {
-                    SFOffset mark2Offset = SFMarkMarkPos_Mark2CoverageOffset(markMarkPos);
-                    SFData mark2Coverage = SFData_Subdata(markMarkPos, mark2Offset);
+                    SFData mark2Coverage = SFMarkMarkPos_Mark2CoverageTable(markMarkPos);
                     SFUInteger mark2Index;
 
                     prevGlyph = SFAlbumGetGlyph(album, prevIndex);
@@ -898,7 +877,6 @@ static SFBoolean _SFApplyMarkToMarkArrays(SFTextProcessorRef textProcessor, SFDa
     SFLocatorRef locator = &textProcessor->_locator;
     SFUInteger inputIndex = locator->index;
     SFUInt16 classCount;
-    SFOffset mark1ArrayOffset;
     SFData mark1ArrayTable;
     SFUInt16 classValue;
     SFData mark1AnchorTable;
@@ -907,15 +885,13 @@ static SFBoolean _SFApplyMarkToMarkArrays(SFTextProcessorRef textProcessor, SFDa
     SFAssert(attachmentIndex < inputIndex);
 
     classCount = SFMarkMarkPos_ClassCount(markMarkPos);
-    mark1ArrayOffset = SFMarkMarkPos_Mark1ArrayOffset(markMarkPos);
-    mark1ArrayTable = SFData_Subdata(markMarkPos, mark1ArrayOffset);
+    mark1ArrayTable = SFMarkMarkPos_Mark1ArrayTable(markMarkPos);
 
     /* Get mark anchor and its class value. */
     mark1AnchorTable = _SFMarkArrayGetAnchorTable(mark1ArrayTable, mark1Index, &classValue);
     /* Validate mark anchor and its class value. */
     if (mark1AnchorTable && classValue < classCount) {
-        SFOffset mark2ArrayOffset = SFMarkMarkPos_Mark2ArrayOffset(markMarkPos);
-        SFData mark2ArrayTable = SFData_Subdata(markMarkPos, mark2ArrayOffset);
+        SFData mark2ArrayTable = SFMarkMarkPos_Mark2ArrayTable(markMarkPos);
         SFUInt16 mark2Count = SFMark2Array_Mark2Count(mark2ArrayTable);
 
         /* Validate mark 2 index. */
