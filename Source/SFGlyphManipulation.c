@@ -220,8 +220,7 @@ SF_PRIVATE SFBoolean _SFApplyContextSubtable(SFTextProcessorRef processor, SFDat
 
     switch (format) {
         case 1: {
-            SFOffset coverageOffset = SFContextF1_CoverageOffset(contextSubtable);
-            SFData coverageTable = SFData_Subdata(contextSubtable, coverageOffset);
+            SFData coverageTable = SFContextF1_CoverageTable(contextSubtable);
             SFUInteger coverageIndex;
 
             coverageIndex = SFOpenTypeSearchCoverageIndex(coverageTable, inputGlyph);
@@ -230,8 +229,7 @@ SF_PRIVATE SFBoolean _SFApplyContextSubtable(SFTextProcessorRef processor, SFDat
                 SFUInt16 chainRuleSetCount = SFContextF1_RuleSetCount(contextSubtable);
 
                 if (coverageIndex < chainRuleSetCount) {
-                    SFOffset ruleSetOffset = SFContextF1_RuleSetOffset(contextSubtable, coverageIndex);
-                    SFData ruleSetTable = SFData_Subdata(contextSubtable, ruleSetOffset);
+                    SFData ruleSetTable = SFContextF1_RuleSetTable(contextSubtable, coverageIndex);
 
                     return _SFApplyRuleSetTable(processor, ruleSetTable, _SFAssessGlyphByEquality, NULL);
                 }
@@ -240,23 +238,20 @@ SF_PRIVATE SFBoolean _SFApplyContextSubtable(SFTextProcessorRef processor, SFDat
         }
 
         case 2: {
-            SFOffset coverageOffset = SFContextF2_CoverageOffset(contextSubtable);
-            SFData coverageTable = SFData_Subdata(contextSubtable, coverageOffset);
+            SFData coverageTable = SFContextF2_CoverageTable(contextSubtable);
             SFUInteger coverageIndex;
 
             coverageIndex = SFOpenTypeSearchCoverageIndex(coverageTable, inputGlyph);
 
             if (coverageIndex != SFInvalidIndex) {
-                SFOffset classDefOffset = SFContextF2_ClassDefOffset(contextSubtable);
-                SFData classDefTable = SFData_Subdata(contextSubtable, classDefOffset);
+                SFData classDefTable = SFContextF2_ClassDefTable(contextSubtable);
                 SFUInt16 ruleSetCount = SFContextF2_RuleSetCount(contextSubtable);
                 SFUInt16 inputClass;
 
                 inputClass = SFOpenTypeSearchGlyphClass(classDefTable, inputGlyph);
 
                 if (inputClass < ruleSetCount) {
-                    SFOffset ruleSetOffset = SFContextF2_RuleSetOffset(contextSubtable, inputClass);
-                    SFData ruleSetTable = SFData_Subdata(contextSubtable, ruleSetOffset);
+                    SFData ruleSetTable = SFContextF2_RuleSetTable(contextSubtable, inputClass);
                     SFData helperTables[1];
 
                     helperTables[0] = classDefTable;
@@ -328,8 +323,7 @@ SF_PRIVATE SFBoolean _SFApplyChainContextSubtable(SFTextProcessorRef textProcess
 
     switch (format) {
         case 1: {
-            SFOffset coverageOffset = SFChainContextF1_CoverageOffset(chainContextSubtable);
-            SFData coverageTable = SFData_Subdata(chainContextSubtable, coverageOffset);
+            SFData coverageTable = SFChainContextF1_CoverageTable(chainContextSubtable);
             SFUInteger coverageIndex;
 
             coverageIndex = SFOpenTypeSearchCoverageIndex(coverageTable, inputGlyph);
@@ -338,8 +332,7 @@ SF_PRIVATE SFBoolean _SFApplyChainContextSubtable(SFTextProcessorRef textProcess
                 SFUInt16 chainRuleSetCount = SFChainContextF1_ChainRuleSetCount(chainContextSubtable);
 
                 if (coverageIndex < chainRuleSetCount) {
-                    SFOffset chainRuleSetOffset = SFChainContextF1_ChainRuleSetOffset(chainContextSubtable, coverageIndex);
-                    SFData chainRuleSetTable = SFData_Subdata(chainContextSubtable, chainRuleSetOffset);
+                    SFData chainRuleSetTable = SFChainContextF1_ChainRuleSetTable(chainContextSubtable, coverageIndex);
 
                     return _SFApplyChainRuleSetTable(textProcessor, chainRuleSetTable, _SFAssessGlyphByEquality, NULL);
                 }
@@ -348,27 +341,22 @@ SF_PRIVATE SFBoolean _SFApplyChainContextSubtable(SFTextProcessorRef textProcess
         }
 
         case 2: {
-            SFOffset coverageOffset = SFChainContextF2_CoverageOffset(chainContextSubtable);
-            SFData coverageTable = SFData_Subdata(chainContextSubtable, coverageOffset);
+            SFData coverageTable = SFChainContextF2_CoverageTable(chainContextSubtable);
             SFUInteger coverageIndex;
 
             coverageIndex = SFOpenTypeSearchCoverageIndex(coverageTable, inputGlyph);
 
             if (coverageIndex != SFInvalidIndex) {
-                SFOffset backtrackClassDefOffset = SFChainContextF2_BacktrackClassDefOffset(chainContextSubtable);
-                SFData backtrackClassDefTable = SFData_Subdata(chainContextSubtable, backtrackClassDefOffset);
-                SFOffset inputClassDefOffset = SFChainContextF2_InputClassDefOffset(chainContextSubtable);
-                SFData inputClassDefTable = SFData_Subdata(chainContextSubtable, inputClassDefOffset);
-                SFOffset lookaheadClassDefOffset = SFChainContextF2_LookaheadClassDefOffset(chainContextSubtable);
-                SFData lookaheadClassDefTable = SFData_Subdata(chainContextSubtable, lookaheadClassDefOffset);
+                SFData backtrackClassDefTable = SFChainContextF2_BacktrackClassDefTable(chainContextSubtable);
+                SFData inputClassDefTable = SFChainContextF2_InputClassDefTable(chainContextSubtable);
+                SFData lookaheadClassDefTable = SFChainContextF2_LookaheadClassDefTable(chainContextSubtable);
                 SFUInt16 chainRuleSetCount = SFChainContextF2_ChainRuleSetCount(chainContextSubtable);
                 SFUInt16 inputClass;
 
                 inputClass = SFOpenTypeSearchGlyphClass(inputClassDefTable, inputGlyph);
 
                 if (inputClass < chainRuleSetCount) {
-                    SFOffset chainRuleSetOffset = SFChainContextF2_ChainRuleSetOffset(chainContextSubtable, inputClass);
-                    SFData chainRuleSetTable = SFData_Subdata(chainContextSubtable, chainRuleSetOffset);
+                    SFData chainRuleSetTable = SFChainContextF2_ChainRuleSetTable(chainContextSubtable, inputClass);
                     SFData helperTables[3];
 
                     helperTables[0] = inputClassDefTable;
@@ -382,7 +370,7 @@ SF_PRIVATE SFBoolean _SFApplyChainContextSubtable(SFTextProcessorRef textProcess
         }
 
         case 3: {
-            SFData chainRuleTable = SFChainContextF3_ChainRule(chainContextSubtable);
+            SFData chainRuleTable = SFChainContextF3_ChainRuleTable(chainContextSubtable);
             return _SFApplyChainRuleTable(textProcessor, chainRuleTable, SFTrue, _SFAssessGlyphByCoverage, (void *)chainContextSubtable);
         }
     }
@@ -398,8 +386,7 @@ static SFBoolean _SFApplyChainRuleSetTable(SFTextProcessorRef textProcessor,
 
     /* Match each rule sequentially as they are ordered by preference. */
     for (chainRuleIndex = 0; chainRuleIndex < chainRuleCount; chainRuleIndex++) {
-        SFOffset chainRuleOffset = SFChainRuleSet_ChainRuleOffset(chainRuleSetTable, chainRuleIndex);
-        SFData chainRuleTable = SFData_Subdata(chainRuleSetTable, chainRuleOffset);
+        SFData chainRuleTable = SFChainRuleSet_ChainRuleTable(chainRuleSetTable, chainRuleIndex);
 
         if (_SFApplyChainRuleTable(textProcessor, chainRuleTable, SFFalse, glyphAsessment, helperPtr)) {
             return SFTrue;
@@ -482,8 +469,7 @@ SF_PRIVATE SFBoolean _SFApplyExtensionSubtable(SFTextProcessorRef textProcessor,
     switch (format) {
         case 1: {
             SFLookupType lookupType = SFExtensionF1_LookupType(extensionSubtable);
-            SFUInt32 extensionOffset = SFExtensionF1_ExtensionOffset(extensionSubtable);
-            SFData innerSubtable = SFData_Subdata(extensionSubtable, extensionOffset);
+            SFData innerSubtable = SFExtensionF1_ExtensionData(extensionSubtable);
 
             return textProcessor->_lookupOperation(textProcessor, lookupType, innerSubtable);
         }

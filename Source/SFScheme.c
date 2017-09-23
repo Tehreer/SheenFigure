@@ -174,10 +174,8 @@ static void _SFAddKnownFeatures(SFPatternBuilderRef patternBuilder,
 static void _SFAddHeaderTable(SFSchemeRef scheme,
     SFPatternBuilderRef patternBuilder, SFScriptKnowledgeRef scriptKnowledge, SFData headerTable)
 {
-    SFOffset scriptListOffset = SFHeader_ScriptListOffset(headerTable);
-    SFData scriptListTable = SFData_Subdata(headerTable, scriptListOffset);
-    SFOffset featureListOffset = SFHeader_FeatureListOffset(headerTable);
-    SFData featureListTable = SFData_Subdata(headerTable, featureListOffset);
+    SFData scriptListTable = SFHeader_ScriptListTable(headerTable);
+    SFData featureListTable = SFHeader_FeatureListTable(headerTable);
     SFData scriptTable;
     SFData langSysTable;
 

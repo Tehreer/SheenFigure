@@ -173,12 +173,10 @@ SF_PRIVATE void _SFApplyLookup(SFTextProcessorRef processor, SFUInt16 lookupInde
 static void _SFPrepareLookup(SFTextProcessorRef processor, SFUInt16 lookupIndex, SFData *outLookupTable)
 {
     SFData lookupListTable = processor->_lookupList;
-    SFOffset lookupOffset;
     SFData lookupTable;
     SFLookupFlag lookupFlag;
 
-    lookupOffset = SFLookupList_LookupOffset(lookupListTable, lookupIndex);
-    lookupTable = SFData_Subdata(lookupListTable, lookupOffset);
+    lookupTable = SFLookupList_LookupTable(lookupListTable, lookupIndex);
     lookupFlag = SFLookup_LookupFlag(lookupTable);
 
     SFLocatorSetLookupFlag(&processor->_locator, lookupFlag);
@@ -204,8 +202,7 @@ static void _SFApplySubtables(SFTextProcessorRef processor, SFData lookupTable)
 
     /* Apply subtables in order until one of them performs substitution/positioning. */
     for (subtableIndex = 0; subtableIndex < subtableCount; subtableIndex++) {
-        SFOffset subtableOffset = SFLookup_SubtableOffset(lookupTable, subtableIndex);
-        SFData subtable = SFData_Subdata(lookupTable, subtableOffset);
+        SFData subtable = SFLookup_SubtableData(lookupTable, subtableIndex);
 
         if (processor->_lookupOperation(processor, lookupType, subtable)) {
             /* A subtable has performed substitution/positioning, so break the loop. */
