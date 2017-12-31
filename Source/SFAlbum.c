@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Muhammad Tayyab Akram
+ * Copyright (C) 2017 Muhammad Tayyab Akram
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,7 +15,6 @@
  */
 
 #include <SFConfig.h>
-
 #include <stddef.h>
 #include <stdlib.h>
 #include <string.h>
@@ -26,7 +25,6 @@
 #include "SFAlbum.h"
 
 static const SFGlyphMask _SFGlyphMaskEmpty = { { SFUInt16Max, 0 } };
-static const SFGlyphMask _SFGlyphMaskPlaceholder = { { SFUInt16Max, SFGlyphTraitPlaceholder } };
 
 static void _SFAlbumSetGlyphMask(SFAlbumRef album, SFUInteger index, SFGlyphMask glyphMask);
 static void _SFAlbumRemoveGlyphs(SFAlbumRef album, SFUInteger index, SFUInteger count);
@@ -36,9 +34,9 @@ static void _SFAlbumBuildCodeunitToGlyphMap(SFAlbumRef album);
 SF_PRIVATE SFUInt16 _SFAlbumGetAntiFeatureMask(SFUInt16 featureMask)
 {
     /* The assumtion must NOT break that the feature mask will never be equal to default mask. */
-    SFAssert(featureMask != _SFGlyphMaskEmpty.section.featureMask);
+    SFAssert(featureMask != _SFGlyphMaskEmpty.section.feature);
 
-    return !featureMask ? ~_SFGlyphMaskEmpty.section.featureMask : ~featureMask;
+    return !featureMask ? ~_SFGlyphMaskEmpty.section.feature : ~featureMask;
 }
 
 SFAlbumRef SFAlbumCreate(void)
@@ -155,8 +153,8 @@ SF_INTERNAL void SFAlbumAddGlyph(SFAlbumRef album, SFGlyphID glyph, SFGlyphTrait
     /* Initialize the glyph along with its details. */
     SFListSetVal(&album->_glyphs, index, glyph);
     detail->association = association;
-    detail->mask.section.featureMask = SFUInt16Max;
-    detail->mask.section.glyphTraits = traits;
+    detail->mask.section.feature = SFUInt16Max;
+    detail->mask.section.traits = traits;
 }
 
 SF_INTERNAL SFUInteger *SFAlbumGetTemporaryIndexArray(SFAlbumRef album, SFUInteger count)
@@ -224,7 +222,7 @@ static void _SFAlbumSetGlyphMask(SFAlbumRef album, SFUInteger index, SFGlyphMask
 
 SF_INTERNAL SFUInt16 SFAlbumGetFeatureMask(SFAlbumRef album, SFUInteger index)
 {
-    return SFListGetRef(&album->_details, index)->mask.section.featureMask;
+    return SFListGetRef(&album->_details, index)->mask.section.feature;
 }
 
 SF_INTERNAL void SFAlbumSetFeatureMask(SFAlbumRef album, SFUInteger index, SFUInt16 featureMask)
@@ -232,12 +230,12 @@ SF_INTERNAL void SFAlbumSetFeatureMask(SFAlbumRef album, SFUInteger index, SFUIn
     /* The album must be in filling state. */
     SFAssert(album->_state == _SFAlbumStateFilling);
 
-    SFListGetRef(&album->_details, index)->mask.section.featureMask = featureMask;
+    SFListGetRef(&album->_details, index)->mask.section.feature = featureMask;
 }
 
 SF_INTERNAL SFGlyphTraits SFAlbumGetTraits(SFAlbumRef album, SFUInteger index)
 {
-    return (SFGlyphTraits)SFListGetRef(&album->_details, index)->mask.section.glyphTraits;
+    return (SFGlyphTraits)SFListGetRef(&album->_details, index)->mask.section.traits;
 }
 
 SF_INTERNAL void SFAlbumSetTraits(SFAlbumRef album, SFUInteger index, SFGlyphTraits traits)
@@ -245,7 +243,7 @@ SF_INTERNAL void SFAlbumSetTraits(SFAlbumRef album, SFUInteger index, SFGlyphTra
     /* The album must be either in filling state or arranging state. */
     SFAssert(album->_state == _SFAlbumStateFilling || album->_state == _SFAlbumStateArranging);
 
-    SFListGetRef(&album->_details, index)->mask.section.glyphTraits = (SFUInt16)traits;
+    SFListGetRef(&album->_details, index)->mask.section.traits = (SFUInt16)traits;
 }
 
 SF_INTERNAL void SFAlbumInsertTraits(SFAlbumRef album, SFUInteger index, SFGlyphTraits traits)
@@ -253,7 +251,7 @@ SF_INTERNAL void SFAlbumInsertTraits(SFAlbumRef album, SFUInteger index, SFGlyph
     /* The album must be either in filling state or arranging state. */
     SFAssert(album->_state == _SFAlbumStateFilling || album->_state == _SFAlbumStateArranging);
 
-    SFListGetRef(&album->_details, index)->mask.section.glyphTraits |= (SFUInt16)traits;
+    SFListGetRef(&album->_details, index)->mask.section.traits |= (SFUInt16)traits;
 }
 
 SF_INTERNAL void SFAlbumRemoveTraits(SFAlbumRef album, SFUInteger index, SFGlyphTraits traits)
@@ -261,7 +259,7 @@ SF_INTERNAL void SFAlbumRemoveTraits(SFAlbumRef album, SFUInteger index, SFGlyph
     /* The album must be either in filling state or arranging state. */
     SFAssert(album->_state == _SFAlbumStateFilling || album->_state == _SFAlbumStateArranging);
 
-    SFListGetRef(&album->_details, index)->mask.section.glyphTraits &= (SFUInt16)~traits;
+    SFListGetRef(&album->_details, index)->mask.section.traits &= (SFUInt16)~traits;
 }
 
 SF_INTERNAL void SFAlbumEndFilling(SFAlbumRef album)

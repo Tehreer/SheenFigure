@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Muhammad Tayyab Akram
+ * Copyright (C) 2017 Muhammad Tayyab Akram
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,7 +15,6 @@
  */
 
 #include <SFConfig.h>
-
 #include <stddef.h>
 
 #include "SFAssert.h"
@@ -24,8 +23,6 @@
 #include "SFGDEF.h"
 #include "SFOpenType.h"
 #include "SFLocator.h"
-
-static SFBoolean _SFIsIgnoredGlyph(SFLocatorRef locator, SFUInteger index);
 
 SF_INTERNAL void SFLocatorInitialize(SFLocatorRef locator, SFAlbumRef album, SFData gdef)
 {
@@ -68,7 +65,7 @@ SF_INTERNAL void SFLocatorReserveGlyphs(SFLocatorRef locator, SFUInteger glyphCo
 
 SF_INTERNAL void SFLocatorSetFeatureMask(SFLocatorRef locator, SFUInt16 featureMask)
 {
-    locator->_ignoreMask.section.featureMask = _SFAlbumGetAntiFeatureMask(featureMask);
+    locator->_ignoreMask.section.feature = _SFAlbumGetAntiFeatureMask(featureMask);
 }
 
 SF_INTERNAL void SFLocatorSetLookupFlag(SFLocatorRef locator, SFLookupFlag lookupFlag)
@@ -90,7 +87,7 @@ SF_INTERNAL void SFLocatorSetLookupFlag(SFLocatorRef locator, SFLookupFlag looku
     ignoreTraits |= SFGlyphTraitPlaceholder;
 
     locator->lookupFlag = lookupFlag;
-    locator->_ignoreMask.section.glyphTraits = ignoreTraits;
+    locator->_ignoreMask.section.traits = ignoreTraits;
 }
 
 SF_INTERNAL void SFLocatorSetMarkFilteringSet(SFLocatorRef locator, SFUInt16 markFilteringSet)
@@ -138,7 +135,7 @@ static SFBoolean _SFIsIgnoredGlyph(SFLocatorRef locator, SFUInteger index) {
         return SFTrue;
     }
 
-    if (glyphMask.section.glyphTraits & SFGlyphTraitMark) {
+    if (glyphMask.section.traits & SFGlyphTraitMark) {
         if (lookupFlag & SFLookupFlagUseMarkFilteringSet) {
             SFData markFilteringCoverage = locator->_markFilteringCoverage;
 

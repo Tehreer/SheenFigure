@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Muhammad Tayyab Akram
+ * Copyright (C) 2017 Muhammad Tayyab Akram
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,7 +20,6 @@
 #include <SFAlbum.h>
 #include <SFConfig.h>
 
-#include "SFAssert.h"
 #include "SFBase.h"
 #include "SFCodepoints.h"
 #include "SFList.h"
@@ -49,8 +48,8 @@ typedef SFUInt16 SFGlyphTraits;
 
 typedef union {
     struct {
-        SFUInt16 featureMask;
-        SFUInt16 glyphTraits;
+        SFUInt16 feature;
+        SFUInt16 traits;
     } section;
     SFUInt32 full;
 } SFGlyphMask;
