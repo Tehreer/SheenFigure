@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Muhammad Tayyab Akram
+ * Copyright (C) 2018 Muhammad Tayyab Akram
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -233,33 +233,28 @@ SF_INTERNAL void SFAlbumSetFeatureMask(SFAlbumRef album, SFUInteger index, SFUIn
     SFListGetRef(&album->_details, index)->mask.section.feature = featureMask;
 }
 
-SF_INTERNAL SFGlyphTraits SFAlbumGetTraits(SFAlbumRef album, SFUInteger index)
+SF_INTERNAL SFGlyphTraits SFAlbumGetAllTraits(SFAlbumRef album, SFUInteger index)
 {
     return (SFGlyphTraits)SFListGetRef(&album->_details, index)->mask.section.traits;
 }
 
-SF_INTERNAL void SFAlbumSetTraits(SFAlbumRef album, SFUInteger index, SFGlyphTraits traits)
+SF_INTERNAL void SFAlbumSetAllTraits(SFAlbumRef album, SFUInteger index, SFGlyphTraits traits)
 {
-    /* The album must be either in filling state or arranging state. */
-    SFAssert(album->_state == _SFAlbumStateFilling || album->_state == _SFAlbumStateArranging);
+    /* The album must be in filling state. */
+    SFAssert(album->_state == _SFAlbumStateFilling);
 
-    SFListGetRef(&album->_details, index)->mask.section.traits = (SFUInt16)traits;
+    SFListGetRef(&album->_details, index)->mask.section.traits = traits;
 }
 
-SF_INTERNAL void SFAlbumInsertTraits(SFAlbumRef album, SFUInteger index, SFGlyphTraits traits)
+SF_INTERNAL void SFAlbumReplaceBasicTraits(SFAlbumRef album, SFUInteger index, SFGlyphTraits traits)
 {
-    /* The album must be either in filling state or arranging state. */
-    SFAssert(album->_state == _SFAlbumStateFilling || album->_state == _SFAlbumStateArranging);
+    SFGlyphTraits *all;
 
-    SFListGetRef(&album->_details, index)->mask.section.traits |= (SFUInt16)traits;
-}
+    /* The album must be in filling state. */
+    SFAssert(album->_state == _SFAlbumStateFilling);
 
-SF_INTERNAL void SFAlbumRemoveTraits(SFAlbumRef album, SFUInteger index, SFGlyphTraits traits)
-{
-    /* The album must be either in filling state or arranging state. */
-    SFAssert(album->_state == _SFAlbumStateFilling || album->_state == _SFAlbumStateArranging);
-
-    SFListGetRef(&album->_details, index)->mask.section.traits &= (SFUInt16)~traits;
+    all = &SFListGetRef(&album->_details, index)->mask.section.traits;
+    *all = (*all & 0xFF00) | (traits & 0x00FF);
 }
 
 SF_INTERNAL void SFAlbumEndFilling(SFAlbumRef album)
@@ -279,6 +274,26 @@ SF_INTERNAL void SFAlbumBeginArranging(SFAlbumRef album)
     SFListReserveRange(&album->_advances, 0, album->glyphCount);
 
     album->_state = _SFAlbumStateArranging;
+}
+
+SF_INTERNAL void SFAlbumInsertHelperTraits(SFAlbumRef album, SFUInteger index, SFGlyphTraits traits)
+{
+    /* The album must be in arranging state. */
+    SFAssert(album->_state == _SFAlbumStateArranging);
+    /* Traits must be helping ones only. */
+    SFAssert((traits & 0x0F00) == traits);
+
+    SFListGetRef(&album->_details, index)->mask.section.traits |= traits;
+}
+
+SF_INTERNAL void SFAlbumRemoveHelperTraits(SFAlbumRef album, SFUInteger index, SFGlyphTraits traits)
+{
+    /* The album must be in arranging state. */
+    SFAssert(album->_state == _SFAlbumStateArranging);
+    /* Traits must be helping ones only. */
+    SFAssert((traits & 0x0F00) == traits);
+
+    SFListGetRef(&album->_details, index)->mask.section.traits &= (SFUInt16)~traits;
 }
 
 SF_INTERNAL SFInt32 SFAlbumGetX(SFAlbumRef album, SFUInteger index)
@@ -368,7 +383,7 @@ static void _SFAlbumRemovePlaceholders(SFAlbumRef album)
     SFUInteger index = album->glyphCount;
 
     while (index--) {
-        SFGlyphTraits traits = SFAlbumGetTraits(album, index);
+        SFGlyphTraits traits = SFAlbumGetAllTraits(album, index);
         if (traits & SFGlyphTraitPlaceholder) {
             placeholderCount++;
         } else {
