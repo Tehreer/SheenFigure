@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Muhammad Tayyab Akram
+ * Copyright (C) 2018 Muhammad Tayyab Akram
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -94,7 +94,7 @@ static SFBoolean _SFApplySingleSubst(SFTextProcessorRef textProcessor, SFData si
 
                 /* Substitute the glyph and set its traits. */
                 SFAlbumSetGlyph(album, locator->index, subGlyph);
-                SFAlbumSetTraits(album, locator->index, subTraits);
+                SFAlbumReplaceBasicTraits(album, locator->index, subTraits);
 
                 return SFTrue;
             }
@@ -118,7 +118,7 @@ static SFBoolean _SFApplySingleSubst(SFTextProcessorRef textProcessor, SFData si
 
                 /* Substitute the glyph and set its traits. */
                 SFAlbumSetGlyph(album, locator->index, subGlyph);
-                SFAlbumSetTraits(album, locator->index, subTraits);
+                SFAlbumReplaceBasicTraits(album, locator->index, subTraits);
 
                 return SFTrue;
             }
@@ -173,7 +173,7 @@ static SFBoolean _SFApplySequenceTable(SFTextProcessorRef textProcessor, SFData 
 
         /* Put substitute of first glyph and set its traits. */
         SFAlbumSetGlyph(album, locator->index, subGlyph);
-        SFAlbumSetTraits(album, locator->index, subTraits);
+        SFAlbumReplaceBasicTraits(album, locator->index, subTraits);
 
         if (glyphCount != 1) {
             SFUInteger association = SFAlbumGetAssociation(album, locator->index);
@@ -192,7 +192,7 @@ static SFBoolean _SFApplySequenceTable(SFTextProcessorRef textProcessor, SFData 
 
                 /* Initialize the glyph with substitute. */
                 SFAlbumSetGlyph(album, newIndex, subGlyph);
-                SFAlbumSetTraits(album, newIndex, subTraits);
+                SFAlbumSetAllTraits(album, newIndex, subTraits);
                 SFAlbumSetAssociation(album, newIndex, association);
             }
 
@@ -254,7 +254,7 @@ static SFBoolean _SFApplyAlternateSetTable(SFTextProcessorRef textProcessor, SFD
 
     /* Substitute the glyph and set its traits. */
     SFAlbumSetGlyph(album, locator->index, altGlyph);
-    SFAlbumSetTraits(album, locator->index, altTraits);
+    SFAlbumReplaceBasicTraits(album, locator->index, altTraits);
 
     return SFTrue;
 }
@@ -342,7 +342,7 @@ static SFBoolean _SFApplyLigatureSetTable(SFTextProcessorRef textProcessor, SFDa
 
             /* Substitute the ligature glyph and set its traits. */
             SFAlbumSetGlyph(album, locator->index, ligGlyph);
-            SFAlbumSetTraits(album, locator->index, ligTraits);
+            SFAlbumReplaceBasicTraits(album, locator->index, ligTraits);
 
             ligAssociation = SFAlbumGetAssociation(album, locator->index);
             prevIndex = locator->index;
@@ -354,7 +354,7 @@ static SFBoolean _SFApplyLigatureSetTable(SFTextProcessorRef textProcessor, SFDa
 
                 /* Make the glyph placeholder. */
                 SFAlbumSetGlyph(album, nextIndex, 0);
-                SFAlbumSetTraits(album, nextIndex, SFGlyphTraitPlaceholder);
+                SFAlbumReplaceBasicTraits(album, nextIndex, SFGlyphTraitPlaceholder);
 
                 /* Form a cluster by setting the association of in-between glyphs. */
                 for (; prevIndex <= nextIndex; prevIndex++) {
