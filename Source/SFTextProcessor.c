@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Muhammad Tayyab Akram
+ * Copyright (C) 2018 Muhammad Tayyab Akram
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -52,6 +52,7 @@ SF_INTERNAL void SFTextProcessorInitialize(SFTextProcessorRef textProcessor, SFP
     textProcessor->_glyphClassDef = NULL;
     textProcessor->_textDirection = textDirection;
     textProcessor->_textMode = textMode;
+    textProcessor->_containsZeroWidthCodepoints = SFFalse;
 
     gdef = pattern->font->tables.gdef;
     if (gdef) {
@@ -128,8 +129,32 @@ SF_INTERNAL void SFTextProcessorPositionGlyphs(SFTextProcessorRef textProcessor)
     SFAlbumEndArranging(album);
 }
 
+static void _SFHandleZeroWidthGlyphs(SFTextProcessorRef textProcessor)
+{
+    if (textProcessor->_containsZeroWidthCodepoints) {
+        SFFontRef font = textProcessor->_pattern->font;
+        SFAlbumRef album = textProcessor->_album;
+        SFUInteger glyphCount = album->glyphCount;
+        SFGlyphID spaceGlyph;
+        SFUInteger index;
+
+        spaceGlyph = SFFontGetGlyphIDForCodepoint(font, ' ');
+
+        for (index = 0; index < glyphCount; index++) {
+            SFGlyphTraits traits = SFAlbumGetAllTraits(album, index);
+            if (traits & SFGlyphTraitZeroWidth) {
+                SFAlbumSetGlyph(album, index, spaceGlyph);
+                SFAlbumSetX(album, index, 0);
+                SFAlbumSetY(album, index, 0);
+                SFAlbumSetAdvance(album, index, 0);
+            }
+        }
+    }
+}
+
 SF_INTERNAL void SFTextProcessorWrapUp(SFTextProcessorRef textProcessor)
 {
+    _SFHandleZeroWidthGlyphs(textProcessor);
     SFAlbumWrapUp(textProcessor->_album);
 }
 

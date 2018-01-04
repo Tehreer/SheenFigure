@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Muhammad Tayyab Akram
+ * Copyright (C) 2018 Muhammad Tayyab Akram
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,6 +34,7 @@ typedef struct _SFTextProcessor {
     SFBoolean (*_lookupOperation)(struct _SFTextProcessor *, SFLookupType, SFData);
     SFTextDirection _textDirection;
     SFTextMode _textMode;
+    SFBoolean _containsZeroWidthCodepoints;
     SFLocator _locator;
 } SFTextProcessor, *SFTextProcessorRef;
 

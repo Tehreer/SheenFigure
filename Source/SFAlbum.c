@@ -214,8 +214,8 @@ SF_PRIVATE SFGlyphMask _SFAlbumGetGlyphMask(SFAlbumRef album, SFUInteger index)
 
 static void _SFAlbumSetGlyphMask(SFAlbumRef album, SFUInteger index, SFGlyphMask glyphMask)
 {
-    /* The album must be in filling state. */
-    SFAssert(album->_state == _SFAlbumStateFilling);
+    /* The album must be in filling or arranged state. */
+    SFAssert(album->_state == _SFAlbumStateFilling || album->_state == _SFAlbumStateArranged);
 
     SFListGetRef(&album->_details, index)->mask = glyphMask;
 }
@@ -303,8 +303,8 @@ SF_INTERNAL SFInt32 SFAlbumGetX(SFAlbumRef album, SFUInteger index)
 
 SF_INTERNAL void SFAlbumSetX(SFAlbumRef album, SFUInteger index, SFInt32 x)
 {
-    /* The album must be in arranging state. */
-    SFAssert(album->_state == _SFAlbumStateArranging);
+    /* The album must be in arranging or arranged state. */
+    SFAssert(album->_state == _SFAlbumStateArranging || album->_state == _SFAlbumStateArranged);
 
     SFListGetRef(&album->_offsets, index)->x = x;
 }
@@ -316,8 +316,8 @@ SF_INTERNAL SFInt32 SFAlbumGetY(SFAlbumRef album, SFUInteger index)
 
 SF_INTERNAL void SFAlbumSetY(SFAlbumRef album, SFUInteger index, SFInt32 y)
 {
-    /* The album must be in arranging state. */
-    SFAssert(album->_state == _SFAlbumStateArranging);
+    /* The album must be in arranging or arranged state. */
+    SFAssert(album->_state == _SFAlbumStateArranging || album->_state == _SFAlbumStateArranged);
 
     SFListGetRef(&album->_offsets, index)->y = y;
 }
@@ -329,8 +329,8 @@ SF_INTERNAL SFAdvance SFAlbumGetAdvance(SFAlbumRef album, SFUInteger index)
 
 SF_INTERNAL void SFAlbumSetAdvance(SFAlbumRef album, SFUInteger index, SFAdvance advance)
 {
-    /* The album must be in arranging state. */
-    SFAssert(album->_state == _SFAlbumStateArranging);
+    /* The album must be in arranging or arranged state. */
+    SFAssert(album->_state == _SFAlbumStateArranging || album->_state == _SFAlbumStateArranged);
 
     SFListSetVal(&album->_advances, index, advance);
 }

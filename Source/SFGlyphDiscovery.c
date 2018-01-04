@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Muhammad Tayyab Akram
+ * Copyright (C) 2018 Muhammad Tayyab Akram
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,6 +26,12 @@
 
 #include "SFGlyphDiscovery.h"
 #include "SFTextProcessor.h"
+
+static SFBoolean _isZeroWidthCodepoint(SFCodepoint codepoint)
+{
+    /* TODO: Handle other control characters as well. */
+    return SFCodepointInRange(codepoint, 0x200B, 0x200F);
+}
 
 SF_PRIVATE SFGlyphTraits _SFGetGlyphTraits(SFTextProcessorRef processor, SFGlyphID glyph)
 {
@@ -82,6 +88,12 @@ SF_INTERNAL void _SFDiscoverGlyphs(SFTextProcessorRef processor)
 
                 glyph = SFFontGetGlyphIDForCodepoint(font, current);
                 traits = _SFGetGlyphTraits(processor, glyph);
+
+                if (_isZeroWidthCodepoint(current)) {
+                    processor->_containsZeroWidthCodepoints = SFTrue;
+                    traits |= SFGlyphTraitZeroWidth;
+                }
+
                 SFAlbumAddGlyph(album, glyph, traits, codepoints->index);
             }
             break;
