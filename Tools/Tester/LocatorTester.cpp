@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Muhammad Tayyab Akram
+ * Copyright (C) 2018 Muhammad Tayyab Akram
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -194,7 +194,7 @@ static SFAlbumRef SFAlbumCreateWithTraits(const SFGlyphTraits *traits, SFUIntege
     for (SFUInteger i = 0; i < count; i++) {
         SFAlbumSetGlyph(album, i, (SFGlyphID)i);
         SFAlbumSetFeatureMask(album, i, 0);
-        SFAlbumSetTraits(album, i, traits[i]);
+        SFAlbumReplaceBasicTraits(album, i, traits[i]);
         SFAlbumSetAssociation(album, i, 0);
     }
 

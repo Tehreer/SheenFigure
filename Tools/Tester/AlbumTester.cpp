@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Muhammad Tayyab Akram
+ * Copyright (C) 2018 Muhammad Tayyab Akram
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -38,7 +38,7 @@ static void SFAlbumReserveGlyphsInitialized(SFAlbumRef album, SFUInteger index, 
     for (i = index; i < maxIndex; i++) {
         SFAlbumSetGlyph(album, i, 0);
         SFAlbumSetFeatureMask(album, i, 0);
-        SFAlbumSetTraits(album, i, SFGlyphTraitNone);
+        SFAlbumSetAllTraits(album, i, SFGlyphTraitNone);
         SFAlbumSetAssociation(album, i, 0);
     }
 }
@@ -218,7 +218,7 @@ void AlbumTester::testReserveGlyphs()
 
     /* Wrap up the album. */
     for (SFUInteger i = 0; i < 25; i++) {
-        SFAlbumSetTraits(&album, i, SFGlyphTraitNone);
+        SFAlbumReplaceBasicTraits(&album, i, SFGlyphTraitNone);
         SFAlbumSetAssociation(&album, i, 0);
     }
     SFAlbumEndFilling(&album);
@@ -456,50 +456,53 @@ void AlbumTester::testTraits()
 
     /* Test by setting traits. */
     {
-        SFAlbumSetTraits(&album, 0, SFGlyphTraitNone);
-        SFAlbumSetTraits(&album, 1, SFGlyphTraitBase);
-        SFAlbumSetTraits(&album, 2, SFGlyphTraitLigature);
-        SFAlbumSetTraits(&album, 3, SFGlyphTraitMark);
-        SFAlbumSetTraits(&album, 4, SFGlyphTraitComponent);
+        SFAlbumReplaceBasicTraits(&album, 0, SFGlyphTraitNone);
+        SFAlbumReplaceBasicTraits(&album, 1, SFGlyphTraitBase);
+        SFAlbumReplaceBasicTraits(&album, 2, SFGlyphTraitLigature);
+        SFAlbumReplaceBasicTraits(&album, 3, SFGlyphTraitMark);
+        SFAlbumReplaceBasicTraits(&album, 4, SFGlyphTraitComponent);
 
-        assert(SFAlbumGetTraits(&album, 0) == SFGlyphTraitNone);
-        assert(SFAlbumGetTraits(&album, 1) == SFGlyphTraitBase);
-        assert(SFAlbumGetTraits(&album, 2) == SFGlyphTraitLigature);
-        assert(SFAlbumGetTraits(&album, 3) == SFGlyphTraitMark);
-        assert(SFAlbumGetTraits(&album, 4) == SFGlyphTraitComponent);
+        assert(SFAlbumGetAllTraits(&album, 0) == SFGlyphTraitNone);
+        assert(SFAlbumGetAllTraits(&album, 1) == SFGlyphTraitBase);
+        assert(SFAlbumGetAllTraits(&album, 2) == SFGlyphTraitLigature);
+        assert(SFAlbumGetAllTraits(&album, 3) == SFGlyphTraitMark);
+        assert(SFAlbumGetAllTraits(&album, 4) == SFGlyphTraitComponent);
     }
+
+    SFAlbumEndFilling(&album);
+    SFAlbumBeginArranging(&album);
 
     /* Test by inserting traits. */
     {
-        SFAlbumInsertTraits(&album, 0, SFGlyphTraitPlaceholder);
-        SFAlbumInsertTraits(&album, 1, SFGlyphTraitAttached | SFGlyphTraitResolved);
-        SFAlbumInsertTraits(&album, 2, SFGlyphTraitCursive);
-        SFAlbumInsertTraits(&album, 3, SFGlyphTraitCursive | SFGlyphTraitRightToLeft);
-        SFAlbumInsertTraits(&album, 4, SFGlyphTraitResolved);
+        SFAlbumInsertHelperTraits(&album, 0, SFGlyphTraitRightToLeft);
+        SFAlbumInsertHelperTraits(&album, 1, SFGlyphTraitAttached | SFGlyphTraitResolved);
+        SFAlbumInsertHelperTraits(&album, 2, SFGlyphTraitCursive);
+        SFAlbumInsertHelperTraits(&album, 3, SFGlyphTraitCursive | SFGlyphTraitRightToLeft);
+        SFAlbumInsertHelperTraits(&album, 4, SFGlyphTraitResolved);
 
-        assert(SFAlbumGetTraits(&album, 0) == (SFGlyphTraitPlaceholder));
-        assert(SFAlbumGetTraits(&album, 1) == (SFGlyphTraitBase | SFGlyphTraitAttached | SFGlyphTraitResolved));
-        assert(SFAlbumGetTraits(&album, 2) == (SFGlyphTraitLigature | SFGlyphTraitCursive));
-        assert(SFAlbumGetTraits(&album, 3) == (SFGlyphTraitMark | SFGlyphTraitCursive | SFGlyphTraitRightToLeft));
-        assert(SFAlbumGetTraits(&album, 4) == (SFGlyphTraitComponent | SFGlyphTraitResolved));
+        assert(SFAlbumGetAllTraits(&album, 0) == (SFGlyphTraitRightToLeft));
+        assert(SFAlbumGetAllTraits(&album, 1) == (SFGlyphTraitBase | SFGlyphTraitAttached | SFGlyphTraitResolved));
+        assert(SFAlbumGetAllTraits(&album, 2) == (SFGlyphTraitLigature | SFGlyphTraitCursive));
+        assert(SFAlbumGetAllTraits(&album, 3) == (SFGlyphTraitMark | SFGlyphTraitCursive | SFGlyphTraitRightToLeft));
+        assert(SFAlbumGetAllTraits(&album, 4) == (SFGlyphTraitComponent | SFGlyphTraitResolved));
     }
 
     /* Test by removing traits. */
     {
-        SFAlbumRemoveTraits(&album, 0, SFGlyphTraitPlaceholder);
-        SFAlbumRemoveTraits(&album, 1, SFGlyphTraitBase | SFGlyphTraitResolved);
-        SFAlbumRemoveTraits(&album, 2, SFGlyphTraitLigature | SFGlyphTraitCursive);
-        SFAlbumRemoveTraits(&album, 3, SFGlyphTraitRightToLeft);
-        SFAlbumRemoveTraits(&album, 4, SFGlyphTraitComponent);
+        SFAlbumRemoveHelperTraits(&album, 0, SFGlyphTraitRightToLeft);
+        SFAlbumRemoveHelperTraits(&album, 1, SFGlyphTraitCursive | SFGlyphTraitResolved);
+        SFAlbumRemoveHelperTraits(&album, 2, SFGlyphTraitAttached | SFGlyphTraitCursive);
+        SFAlbumRemoveHelperTraits(&album, 3, SFGlyphTraitRightToLeft);
+        SFAlbumRemoveHelperTraits(&album, 4, SFGlyphTraitAttached | SFGlyphTraitRightToLeft);
 
-        assert(SFAlbumGetTraits(&album, 0) == (SFGlyphTraitNone));
-        assert(SFAlbumGetTraits(&album, 1) == (SFGlyphTraitAttached));
-        assert(SFAlbumGetTraits(&album, 2) == (SFGlyphTraitNone));
-        assert(SFAlbumGetTraits(&album, 3) == (SFGlyphTraitMark | SFGlyphTraitCursive));
-        assert(SFAlbumGetTraits(&album, 4) == (SFGlyphTraitResolved));
+        assert(SFAlbumGetAllTraits(&album, 0) == (SFGlyphTraitNone));
+        assert(SFAlbumGetAllTraits(&album, 1) == (SFGlyphTraitBase | SFGlyphTraitAttached));
+        assert(SFAlbumGetAllTraits(&album, 2) == (SFGlyphTraitLigature));
+        assert(SFAlbumGetAllTraits(&album, 3) == (SFGlyphTraitMark | SFGlyphTraitCursive));
+        assert(SFAlbumGetAllTraits(&album, 4) == (SFGlyphTraitComponent | SFGlyphTraitResolved));
     }
 
-    SFAlbumEndFilling(&album);
+    SFAlbumEndArranging(&album);
     SFAlbumFinalize(&album);
 }
 
