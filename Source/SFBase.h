@@ -40,6 +40,14 @@
  */
 #define SFCodepointInvalid  UINT32_MAX
 
+#define SFUInt32InRange(v, s, e)    \
+(                                   \
+    (SFUInt32)((v) - (s))           \
+ <= (SFUInt32)((e) - (s))           \
+)
+
+#define SFCodepointInRange(v, s, e) SFUInt32InRange(v, s, e)
+
 /**
  * A type to represent a range of sequential items.
  */
