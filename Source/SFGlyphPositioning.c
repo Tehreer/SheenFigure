@@ -790,23 +790,24 @@ static SFBoolean _SFApplyMarkToLigArrays(SFTextProcessorRef textProcessor, SFDat
 static SFUInteger _SFGetPreviousMarkGlyphIndex(SFTextProcessorRef textProcessor)
 {
     SFLocatorRef locator = &textProcessor->_locator;
-    SFLookupFlag ignoreFlag = SFLookupFlagIgnoreBaseGlyphs
-                            | SFLookupFlagIgnoreMarks
-                            | SFLookupFlagIgnoreLigatures;
-    SFLookupFlag lookupFlag = locator->lookupFlag;
     SFUInteger markIndex;
 
-    /* Make locator ignore nothing. */
-    SFLocatorSetLookupFlag(locator, lookupFlag & ~ignoreFlag);
-
     /*
-     * NOTE:
-     *      Previous glyph is assumed to be a mark glyph.
+     * Consider placeholders as well, because it would be wrong to apply mark-to-mark positioning
+     * across different components of a ligature.
      */
-    markIndex = SFLocatorGetBefore(locator, locator->index);
+    SFLocatorSetPlaceholderBit(locator, SFTrue);
 
-    /* Restore the old lookup flag. */
-    SFLocatorSetLookupFlag(locator, lookupFlag);
+    markIndex = SFLocatorGetBefore(locator, locator->index);
+    if (markIndex != SFInvalidIndex) {
+        SFAlbumRef album = textProcessor->_album;
+        SFGlyphTraits traits = SFAlbumGetAllTraits(album, markIndex);
+        if (traits & SFGlyphTraitPlaceholder) {
+            markIndex = SFInvalidIndex;
+        }
+    }
+
+    SFLocatorSetPlaceholderBit(locator, SFFalse);
 
     return markIndex;
 }
