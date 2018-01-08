@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Muhammad Tayyab Akram
+ * Copyright (C) 2018 Muhammad Tayyab Akram
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -66,6 +66,17 @@ SF_INTERNAL void SFLocatorReserveGlyphs(SFLocatorRef locator, SFUInteger glyphCo
 SF_INTERNAL void SFLocatorSetFeatureMask(SFLocatorRef locator, SFUInt16 featureMask)
 {
     locator->_ignoreMask.section.feature = _SFAlbumGetAntiFeatureMask(featureMask);
+}
+
+SF_INTERNAL void SFLocatorSetPlaceholderBit(SFLocatorRef locator, SFBoolean on)
+{
+    SFGlyphTraits *ignoreTraits = &locator->_ignoreMask.section.traits;
+
+    if (!on) {
+        *ignoreTraits |= SFGlyphTraitPlaceholder;
+    } else {
+        *ignoreTraits &= ~SFGlyphTraitPlaceholder;
+    }
 }
 
 SF_INTERNAL void SFLocatorSetLookupFlag(SFLocatorRef locator, SFLookupFlag lookupFlag)
