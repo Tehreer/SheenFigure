@@ -531,13 +531,9 @@ static SFUInteger _SFGetPreviousBaseGlyphIndex(SFTextProcessorRef textProcessor)
     SFLookupFlag lookupFlag = locator->lookupFlag;
     SFUInteger baseIndex;
 
-    /* Make locator ignore marks. */
-    SFLocatorSetLookupFlag(locator, lookupFlag | SFLookupFlagIgnoreMarks);
+    /* Make locator ignore marks only. */
+    SFLocatorSetLookupFlag(locator, SFLookupFlagIgnoreMarks);
 
-    /*
-     * NOTE:
-     *      Previous non-mark glyph is assumed to be a base glyph.
-     */
     baseIndex = SFLocatorGetBefore(locator, locator->index);
 
     /* Restore the old lookup flag. */
@@ -648,13 +644,9 @@ static SFUInteger _SFGetPreviousLigatureGlyphIndex(SFTextProcessorRef textProces
     /* Initialize component counter. */
     *outComponent = 0;
 
-    /* Make locator ignore marks. */
-    SFLocatorSetLookupFlag(locator, lookupFlag | SFLookupFlagIgnoreMarks);
+    /* Make locator ignore marks only. */
+    SFLocatorSetLookupFlag(locator, SFLookupFlagIgnoreMarks);
 
-    /*
-     * NOTE:
-     *      Previous non-mark glyph is assumed to be a ligature glyph.
-     */
     ligIndex = SFLocatorGetBefore(locator, locator->index);
 
     if (ligIndex != SFInvalidIndex) {
@@ -790,8 +782,14 @@ static SFBoolean _SFApplyMarkToLigArrays(SFTextProcessorRef textProcessor, SFDat
 static SFUInteger _SFGetPreviousMarkGlyphIndex(SFTextProcessorRef textProcessor)
 {
     SFLocatorRef locator = &textProcessor->_locator;
+    SFLookupFlag lookupFlag = locator->lookupFlag;
+    SFLookupFlag ignoreFlag = SFLookupFlagIgnoreBaseGlyphs
+                            | SFLookupFlagIgnoreMarks
+                            | SFLookupFlagIgnoreLigatures;
     SFUInteger markIndex;
 
+    /* Make locator ignore specified marks only. */
+    SFLocatorSetLookupFlag(locator, lookupFlag & ~ignoreFlag);
     /*
      * Consider placeholders as well, because it would be wrong to apply mark-to-mark positioning
      * across different components of a ligature.
@@ -807,7 +805,10 @@ static SFUInteger _SFGetPreviousMarkGlyphIndex(SFTextProcessorRef textProcessor)
         }
     }
 
+    /* Prohibit placeholders as they must be excluded in normal process. */
     SFLocatorSetPlaceholderBit(locator, SFFalse);
+    /* Restore the old lookup flag. */
+    SFLocatorSetLookupFlag(locator, lookupFlag);
 
     return markIndex;
 }
