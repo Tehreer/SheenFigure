@@ -358,11 +358,13 @@ static SFPoint _SFConvertAnchorToPoint(SFData anchor)
 
     switch (format) {
         case 1:
+        case 2:
+        case 3:
             point.x = SFAnchorF1_XCoordinate(anchor);
             point.y = SFAnchorF1_YCoordinate(anchor);
             break;
 
-            /* TODO: Support remaining anchor formats. */
+            /* TODO: Support specification of format 2 and 3. */
 
         default:
             point.x = 0;
