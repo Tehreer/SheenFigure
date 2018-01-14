@@ -192,7 +192,7 @@ static SFBoolean _SFApplySequenceTable(SFTextProcessorRef textProcessor, SFData 
 
                 /* Initialize the glyph with substitute. */
                 SFAlbumSetGlyph(album, newIndex, subGlyph);
-                SFAlbumSetAllTraits(album, newIndex, subTraits);
+                SFAlbumSetAllTraits(album, newIndex, subTraits | SFGlyphTraitSequence);
                 SFAlbumSetAssociation(album, newIndex, association);
             }
 

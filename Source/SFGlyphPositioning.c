@@ -529,6 +529,7 @@ static SFBoolean _SFApplyCursiveAnchors(SFTextProcessorRef textProcessor,
 
 static SFUInteger _SFGetPreviousBaseGlyphIndex(SFTextProcessorRef textProcessor)
 {
+    SFAlbumRef album = textProcessor->_album;
     SFLocatorRef locator = &textProcessor->_locator;
     SFLookupFlag lookupFlag = locator->lookupFlag;
     SFUInteger baseIndex;
@@ -537,6 +538,14 @@ static SFUInteger _SFGetPreviousBaseGlyphIndex(SFTextProcessorRef textProcessor)
     SFLocatorSetLookupFlag(locator, SFLookupFlagIgnoreMarks);
 
     baseIndex = SFLocatorGetBefore(locator, locator->index);
+
+    /* Make sure to connect with first glyph of a multiple substitution sequence. */
+    do {
+        SFGlyphTraits traits = SFAlbumGetAllTraits(album, baseIndex);
+        if (!(traits & SFGlyphTraitSequence)) {
+            break;
+        }
+    } while (baseIndex--);
 
     /* Restore the old lookup flag. */
     SFLocatorSetLookupFlag(locator, lookupFlag);

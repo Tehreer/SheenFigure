@@ -39,6 +39,7 @@ enum {
     SFGlyphTraitLigature    = 1 << 2,   /**< BASIC: Multiple character, spacing glyph. */
     SFGlyphTraitMark        = 1 << 3,   /**< BASIC: Non-spacing combining glyph. */
     SFGlyphTraitComponent   = 1 << 4,   /**< BASIC: Part of single character, spacing glyph. */
+    SFGlyphTraitSequence    = 1 << 5,   /**< BASIC: Multiple substituted, sequence glyph. */
 
     SFGlyphTraitAttached    = 1 << 8,   /**< HELPER: Attached with a previous glyph. */
     SFGlyphTraitCursive     = 1 << 9,   /**< HELPER: Cursively connected glyph. */
