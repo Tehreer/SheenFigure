@@ -96,6 +96,30 @@ SF_INTERNAL SFUInteger SFLocatorGetAfter(SFLocatorRef locator, SFUInteger index)
 SF_INTERNAL SFUInteger SFLocatorGetBefore(SFLocatorRef locator, SFUInteger index);
 
 /**
+ * Returns the index of appropriate preceding base glyph.
+ * @return
+ *      The index of preceding base glyph if available, or SFInvalidIndex if there was no
+ *      appropriate base glyph.
+ */
+SF_INTERNAL SFUInteger SFLocatorGetPrecedingBaseIndex(SFLocatorRef locator);
+
+/**
+ * Returns the index of appropriate preceding ligature glyph.
+ * @return
+ *      The index of preceding ligature glyph if available, or SFInvalidIndex if there was no
+ *      appropriate ligature glyph.
+ */
+SF_INTERNAL SFUInteger SFLocatorGetPrecedingLigatureIndex(SFLocatorRef locator, SFUInteger *outComponent);
+
+/**
+ * Returns the index of appropriate preceding mark glyph.
+ * @return
+ *      The index of preceding mark glyph if available, or SFInvalidIndex if there was no
+ *      appropriate mark glyph.
+ */
+SF_INTERNAL SFUInteger SFLocatorGetPrecedingMarkIndex(SFLocatorRef locator);
+
+/**
  * Takes the state of other locator provided that it also belong to the same album and is subset of
  * the input locator.
  */
