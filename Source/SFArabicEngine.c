@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Muhammad Tayyab Akram
+ * Copyright (C) 2018 Muhammad Tayyab Akram
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -43,32 +43,36 @@ enum {
     _SFArabicFeatureMaskFinal    = 1 << 3
 };
 
-static SFFeatureInfo _SFArabicFeatureInfoArray[] = {
+static SFFeatureInfo _SFArabicSubstFeatureArray[] = {
     /* Language based forms */
-    { SFTagMake('c', 'c', 'm', 'p'), SFFeatureBehaviourRequired, _SFArabicFeatureMaskNone },
-    { SFTagMake('i', 's', 'o', 'l'), SFFeatureBehaviourRequired, _SFArabicFeatureMaskIsolated },
-    { SFTagMake('f', 'i', 'n', 'a'), SFFeatureBehaviourRequired, _SFArabicFeatureMaskFinal },
-    { SFTagMake('m', 'e', 'd', 'i'), SFFeatureBehaviourRequired, _SFArabicFeatureMaskMedial },
-    { SFTagMake('i', 'n', 'i', 't'), SFFeatureBehaviourRequired, _SFArabicFeatureMaskInitial },
-    { SFTagMake('r', 'l', 'i', 'g'), SFFeatureBehaviourRequired, _SFArabicFeatureMaskNone },
-    { SFTagMake('c', 'a', 'l', 't'), SFFeatureBehaviourRequired, _SFArabicFeatureMaskNone },
+    { 1, SFTagMake('c', 'c', 'm', 'p'), SFFeatureNatureRequired, _SFArabicFeatureMaskNone },
+    { 1, SFTagMake('i', 's', 'o', 'l'), SFFeatureNatureRequired, _SFArabicFeatureMaskIsolated },
+    { 1, SFTagMake('f', 'i', 'n', 'a'), SFFeatureNatureRequired, _SFArabicFeatureMaskFinal },
+    { 1, SFTagMake('m', 'e', 'd', 'i'), SFFeatureNatureRequired, _SFArabicFeatureMaskMedial },
+    { 1, SFTagMake('i', 'n', 'i', 't'), SFFeatureNatureRequired, _SFArabicFeatureMaskInitial },
+    { 1, SFTagMake('r', 'l', 'i', 'g'), SFFeatureNatureRequired, _SFArabicFeatureMaskNone },
+    { 1, SFTagMake('c', 'a', 'l', 't'), SFFeatureNatureRequired, _SFArabicFeatureMaskNone },
     /* Typographical forms */
-    { SFTagMake('l', 'i', 'g', 'a'), SFFeatureBehaviourOn,       _SFArabicFeatureMaskNone },
-    { SFTagMake('d', 'l', 'i', 'g'), SFFeatureBehaviourOff,      _SFArabicFeatureMaskNone },
-    { SFTagMake('c', 's', 'w', 'h'), SFFeatureBehaviourOff,      _SFArabicFeatureMaskNone },
-    { SFTagMake('m', 's', 'e', 't'), SFFeatureBehaviourRequired, _SFArabicFeatureMaskNone },
-    /* Positioning features */
-    { SFTagMake('c', 'u', 'r', 's'), SFFeatureBehaviourRequired, _SFArabicFeatureMaskNone },
-    { SFTagMake('k', 'e', 'r', 'n'), SFFeatureBehaviourRequired, _SFArabicFeatureMaskNone },
-    { SFTagMake('m', 'a', 'r', 'k'), SFFeatureBehaviourRequired, _SFArabicFeatureMaskNone },
-    { SFTagMake('m', 'k', 'm', 'k'), SFFeatureBehaviourRequired, _SFArabicFeatureMaskNone },
+    { 1, SFTagMake('l', 'i', 'g', 'a'), SFFeatureNatureOn,       _SFArabicFeatureMaskNone },
+    { 1, SFTagMake('d', 'l', 'i', 'g'), SFFeatureNatureOff,      _SFArabicFeatureMaskNone },
+    { 1, SFTagMake('c', 's', 'w', 'h'), SFFeatureNatureOff,      _SFArabicFeatureMaskNone },
+    { 1, SFTagMake('m', 's', 'e', 't'), SFFeatureNatureRequired, _SFArabicFeatureMaskNone },
 };
-#define _SFArabicFeatureInfoCount (sizeof(_SFArabicFeatureInfoArray) / sizeof(SFFeatureInfo))
+#define _SFArabicSubstFeatureCount (sizeof(_SFArabicSubstFeatureArray) / sizeof(SFFeatureInfo))
+
+static SFFeatureInfo _SFArabicPosFeatureArray[] = {
+    /* Positioning features */
+    { 1, SFTagMake('c', 'u', 'r', 's'), SFFeatureNatureRequired, _SFArabicFeatureMaskNone },
+    { 1, SFTagMake('k', 'e', 'r', 'n'), SFFeatureNatureRequired, _SFArabicFeatureMaskNone },
+    { 1, SFTagMake('m', 'a', 'r', 'k'), SFFeatureNatureRequired, _SFArabicFeatureMaskNone },
+    { 1, SFTagMake('m', 'k', 'm', 'k'), SFFeatureNatureRequired, _SFArabicFeatureMaskNone },
+};
+#define _SFArabicPosFeatureCount (sizeof(_SFArabicPosFeatureArray) / sizeof(SFFeatureInfo))
 
 static SFScriptKnowledge _SFArabicScriptKnowledge = {
     SFTextDirectionRightToLeft,
-    { _SFArabicFeatureInfoArray, _SFArabicFeatureInfoCount },
-    { NULL, 0 }
+    { _SFArabicSubstFeatureArray, _SFArabicSubstFeatureCount },
+    { _SFArabicPosFeatureArray, _SFArabicPosFeatureCount }
 };
 
 SFShapingKnowledge SFArabicKnowledgeInstance = {
