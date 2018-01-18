@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Muhammad Tayyab Akram
+ * Copyright (C) 2018 Muhammad Tayyab Akram
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,16 +23,17 @@
 #include "SFBase.h"
 
 enum {
-    SFFeatureBehaviourOff = 0,
-    SFFeatureBehaviourOn = 1,
-    SFFeatureBehaviourRequired = 2
+    SFFeatureNatureOff = 0,
+    SFFeatureNatureOn = 1,
+    SFFeatureNatureRequired = 2
 };
-typedef SFUInt16 SFFeatureBehaviour;
+typedef SFUInt16 SFFeatureNature;
 
 typedef struct _SFFeatureInfo {
-    SFTag featureTag;
-    SFFeatureBehaviour featureBehaviour;
-    SFUInt16 featureMask;
+    SFBoolean isSeparate;
+    SFTag tag;
+    SFFeatureNature nature;
+    SFUInt16 mask;
 } SFFeatureInfo, *SFFeatureInfoRef;
 
 typedef struct _SFScriptKnowledge {
@@ -46,14 +47,11 @@ typedef struct _SFScriptKnowledge {
     struct {
         SFFeatureInfo *items;
         SFUInteger count;
-    } featureInfos;
-	/**
-     * Ranges of those features which must be applied simultaneously.
-     */
+    } substFeatures;
     struct {
-        SFRange *items;
+        SFFeatureInfo *items;
         SFUInteger count;
-    } featureUnits;
+    } posFeatures;
 } SFScriptKnowledge, *SFScriptKnowledgeRef;
 
 /**
