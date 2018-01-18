@@ -1,5 +1,5 @@
 /*
-* Copyright (C) 2016 Muhammad Tayyab Akram
+* Copyright (C) 2018 Muhammad Tayyab Akram
 *
 * Licensed under the Apache License, Version 2.0 (the "License");
 * you may not use this file except in compliance with the License.
@@ -33,24 +33,28 @@ enum {
     _SFStandardFeatureMaskNone = 0 << 0
 };
 
-static SFFeatureInfo _SFStandardFeatureInfoArray[] = {
+static SFFeatureInfo _SFStandardSubstFeatureArray[] = {
     /* Language based forms. */
-    { SFTagMake('c', 'c', 'm', 'p'), SFFeatureBehaviourOn, _SFStandardFeatureMaskNone },
+    { 1, SFTagMake('c', 'c', 'm', 'p'), SFFeatureNatureOn, _SFStandardFeatureMaskNone },
     /* Typographical forms */
-    { SFTagMake('l', 'i', 'g', 'a'), SFFeatureBehaviourOn, _SFStandardFeatureMaskNone },
-    { SFTagMake('c', 'l', 'i', 'g'), SFFeatureBehaviourOn, _SFStandardFeatureMaskNone },
-    /* Positioning features. */
-    { SFTagMake('d', 'i', 's', 't'), SFFeatureBehaviourRequired, _SFStandardFeatureMaskNone },
-    { SFTagMake('k', 'e', 'r', 'n'), SFFeatureBehaviourOn,       _SFStandardFeatureMaskNone },
-    { SFTagMake('m', 'a', 'r', 'k'), SFFeatureBehaviourRequired, _SFStandardFeatureMaskNone },
-    { SFTagMake('m', 'k', 'm', 'k'), SFFeatureBehaviourRequired, _SFStandardFeatureMaskNone }
+    { 1, SFTagMake('l', 'i', 'g', 'a'), SFFeatureNatureOn, _SFStandardFeatureMaskNone },
+    { 1, SFTagMake('c', 'l', 'i', 'g'), SFFeatureNatureOn, _SFStandardFeatureMaskNone },
 };
-#define _SFStandardFeatureInfoCount (sizeof(_SFStandardFeatureInfoArray) / sizeof(SFFeatureInfo))
+#define _SFStandardSubstFeatureCount (sizeof(_SFStandardSubstFeatureArray) / sizeof(SFFeatureInfo))
+
+static SFFeatureInfo _SFStandardPosFeatureArray[] = {
+    /* Positioning features. */
+    { 1, SFTagMake('d', 'i', 's', 't'), SFFeatureNatureRequired, _SFStandardFeatureMaskNone },
+    { 1, SFTagMake('k', 'e', 'r', 'n'), SFFeatureNatureOn,       _SFStandardFeatureMaskNone },
+    { 1, SFTagMake('m', 'a', 'r', 'k'), SFFeatureNatureRequired, _SFStandardFeatureMaskNone },
+    { 1, SFTagMake('m', 'k', 'm', 'k'), SFFeatureNatureRequired, _SFStandardFeatureMaskNone }
+};
+#define _SFStandardPosFeatureCount (sizeof(_SFStandardPosFeatureArray) / sizeof(SFFeatureInfo))
 
 static SFScriptKnowledge _SFStandardScriptKnowledge = {
     SFTextDirectionLeftToRight,
-    { _SFStandardFeatureInfoArray, _SFStandardFeatureInfoCount },
-    { NULL, 0 }
+    { _SFStandardSubstFeatureArray, _SFStandardSubstFeatureCount },
+    { _SFStandardPosFeatureArray, _SFStandardPosFeatureCount }
 };
 
 SFShapingKnowledge SFStandardKnowledgeInstance = {
