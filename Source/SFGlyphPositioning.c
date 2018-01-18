@@ -242,49 +242,46 @@ static SFBoolean _SFApplyPairPosF1(SFTextProcessorRef textProcessor, SFData pair
     SFGlyphID firstGlyph = SFAlbumGetGlyph(album, firstIndex);
     SFGlyphID secondGlyph = SFAlbumGetGlyph(album, secondIndex);
     SFData coverage;
+    SFUInt16 pairSetCount;
     SFUInteger covIndex;
 
     *outShouldSkip = SFFalse;
 
     coverage = SFPairPosF1_CoverageTable(pairPos);
+    pairSetCount = SFPairPosF1_PairSetCount(pairPos);
     covIndex = SFOpenTypeSearchCoverageIndex(coverage, firstGlyph);
 
-    if (covIndex != SFInvalidIndex) {
+    if (covIndex < pairSetCount) {
         SFUInt16 valueFormat1 = SFPairPosF1_ValueFormat1(pairPos);
         SFUInt16 valueFormat2 = SFPairPosF1_ValueFormat2(pairPos);
-        SFUInt16 pairSetCount = SFPairPosF1_PairSetCount(pairPos);
+        SFData pairSet = SFPairPosF1_PairSetTable(pairPos, covIndex);
+        SFUInt16 valueCount = SFPairSet_PairValueCount(pairSet);
+        SFData recordArray = SFPairSet_PairValueRecordArray(pairSet);
         SFUInteger value1Size = SFValueRecord_Size(valueFormat1);
         SFUInteger value2Size = SFValueRecord_Size(valueFormat2);
         SFUInteger recordSize = SFPairValueRecord_Size(value1Size, value2Size);
-        SFUInteger pairSetIndex;
+        SFData pairRecord;
 
-        for (pairSetIndex = 0; pairSetIndex < pairSetCount; pairSetIndex++) {
-            SFData pairSet = SFPairPosF1_PairSetTable(pairPos, pairSetIndex);
-            SFUInt16 valueCount = SFPairSet_PairValueCount(pairSet);
-            SFData recordArray = SFPairSet_PairValueRecordArray(pairSet);
-            SFData pairRecord;
+        pairRecord = bsearch(&secondGlyph, recordArray, valueCount, recordSize, _SFPairRecordGlyphComparison);
 
-            pairRecord = bsearch(&secondGlyph, recordArray, valueCount, recordSize, _SFPairRecordGlyphComparison);
-
-            if (pairRecord) {
-                if (value1Size) {
-                    SFData value1 = SFPairValueRecord_Value1(pairRecord);
-                    _SFApplyValueRecord(textProcessor, value1, valueFormat1, firstIndex);
-                }
-
-                if (value2Size) {
-                    SFData value2 = SFPairValueRecord_Value2(pairRecord, value1Size);
-                    _SFApplyValueRecord(textProcessor, value2, valueFormat2, secondIndex);
-
-                    /*
-                     * Pair element should be skipped only if the value record for the second glyph
-                     * is AVAILABLE.
-                     */
-                    *outShouldSkip = SFTrue;
-                }
-
-                return SFTrue;
+        if (pairRecord) {
+            if (value1Size) {
+                SFData value1 = SFPairValueRecord_Value1(pairRecord);
+                _SFApplyValueRecord(textProcessor, value1, valueFormat1, firstIndex);
             }
+
+            if (value2Size) {
+                SFData value2 = SFPairValueRecord_Value2(pairRecord, value1Size);
+                _SFApplyValueRecord(textProcessor, value2, valueFormat2, secondIndex);
+
+                /*
+                 * Pair element should be skipped only if the value record for the second glyph
+                 * is AVAILABLE.
+                 */
+                *outShouldSkip = SFTrue;
+            }
+
+            return SFTrue;
         }
     }
 
