@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Muhammad Tayyab Akram
+ * Copyright (C) 2018 Muhammad Tayyab Akram
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -114,65 +114,53 @@ static void _SFAddFeatureLookups(SFPatternBuilderRef patternBuilder, SFData feat
     }
 }
 
-static void _SFAddFeatureRange(SFPatternBuilderRef patternBuilder,
+static void _SFAddFeatureUnit(SFPatternBuilderRef patternBuilder,
     SFData langSysTable, SFData featureListTable,
-    SFFeatureInfo *featureInfos, SFUInteger featureCount, SFBoolean simultaneous)
+    SFFeatureInfo *featureInfos, SFUInteger featureCount)
 {
+    SFBoolean exists = SFFalse;
     SFUInteger index;
 
     for (index = 0; index < featureCount; index++) {
         SFFeatureInfoRef featureInfo = &featureInfos[index];
 
         /* Skip those features which are off by default. */
-        if (featureInfo->featureBehaviour != SFFeatureBehaviourOff) {
-            SFData featureTable = _SFSearchFeatureTable(langSysTable, featureListTable, featureInfo->featureTag);
+        if (featureInfo->nature != SFFeatureNatureOff) {
+            SFData featureTable = _SFSearchFeatureTable(langSysTable, featureListTable, featureInfo->tag);
 
             /* Add the feature, if it exists in the language. */
             if (featureTable) {
-                SFPatternBuilderAddFeature(patternBuilder, featureInfo->featureTag, featureInfo->featureMask);
+                SFPatternBuilderAddFeature(patternBuilder, featureInfo->tag, featureInfo->mask);
                 _SFAddFeatureLookups(patternBuilder, featureTable);
 
-                if (!simultaneous) {
-                    SFPatternBuilderMakeFeatureUnit(patternBuilder);
-                }
+                exists = SFTrue;
             }
         }
     }
 
-    if (simultaneous) {
+    if (exists) {
         SFPatternBuilderMakeFeatureUnit(patternBuilder);
     }
 }
 
 static void _SFAddKnownFeatures(SFPatternBuilderRef patternBuilder,
-    SFScriptKnowledgeRef scriptKnowledge, SFData langSysTable, SFData featureListTable)
+    SFData langSysTable, SFData featureListTable,
+    SFFeatureInfo *featureInfos, SFUInteger featureCount)
 {
-    SFUInteger featureCount = scriptKnowledge->featureInfos.count;
-    SFUInteger unitCount = scriptKnowledge->featureUnits.count;
-    SFFeatureInfo *featureInfos = scriptKnowledge->featureInfos.items;
-    SFUInteger featureIndex = 0;
-    SFUInteger unitIndex;
+    SFUInteger index;
 
-    for (unitIndex = 0; unitIndex < unitCount; unitIndex++) {
-        SFRange groupRange = scriptKnowledge->featureUnits.items[unitIndex];
+    for (index = 0; index < featureCount; index++) {
+        SFFeatureInfoRef featureInfo = &featureInfos[index];
 
-        if (groupRange.start > featureIndex) {
-            _SFAddFeatureRange(patternBuilder, langSysTable, featureListTable,
-                               featureInfos + featureIndex, groupRange.start - featureIndex, SFFalse);
-            featureIndex = groupRange.start;
-        } else {
-            _SFAddFeatureRange(patternBuilder, langSysTable, featureListTable,
-                               featureInfos + groupRange.start, groupRange.count, SFTrue);
-            featureIndex += groupRange.count;
-        }
+        /* TODO: Add support for simultaneous features. */
+        SFAssert(featureInfo->isSeparate);
+
+        _SFAddFeatureUnit(patternBuilder, langSysTable, featureListTable, featureInfo, 1);
     }
-
-    _SFAddFeatureRange(patternBuilder, langSysTable, featureListTable,
-                       featureInfos + featureIndex, featureCount - featureIndex, SFFalse);
 }
 
-static void _SFAddHeaderTable(SFSchemeRef scheme,
-    SFPatternBuilderRef patternBuilder, SFScriptKnowledgeRef scriptKnowledge, SFData headerTable)
+static void _SFAddHeaderTable(SFSchemeRef scheme, SFPatternBuilderRef patternBuilder,
+    SFData headerTable, SFFeatureInfo *featureInfos, SFUInteger featureCount)
 {
     SFData scriptListTable = SFHeader_ScriptListTable(headerTable);
     SFData featureListTable = SFHeader_FeatureListTable(headerTable);
@@ -187,7 +175,7 @@ static void _SFAddHeaderTable(SFSchemeRef scheme,
         langSysTable = _SFSearchLangSysTable(scriptTable, scheme->_languageTag);
 
         if (langSysTable) {
-            _SFAddKnownFeatures(patternBuilder, scriptKnowledge, langSysTable, featureListTable);
+            _SFAddKnownFeatures(patternBuilder, langSysTable, featureListTable, featureInfos, featureCount);
         }
     }
 }
@@ -223,24 +211,24 @@ SFPatternRef SFSchemeBuildPattern(SFSchemeRef scheme)
     SFFontRef font = scheme->_font;
 
     if (font) {
-        SFScriptKnowledgeRef scriptKnowledge = SFShapingKnowledgeSeekScript(&SFUnifiedKnowledgeInstance, scheme->_scriptTag);
+        SFScriptKnowledgeRef knowledge = SFShapingKnowledgeSeekScript(&SFUnifiedKnowledgeInstance, scheme->_scriptTag);
         SFPatternRef pattern = SFPatternCreate();
         SFPatternBuilder builder;
 
         SFPatternBuilderInitialize(&builder, pattern);
         SFPatternBuilderSetFont(&builder, scheme->_font);
-        SFPatternBuilderSetScript(&builder, scheme->_scriptTag, scriptKnowledge->defaultDirection);
+        SFPatternBuilderSetScript(&builder, scheme->_scriptTag, knowledge->defaultDirection);
         SFPatternBuilderSetLanguage(&builder, scheme->_languageTag);
 
         if (font->tables.gsub) {
             SFPatternBuilderBeginFeatures(&builder, SFFeatureKindSubstitution);
-            _SFAddHeaderTable(scheme, &builder, scriptKnowledge, font->tables.gsub);
+            _SFAddHeaderTable(scheme, &builder, font->tables.gsub, knowledge->substFeatures.items, knowledge->substFeatures.count);
             SFPatternBuilderEndFeatures(&builder);
         }
 
         if (font->tables.gpos) {
             SFPatternBuilderBeginFeatures(&builder, SFFeatureKindPositioning);
-            _SFAddHeaderTable(scheme, &builder, scriptKnowledge, font->tables.gpos);
+            _SFAddHeaderTable(scheme, &builder, font->tables.gpos, knowledge->posFeatures.items, knowledge->posFeatures.count);
             SFPatternBuilderEndFeatures(&builder);
         }
 
