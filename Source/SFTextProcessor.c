@@ -38,7 +38,7 @@ static void _SFPrepareLookup(SFTextProcessorRef processor, SFUInt16 lookupIndex,
 static void _SFApplySubtables(SFTextProcessorRef processor, SFData lookupTable);
 
 SF_INTERNAL void SFTextProcessorInitialize(SFTextProcessorRef textProcessor, SFPatternRef pattern,
-    SFAlbumRef album, SFTextDirection textDirection, SFTextMode textMode)
+    SFAlbumRef album, SFTextDirection textDirection, SFTextMode textMode, SFBoolean zeroWidthMarks)
 {
     SFData gdef;
 
@@ -52,6 +52,7 @@ SF_INTERNAL void SFTextProcessorInitialize(SFTextProcessorRef textProcessor, SFP
     textProcessor->_glyphClassDef = NULL;
     textProcessor->_textDirection = textDirection;
     textProcessor->_textMode = textMode;
+    textProcessor->_zeroWidthMarks = zeroWidthMarks;
     textProcessor->_containsZeroWidthCodepoints = SFFalse;
 
     gdef = pattern->font->tables.gdef;
@@ -86,6 +87,43 @@ SF_INTERNAL void SFTextProcessorSubstituteGlyphs(SFTextProcessorRef textProcesso
     }
 
     SFAlbumEndFilling(album);
+}
+
+static void _SFHandleZeroWidthGlyphs(SFTextProcessorRef textProcessor)
+{
+    if (textProcessor->_containsZeroWidthCodepoints) {
+        SFFontRef font = textProcessor->_pattern->font;
+        SFAlbumRef album = textProcessor->_album;
+        SFUInteger glyphCount = album->glyphCount;
+        SFGlyphID spaceGlyph;
+        SFUInteger index;
+
+        spaceGlyph = SFFontGetGlyphIDForCodepoint(font, ' ');
+
+        for (index = 0; index < glyphCount; index++) {
+            SFGlyphTraits traits = SFAlbumGetAllTraits(album, index);
+            if (traits & SFGlyphTraitZeroWidth) {
+                SFAlbumSetGlyph(album, index, spaceGlyph);
+                SFAlbumSetX(album, index, 0);
+                SFAlbumSetY(album, index, 0);
+                SFAlbumSetAdvance(album, index, 0);
+            }
+        }
+    }
+}
+
+static void _SFMakeMarksZeroWidth(SFTextProcessorRef textProcessor)
+{
+    SFAlbumRef album = textProcessor->_album;
+    SFUInteger count = SFAlbumGetGlyphCount(album);
+    SFUInteger index;
+
+    for (index = 0; index < count; index++) {
+        SFGlyphTraits traits = SFAlbumGetAllTraits(album, index);
+        if (traits & SFGlyphTraitMark) {
+            SFAlbumSetAdvance(album, index, 0);
+        }
+    }
 }
 
 SF_INTERNAL void SFTextProcessorPositionGlyphs(SFTextProcessorRef textProcessor)
@@ -123,38 +161,20 @@ SF_INTERNAL void SFTextProcessorPositionGlyphs(SFTextProcessorRef textProcessor)
         textProcessor->_lookupOperation = _SFApplyPositioningSubtable;
 
         _SFApplyFeatureRange(textProcessor, pattern->featureUnits.gsub, pattern->featureUnits.gpos);
+        _SFHandleZeroWidthGlyphs(textProcessor);
+
+        if (textProcessor->_zeroWidthMarks) {
+            _SFMakeMarksZeroWidth(textProcessor);
+        }
+
         _SFResolveAttachments(textProcessor);
     }
 
     SFAlbumEndArranging(album);
 }
 
-static void _SFHandleZeroWidthGlyphs(SFTextProcessorRef textProcessor)
-{
-    if (textProcessor->_containsZeroWidthCodepoints) {
-        SFFontRef font = textProcessor->_pattern->font;
-        SFAlbumRef album = textProcessor->_album;
-        SFUInteger glyphCount = album->glyphCount;
-        SFGlyphID spaceGlyph;
-        SFUInteger index;
-
-        spaceGlyph = SFFontGetGlyphIDForCodepoint(font, ' ');
-
-        for (index = 0; index < glyphCount; index++) {
-            SFGlyphTraits traits = SFAlbumGetAllTraits(album, index);
-            if (traits & SFGlyphTraitZeroWidth) {
-                SFAlbumSetGlyph(album, index, spaceGlyph);
-                SFAlbumSetX(album, index, 0);
-                SFAlbumSetY(album, index, 0);
-                SFAlbumSetAdvance(album, index, 0);
-            }
-        }
-    }
-}
-
 SF_INTERNAL void SFTextProcessorWrapUp(SFTextProcessorRef textProcessor)
 {
-    _SFHandleZeroWidthGlyphs(textProcessor);
     SFAlbumWrapUp(textProcessor->_album);
 }
 

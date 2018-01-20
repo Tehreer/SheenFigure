@@ -1,5 +1,5 @@
 /*
-* Copyright (C) 2017 Muhammad Tayyab Akram
+* Copyright (C) 2018 Muhammad Tayyab Akram
 *
 * Licensed under the Apache License, Version 2.0 (the "License");
 * you may not use this file except in compliance with the License.
@@ -58,7 +58,7 @@ static void _SFSimpleEngineProcessAlbum(const void *object, SFAlbumRef album)
     SFArtistRef artist = simpleEngine->_artist;
     SFTextProcessor processor;
 
-    SFTextProcessorInitialize(&processor, artist->pattern, album, artist->textDirection, artist->textMode);
+    SFTextProcessorInitialize(&processor, artist->pattern, album, artist->textDirection, artist->textMode, SFFalse);
     SFTextProcessorDiscoverGlyphs(&processor);
     SFTextProcessorSubstituteGlyphs(&processor);
     SFTextProcessorPositionGlyphs(&processor);

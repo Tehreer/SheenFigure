@@ -230,7 +230,7 @@ static void _SFArabicEngineProcessAlbum(const void *object, SFAlbumRef album)
     SFArtistRef artist = arabicEngine->_artist;
     SFTextProcessor processor;
 
-    SFTextProcessorInitialize(&processor, artist->pattern, album, artist->textDirection, artist->textMode);
+    SFTextProcessorInitialize(&processor, artist->pattern, album, artist->textDirection, artist->textMode, SFTrue);
     SFTextProcessorDiscoverGlyphs(&processor);
     _SFPutArabicFeatureMask(album);
     SFTextProcessorSubstituteGlyphs(&processor);

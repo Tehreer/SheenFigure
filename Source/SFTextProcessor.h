@@ -34,11 +34,13 @@ typedef struct _SFTextProcessor {
     SFBoolean (*_lookupOperation)(struct _SFTextProcessor *, SFLookupType, SFData);
     SFTextDirection _textDirection;
     SFTextMode _textMode;
+    SFBoolean _zeroWidthMarks;
     SFBoolean _containsZeroWidthCodepoints;
     SFLocator _locator;
 } SFTextProcessor, *SFTextProcessorRef;
 
-SF_INTERNAL void SFTextProcessorInitialize(SFTextProcessorRef textProcessor, SFPatternRef pattern, SFAlbumRef album, SFTextDirection textDirection, SFTextMode textMode);
+SF_INTERNAL void SFTextProcessorInitialize(SFTextProcessorRef textProcessor, SFPatternRef pattern,
+   SFAlbumRef album, SFTextDirection textDirection, SFTextMode textMode, SFBoolean zeroWidthMarks);
 
 SF_INTERNAL void SFTextProcessorDiscoverGlyphs(SFTextProcessorRef textProcessor);
 SF_INTERNAL void SFTextProcessorSubstituteGlyphs(SFTextProcessorRef textProcessor);
