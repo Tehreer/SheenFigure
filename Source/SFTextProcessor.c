@@ -57,8 +57,7 @@ SF_INTERNAL void SFTextProcessorInitialize(SFTextProcessorRef textProcessor, SFP
 
     gdef = pattern->font->tables.gdef;
     if (gdef) {
-        SFOffset offset = SFGDEF_GlyphClassDefOffset(gdef);
-        textProcessor->_glyphClassDef = SFData_Subdata(gdef, offset);
+        textProcessor->_glyphClassDef = SFGDEF_GlyphClassDefTable(gdef);
     }
 
     SFLocatorInitialize(&textProcessor->_locator, album, gdef);

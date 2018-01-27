@@ -42,12 +42,10 @@ SF_INTERNAL void SFLocatorInitialize(SFLocatorRef locator, SFAlbumRef album, SFD
     locator->lookupFlag = 0;
 
     if (gdef) {
-        SFOffset offset = SFGDEF_MarkAttachClassDefOffset(gdef);
-        locator->_markAttachClassDef = SFData_Subdata(gdef, offset);
+        locator->_markAttachClassDef = SFGDEF_MarkAttachClassDefTable(gdef);
 
         if (SFGDEF_Version(gdef) == 0x00010002) {
-            offset = SFGDEF_MarkGlyphSetsDefOffset(gdef);
-            locator->_markGlyphSetsDef = SFData_Subdata(gdef, offset);
+            locator->_markGlyphSetsDef = SFGDEF_MarkGlyphSetsDefTable(gdef);
         }
     }
 }
@@ -103,10 +101,7 @@ SF_INTERNAL void SFLocatorSetMarkFilteringSet(SFLocatorRef locator, SFUInt16 mar
                 SFUInt16 markSetCount = SFMarkGlyphSets_MarkSetCount(markGlyphSetsDef);
 
                 if (markFilteringSet < markSetCount) {
-                    SFUInt32 offset = SFMarkGlyphSets_CoverageOffset(markGlyphSetsDef, markFilteringSet);
-                    SFData coverage = SFData_Subdata(markGlyphSetsDef, offset);
-
-                    locator->_markFilteringCoverage = coverage;
+                    locator->_markFilteringCoverage = SFMarkGlyphSets_CoverageTable(markGlyphSetsDef, markFilteringSet);
                 }
                 break;
             }
