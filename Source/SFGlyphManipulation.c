@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Muhammad Tayyab Akram
+ * Copyright (C) 2018 Muhammad Tayyab Akram
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -92,7 +92,7 @@ static SFBoolean _SFAssessGlyphByClass(_SFGlyphAgent *glyphAgent)
 
 static SFBoolean _SFAssessGlyphByCoverage(_SFGlyphAgent *glyphAgent)
 {
-    SFData coverage = SFData_Subdata(glyphAgent->helperPtr, glyphAgent->recordValue);
+    SFData coverage = SFData_Subdata((SFData)glyphAgent->helperPtr, glyphAgent->recordValue);
     SFUInteger covIndex;
 
     covIndex = SFOpenTypeSearchCoverageIndex(coverage, glyphAgent->glyphID);
