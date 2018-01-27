@@ -197,7 +197,7 @@ static void processSubtable(SFAlbumRef album,
 
     /* Process the album. */
     SFTextProcessor processor;
-    SFTextProcessorInitialize(&processor, pattern, album, direction, SFTextModeForward);
+    SFTextProcessorInitialize(&processor, pattern, album, direction, SFTextModeForward, SFFalse);
     SFTextProcessorDiscoverGlyphs(&processor);
     SFTextProcessorSubstituteGlyphs(&processor);
     SFTextProcessorPositionGlyphs(&processor);
