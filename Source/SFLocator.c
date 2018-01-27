@@ -68,17 +68,6 @@ SF_INTERNAL void SFLocatorSetFeatureMask(SFLocatorRef locator, SFUInt16 featureM
     locator->_ignoreMask.section.feature = _SFAlbumGetAntiFeatureMask(featureMask);
 }
 
-SF_INTERNAL void SFLocatorSetPlaceholderBit(SFLocatorRef locator, SFBoolean on)
-{
-    SFGlyphTraits *ignoreTraits = &locator->_ignoreMask.section.traits;
-
-    if (!on) {
-        *ignoreTraits |= SFGlyphTraitPlaceholder;
-    } else {
-        *ignoreTraits &= ~SFGlyphTraitPlaceholder;
-    }
-}
-
 SF_INTERNAL void SFLocatorSetLookupFlag(SFLocatorRef locator, SFLookupFlag lookupFlag)
 {
     SFGlyphTraits ignoreTraits = SFGlyphTraitNone;

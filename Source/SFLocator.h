@@ -41,8 +41,6 @@ SF_INTERNAL void SFLocatorInitialize(SFLocatorRef locator, SFAlbumRef album, SFD
 
 SF_INTERNAL void SFLocatorSetFeatureMask(SFLocatorRef locator, SFUInt16 featureMask);
 
-SF_INTERNAL void SFLocatorSetPlaceholderBit(SFLocatorRef locator, SFBoolean on);
-
 /**
  * Sets the lookup flag describing the criterion for ignoring glyphs.
  */
