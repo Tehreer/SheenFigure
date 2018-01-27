@@ -26,11 +26,6 @@
 
 static const SFGlyphMask _SFGlyphMaskEmpty = { { SFUInt16Max, 0 } };
 
-static void _SFAlbumSetGlyphMask(SFAlbumRef album, SFUInteger index, SFGlyphMask glyphMask);
-static void _SFAlbumRemoveGlyphs(SFAlbumRef album, SFUInteger index, SFUInteger count);
-static void _SFAlbumRemovePlaceholders(SFAlbumRef album);
-static void _SFAlbumBuildCodeunitToGlyphMap(SFAlbumRef album);
-
 SF_PRIVATE SFUInt16 _SFAlbumGetAntiFeatureMask(SFUInt16 featureMask)
 {
     /* The assumtion must NOT break that the feature mask will never be equal to default mask. */
@@ -210,14 +205,6 @@ SF_INTERNAL void SFAlbumSetAssociation(SFAlbumRef album, SFUInteger index, SFUIn
 SF_PRIVATE SFGlyphMask _SFAlbumGetGlyphMask(SFAlbumRef album, SFUInteger index)
 {
     return SFListGetRef(&album->_details, index)->mask;
-}
-
-static void _SFAlbumSetGlyphMask(SFAlbumRef album, SFUInteger index, SFGlyphMask glyphMask)
-{
-    /* The album must be in filling or arranged state. */
-    SFAssert(album->_state == _SFAlbumStateFilling || album->_state == _SFAlbumStateArranged);
-
-    SFListGetRef(&album->_details, index)->mask = glyphMask;
 }
 
 SF_INTERNAL SFUInt16 SFAlbumGetFeatureMask(SFAlbumRef album, SFUInteger index)
