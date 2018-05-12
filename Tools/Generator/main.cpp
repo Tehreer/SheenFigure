@@ -14,15 +14,11 @@
  * limitations under the License.
  */
 
-#include <cstdio>
-#include <iostream>
 #include <string>
 
 #include <Parser/ArabicShaping.h>
-#include <Parser/UnicodeData.h>
 
 #include "JoiningTypeLookupGenerator.h"
-#include "GeneralCategoryLookupGenerator.h"
 
 using namespace std;
 using namespace SheenFigure::Parser;
@@ -34,16 +30,10 @@ int main(int argc, const char * argv[])
     const string out = "/path/to/output";
 
     ArabicShaping arabicShaping(in);
-    UnicodeData unicodeData(in);
 
     JoiningTypeLookupGenerator joiningTypeLookup(arabicShaping);
     joiningTypeLookup.setAllowedGap(75);
     joiningTypeLookup.generateFile(out);
-
-    GeneralCategoryLookupGenerator generator(unicodeData);
-    generator.setMainSegmentSize(16);
-    generator.setBranchSegmentSize(64);
-    generator.generateFile(out);
 
     return 0;
 }
