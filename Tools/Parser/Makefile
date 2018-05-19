@@ -1,7 +1,6 @@
 PARSER = $(DEBUG)/Parser
 
-PARSER_SRCS = $(PARSER_DIR)/ArabicShaping.cpp \
-              $(PARSER_DIR)/UnicodeData.cpp
+PARSER_SRCS = $(PARSER_DIR)/ArabicShaping.cpp
 
 PARSER_OBJS = $(PARSER_SRCS:$(PARSER_DIR)/%.cpp=$(PARSER)/%.o)
 
