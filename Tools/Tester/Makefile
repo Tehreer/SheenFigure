@@ -8,7 +8,6 @@ TESTER_UTIL = $(TESTER)/Utilities
 
 TESTER_SRCS = $(TESTER_DIR)/AlbumTester.cpp \
               $(TESTER_DIR)/FontTester.cpp \
-              $(TESTER_DIR)/GeneralCategoryLookupTester.cpp \
               $(TESTER_DIR)/GlyphManipulationTester.cpp \
               $(TESTER_DIR)/GlyphPositioningTester.cpp \
               $(TESTER_DIR)/GlyphSubstitutionTester.cpp \
