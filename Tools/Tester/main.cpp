@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Muhammad Tayyab Akram
+ * Copyright (C) 2015-2018 Muhammad Tayyab Akram
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,14 +14,10 @@
  * limitations under the License.
  */
 
-#include <cstdio>
-
 #include <Parser/ArabicShaping.h>
-#include <Parser/UnicodeData.h>
 
 #include "AlbumTester.h"
 #include "FontTester.h"
-#include "GeneralCategoryLookupTester.h"
 #include "JoiningTypeLookupTester.h"
 #include "ListTester.h"
 #include "LocatorTester.h"
@@ -38,9 +34,7 @@ int main(int argc, const char * argv[])
     const char *dir = argv[1];
 
     ArabicShaping arabicShaping(dir);
-    UnicodeData unicodeData(dir);
-    JoiningTypeLookupTester joiningTypeLookuptester(arabicShaping);
-    GeneralCategoryLookupTester generalCategoryLookupTester(unicodeData);
+    JoiningTypeLookupTester joiningTypeLookupTester(arabicShaping);
     ListTester listTester;
     AlbumTester albumTester;
     LocatorTester locatorTester;
@@ -51,8 +45,7 @@ int main(int argc, const char * argv[])
 
     albumTester.test();
     fontTester.test();
-    generalCategoryLookupTester.test();
-    joiningTypeLookuptester.test();
+    joiningTypeLookupTester.test();
     listTester.test();
     locatorTester.test();
     patternTester.test();
