@@ -37,7 +37,6 @@ DEBUG_SOURCES = $(SOURCE_DIR)/SFAlbum.c \
                 $(SOURCE_DIR)/SFBase.c \
                 $(SOURCE_DIR)/SFCodepoints.c \
                 $(SOURCE_DIR)/SFFont.c \
-                $(SOURCE_DIR)/SFGeneralCategoryLookup.c \
                 $(SOURCE_DIR)/SFGlyphDiscovery.c \
                 $(SOURCE_DIR)/SFGlyphManipulation.c \
                 $(SOURCE_DIR)/SFGlyphPositioning.c \
