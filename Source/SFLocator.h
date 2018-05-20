@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Muhammad Tayyab Akram
+ * Copyright (C) 2015-2018 Muhammad Tayyab Akram
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -62,6 +62,14 @@ SF_INTERNAL void SFLocatorReserveGlyphs(SFLocatorRef locator, SFUInteger glyphCo
  *      has passed the end of the album.
  */
 SF_INTERNAL SFBoolean SFLocatorMoveNext(SFLocatorRef locator);
+
+/**
+ * Advances the locator to previous glyph.
+ * @return
+ *      SFTrue if the locator was successfully advanced to the previous glyph; SFFalse if the
+ *      locator has passed the start of the album.
+ */
+SF_INTERNAL SFBoolean SFLocatorMovePrevious(SFLocatorRef locator);
 
 /**
  * Skips the given number of legitimate glyphs.

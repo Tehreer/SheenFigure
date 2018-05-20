@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Muhammad Tayyab Akram
+ * Copyright (C) 2015-2018 Muhammad Tayyab Akram
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -170,6 +170,26 @@ SF_INTERNAL SFBoolean SFLocatorMoveNext(SFLocatorRef locator)
 
     while (locator->_stateIndex < locator->_limitIndex) {
         SFUInteger index = locator->_stateIndex++;
+
+        if (!_SFIsIgnoredGlyph(locator, index)) {
+            locator->index = index;
+            return SFTrue;
+        }
+    }
+
+    locator->index = SFInvalidIndex;
+    return SFFalse;
+}
+
+SF_INTERNAL SFBoolean SFLocatorMovePrevious(SFLocatorRef locator)
+{
+    /* The state of locator must be valid. */
+    SFAssert(locator->_stateIndex >= locator->_startIndex);
+    /* The album version MUST be same. */
+    SFAssert(locator->_version == locator->_album->_version);
+
+    while (locator->_stateIndex >= locator->_startIndex) {
+        SFUInteger index = locator->_stateIndex--;
 
         if (!_SFIsIgnoredGlyph(locator, index)) {
             locator->index = index;
