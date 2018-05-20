@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Muhammad Tayyab Akram
+ * Copyright (C) 2015-2018 Muhammad Tayyab Akram
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,5 +26,6 @@
 SF_PRIVATE SFBoolean _SFApplyContextSubtable(SFTextProcessorRef textProcessor, SFData contextSubtable);
 SF_PRIVATE SFBoolean _SFApplyChainContextSubtable(SFTextProcessorRef textProcessor, SFData chainContextSubtable);
 SF_PRIVATE SFBoolean _SFApplyExtensionSubtable(SFTextProcessorRef textProcessor, SFData extensionSubtable);
+SF_PRIVATE SFBoolean _SFApplyReverseChainSubst(SFTextProcessorRef textProcessor, SFData reverseChain);
 
 #endif

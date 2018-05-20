@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Muhammad Tayyab Akram
+ * Copyright (C) 2015-2018 Muhammad Tayyab Akram
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,9 +24,11 @@
 #include "SFCommon.h"
 #include "SFData.h"
 #include "SFGDEF.h"
+#include "SFGSUB.h"
 #include "SFLocator.h"
 #include "SFOpenType.h"
 
+#include "SFGlyphDiscovery.h"
 #include "SFGlyphManipulation.h"
 #include "SFGlyphPositioning.h"
 #include "SFGlyphSubstitution.h"
@@ -466,5 +468,54 @@ SF_PRIVATE SFBoolean _SFApplyExtensionSubtable(SFTextProcessorRef textProcessor,
         }
     }
     
+    return SFFalse;
+}
+
+SF_PRIVATE SFBoolean _SFApplyReverseChainSubst(SFTextProcessorRef textProcessor, SFData reverseChain)
+{
+    SFAlbumRef album = textProcessor->_album;
+    SFLocatorRef locator = &textProcessor->_locator;
+    SFUInt16 substFormat;
+
+    substFormat = SFReverseChainSubst_Format(reverseChain);
+
+    switch (substFormat) {
+        case 1: {
+            SFData coverage = SFReverseChainSubstF1_CoverageTable(reverseChain);
+            SFGlyphID locGlyph;
+            SFUInteger covIndex;
+
+            locGlyph = SFAlbumGetGlyph(album, locator->index);
+            covIndex = SFOpenTypeSearchCoverageIndex(coverage, locGlyph);
+
+            if (covIndex != SFInvalidIndex) {
+                SFData backtrackRecord = SFReverseChainSubstF1_RevBacktrackRecord(reverseChain);
+                SFUInt16 backtrackCount = SFRevBacktrackRecord_GlyphCount(backtrackRecord);
+                SFData backtrackOffsets = SFRevBacktrackRecord_CoverageOffsets(backtrackRecord);
+                SFData lookaheadRecord = SFRevBacktrackRecord_RevLookaheadRecord(backtrackRecord, backtrackCount);
+                SFUInt16 lookaheadCount = SFRevLookaheadRecord_GlyphCount(lookaheadRecord);
+                SFData lookaheadOffsets = SFRevLookaheadRecord_CoverageOffsets(lookaheadRecord);
+                SFData substRecord = SFRevLookaheadRecord_RevSubstRecord(lookaheadRecord, lookaheadCount);
+                SFUInt16 substCount = SFRevSubstRecord_GlyphCount(substRecord);
+
+                if (_SFAssessBacktrackGlyphs(textProcessor, backtrackOffsets, backtrackCount, _SFAssessGlyphByCoverage, (void *)reverseChain)
+                    && _SFAssessLookaheadGlyphs(textProcessor, lookaheadOffsets, lookaheadCount, _SFAssessGlyphByCoverage, (void *)reverseChain, locator->index)
+                    && covIndex < substCount) {
+                    SFGlyphID subGlyph = SFRevSubstRecord_Substitute(substRecord, covIndex);
+                    SFGlyphTraits subTraits;
+
+                    subTraits = _SFGetGlyphTraits(textProcessor, subGlyph);
+
+                    /* Substitute the glyph and set its traits. */
+                    SFAlbumSetGlyph(album, locator->index, subGlyph);
+                    SFAlbumReplaceBasicTraits(album, locator->index, subTraits);
+
+                    return SFTrue;
+                }
+            }
+            break;
+        }
+    }
+
     return SFFalse;
 }
