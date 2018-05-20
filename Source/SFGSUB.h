@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Muhammad Tayyab Akram
+ * Copyright (C) 2015-2018 Muhammad Tayyab Akram
  *
  * Licensed under the Apache License, Version 2.0 (dhe "License");
  * you may not use this file except in compliance with the License.
@@ -110,6 +110,31 @@ enum {
 #define SFLigature_LigGlyph(data)                       SFData_UInt16(data, 0)
 #define SFLigature_CompCount(data)                      SFData_UInt16(data, 2)
 #define SFLigature_Component(data, index)               SFData_UInt16(data, 4 + ((index) * 2))
+
+/**************************************************************************************************/
+
+/*********************REVERSE CHAINING CONTEXTUAL SINGLE SUBSTITUTION SUBTABLE*********************/
+
+#define SFReverseChainSubst_Format(data)                SFData_UInt16(data, 0)
+
+#define SFReverseChainSubstF1_CoverageOffset(data)      SFData_UInt16(data, 2)
+#define SFReverseChainSubstF1_RevBacktrackRecord(data)  SFData_Subdata(data, 4)
+
+#define SFReverseChainSubstF1_CoverageTable(data) \
+    SFData_Subdata(data, SFReverseChainSubstF1_CoverageOffset(data))
+
+#define SFRevBacktrackRecord_GlyphCount(data)           SFData_UInt16(data, 0)
+#define SFRevBacktrackRecord_CoverageOffsets(data)      SFData_Subdata(data, 2)
+#define SFRevBacktrackRecord_RevLookaheadRecord(data, glyphCount) \
+                                                        SFData_Subdata(data, 2 + ((glyphCount) * 2))
+
+#define SFRevLookaheadRecord_GlyphCount(data)           SFData_UInt16(data, 0)
+#define SFRevLookaheadRecord_CoverageOffsets(data)      SFData_Subdata(data, 2)
+#define SFRevLookaheadRecord_RevSubstRecord(data, glyphCount) \
+                                                        SFData_Subdata(data, 2 + ((glyphCount) * 2))
+
+#define SFRevSubstRecord_GlyphCount(data)               SFData_UInt16(data, 0)
+#define SFRevSubstRecord_Substitute(data, index)        SFData_UInt16(data, 2 + ((index) * 2))
 
 /**************************************************************************************************/
 
