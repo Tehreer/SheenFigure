@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Muhammad Tayyab Akram
+ * Copyright (C) 2015-2018 Muhammad Tayyab Akram
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -47,6 +47,6 @@ SF_INTERNAL void SFTextProcessorSubstituteGlyphs(SFTextProcessorRef textProcesso
 SF_INTERNAL void SFTextProcessorPositionGlyphs(SFTextProcessorRef textProcessor);
 SF_INTERNAL void SFTextProcessorWrapUp(SFTextProcessorRef textProcessor);
 
-SF_PRIVATE void _SFApplyLookup(SFTextProcessorRef processor, SFUInt16 lookupIndex);
+SF_PRIVATE void _SFApplyLookup(SFTextProcessorRef textProcessor, SFUInt16 lookupIndex);
 
 #endif
