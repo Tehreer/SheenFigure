@@ -164,7 +164,7 @@ static SFBoolean _SFIsIgnoredGlyph(SFLocatorRef locator, SFUInteger index) {
 SF_INTERNAL SFBoolean SFLocatorMoveNext(SFLocatorRef locator)
 {
     /* The state of locator must be valid. */
-    SFAssert(locator->_stateIndex <= locator->_limitIndex);
+    SFAssert(locator->_stateIndex >= locator->_startIndex && locator->_stateIndex <= locator->_limitIndex);
     /* The album version MUST be same. */
     SFAssert(locator->_version == locator->_album->_version);
 
@@ -184,12 +184,12 @@ SF_INTERNAL SFBoolean SFLocatorMoveNext(SFLocatorRef locator)
 SF_INTERNAL SFBoolean SFLocatorMovePrevious(SFLocatorRef locator)
 {
     /* The state of locator must be valid. */
-    SFAssert(locator->_stateIndex >= locator->_startIndex);
+    SFAssert(locator->_stateIndex >= locator->_startIndex && locator->_stateIndex <= locator->_limitIndex);
     /* The album version MUST be same. */
     SFAssert(locator->_version == locator->_album->_version);
 
-    while (locator->_stateIndex >= locator->_startIndex) {
-        SFUInteger index = locator->_stateIndex--;
+    while (locator->_stateIndex > locator->_startIndex) {
+        SFUInteger index = --locator->_stateIndex;
 
         if (!_SFIsIgnoredGlyph(locator, index)) {
             locator->index = index;
@@ -203,9 +203,9 @@ SF_INTERNAL SFBoolean SFLocatorMovePrevious(SFLocatorRef locator)
 
 SF_INTERNAL SFBoolean SFLocatorSkip(SFLocatorRef locator, SFUInteger count)
 {
-    SFUInteger skipper;
+    SFUInteger skip;
 
-    for (skipper = count; skipper; skipper--) {
+    for (skip = count; skip != 0; skip--) {
         if (SFLocatorMoveNext(locator)) {
             continue;
         }
@@ -222,7 +222,9 @@ SF_INTERNAL void SFLocatorJumpTo(SFLocatorRef locator, SFUInteger index)
      * The index must be valid.
      *
      * NOTE:
-     *      It is legal to jump to limit index so that MoveNext method returns SFFalse thereafter.
+     *      - It is legal to jump to limit index so that MoveNext method returns SFFalse thereafter.
+     *      - Similarly, it is legal to jump to start index so that MovePrevious method returns
+     *        SFFalse thereafter.
      */
     SFAssert(index >= locator->_startIndex && index <= locator->_limitIndex);
     /* The album version MUST be same. */
@@ -234,11 +236,11 @@ SF_INTERNAL void SFLocatorJumpTo(SFLocatorRef locator, SFUInteger index)
 SF_INTERNAL SFUInteger SFLocatorGetAfter(SFLocatorRef locator, SFUInteger index)
 {
     /* The index must be valid. */
-    SFAssert(index < locator->_limitIndex);
+    SFAssert(index >= locator->_startIndex && index <= locator->_limitIndex);
     /* The album version MUST be same. */
     SFAssert(locator->_version == locator->_album->_version);
 
-    for (index += 1; index < locator->_limitIndex; index++) {
+    while (++index < locator->_limitIndex) {
         if (!_SFIsIgnoredGlyph(locator, index)) {
             return index;
         }
@@ -250,7 +252,7 @@ SF_INTERNAL SFUInteger SFLocatorGetAfter(SFLocatorRef locator, SFUInteger index)
 SF_INTERNAL SFUInteger SFLocatorGetBefore(SFLocatorRef locator, SFUInteger index)
 {
     /* The index must be valid. */
-    SFAssert(index < locator->_limitIndex);
+    SFAssert(index >= locator->_startIndex && index <= locator->_limitIndex);
     /* The album version MUST be same. */
     SFAssert(locator->_version == locator->_album->_version);
 
