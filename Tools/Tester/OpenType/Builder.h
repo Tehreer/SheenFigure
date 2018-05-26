@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Muhammad Tayyab Akram
+ * Copyright (C) 2016-2018 Muhammad Tayyab Akram
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -66,6 +66,9 @@ public:
     MultipleSubstSubtable &createMultipleSubst(const std::map<Glyph, std::vector<Glyph>> glyphs);
     AlternateSubstSubtable &createAlternateSubst(const std::map<Glyph, std::vector<Glyph>> glyphs);
     LigatureSubstSubtable &createLigatureSubst(const std::map<std::vector<Glyph>, Glyph> glyphs);
+    ReverseChainContextSubstSubtable &createRevChainSubst(const std::map<Glyph, Glyph> glyphs,
+                                                          const std::vector<std::vector<Glyph>> backtrack,
+                                                          const std::vector<std::vector<Glyph>> lookahead);
 
     ContextSubtable &createContext(const std::vector<rule_context> rules);
     ContextSubtable &createContext(const std::vector<Glyph> initialGlyphs,

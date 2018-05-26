@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Muhammad Tayyab Akram
+ * Copyright (C) 2016-2018 Muhammad Tayyab Akram
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -266,6 +266,43 @@ LigatureSubstSubtable &Builder::createLigatureSubst(const map<vector<Glyph>, Gly
 
         previous = sequence[0];
         ligature++;
+    }
+
+    return subtable;
+}
+
+ReverseChainContextSubstSubtable &Builder::createRevChainSubst(
+    const map<Glyph, Glyph> glyphs,
+    const vector<vector<Glyph>> backtrack,
+    const vector<vector<Glyph>> lookahead)
+{
+    Glyph *input = createGlyphs(glyphs.begin(), glyphs.end(),
+                                [](const decltype(glyphs)::value_type &pair) {
+                                    return pair.first;
+                                });
+    Glyph *output = createGlyphs(glyphs.begin(), glyphs.end(),
+                                 [](const decltype(glyphs)::value_type &pair) {
+                                     return pair.second;
+                                 });
+
+    ReverseChainContextSubstSubtable &subtable = createObject<ReverseChainContextSubstSubtable>();
+    subtable.format = 1;
+    subtable.coverage = &createCoverage(input, (UInt16)glyphs.size());
+    subtable.backtrackGlyphCount = (UInt16)backtrack.size();
+    subtable.backtrackGlyphCoverage = createArray<CoverageTable>(backtrack.size());
+    subtable.lookaheadGlyphCount = (UInt16)lookahead.size();
+    subtable.lookaheadGlyphCoverage = createArray<CoverageTable>(lookahead.size());
+    subtable.glyphCount = (UInt16)glyphs.size();
+    subtable.substitute = output;
+
+    for (size_t i = 0; i < backtrack.size(); i++) {
+        initCoverage(subtable.backtrackGlyphCoverage[backtrack.size() - i - 1],
+                     createGlyphs(backtrack[i]), (UInt16)backtrack[i].size());
+    }
+
+    for (size_t i = 0; i < lookahead.size(); i++) {
+        initCoverage(subtable.lookaheadGlyphCoverage[i],
+                     createGlyphs(lookahead[i]), (UInt16)lookahead[i].size());
     }
 
     return subtable;
