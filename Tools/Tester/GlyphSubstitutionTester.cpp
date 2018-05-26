@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Muhammad Tayyab Akram
+ * Copyright (C) 2016-2018 Muhammad Tayyab Akram
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,9 +14,12 @@
  * limitations under the License.
  */
 
+#include <vector>
+
 #include "OpenType/Builder.h"
 #include "TextProcessorTester.h"
 
+using namespace std;
 using namespace SheenFigure::Tester;
 using namespace SheenFigure::Tester::OpenType;
 
@@ -133,4 +136,52 @@ void TextProcessorTester::testLigatureSubstitution()
     testSubstitution(builder.createLigatureSubst({ {{ 1, 1, 1 }, 100} }), { 1, 1, 1 }, { 100 });
     /* Test with multiple zero glyphs. */
     testSubstitution(builder.createLigatureSubst({ {{ 0, 0, 0 }, 100} }), { 0, 0, 0 }, { 100 });
+}
+
+void TextProcessorTester::testReverseChainContextSubstitution()
+{
+    Builder builder;
+
+    /* Test with unmatching input glyph. */
+    testSubstitution(builder.createRevChainSubst(
+                        { {1, 11} }, { { 21 } }, { { 31 } }),
+                     { 21, 0, 31 }, { 21, 0, 31 });
+    /* Test with unmatching first backtrack glyph. */
+    testSubstitution(builder.createRevChainSubst(
+                        { {1, 11} }, { { 21 }, { 22} , { 23 } }, { { 31 } }),
+                     { 0, 22, 23, 1, 31 }, { 0, 22, 23, 1, 31 });
+    /* Test with unmatching middle backtrack glyph. */
+    testSubstitution(builder.createRevChainSubst(
+                        { {1, 11} }, { { 21 }, { 22 }, { 23 } }, { { 31 } }),
+                     { 21, 0, 23, 1, 31 }, { 21, 0, 23, 1, 31 });
+    /* Test with unmatching last backtrack glyph. */
+    testSubstitution(builder.createRevChainSubst(
+                        { {1, 11} }, { { 21 }, { 22 }, { 23 } }, { { 31 } }),
+                     { 21, 22, 0, 1, 31 }, { 21, 22, 0, 1, 31 });
+    /* Test with unmatching first lookahead glyph. */
+    testSubstitution(builder.createRevChainSubst(
+                        { {1, 11} }, { { 21 } }, { { 31 }, { 32 }, { 33 } }),
+                     { 21, 1, 0, 32, 33 }, { 21, 1, 0, 32, 33 });
+    /* Test with unmatching middle lookahead glyph. */
+    testSubstitution(builder.createRevChainSubst(
+                        { {1, 11} }, { { 21 } }, { { 31 }, { 32 }, { 33 } }),
+                     { 21, 1, 31, 0, 33 }, { 21, 1, 31, 0, 33 });
+    /* Test with unmatching last lookahead glyph. */
+    testSubstitution(builder.createRevChainSubst(
+                        { {1, 11} }, { { 21 } }, { { 31 }, { 32 }, { 33 } }),
+                     { 21, 1, 31, 32, 0 }, { 21, 1, 31, 32, 0 });
+    /* Test by providing all matching glyphs. */
+    testSubstitution(builder.createRevChainSubst(
+                        { {1, 11} }, { { 21 }, { 22 }, { 23 } }, { { 31 }, { 32 }, { 33 } }),
+                     { 21, 22, 23, 1, 31, 32, 33 }, { 21, 22, 23, 11, 31, 32, 33 });
+    /* Test by providing no backtrack and lookahead glyph. */
+    testSubstitution(builder.createRevChainSubst(
+                        { {1, 11} }, { }, { }),
+                     { 1 }, { 11 });
+    /* Test by providing reverse dependent sequence. */
+    testSubstitution(builder.createRevChainSubst(
+                        { {1, 11}, {2, 12}, {3, 13} },
+                        { { 1, 2, 21 } },
+                        { { 12, 13, 31 } }),
+                     { 21, 1, 2, 3, 31 }, { 21, 11, 12, 13, 31 });
 }
