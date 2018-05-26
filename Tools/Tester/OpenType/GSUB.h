@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Muhammad Tayyab Akram
+ * Copyright (C) 2016-2018 Muhammad Tayyab Akram
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -195,6 +195,40 @@ struct LigatureSubstSubtable : public LookupSubtable {
         for (int i = 0; i < ligSetCount; i++) {
             writer.defer(&ligatureSet[i]);
         }
+
+        writer.exit();
+    }
+};
+
+struct ReverseChainContextSubstSubtable : public LookupSubtable {
+    UInt16 format;                          // Format identifier: format = 1
+    CoverageTable *coverage;                // Offset to Coverage table, from beginning of substitution subtable
+    UInt16 backtrackGlyphCount;             // Number of glyphs in the backtracking sequence
+    CoverageTable *backtrackGlyphCoverage;  // Array of offsets to coverage tables in backtracking sequence, in glyph sequence order
+    UInt16 lookaheadGlyphCount;             // Number of glyphs in lookahead sequence.
+    CoverageTable *lookaheadGlyphCoverage;  // Array of offsets to coverage tables in lookahead sequence, in glyph sequence order
+    UInt16 glyphCount;                      // Number of glyph IDs in the substituteGlyphIDs array
+    Glyph *substitute;                      // Array of substitute glyph IDs — ordered by Coverage index
+
+    LookupType lookupType() override {
+        return LookupType::sReverseChainingContextSingle;
+    }
+
+    void write(Writer &writer) override {
+        writer.enter();
+
+        writer.write(format);
+        writer.defer(coverage);
+        writer.write(backtrackGlyphCount);
+        for (int i = 0; i < backtrackGlyphCount; i++) {
+            writer.defer(&backtrackGlyphCoverage[i]);
+        }
+        writer.write(lookaheadGlyphCount);
+        for (int i = 0; i < lookaheadGlyphCount; i++) {
+            writer.defer(&lookaheadGlyphCoverage[i]);
+        }
+        writer.write(glyphCount);
+        writer.write(substitute, glyphCount);
 
         writer.exit();
     }
