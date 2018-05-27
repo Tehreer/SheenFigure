@@ -115,7 +115,7 @@ static SFBoolean _SFAssessBacktrackGlyphs(SFTextProcessorRef textProcessor,
     glyphAgent.glyphZone = _SFGlyphZoneBacktrack;
 
     for (valueIndex = 0; valueIndex < valueCount; valueIndex++) {
-        backIndex = SFLocatorGetBefore(locator, backIndex);
+        backIndex = SFLocatorGetBefore(locator, backIndex, SFFalse);
 
         if (backIndex != SFInvalidIndex) {
             glyphAgent.glyphID = SFAlbumGetGlyph(album, backIndex);
@@ -159,7 +159,7 @@ static SFBoolean _SFAssessInputGlyphs(SFTextProcessorRef textProcessor,
     }
 
     for (; valueIndex < valueCount; valueIndex++) {
-        inputIndex = SFLocatorGetAfter(locator, inputIndex);
+        inputIndex = SFLocatorGetAfter(locator, inputIndex, SFTrue);
 
         if (inputIndex != SFInvalidIndex) {
             glyphAgent.glyphID = SFAlbumGetGlyph(album, inputIndex);
@@ -191,7 +191,7 @@ static SFBoolean _SFAssessLookaheadGlyphs(SFTextProcessorRef textProcessor,
     glyphAgent.glyphZone = _SFGlyphZoneLookahead;
 
     for (valueIndex = 0; valueIndex < valueCount; valueIndex++) {
-        aheadIndex = SFLocatorGetAfter(locator, aheadIndex);
+        aheadIndex = SFLocatorGetAfter(locator, aheadIndex, SFFalse);
 
         if (aheadIndex != SFInvalidIndex) {
             glyphAgent.glyphID = SFAlbumGetGlyph(album, aheadIndex);
