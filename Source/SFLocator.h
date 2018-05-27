@@ -56,7 +56,7 @@ SF_INTERNAL void SFLocatorReset(SFLocatorRef locator, SFUInteger index, SFUInteg
 SF_INTERNAL void SFLocatorReserveGlyphs(SFLocatorRef locator, SFUInteger glyphCount);
 
 /**
- * Advances the locator to next glyph.
+ * Advances the locator to next glyph within the contextual boundary.
  * @return
  *      SFTrue if the locator was successfully advanced to the next glyph; SFFalse if the locator
  *      has passed the end of the album.
@@ -64,7 +64,7 @@ SF_INTERNAL void SFLocatorReserveGlyphs(SFLocatorRef locator, SFUInteger glyphCo
 SF_INTERNAL SFBoolean SFLocatorMoveNext(SFLocatorRef locator);
 
 /**
- * Advances the locator to previous glyph.
+ * Advances the locator to previous glyph within the contextual boundary.
  * @return
  *      SFTrue if the locator was successfully advanced to the previous glyph; SFFalse if the
  *      locator has passed the start of the album.
@@ -86,20 +86,26 @@ SF_INTERNAL SFBoolean SFLocatorSkip(SFLocatorRef locator, SFUInteger count);
 SF_INTERNAL void SFLocatorJumpTo(SFLocatorRef locator, SFUInteger index);
 
 /**
- * Gets the index of legitimate glyph after the given index.
+ * Determines the index of next legitimate glyph after the specified index.
+ *
+ * @param bounded
+ *      Enables/Disables glyph searching within the contextual boundary.
  * @return
  *      The index of next legitimate glyph if available, or SFInvalidIndex if there was no
- *      legitimate glyph after the given index.
+ *      legitimate glyph after the specified index.
  */
-SF_INTERNAL SFUInteger SFLocatorGetAfter(SFLocatorRef locator, SFUInteger index);
+SF_INTERNAL SFUInteger SFLocatorGetAfter(SFLocatorRef locator, SFUInteger index, SFBoolean bounded);
 
 /**
- * Gets the index of legitimate glyph before the given index.
+ * Determines the index of previous legitimate glyph before the specified index.
+ *
+ * @param bounded
+ *      Enables/Disables glyph searching within the contextual boundary.
  * @return
  *      The index of previous legitimate glyph if available, or SFInvalidIndex if there was no
- *      legitimate glyph after the given index.
+ *      legitimate glyph after the specified index.
  */
-SF_INTERNAL SFUInteger SFLocatorGetBefore(SFLocatorRef locator, SFUInteger index);
+SF_INTERNAL SFUInteger SFLocatorGetBefore(SFLocatorRef locator, SFUInteger index, SFBoolean bounded);
 
 /**
  * Returns the index of appropriate preceding base glyph.

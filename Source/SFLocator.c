@@ -233,14 +233,16 @@ SF_INTERNAL void SFLocatorJumpTo(SFLocatorRef locator, SFUInteger index)
     locator->_stateIndex = index;
 }
 
-SF_INTERNAL SFUInteger SFLocatorGetAfter(SFLocatorRef locator, SFUInteger index)
+SF_INTERNAL SFUInteger SFLocatorGetAfter(SFLocatorRef locator, SFUInteger index, SFBoolean bounded)
 {
+    SFUInteger limit = (bounded ? locator->_limitIndex : locator->_album->glyphCount);
+
     /* The index must be valid. */
-    SFAssert(index >= locator->_startIndex && index <= locator->_limitIndex);
+    SFAssert(index >= (bounded ? locator->_startIndex : 0) && index <= limit);
     /* The album version MUST be same. */
     SFAssert(locator->_version == locator->_album->_version);
 
-    while (++index < locator->_limitIndex) {
+    while (++index < limit) {
         if (!_SFIsIgnoredGlyph(locator, index)) {
             return index;
         }
@@ -249,14 +251,16 @@ SF_INTERNAL SFUInteger SFLocatorGetAfter(SFLocatorRef locator, SFUInteger index)
     return SFInvalidIndex;
 }
 
-SF_INTERNAL SFUInteger SFLocatorGetBefore(SFLocatorRef locator, SFUInteger index)
+SF_INTERNAL SFUInteger SFLocatorGetBefore(SFLocatorRef locator, SFUInteger index, SFBoolean bounded)
 {
+    SFUInteger start = (bounded ? locator->_startIndex : 0);
+
     /* The index must be valid. */
-    SFAssert(index >= locator->_startIndex && index <= locator->_limitIndex);
+    SFAssert(index >= start && index <= (bounded ? locator->_limitIndex : locator->_album->glyphCount));
     /* The album version MUST be same. */
     SFAssert(locator->_version == locator->_album->_version);
 
-    while (index-- > locator->_startIndex) {
+    while (index-- > start) {
         if (!_SFIsIgnoredGlyph(locator, index)) {
             return index;
         }
@@ -280,7 +284,7 @@ SFUInteger SFLocatorGetPrecedingBaseIndex(SFLocatorRef locator)
     locator->_ignoreMask.section.traits = SFGlyphTraitPlaceholder | SFGlyphTraitMark | SFGlyphTraitSequence;
 
     /* Get preeding glyph. */
-    baseIndex = SFLocatorGetBefore(locator, locator->index);
+    baseIndex = SFLocatorGetBefore(locator, locator->index, SFFalse);
 
     /* Restore ignore traits. */
     locator->_ignoreMask.section.traits = ignoreTraits;
@@ -301,7 +305,7 @@ SF_INTERNAL SFUInteger SFLocatorGetPrecedingLigatureIndex(SFLocatorRef locator, 
     locator->_ignoreMask.section.traits = SFGlyphTraitPlaceholder | SFLookupFlagIgnoreMarks;
 
     /* Get preeding glyph. */
-    ligIndex = SFLocatorGetBefore(locator, locator->index);
+    ligIndex = SFLocatorGetBefore(locator, locator->index, SFFalse);
 
     if (ligIndex != SFInvalidIndex) {
         SFUInteger nextIndex;
@@ -344,7 +348,7 @@ SF_INTERNAL SFUInteger SFLocatorGetPrecedingMarkIndex(SFLocatorRef locator)
     locator->_ignoreMask.section.traits = SFGlyphTraitNone;
 
     /* Get preeding glyph. */
-    markIndex = SFLocatorGetBefore(locator, locator->index);
+    markIndex = SFLocatorGetBefore(locator, locator->index, SFFalse);
 
     /* Fix mark index in case of placeholder. */
     if (markIndex != SFInvalidIndex) {
