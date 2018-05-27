@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Muhammad Tayyab Akram
+ * Copyright (C) 2016-2018 Muhammad Tayyab Akram
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -385,7 +385,7 @@ static void testGetAfter(const SFGlyphTraits *traits, SFInteger count)
         SFLocatorSetLookupFlag(&locator, lookupFlag);
 
         while (true) {
-            afterIndex = SFLocatorGetAfter(&locator, (SFUInteger)start);
+            afterIndex = SFLocatorGetAfter(&locator, (SFUInteger)start, SFTrue);
             start = getNext(traits, count, start, lookupFlag);
 
             if (start > -1) {
@@ -419,7 +419,7 @@ static void testGetBefore(const SFGlyphTraits *traits, SFInteger count)
         SFLocatorSetLookupFlag(&locator, lookupFlag);
 
         while (true) {
-            beforeIndex = SFLocatorGetBefore(&locator, (SFUInteger)start);
+            beforeIndex = SFLocatorGetBefore(&locator, (SFUInteger)start, SFTrue);
             start = getPrevious(traits, count, start, lookupFlag);
 
             if (start > -1) {
