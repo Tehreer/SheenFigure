@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Muhammad Tayyab Akram
+ * Copyright (C) 2015-2018 Muhammad Tayyab Akram
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -211,7 +211,7 @@ static SFBoolean _SFApplyPairPos(SFTextProcessorRef textProcessor, SFData pairPo
     SFUInteger secondIndex;
 
     firstIndex = locator->index;
-    secondIndex = SFLocatorGetAfter(locator, firstIndex);
+    secondIndex = SFLocatorGetAfter(locator, firstIndex, SFTrue);
 
     /* Proceed only if pair glyph is available. */
     if (secondIndex != SFInvalidIndex) {
@@ -414,7 +414,7 @@ static SFBoolean _SFApplyCursivePos(SFTextProcessorRef textProcessor, SFData cur
 
             /* Proceed only if exit anchor of first glyph exists. */
             if (exitAnchor) {
-                SFUInteger secondIndex = SFLocatorGetAfter(locator, firstIndex);
+                SFUInteger secondIndex = SFLocatorGetAfter(locator, firstIndex, SFTrue);
 
                 if (secondIndex != SFInvalidIndex) {
                     SFGlyphID secondGlyph = SFAlbumGetGlyph(album, secondIndex);
