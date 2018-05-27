@@ -317,7 +317,7 @@ static SFBoolean _SFApplyLigatureSetTable(SFTextProcessorRef textProcessor, SFDa
          *      it does not accidently overflow if the component count is zero.
          */
         for (compIndex = 1; compIndex < compCount; compIndex++) {
-            nextIndex = SFLocatorGetAfter(locator, prevIndex);
+            nextIndex = SFLocatorGetAfter(locator, prevIndex, SFTrue);
 
             if (nextIndex != SFInvalidIndex) {
                 SFGlyphID component = SFLigature_Component(ligature, compIndex - 1);
