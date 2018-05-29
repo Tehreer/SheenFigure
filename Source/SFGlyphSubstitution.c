@@ -28,47 +28,9 @@
 #include "SFGlyphSubstitution.h"
 #include "SFTextProcessor.h"
 
-static SFBoolean _SFApplySingleSubst(SFTextProcessorRef textProcessor, SFData singleSubst);
-
-static SFBoolean _SFApplyMultipleSubst(SFTextProcessorRef textProcessor, SFData multipleSubst);
 static SFBoolean _SFApplySequenceTable(SFTextProcessorRef textProcessor, SFData sequence);
-
-static SFBoolean _SFApplyAlternateSubst(SFTextProcessorRef textProcessor, SFData alternateSubst);
 static SFBoolean _SFApplyAlternateSetTable(SFTextProcessorRef textProcessor, SFData alternateSet);
-
-static SFBoolean _SFApplyLigatureSubst(SFTextProcessorRef textProcessor, SFData ligatureSubst);
 static SFBoolean _SFApplyLigatureSetTable(SFTextProcessorRef textProcessor, SFData ligatureSet);
-
-SF_PRIVATE SFBoolean _SFApplySubstitutionSubtable(SFTextProcessorRef textProcessor, SFLookupType lookupType, SFData subtable)
-{
-    switch (lookupType) {
-        case SFLookupTypeSingle:
-            return _SFApplySingleSubst(textProcessor, subtable);
-
-        case SFLookupTypeMultiple:
-            return _SFApplyMultipleSubst(textProcessor, subtable);
-
-        case SFLookupTypeAlternate:
-            return _SFApplyAlternateSubst(textProcessor, subtable);
-
-        case SFLookupTypeLigature:
-            return _SFApplyLigatureSubst(textProcessor, subtable);
-
-        case SFLookupTypeContext:
-            return _SFApplyContextSubtable(textProcessor, subtable);
-
-        case SFLookupTypeChainingContext:
-            return _SFApplyChainContextSubtable(textProcessor, subtable);
-
-        case SFLookupTypeExtension:
-            return _SFApplyExtensionSubtable(textProcessor, subtable);
-
-        case SFLookupTypeReverseChainingContext:
-            return _SFApplyReverseChainSubst(textProcessor, subtable);
-    }
-
-    return SFFalse;
-}
 
 static SFBoolean _SFApplySingleSubst(SFTextProcessorRef textProcessor, SFData singleSubst)
 {
@@ -364,6 +326,37 @@ static SFBoolean _SFApplyLigatureSetTable(SFTextProcessorRef textProcessor, SFDa
 
             return SFTrue;
         }
+    }
+
+    return SFFalse;
+}
+
+SF_PRIVATE SFBoolean _SFApplySubstitutionSubtable(SFTextProcessorRef textProcessor, SFLookupType lookupType, SFData subtable)
+{
+    switch (lookupType) {
+        case SFLookupTypeSingle:
+            return _SFApplySingleSubst(textProcessor, subtable);
+
+        case SFLookupTypeMultiple:
+            return _SFApplyMultipleSubst(textProcessor, subtable);
+
+        case SFLookupTypeAlternate:
+            return _SFApplyAlternateSubst(textProcessor, subtable);
+
+        case SFLookupTypeLigature:
+            return _SFApplyLigatureSubst(textProcessor, subtable);
+
+        case SFLookupTypeContext:
+            return _SFApplyContextSubtable(textProcessor, subtable);
+
+        case SFLookupTypeChainingContext:
+            return _SFApplyChainContextSubtable(textProcessor, subtable);
+
+        case SFLookupTypeExtension:
+            return _SFApplyExtensionSubtable(textProcessor, subtable);
+
+        case SFLookupTypeReverseChainingContext:
+            return _SFApplyReverseChainSubst(textProcessor, subtable);
     }
 
     return SFFalse;
