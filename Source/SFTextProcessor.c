@@ -182,7 +182,7 @@ static void _SFApplyFeatureRange(SFTextProcessorRef textProcessor, SFFeatureKind
 {
     SFPatternRef pattern = textProcessor->_pattern;
     SFUInteger limit = index + count;
-    SFBoolean reversable = (featureKind == SFFeatureKindSubstitution);
+    SFBoolean reversible = (featureKind == SFFeatureKindSubstitution);
 
     for (; index < limit; index++) {
         SFFeatureUnitRef featureUnit = &pattern->featureUnits.items[index];
@@ -203,7 +203,7 @@ static void _SFApplyFeatureRange(SFTextProcessorRef textProcessor, SFFeatureKind
             lookupType = _SFPrepareLookup(textProcessor, lookupArray[lookupIndex], &lookupTable);
 
             /* Apply current lookup on all glyphs. */
-            if (!reversable || lookupType != SFLookupTypeReverseChainingContext) {
+            if (!reversible || lookupType != SFLookupTypeReverseChainingContext) {
                 while (SFLocatorMoveNext(locator)) {
                     _SFApplySubtables(textProcessor, lookupTable, lookupType);
                 }
