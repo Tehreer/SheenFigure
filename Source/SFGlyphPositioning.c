@@ -25,78 +25,26 @@
 #include "SFData.h"
 #include "SFGPOS.h"
 #include "SFLocator.h"
-#include "SFPattern.h"
 #include "SFOpenType.h"
 
 #include "SFGlyphManipulation.h"
 #include "SFGlyphPositioning.h"
 #include "SFTextProcessor.h"
 
-static SFBoolean _SFApplySinglePos(SFTextProcessorRef textProcessor, SFData singlePos);
-
-static SFBoolean _SFApplyPairPos(SFTextProcessorRef textProcessor, SFData pairPos);
 static SFBoolean _SFApplyPairPosF1(SFTextProcessorRef textProcessor, SFData pairPos,
     SFUInteger firstIndex, SFUInteger secondIndex, SFBoolean *outShouldSkip);
 static SFBoolean _SFApplyPairPosF2(SFTextProcessorRef textProcessor, SFData pairPos,
     SFUInteger firstIndex, SFUInteger secondIndex, SFBoolean *outShouldSkip);
 
-static SFBoolean _SFApplyCursivePos(SFTextProcessorRef textProcessor, SFData cursivePos);
-static SFBoolean _SFApplyCursivePosF1(SFTextProcessorRef textProcessor, SFData cursivePos);
 static SFBoolean _SFApplyCursiveAnchors(SFTextProcessorRef textProcessor,
     SFData exitAnchor, SFData entryAnchor, SFUInteger firstIndex, SFUInteger secondIndex);
 
-static SFBoolean _SFApplyMarkToBasePos(SFTextProcessorRef textProcessor, SFData markBasePos);
 static SFBoolean _SFApplyMarkToBaseArrays(SFTextProcessorRef textProcessor, SFData markBasePos,
     SFUInteger markIndex, SFUInteger baseIndex, SFUInteger attachmentIndex);
-
-static SFBoolean _SFApplyMarkToLigPos(SFTextProcessorRef textProcessor, SFData markLigPos);
 static SFBoolean _SFApplyMarkToLigArrays(SFTextProcessorRef textProcessor, SFData markLigPos,
     SFUInteger markIndex, SFUInteger ligIndex, SFUInteger ligComponent, SFUInteger attachmentIndex);
-
-static SFBoolean _SFApplyMarkToMarkPos(SFTextProcessorRef textProcessor, SFData markMarkPos);
 static SFBoolean _SFApplyMarkToMarkArrays(SFTextProcessorRef textProcessor, SFData markMarkPos,
     SFUInteger mark1Index, SFUInteger mark2Index, SFUInteger attachmentIndex);
-
-static SFData _SFMarkArrayGetAnchorTable(SFData markArray, SFUInteger markIndex, SFUInt16 *outClass);
-
-static void _SFResolveLeftCursiveSegment(SFTextProcessorRef textProcessor, SFUInteger inputIndex);
-static void _SFResolveRightCursiveSegment(SFTextProcessorRef textProcessor, SFUInteger inputIndex);
-static void _SFResolveCursivePositions(SFTextProcessorRef textProcessor, SFLocatorRef locator);
-static void _SFResolveMarkPositions(SFTextProcessorRef textProcessor, SFLocatorRef locator);
-
-SF_PRIVATE SFBoolean _SFApplyPositioningSubtable(SFTextProcessorRef textProcessor, SFLookupType lookupType, SFData subtable)
-{
-    switch (lookupType) {
-        case SFLookupTypeSingleAdjustment:
-            return _SFApplySinglePos(textProcessor, subtable);
-
-        case SFLookupTypePairAdjustment:
-            return _SFApplyPairPos(textProcessor, subtable);
-
-        case SFLookupTypeCursiveAttachment:
-            return _SFApplyCursivePos(textProcessor, subtable);
-
-        case SFLookupTypeMarkToBaseAttachment:
-            return _SFApplyMarkToBasePos(textProcessor, subtable);
-
-        case SFLookupTypeMarkToLigatureAttachment:
-            return _SFApplyMarkToLigPos(textProcessor, subtable);
-
-        case SFLookupTypeMarkToMarkAttachment:
-            return _SFApplyMarkToMarkPos(textProcessor, subtable);
-
-        case SFLookupTypeContextPositioning:
-            return _SFApplyContextSubtable(textProcessor, subtable);
-
-        case SFLookupTypeChainedContextPositioning:
-            return _SFApplyChainContextSubtable(textProcessor, subtable);
-
-        case SFLookupTypeExtensionPositioning:
-            return _SFApplyExtensionSubtable(textProcessor, subtable);
-    }
-
-    return SFFalse;
-}
 
 static void _SFApplyValueRecord(SFTextProcessorRef textProcessor,
     SFData valueRecord, SFUInt16 valueFormat, SFUInteger inputIndex)
@@ -524,6 +472,24 @@ static SFBoolean _SFApplyCursiveAnchors(SFTextProcessorRef textProcessor,
     return SFTrue;
 }
 
+static SFData _SFMarkArrayGetAnchorTable(SFData markArray, SFUInteger markIndex, SFUInt16 *outClass)
+{
+    SFUInt16 markCount = SFMarkArray_MarkCount(markArray);
+
+    if (markIndex < markCount) {
+        SFData markRecord = SFMarkArray_MarkRecord(markArray, markIndex);
+        SFUInt16 classValue = SFMarkRecord_Class(markRecord);
+        SFOffset anchorOffset = SFMarkRecord_MarkAnchorOffset(markRecord);
+        SFData markAnchor = SFData_Subdata(markArray, anchorOffset);
+
+        *outClass = classValue;
+        return markAnchor;
+    }
+
+    *outClass = 0;
+    return NULL;
+}
+
 static SFBoolean _SFApplyMarkToBasePos(SFTextProcessorRef textProcessor, SFData markBasePos)
 {
     SFAlbumRef album = textProcessor->_album;
@@ -809,22 +775,38 @@ static SFBoolean _SFApplyMarkToMarkArrays(SFTextProcessorRef textProcessor, SFDa
     return SFFalse;
 }
 
-static SFData _SFMarkArrayGetAnchorTable(SFData markArray, SFUInteger markIndex, SFUInt16 *outClass)
+SF_PRIVATE SFBoolean _SFApplyPositioningSubtable(SFTextProcessorRef textProcessor, SFLookupType lookupType, SFData subtable)
 {
-    SFUInt16 markCount = SFMarkArray_MarkCount(markArray);
+    switch (lookupType) {
+        case SFLookupTypeSingleAdjustment:
+            return _SFApplySinglePos(textProcessor, subtable);
 
-    if (markIndex < markCount) {
-        SFData markRecord = SFMarkArray_MarkRecord(markArray, markIndex);
-        SFUInt16 classValue = SFMarkRecord_Class(markRecord);
-        SFOffset anchorOffset = SFMarkRecord_MarkAnchorOffset(markRecord);
-        SFData markAnchor = SFData_Subdata(markArray, anchorOffset);
+        case SFLookupTypePairAdjustment:
+            return _SFApplyPairPos(textProcessor, subtable);
 
-        *outClass = classValue;
-        return markAnchor;
+        case SFLookupTypeCursiveAttachment:
+            return _SFApplyCursivePos(textProcessor, subtable);
+
+        case SFLookupTypeMarkToBaseAttachment:
+            return _SFApplyMarkToBasePos(textProcessor, subtable);
+
+        case SFLookupTypeMarkToLigatureAttachment:
+            return _SFApplyMarkToLigPos(textProcessor, subtable);
+
+        case SFLookupTypeMarkToMarkAttachment:
+            return _SFApplyMarkToMarkPos(textProcessor, subtable);
+
+        case SFLookupTypeContextPositioning:
+            return _SFApplyContextSubtable(textProcessor, subtable);
+
+        case SFLookupTypeChainedContextPositioning:
+            return _SFApplyChainContextSubtable(textProcessor, subtable);
+
+        case SFLookupTypeExtensionPositioning:
+            return _SFApplyExtensionSubtable(textProcessor, subtable);
     }
 
-    *outClass = 0;
-    return NULL;
+    return SFFalse;
 }
 
 static void _SFResolveLeftCursiveSegment(SFTextProcessorRef textProcessor, SFUInteger inputIndex)
