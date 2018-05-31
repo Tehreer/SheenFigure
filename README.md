@@ -76,4 +76,4 @@ Following are the tables implemented by SheenFigure.
 | Context                  	|     ✔️    	|     ✔️    	|     ✔️    	|
 | Chaining Context         	|     ✔️    	|     ✔️    	|     ✔️    	|
 | Extension                	|     ✔️    	|          	|          	|
-| Reverse Chaining Context 	|     ❌    	|          	|          	|
+| Reverse Chaining Context 	|     ✔️    	|          	|          	|
