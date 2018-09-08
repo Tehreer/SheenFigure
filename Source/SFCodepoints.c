@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Muhammad Tayyab Akram
+ * Copyright (C) 2016-2018 Muhammad Tayyab Akram
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,6 @@
 #include <SBCodepointSequence.h>
 #include <SFConfig.h>
 
-#include "SFAssert.h"
 #include "SFBase.h"
 #include "SFCodepoints.h"
 
@@ -33,6 +32,11 @@ SF_INTERNAL void SFCodepointsInitialize(SFCodepointsRef codepoints, const SBCode
     codepoints->_token = SFInvalidIndex;
     codepoints->index = SFInvalidIndex;
     codepoints->backward = backward;
+}
+
+SF_INTERNAL SFUInteger SFCodepointsGetCodeUnitCount(SFCodepointsRef codepoints)
+{
+    return codepoints->_referral->stringLength;
 }
 
 SF_INTERNAL void SFCodepointsReset(SFCodepointsRef codepoints)
