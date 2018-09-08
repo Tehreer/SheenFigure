@@ -402,13 +402,24 @@ static void _SFAlbumBuildCodeunitToGlyphMap(SFAlbumRef album)
         SFListSetVal(&album->_indexMap, association, index);
     }
 
-    /* Assign the same glyph index to subsequent codeunits. */
-    for (index = 0; index < codeunitCount; index++) {
-        if (SFListGetVal(&album->_indexMap, index) == SFInvalidIndex) {
-            SFListSetVal(&album->_indexMap, index, association);
-        }
+    if (!album->codepoints->backward) {
+        /* Assign the same glyph index to subsequent codeunits. */
+        for (index = 0; index < codeunitCount; index++) {
+            if (SFListGetVal(&album->_indexMap, index) == SFInvalidIndex) {
+                SFListSetVal(&album->_indexMap, index, association);
+            }
 
-        association = SFListGetVal(&album->_indexMap, index);
+            association = SFListGetVal(&album->_indexMap, index);
+        }
+    } else {
+        /* Assign the same glyph index to preceding codeunits. */
+        for (index = codeunitCount; index--;) {
+            if (SFListGetVal(&album->_indexMap, index) == SFInvalidIndex) {
+                SFListSetVal(&album->_indexMap, index, association);
+            }
+
+            association = SFListGetVal(&album->_indexMap, index);
+        }
     }
 }
 
