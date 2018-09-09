@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Muhammad Tayyab Akram
+ * Copyright (C) 2016-2018 Muhammad Tayyab Akram
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,15 +18,40 @@
 #include <cstddef>
 #include <cstdlib>
 #include <cstring>
+#include <vector>
 
 extern "C" {
 #include <SBCodepointSequence.h>
 #include <Source/SFAlbum.h>
+#include <Source/SFCodepoints.h>
 }
 
 #include "AlbumTester.h"
 
+using namespace std;
 using namespace SheenFigure::Tester;
+
+class Codepoints {
+public:
+    Codepoints(size_t count, bool backward = false)
+    {
+        array.reserve(count);
+        sequence = {
+            SBStringEncodingUTF32,
+            array.data(),
+            count
+        };
+
+        SFCodepointsInitialize(&codepoints, &sequence, backward);
+    }
+
+    SFCodepointsRef ptr() { return &codepoints; }
+
+private:
+    vector<uint32_t> array;
+    SBCodepointSequence sequence;
+    SFCodepoints codepoints;
+};
 
 static void SFAlbumReserveGlyphsInitialized(SFAlbumRef album, SFUInteger index, SFUInteger count)
 {
@@ -66,10 +91,10 @@ void AlbumTester::testReset()
 
     /* Test reset just after initialization. */
     {
-        SFCodepoints codepoints;
-        SFAlbumReset(&album, &codepoints, 1024);
+        Codepoints codepoints(1024);
+        SFAlbumReset(&album, codepoints.ptr());
 
-        assert(album.codepoints == &codepoints);
+        assert(album.codepoints == codepoints.ptr());
         assert(album.codeunitCount == 1024);
         assert(album.glyphCount == 0);
     }
@@ -80,10 +105,10 @@ void AlbumTester::testReset()
         SFAlbumReserveGlyphsInitialized(&album, 0, 5);
         SFAlbumEndFilling(&album);
 
-        SFCodepoints codepoints;
-        SFAlbumReset(&album, &codepoints, 1024);
+        Codepoints codepoints(1024);
+        SFAlbumReset(&album, codepoints.ptr());
 
-        assert(album.codepoints == &codepoints);
+        assert(album.codepoints == codepoints.ptr());
         assert(album.codeunitCount == 1024);
         assert(album.glyphCount == 0);
     }
@@ -98,7 +123,8 @@ void AlbumTester::testAddGlyph()
 
     /* Test with forward associations. */
     {
-        SFAlbumReset(&album, NULL, 5);
+        Codepoints codepoints(5);
+        SFAlbumReset(&album, codepoints.ptr());
 
         SFAlbumBeginFilling(&album);
         SFAlbumAddGlyph(&album, 100, SFGlyphTraitNone, 0);
@@ -129,7 +155,8 @@ void AlbumTester::testAddGlyph()
 
     /* Test with backward associations. */
     {
-        SFAlbumReset(&album, NULL, 5);
+        Codepoints codepoints(5, true);
+        SFAlbumReset(&album, codepoints.ptr());
 
         SFAlbumBeginFilling(&album);
         SFAlbumAddGlyph(&album, 100, SFGlyphTraitNone, 4);
@@ -160,7 +187,8 @@ void AlbumTester::testAddGlyph()
 
     /* Test by mimicing multiple code units per codepoint. */
     {
-        SFAlbumReset(&album, NULL, 15);
+        Codepoints codepoints(15);
+        SFAlbumReset(&album, codepoints.ptr());
 
         SFAlbumBeginFilling(&album);
         SFAlbumAddGlyph(&album, 100, SFGlyphTraitNone, 0);
@@ -194,9 +222,11 @@ void AlbumTester::testAddGlyph()
 
 void AlbumTester::testReserveGlyphs()
 {
+    Codepoints codepoints(5);
+
     SFAlbum album;
     SFAlbumInitialize(&album);
-    SFAlbumReset(&album, NULL, 5);
+    SFAlbumReset(&album, codepoints.ptr());
     SFAlbumBeginFilling(&album);
 
     /* Reserve some initial glyphs and place marking. */
@@ -240,9 +270,11 @@ void AlbumTester::testReserveGlyphs()
 
 void AlbumTester::testSetGlyph()
 {
+    Codepoints codepoints(5);
+
     SFAlbum album;
     SFAlbumInitialize(&album);
-    SFAlbumReset(&album, NULL, 5);
+    SFAlbumReset(&album, codepoints.ptr());
     SFAlbumBeginFilling(&album);
 
     SFAlbumReserveGlyphsInitialized(&album, 0, 5);
@@ -270,9 +302,11 @@ void AlbumTester::testSetGlyph()
 
 void AlbumTester::testGetGlyph()
 {
+    Codepoints codepoints(5);
+
     SFAlbum album;
     SFAlbumInitialize(&album);
-    SFAlbumReset(&album, NULL, 5);
+    SFAlbumReset(&album, codepoints.ptr());
     SFAlbumBeginFilling(&album);
 
     /* Test by adding some glyphs. */
@@ -308,7 +342,9 @@ void AlbumTester::testSetAssociation()
 
     /* Test with forward associations. */
     {
-        SFAlbumReset(&album, NULL, 5);
+        Codepoints codepoints(5);
+
+        SFAlbumReset(&album, codepoints.ptr());
         SFAlbumBeginFilling(&album);
 
         SFAlbumReserveGlyphsInitialized(&album, 0, 5);
@@ -330,7 +366,9 @@ void AlbumTester::testSetAssociation()
 
     /* Test with backward associations. */
     {
-        SFAlbumReset(&album, NULL, 5);
+        Codepoints codepoints(5, true);
+
+        SFAlbumReset(&album, codepoints.ptr());
         SFAlbumBeginFilling(&album);
 
         SFAlbumReserveGlyphsInitialized(&album, 0, 5);
@@ -352,7 +390,9 @@ void AlbumTester::testSetAssociation()
 
     /* Test with complex associations. */
     {
-        SFAlbumReset(&album, NULL, 5);
+        Codepoints codepoints(5);
+
+        SFAlbumReset(&album, codepoints.ptr());
         SFAlbumBeginFilling(&album);
 
         SFAlbumReserveGlyphsInitialized(&album, 0, 8);
@@ -380,9 +420,11 @@ void AlbumTester::testSetAssociation()
 
 void AlbumTester::testGetAssociation()
 {
+    Codepoints codepoints(5);
+
     SFAlbum album;
     SFAlbumInitialize(&album);
-    SFAlbumReset(&album, NULL, 5);
+    SFAlbumReset(&album, codepoints.ptr());
     SFAlbumBeginFilling(&album);
 
     /* Test by adding some glyphs. */
@@ -415,9 +457,11 @@ void AlbumTester::testGetAssociation()
 
 void AlbumTester::testFeatureMask()
 {
+    Codepoints codepoints(5);
+
     SFAlbum album;
     SFAlbumInitialize(&album);
-    SFAlbumReset(&album, NULL, 5);
+    SFAlbumReset(&album, codepoints.ptr());
 
     SFAlbumBeginFilling(&album);
     SFAlbumReserveGlyphsInitialized(&album, 0, 5);
@@ -447,9 +491,11 @@ void AlbumTester::testFeatureMask()
 
 void AlbumTester::testTraits()
 {
+    Codepoints codepoints(5);
+
     SFAlbum album;
     SFAlbumInitialize(&album);
-    SFAlbumReset(&album, NULL, 5);
+    SFAlbumReset(&album, codepoints.ptr());
 
     SFAlbumBeginFilling(&album);
     SFAlbumReserveGlyphsInitialized(&album, 0, 5);
@@ -508,9 +554,11 @@ void AlbumTester::testTraits()
 
 void AlbumTester::testOffset()
 {
+    Codepoints codepoints(5);
+
     SFAlbum album;
     SFAlbumInitialize(&album);
-    SFAlbumReset(&album, NULL, 5);
+    SFAlbumReset(&album, codepoints.ptr());
 
     SFAlbumBeginFilling(&album);
     SFAlbumReserveGlyphsInitialized(&album, 0, 5);
@@ -545,9 +593,11 @@ void AlbumTester::testOffset()
 
 void AlbumTester::testAdvance()
 {
+    Codepoints codepoints(5);
+
     SFAlbum album;
     SFAlbumInitialize(&album);
-    SFAlbumReset(&album, NULL, 5);
+    SFAlbumReset(&album, codepoints.ptr());
 
     SFAlbumBeginFilling(&album);
     SFAlbumReserveGlyphsInitialized(&album, 0, 5);
@@ -580,9 +630,11 @@ void AlbumTester::testAdvance()
 
 void AlbumTester::testCursiveOffset()
 {
+    Codepoints codepoints(5);
+
     SFAlbum album;
     SFAlbumInitialize(&album);
-    SFAlbumReset(&album, NULL, 5);
+    SFAlbumReset(&album, codepoints.ptr());
 
     SFAlbumBeginFilling(&album);
     SFAlbumReserveGlyphsInitialized(&album, 0, 5);
@@ -609,9 +661,11 @@ void AlbumTester::testCursiveOffset()
 
 void AlbumTester::testAttachmentOffset()
 {
+    Codepoints codepoints(5);
+
     SFAlbum album;
     SFAlbumInitialize(&album);
-    SFAlbumReset(&album, NULL, 5);
+    SFAlbumReset(&album, codepoints.ptr());
 
     SFAlbumBeginFilling(&album);
     SFAlbumReserveGlyphsInitialized(&album, 0, 5);
