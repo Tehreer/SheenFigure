@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Muhammad Tayyab Akram
+ * Copyright (C) 2015-2018 Muhammad Tayyab Akram
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,10 +17,8 @@
 #ifndef _SF_INTERNAL_ARTIST_H
 #define _SF_INTERNAL_ARTIST_H
 
-#include <SFArtist.h>
-#include <SFConfig.h>
-
 #include <SBCodepointSequence.h>
+#include <SFArtist.h>
 
 #include "SFBase.h"
 #include "SFPattern.h"

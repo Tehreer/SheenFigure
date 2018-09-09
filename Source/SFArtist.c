@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Muhammad Tayyab Akram
+ * Copyright (C) 2015-2018 Muhammad Tayyab Akram
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-#include <SFConfig.h>
-
 #include <SBCodepointSequence.h>
 #include <stddef.h>
 #include <stdlib.h>
@@ -24,7 +22,8 @@
 #include "SFUnifiedEngine.h"
 #include "SFArtist.h"
 
-static void _SFLoadCodepointSequence(SBCodepointSequence *codepointSequence, SFStringEncoding stringEncoding, void *stringBuffer, SFUInteger stringLength)
+static void _SFLoadCodepointSequence(SBCodepointSequence *codepointSequence,
+    SFStringEncoding stringEncoding, void *stringBuffer, SFUInteger stringLength)
 {
     codepointSequence->stringEncoding = stringEncoding;
     codepointSequence->stringBuffer = stringBuffer;
@@ -92,8 +91,9 @@ void SFArtistSetTextMode(SFArtistRef artist, SFTextMode textMode)
 
 void SFArtistFillAlbum(SFArtistRef artist, SFAlbumRef album)
 {
+    SFCodepoints codepoints;
+
     if (artist->pattern && _SFIsValidCodepointSequence(&artist->codepointSequence)) {
-        SFCodepoints codepoints;
         SFUnifiedEngine unifiedEngine;
         SFShapingEngineRef shapingEngine;
 
@@ -104,10 +104,12 @@ void SFArtistFillAlbum(SFArtistRef artist, SFAlbumRef album)
         SFUnifiedEngineInitialize(&unifiedEngine, artist);
         shapingEngine = (SFShapingEngineRef)&unifiedEngine;
 
-        SFAlbumReset(album, &codepoints, artist->codepointSequence.stringLength);
+        SFAlbumReset(album, &codepoints);
         SFShapingEngineProcessAlbum(shapingEngine, album);
     } else {
-        SFAlbumReset(album, NULL, 0);
+        _SFLoadCodepointSequence(&artist->codepointSequence, 0, NULL, 0);
+        SFCodepointsInitialize(&codepoints, &artist->codepointSequence, 0);
+        SFAlbumReset(album, &codepoints);
     }
 }
 
