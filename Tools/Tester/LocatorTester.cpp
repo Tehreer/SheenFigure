@@ -186,7 +186,7 @@ static const SFLookupFlag LOOKUP_FLAG_LIST[] = {
 static SFAlbumRef SFAlbumCreateWithTraits(const SFGlyphTraits *traits, SFUInteger count)
 {
     SFAlbumRef album = SFAlbumCreate();
-    SFAlbumReset(album, &CODEPOINT_HANDLER, 1);
+    SFAlbumReset(album, &CODEPOINT_HANDLER);
 
     SFAlbumBeginFilling(album);
     SFAlbumReserveGlyphs(album, 0, count);

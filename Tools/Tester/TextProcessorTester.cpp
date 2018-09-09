@@ -193,7 +193,7 @@ static void processSubtable(SFAlbumRef album,
     /* Reset the album for given codepoints. */
     SFCodepoints codepoints;
     SFCodepointsInitialize(&codepoints, &sequence, SFFalse);
-    SFAlbumReset(album, &codepoints, length);
+    SFAlbumReset(album, &codepoints);
 
     /* Process the album. */
     SFTextProcessor processor;
