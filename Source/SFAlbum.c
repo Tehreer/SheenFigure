@@ -105,8 +105,15 @@ SF_INTERNAL void SFAlbumInitialize(SFAlbumRef album)
     album->_retainCount = 1;
 }
 
-SF_INTERNAL void SFAlbumReset(SFAlbumRef album, SFCodepointsRef codepoints, SFUInteger codeunitCount)
+SF_INTERNAL void SFAlbumReset(SFAlbumRef album, SFCodepointsRef codepoints)
 {
+    SFUInteger codeunitCount;
+
+    /* Codepoints object must be non-null. */
+    SFAssert(codepoints != NULL);
+
+    codeunitCount = SFCodepointsGetCodeUnitCount(codepoints);
+
     album->codepoints = codepoints;
     album->codeunitCount = codeunitCount;
     album->glyphCount = 0;
