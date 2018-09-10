@@ -302,7 +302,7 @@ SF_INTERNAL SFUInteger SFLocatorGetPrecedingLigatureIndex(SFLocatorRef locator, 
     *outComponent = 0;
 
     /* Ignore marks only. */
-    locator->_ignoreMask.section.traits = SFGlyphTraitPlaceholder | SFLookupFlagIgnoreMarks;
+    locator->_ignoreMask.section.traits = SFGlyphTraitPlaceholder | SFGlyphTraitMark;
 
     /* Get preeding glyph. */
     ligIndex = SFLocatorGetBefore(locator, locator->index, SFFalse);
