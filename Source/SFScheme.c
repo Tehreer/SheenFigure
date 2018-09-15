@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Muhammad Tayyab Akram
+ * Copyright (C) 2015-2018 Muhammad Tayyab Akram
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -147,15 +147,28 @@ static void _SFAddKnownFeatures(SFPatternBuilderRef patternBuilder,
     SFData langSysTable, SFData featureListTable,
     SFFeatureInfo *featureInfos, SFUInteger featureCount)
 {
-    SFUInteger index;
+    SFUInteger index = 0;
 
-    for (index = 0; index < featureCount; index++) {
+    while (index < featureCount) {
         SFFeatureInfoRef featureInfo = &featureInfos[index];
+        SFUInteger unitLength = 1;
 
-        /* TODO: Add support for simultaneous features. */
-        SFAssert(featureInfo->isSeparate);
+        if (featureInfo->simultaneous) {
+            SFUInt8 groupID = featureInfo->group;
+            SFUInteger limit;
 
-        _SFAddFeatureUnit(patternBuilder, langSysTable, featureListTable, featureInfo, 1);
+            /* Find out the number of features that need to be applied simultaneously. */
+            for (limit = index + 1; limit < featureCount; limit++) {
+                if (!featureInfos[limit].simultaneous || featureInfos[limit].group != groupID) {
+                    break;
+                }
+            }
+
+            unitLength = limit - index;
+        }
+
+        _SFAddFeatureUnit(patternBuilder, langSysTable, featureListTable, featureInfo, unitLength);
+        index += unitLength;
     }
 }
 
