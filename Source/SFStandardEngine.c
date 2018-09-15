@@ -35,19 +35,19 @@ enum {
 
 static SFFeatureInfo _SFStandardSubstFeatureArray[] = {
     /* Language based forms. */
-    { 1, SFTagMake('c', 'c', 'm', 'p'), SFFeatureNatureOn, _SFStandardFeatureMaskNone },
+    { 0, 0, SFTagMake('c', 'c', 'm', 'p'), SFFeatureNatureOn, _SFStandardFeatureMaskNone },
     /* Typographical forms */
-    { 1, SFTagMake('l', 'i', 'g', 'a'), SFFeatureNatureOn, _SFStandardFeatureMaskNone },
-    { 1, SFTagMake('c', 'l', 'i', 'g'), SFFeatureNatureOn, _SFStandardFeatureMaskNone },
+    { 1, 0, SFTagMake('l', 'i', 'g', 'a'), SFFeatureNatureOn, _SFStandardFeatureMaskNone },
+    { 1, 0, SFTagMake('c', 'l', 'i', 'g'), SFFeatureNatureOn, _SFStandardFeatureMaskNone },
 };
 #define _SFStandardSubstFeatureCount (sizeof(_SFStandardSubstFeatureArray) / sizeof(SFFeatureInfo))
 
 static SFFeatureInfo _SFStandardPosFeatureArray[] = {
     /* Positioning features. */
-    { 1, SFTagMake('d', 'i', 's', 't'), SFFeatureNatureRequired, _SFStandardFeatureMaskNone },
-    { 1, SFTagMake('k', 'e', 'r', 'n'), SFFeatureNatureOn,       _SFStandardFeatureMaskNone },
-    { 1, SFTagMake('m', 'a', 'r', 'k'), SFFeatureNatureRequired, _SFStandardFeatureMaskNone },
-    { 1, SFTagMake('m', 'k', 'm', 'k'), SFFeatureNatureRequired, _SFStandardFeatureMaskNone }
+    { 2, 0, SFTagMake('d', 'i', 's', 't'), SFFeatureNatureRequired, _SFStandardFeatureMaskNone },
+    { 2, 0, SFTagMake('k', 'e', 'r', 'n'), SFFeatureNatureOn,       _SFStandardFeatureMaskNone },
+    { 2, 0, SFTagMake('m', 'a', 'r', 'k'), SFFeatureNatureRequired, _SFStandardFeatureMaskNone },
+    { 2, 0, SFTagMake('m', 'k', 'm', 'k'), SFFeatureNatureRequired, _SFStandardFeatureMaskNone }
 };
 #define _SFStandardPosFeatureCount (sizeof(_SFStandardPosFeatureArray) / sizeof(SFFeatureInfo))
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Muhammad Tayyab Akram
+ * Copyright (C) 2016-2018 Muhammad Tayyab Akram
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,7 +30,8 @@ enum {
 typedef SFUInt16 SFFeatureNature;
 
 typedef struct _SFFeatureInfo {
-    SFBoolean isSeparate;
+    SFUInt8 group;
+    SBBoolean simultaneous;
     SFTag tag;
     SFFeatureNature nature;
     SFUInt16 mask;
