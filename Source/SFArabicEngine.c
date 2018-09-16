@@ -49,28 +49,28 @@ enum {
  */
 static SFFeatureInfo _SFArabicSubstFeatureArray[] = {
     /* Language based forms */
-    { 0, 0, SFTagMake('c', 'c', 'm', 'p'), SFFeatureNatureRequired, _SFArabicFeatureMaskNone },
-    { 0, 0, SFTagMake('i', 's', 'o', 'l'), SFFeatureNatureRequired, _SFArabicFeatureMaskIsolated },
-    { 0, 0, SFTagMake('f', 'i', 'n', 'a'), SFFeatureNatureRequired, _SFArabicFeatureMaskFinal },
-    { 0, 0, SFTagMake('m', 'e', 'd', 'i'), SFFeatureNatureRequired, _SFArabicFeatureMaskMedial },
-    { 0, 0, SFTagMake('i', 'n', 'i', 't'), SFFeatureNatureRequired, _SFArabicFeatureMaskInitial },
-    { 0, 0, SFTagMake('r', 'l', 'i', 'g'), SFFeatureNatureRequired, _SFArabicFeatureMaskNone },
-    { 0, 1, SFTagMake('r', 'c', 'l', 't'), SFFeatureNatureRequired, _SFArabicFeatureMaskNone },
-    { 0, 1, SFTagMake('c', 'a', 'l', 't'), SFFeatureNatureRequired, _SFArabicFeatureMaskNone },
+    { 0, SFTagMake('c', 'c', 'm', 'p'), REQUIRED, INDIVIDUAL,   _SFArabicFeatureMaskNone },
+    { 0, SFTagMake('i', 's', 'o', 'l'), REQUIRED, INDIVIDUAL,   _SFArabicFeatureMaskIsolated },
+    { 0, SFTagMake('f', 'i', 'n', 'a'), REQUIRED, INDIVIDUAL,   _SFArabicFeatureMaskFinal },
+    { 0, SFTagMake('m', 'e', 'd', 'i'), REQUIRED, INDIVIDUAL,   _SFArabicFeatureMaskMedial },
+    { 0, SFTagMake('i', 'n', 'i', 't'), REQUIRED, INDIVIDUAL,   _SFArabicFeatureMaskInitial },
+    { 0, SFTagMake('r', 'l', 'i', 'g'), REQUIRED, INDIVIDUAL,   _SFArabicFeatureMaskNone },
+    { 0, SFTagMake('r', 'c', 'l', 't'), REQUIRED, SIMULTANEOUS, _SFArabicFeatureMaskNone },
+    { 0, SFTagMake('c', 'a', 'l', 't'), REQUIRED, SIMULTANEOUS, _SFArabicFeatureMaskNone },
     /* Typographical forms */
-    { 1, 0, SFTagMake('l', 'i', 'g', 'a'), SFFeatureNatureOn,       _SFArabicFeatureMaskNone },
-    { 1, 0, SFTagMake('d', 'l', 'i', 'g'), SFFeatureNatureOff,      _SFArabicFeatureMaskNone },
-    { 1, 0, SFTagMake('c', 's', 'w', 'h'), SFFeatureNatureOff,      _SFArabicFeatureMaskNone },
-    { 1, 0, SFTagMake('m', 's', 'e', 't'), SFFeatureNatureRequired, _SFArabicFeatureMaskNone },
+    { 1, SFTagMake('l', 'i', 'g', 'a'), ON_BY_DEFAULT,  INDIVIDUAL, _SFArabicFeatureMaskNone },
+    { 1, SFTagMake('d', 'l', 'i', 'g'), OFF_BY_DEFAULT, INDIVIDUAL, _SFArabicFeatureMaskNone },
+    { 1, SFTagMake('c', 's', 'w', 'h'), OFF_BY_DEFAULT, INDIVIDUAL, _SFArabicFeatureMaskNone },
+    { 1, SFTagMake('m', 's', 'e', 't'), REQUIRED,       INDIVIDUAL, _SFArabicFeatureMaskNone },
 };
 #define _SFArabicSubstFeatureCount (sizeof(_SFArabicSubstFeatureArray) / sizeof(SFFeatureInfo))
 
 static SFFeatureInfo _SFArabicPosFeatureArray[] = {
     /* Positioning features */
-    { 2, 0, SFTagMake('c', 'u', 'r', 's'), SFFeatureNatureRequired, _SFArabicFeatureMaskNone },
-    { 2, 0, SFTagMake('k', 'e', 'r', 'n'), SFFeatureNatureRequired, _SFArabicFeatureMaskNone },
-    { 2, 0, SFTagMake('m', 'a', 'r', 'k'), SFFeatureNatureRequired, _SFArabicFeatureMaskNone },
-    { 2, 0, SFTagMake('m', 'k', 'm', 'k'), SFFeatureNatureRequired, _SFArabicFeatureMaskNone },
+    { 2, SFTagMake('c', 'u', 'r', 's'), REQUIRED, INDIVIDUAL, _SFArabicFeatureMaskNone },
+    { 2, SFTagMake('k', 'e', 'r', 'n'), REQUIRED, INDIVIDUAL, _SFArabicFeatureMaskNone },
+    { 2, SFTagMake('m', 'a', 'r', 'k'), REQUIRED, INDIVIDUAL, _SFArabicFeatureMaskNone },
+    { 2, SFTagMake('m', 'k', 'm', 'k'), REQUIRED, INDIVIDUAL, _SFArabicFeatureMaskNone },
 };
 #define _SFArabicPosFeatureCount (sizeof(_SFArabicPosFeatureArray) / sizeof(SFFeatureInfo))
 
