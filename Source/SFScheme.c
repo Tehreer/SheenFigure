@@ -125,7 +125,7 @@ static void _SFAddFeatureUnit(SFPatternBuilderRef patternBuilder,
         SFFeatureInfoRef featureInfo = &featureInfos[index];
 
         /* Skip those features which are off by default. */
-        if (featureInfo->nature != SFFeatureNatureOff) {
+        if (featureInfo->status != OFF_BY_DEFAULT) {
             SFData featureTable = _SFSearchFeatureTable(langSysTable, featureListTable, featureInfo->tag);
 
             /* Add the feature, if it exists in the language. */
@@ -153,18 +153,20 @@ static void _SFAddKnownFeatures(SFPatternBuilderRef patternBuilder,
         SFFeatureInfoRef featureInfo = &featureInfos[index];
         SFUInteger unitLength = 1;
 
-        if (featureInfo->simultaneous) {
-            SFUInt8 groupID = featureInfo->group;
-            SFUInteger limit;
+        if (featureInfo->execution == SIMULTANEOUS) {
+            SFUInt8 group = featureInfo->group;
+            SFUInteger next;
 
             /* Find out the number of features that need to be applied simultaneously. */
-            for (limit = index + 1; limit < featureCount; limit++) {
-                if (!featureInfos[limit].simultaneous || featureInfos[limit].group != groupID) {
+            for (next = index + 1; next < featureCount; next++) {
+                if (featureInfos[next].group != group
+                    || featureInfos[next].execution != SIMULTANEOUS)
+                {
                     break;
                 }
             }
 
-            unitLength = limit - index;
+            unitLength = next - index;
         }
 
         _SFAddFeatureUnit(patternBuilder, langSysTable, featureListTable, featureInfo, unitLength);
