@@ -1,5 +1,5 @@
 /*
-* Copyright (C) 2018 Muhammad Tayyab Akram
+* Copyright (C) 2015-2018 Muhammad Tayyab Akram
 *
 * Licensed under the Apache License, Version 2.0 (the "License");
 * you may not use this file except in compliance with the License.
@@ -35,19 +35,19 @@ enum {
 
 static SFFeatureInfo _SFStandardSubstFeatureArray[] = {
     /* Language based forms. */
-    { 0, 0, SFTagMake('c', 'c', 'm', 'p'), SFFeatureNatureOn, _SFStandardFeatureMaskNone },
+    { 0, SFTagMake('c', 'c', 'm', 'p'), ON_BY_DEFAULT, INDIVIDUAL, _SFStandardFeatureMaskNone },
     /* Typographical forms */
-    { 1, 0, SFTagMake('l', 'i', 'g', 'a'), SFFeatureNatureOn, _SFStandardFeatureMaskNone },
-    { 1, 0, SFTagMake('c', 'l', 'i', 'g'), SFFeatureNatureOn, _SFStandardFeatureMaskNone },
+    { 1, SFTagMake('l', 'i', 'g', 'a'), ON_BY_DEFAULT, INDIVIDUAL, _SFStandardFeatureMaskNone },
+    { 1, SFTagMake('c', 'l', 'i', 'g'), ON_BY_DEFAULT, INDIVIDUAL, _SFStandardFeatureMaskNone },
 };
 #define _SFStandardSubstFeatureCount (sizeof(_SFStandardSubstFeatureArray) / sizeof(SFFeatureInfo))
 
 static SFFeatureInfo _SFStandardPosFeatureArray[] = {
     /* Positioning features. */
-    { 2, 0, SFTagMake('d', 'i', 's', 't'), SFFeatureNatureRequired, _SFStandardFeatureMaskNone },
-    { 2, 0, SFTagMake('k', 'e', 'r', 'n'), SFFeatureNatureOn,       _SFStandardFeatureMaskNone },
-    { 2, 0, SFTagMake('m', 'a', 'r', 'k'), SFFeatureNatureRequired, _SFStandardFeatureMaskNone },
-    { 2, 0, SFTagMake('m', 'k', 'm', 'k'), SFFeatureNatureRequired, _SFStandardFeatureMaskNone }
+    { 2, SFTagMake('d', 'i', 's', 't'), REQUIRED,      INDIVIDUAL, _SFStandardFeatureMaskNone },
+    { 2, SFTagMake('k', 'e', 'r', 'n'), ON_BY_DEFAULT, INDIVIDUAL, _SFStandardFeatureMaskNone },
+    { 2, SFTagMake('m', 'a', 'r', 'k'), REQUIRED,      INDIVIDUAL, _SFStandardFeatureMaskNone },
+    { 2, SFTagMake('m', 'k', 'm', 'k'), REQUIRED,      INDIVIDUAL, _SFStandardFeatureMaskNone }
 };
 #define _SFStandardPosFeatureCount (sizeof(_SFStandardPosFeatureArray) / sizeof(SFFeatureInfo))
 
