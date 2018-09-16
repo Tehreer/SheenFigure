@@ -23,17 +23,23 @@
 #include "SFBase.h"
 
 enum {
-    SFFeatureNatureOff = 0,
-    SFFeatureNatureOn = 1,
-    SFFeatureNatureRequired = 2
+    REQUIRED = 0,
+    ON_BY_DEFAULT = 1,
+    OFF_BY_DEFAULT = 2
 };
-typedef SFUInt16 SFFeatureNature;
+typedef SFUInt8 SFFeatureStatus;
+
+enum {
+    INDIVIDUAL = 0,
+    SIMULTANEOUS = 1
+};
+typedef SFUInt8 SFFeatureExecution;
 
 typedef struct _SFFeatureInfo {
     SFUInt8 group;
-    SBBoolean simultaneous;
     SFTag tag;
-    SFFeatureNature nature;
+    SFFeatureStatus status;
+    SFFeatureExecution execution;
     SFUInt16 mask;
 } SFFeatureInfo, *SFFeatureInfoRef;
 
