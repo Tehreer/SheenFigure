@@ -49,28 +49,28 @@ enum {
  */
 static SFFeatureInfo _SFArabicSubstFeatureArray[] = {
     /* Language based forms */
-    { 0, SFTagMake('c', 'c', 'm', 'p'), REQUIRED, INDIVIDUAL,   _SFArabicFeatureMaskNone },
-    { 0, SFTagMake('i', 's', 'o', 'l'), REQUIRED, INDIVIDUAL,   _SFArabicFeatureMaskIsolated },
-    { 0, SFTagMake('f', 'i', 'n', 'a'), REQUIRED, INDIVIDUAL,   _SFArabicFeatureMaskFinal },
-    { 0, SFTagMake('m', 'e', 'd', 'i'), REQUIRED, INDIVIDUAL,   _SFArabicFeatureMaskMedial },
-    { 0, SFTagMake('i', 'n', 'i', 't'), REQUIRED, INDIVIDUAL,   _SFArabicFeatureMaskInitial },
-    { 0, SFTagMake('r', 'l', 'i', 'g'), REQUIRED, INDIVIDUAL,   _SFArabicFeatureMaskNone },
-    { 0, SFTagMake('r', 'c', 'l', 't'), REQUIRED, SIMULTANEOUS, _SFArabicFeatureMaskNone },
-    { 0, SFTagMake('c', 'a', 'l', 't'), REQUIRED, SIMULTANEOUS, _SFArabicFeatureMaskNone },
+    { 0, TAG('c', 'c', 'm', 'p'), REQUIRED, INDIVIDUAL,   _SFArabicFeatureMaskNone },
+    { 0, TAG('i', 's', 'o', 'l'), REQUIRED, INDIVIDUAL,   _SFArabicFeatureMaskIsolated },
+    { 0, TAG('f', 'i', 'n', 'a'), REQUIRED, INDIVIDUAL,   _SFArabicFeatureMaskFinal },
+    { 0, TAG('m', 'e', 'd', 'i'), REQUIRED, INDIVIDUAL,   _SFArabicFeatureMaskMedial },
+    { 0, TAG('i', 'n', 'i', 't'), REQUIRED, INDIVIDUAL,   _SFArabicFeatureMaskInitial },
+    { 0, TAG('r', 'l', 'i', 'g'), REQUIRED, INDIVIDUAL,   _SFArabicFeatureMaskNone },
+    { 0, TAG('r', 'c', 'l', 't'), REQUIRED, SIMULTANEOUS, _SFArabicFeatureMaskNone },
+    { 0, TAG('c', 'a', 'l', 't'), REQUIRED, SIMULTANEOUS, _SFArabicFeatureMaskNone },
     /* Typographical forms */
-    { 1, SFTagMake('l', 'i', 'g', 'a'), ON_BY_DEFAULT,  INDIVIDUAL, _SFArabicFeatureMaskNone },
-    { 1, SFTagMake('d', 'l', 'i', 'g'), OFF_BY_DEFAULT, INDIVIDUAL, _SFArabicFeatureMaskNone },
-    { 1, SFTagMake('c', 's', 'w', 'h'), OFF_BY_DEFAULT, INDIVIDUAL, _SFArabicFeatureMaskNone },
-    { 1, SFTagMake('m', 's', 'e', 't'), REQUIRED,       INDIVIDUAL, _SFArabicFeatureMaskNone },
+    { 1, TAG('l', 'i', 'g', 'a'), ON_BY_DEFAULT,  INDIVIDUAL, _SFArabicFeatureMaskNone },
+    { 1, TAG('d', 'l', 'i', 'g'), OFF_BY_DEFAULT, INDIVIDUAL, _SFArabicFeatureMaskNone },
+    { 1, TAG('c', 's', 'w', 'h'), OFF_BY_DEFAULT, INDIVIDUAL, _SFArabicFeatureMaskNone },
+    { 1, TAG('m', 's', 'e', 't'), REQUIRED,       INDIVIDUAL, _SFArabicFeatureMaskNone },
 };
 #define _SFArabicSubstFeatureCount (sizeof(_SFArabicSubstFeatureArray) / sizeof(SFFeatureInfo))
 
 static SFFeatureInfo _SFArabicPosFeatureArray[] = {
     /* Positioning features */
-    { 2, SFTagMake('c', 'u', 'r', 's'), REQUIRED, INDIVIDUAL, _SFArabicFeatureMaskNone },
-    { 2, SFTagMake('k', 'e', 'r', 'n'), REQUIRED, INDIVIDUAL, _SFArabicFeatureMaskNone },
-    { 2, SFTagMake('m', 'a', 'r', 'k'), REQUIRED, INDIVIDUAL, _SFArabicFeatureMaskNone },
-    { 2, SFTagMake('m', 'k', 'm', 'k'), REQUIRED, INDIVIDUAL, _SFArabicFeatureMaskNone },
+    { 2, TAG('c', 'u', 'r', 's'), REQUIRED, INDIVIDUAL, _SFArabicFeatureMaskNone },
+    { 2, TAG('k', 'e', 'r', 'n'), REQUIRED, INDIVIDUAL, _SFArabicFeatureMaskNone },
+    { 2, TAG('m', 'a', 'r', 'k'), REQUIRED, INDIVIDUAL, _SFArabicFeatureMaskNone },
+    { 2, TAG('m', 'k', 'm', 'k'), REQUIRED, INDIVIDUAL, _SFArabicFeatureMaskNone },
 };
 #define _SFArabicPosFeatureCount (sizeof(_SFArabicPosFeatureArray) / sizeof(SFFeatureInfo))
 
@@ -87,7 +87,7 @@ SFShapingKnowledge SFArabicKnowledgeInstance = {
 static SFScriptKnowledgeRef _SFArabicKnowledgeSeekScript(const void *object, SFTag scriptTag)
 {
     switch (scriptTag) {
-        case SFTagMake('a', 'r', 'a', 'b'):
+        case TAG('a', 'r', 'a', 'b'):
             return &_SFArabicScriptKnowledge;
     }
 
