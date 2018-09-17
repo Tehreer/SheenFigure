@@ -35,19 +35,19 @@ enum {
 
 static SFFeatureInfo _SFStandardSubstFeatureArray[] = {
     /* Language based forms. */
-    { 0, SFTagMake('c', 'c', 'm', 'p'), ON_BY_DEFAULT, INDIVIDUAL, _SFStandardFeatureMaskNone },
+    { 0, TAG('c', 'c', 'm', 'p'), ON_BY_DEFAULT, INDIVIDUAL, _SFStandardFeatureMaskNone },
     /* Typographical forms */
-    { 1, SFTagMake('l', 'i', 'g', 'a'), ON_BY_DEFAULT, INDIVIDUAL, _SFStandardFeatureMaskNone },
-    { 1, SFTagMake('c', 'l', 'i', 'g'), ON_BY_DEFAULT, INDIVIDUAL, _SFStandardFeatureMaskNone },
+    { 1, TAG('l', 'i', 'g', 'a'), ON_BY_DEFAULT, INDIVIDUAL, _SFStandardFeatureMaskNone },
+    { 1, TAG('c', 'l', 'i', 'g'), ON_BY_DEFAULT, INDIVIDUAL, _SFStandardFeatureMaskNone },
 };
 #define _SFStandardSubstFeatureCount (sizeof(_SFStandardSubstFeatureArray) / sizeof(SFFeatureInfo))
 
 static SFFeatureInfo _SFStandardPosFeatureArray[] = {
     /* Positioning features. */
-    { 2, SFTagMake('d', 'i', 's', 't'), REQUIRED,      INDIVIDUAL, _SFStandardFeatureMaskNone },
-    { 2, SFTagMake('k', 'e', 'r', 'n'), ON_BY_DEFAULT, INDIVIDUAL, _SFStandardFeatureMaskNone },
-    { 2, SFTagMake('m', 'a', 'r', 'k'), REQUIRED,      INDIVIDUAL, _SFStandardFeatureMaskNone },
-    { 2, SFTagMake('m', 'k', 'm', 'k'), REQUIRED,      INDIVIDUAL, _SFStandardFeatureMaskNone }
+    { 2, TAG('d', 'i', 's', 't'), REQUIRED,      INDIVIDUAL, _SFStandardFeatureMaskNone },
+    { 2, TAG('k', 'e', 'r', 'n'), ON_BY_DEFAULT, INDIVIDUAL, _SFStandardFeatureMaskNone },
+    { 2, TAG('m', 'a', 'r', 'k'), REQUIRED,      INDIVIDUAL, _SFStandardFeatureMaskNone },
+    { 2, TAG('m', 'k', 'm', 'k'), REQUIRED,      INDIVIDUAL, _SFStandardFeatureMaskNone }
 };
 #define _SFStandardPosFeatureCount (sizeof(_SFStandardPosFeatureArray) / sizeof(SFFeatureInfo))
 
@@ -64,13 +64,13 @@ SFShapingKnowledge SFStandardKnowledgeInstance = {
 static SFScriptKnowledgeRef _SFStandardKnowledgeSeekScript(const void *object, SFTag scriptTag)
 {
     switch (scriptTag) {
-        case SFTagMake('a', 'r', 'm', 'n'):
-        case SFTagMake('c', 'y', 'r', 'l'):
-        case SFTagMake('g', 'e', 'o', 'r'):
-        case SFTagMake('g', 'r', 'e', 'k'):
-        case SFTagMake('l', 'a', 't', 'n'):
-        case SFTagMake('o', 'g', 'a', 'm'):
-        case SFTagMake('r', 'u', 'n', 'r'):
+        case TAG('a', 'r', 'm', 'n'):
+        case TAG('c', 'y', 'r', 'l'):
+        case TAG('g', 'e', 'o', 'r'):
+        case TAG('g', 'r', 'e', 'k'):
+        case TAG('l', 'a', 't', 'n'):
+        case TAG('o', 'g', 'a', 'm'):
+        case TAG('r', 'u', 'n', 'r'):
             return &_SFStandardScriptKnowledge;
     }
 
