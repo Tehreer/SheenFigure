@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Muhammad Tayyab Akram
+ * Copyright (C) 2015-2018 Muhammad Tayyab Akram
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,11 +25,6 @@
 #include "SFPattern.h"
 
 /**
- * SFPatternBuilder is an inner class of SFPattern, therefore it can access private members of
- * SFPattern.
- */
-
-/**
  * Provides a way to create a pattern of script, language, features and lookups.
  */
 typedef struct _SFPatternBuilder {
@@ -42,12 +37,13 @@ typedef struct _SFPatternBuilder {
     SFTag _languageTag;             /**< Tag of the language, whose pattern is being built. */
     SFTextDirection _defaultDirection; /**< Default direction of the script whose pattern is being built. */
     SFUInt16 _featureMask;          /**< Mask of the feature unit being built. */
+    SFUInt16 _featureValue;         /**< Value of the feature being added. */
     SFFeatureKind _featureKind;     /**< Kind of features being added. */
     SFBoolean _canBuild;
 
     SF_LIST(SFTag) _featureTags;
     SF_LIST(SFFeatureUnit) _featureUnits;
-    SF_LIST(SFUInt16) _lookupIndexes;
+    SF_LIST(SFLookupInfo) _lookupInfos;
 } SFPatternBuilder, *SFPatternBuilderRef;
 
 /**
@@ -68,7 +64,7 @@ SF_INTERNAL void SFPatternBuilderBeginFeatures(SFPatternBuilderRef builder, SFFe
 /**
  * Adds a new feature having recently specified kind.
  */
-SF_INTERNAL void SFPatternBuilderAddFeature(SFPatternBuilderRef builder, SFTag featureTag, SFUInt16 featureMask);
+SF_INTERNAL void SFPatternBuilderAddFeature(SFPatternBuilderRef builder, SFTag featureTag, SFUInt16 featureValue, SFUInt16 featureMask);
 
 /**
  * Adds a new lookup in recently added feature.
