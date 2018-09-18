@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Muhammad Tayyab Akram
+ * Copyright (C) 2015-2018 Muhammad Tayyab Akram
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,6 +30,11 @@ enum {
 };
 typedef SFUInt8 SFFeatureKind;
 
+typedef struct _SFLookupInfo {
+    SFUInt16 index;
+    SFUInt16 value;
+} SFLookupInfo, *SFLookupInfoRef;
+
 /**
  * Keeps details of a group having multiple features which must be applied simultaneously.
  */
@@ -38,11 +43,11 @@ typedef struct _SFFeatureUnit {
      * Unique lookup indexes of all features belonging to the unit in ascending order.
      */
     struct {
-        SFUInt16 *items;
+        SFLookupInfo *items;
         SFUInteger count;
-    } lookupIndexes;
-    SFRange coveredRange;
-    SFUInt16 featureMask;
+    } lookups;
+    SFRange range;
+    SFUInt16 mask;
 } SFFeatureUnit, *SFFeatureUnitRef;
 
 /**

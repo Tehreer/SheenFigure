@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Muhammad Tayyab Akram
+ * Copyright (C) 2015-2018 Muhammad Tayyab Akram
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -45,7 +45,7 @@ SF_INTERNAL SFPatternRef SFPatternCreate(void)
 
 static void _SFFinalizeFeatureUnit(SFFeatureUnitRef featureUnit)
 {
-    free(featureUnit->lookupIndexes.items);
+    free(featureUnit->lookups.items);
 }
 
 static void _SFPatternFinalize(SFPatternRef pattern)
