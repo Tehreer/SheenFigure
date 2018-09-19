@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Muhammad Tayyab Akram
+ * Copyright (C) 2015-2018 Muhammad Tayyab Akram
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,6 +27,9 @@ typedef struct _SFScheme {
     SFFontRef _font;                /**< Font, whose scheme is being built. */
     SFTag _scriptTag;               /**< Tag of the script. */
     SFTag _languageTag;             /**< Tag of the language. */
+    SFTag *_featureTags;            /**< Tags of features to override. */
+    SFUInt16 *_featureValues;       /**< Values of features to override. */
+    SFUInteger _featureCount;       /**< The number of features to override. */
 
     SFInteger _retainCount;
 } SFScheme;

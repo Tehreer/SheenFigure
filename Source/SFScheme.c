@@ -17,6 +17,7 @@
 #include <SFConfig.h>
 #include <stddef.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "SFBase.h"
 #include "SFCommon.h"
@@ -201,6 +202,9 @@ SFSchemeRef SFSchemeCreate(void)
     scheme->_font = NULL;
     scheme->_scriptTag = 0;
     scheme->_languageTag = 0;
+    scheme->_featureTags = NULL;
+    scheme->_featureValues = NULL;
+    scheme->_featureCount = 0;
     scheme->_retainCount = 1;
 
     return scheme;
@@ -219,6 +223,20 @@ void SFSchemeSetScriptTag(SFSchemeRef scheme, SFTag scriptTag)
 void SFSchemeSetLanguageTag(SFSchemeRef scheme, SFTag languageTag)
 {
     scheme->_languageTag = languageTag;
+}
+
+void SFSchemeSetFeatureValues(SFSchemeRef scheme,
+    SFTag *featureTags, SFUInt16 *featureValues, SFUInteger featureCount)
+{
+    const SFUInteger sizeTags = sizeof(SFTag) * featureCount;
+    const SFUInteger sizeValues = sizeof(SFUInt16) * featureCount;
+
+    scheme->_featureTags = realloc(scheme->_featureTags, sizeTags);
+    scheme->_featureValues = realloc(scheme->_featureValues, sizeValues);
+    scheme->_featureCount = featureCount;
+
+    memcpy(scheme->_featureTags, featureTags, sizeTags);
+    memcpy(scheme->_featureValues, featureValues, sizeValues);
 }
 
 SFPatternRef SFSchemeBuildPattern(SFSchemeRef scheme)
@@ -268,6 +286,8 @@ SFSchemeRef SFSchemeRetain(SFSchemeRef scheme)
 void SFSchemeRelease(SFSchemeRef scheme)
 {
     if (scheme && --scheme->_retainCount == 0) {
+        free(scheme->_featureTags);
+        free(scheme->_featureValues);
         free(scheme);
     }
 }
