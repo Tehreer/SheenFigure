@@ -115,7 +115,24 @@ static void _SFAddFeatureLookups(SFPatternBuilderRef patternBuilder, SFData feat
     }
 }
 
-static void _SFAddFeatureUnit(SFPatternBuilderRef patternBuilder,
+static SFBoolean _SFGetCustomValue(SFSchemeRef scheme, SFTag featureTag, SFUInt16 *featureValue)
+{
+    SFTag *featureTags = scheme->_featureTags;
+    SFUInt16 *featureValues = scheme->_featureValues;
+    SFUInteger featureCount = scheme->_featureCount;
+    SFUInteger index;
+
+    for (index = 0; index < featureCount; index++) {
+        if (featureTags[index] == featureTag) {
+            *featureValue = featureValues[index];
+            return SFTrue;
+        }
+    }
+
+    return SFFalse;
+}
+
+static void _SFAddFeatureUnit(SFSchemeRef scheme, SFPatternBuilderRef patternBuilder,
     SFData langSysTable, SFData featureListTable,
     SFFeatureInfo *featureInfos, SFUInteger featureCount)
 {
@@ -124,14 +141,27 @@ static void _SFAddFeatureUnit(SFPatternBuilderRef patternBuilder,
 
     for (index = 0; index < featureCount; index++) {
         SFFeatureInfoRef featureInfo = &featureInfos[index];
+        SFTag featureTag = featureInfo->tag;
+        SFFeatureStatus featureStatus = featureInfo->status;
+        SFUInt16 featureValue;
+        SFUInt16 customValue;
 
-        /* Skip those features which are off by default. */
-        if (featureInfo->status != OFF_BY_DEFAULT) {
-            SFData featureTable = _SFSearchFeatureTable(langSysTable, featureListTable, featureInfo->tag);
+        featureValue = (featureStatus == OFF_BY_DEFAULT ? 0 : 1);
 
-            /* Add the feature, if it exists in the language. */
+        if (_SFGetCustomValue(scheme, featureTag, &customValue)) {
+            /* Override the value if applicable. */
+            if ((featureStatus != REQUIRED) || (featureStatus == REQUIRED && customValue != 0)) {
+                featureValue = customValue;
+            }
+        }
+
+        /* Process the feature if it is enabled. */
+        if (featureValue != 0) {
+            SFData featureTable = _SFSearchFeatureTable(langSysTable, featureListTable, featureTag);
+
+            /* Add the feature if it exists in the language. */
             if (featureTable) {
-                SFPatternBuilderAddFeature(patternBuilder, featureInfo->tag, featureInfo->mask);
+                SFPatternBuilderAddFeature(patternBuilder, featureTag, featureValue, featureInfo->mask);
                 _SFAddFeatureLookups(patternBuilder, featureTable);
 
                 exists = SFTrue;
@@ -144,7 +174,7 @@ static void _SFAddFeatureUnit(SFPatternBuilderRef patternBuilder,
     }
 }
 
-static void _SFAddKnownFeatures(SFPatternBuilderRef patternBuilder,
+static void _SFAddKnownFeatures(SFSchemeRef scheme, SFPatternBuilderRef patternBuilder,
     SFData langSysTable, SFData featureListTable,
     SFFeatureInfo *featureInfos, SFUInteger featureCount)
 {
@@ -170,7 +200,7 @@ static void _SFAddKnownFeatures(SFPatternBuilderRef patternBuilder,
             unitLength = next - index;
         }
 
-        _SFAddFeatureUnit(patternBuilder, langSysTable, featureListTable, featureInfo, unitLength);
+        _SFAddFeatureUnit(scheme, patternBuilder, langSysTable, featureListTable, featureInfo, unitLength);
         index += unitLength;
     }
 }
@@ -191,7 +221,7 @@ static void _SFAddHeaderTable(SFSchemeRef scheme, SFPatternBuilderRef patternBui
         langSysTable = _SFSearchLangSysTable(scriptTable, scheme->_languageTag);
 
         if (langSysTable) {
-            _SFAddKnownFeatures(patternBuilder, langSysTable, featureListTable, featureInfos, featureCount);
+            _SFAddKnownFeatures(scheme, patternBuilder, langSysTable, featureListTable, featureInfos, featureCount);
         }
     }
 }
