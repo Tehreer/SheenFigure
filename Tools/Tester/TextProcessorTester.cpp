@@ -178,7 +178,7 @@ static void processSubtable(SFAlbumRef album,
     SFPatternBuilderSetScript(&builder, SFTagMake('d', 'f', 'l', 't'), direction);
     SFPatternBuilderSetLanguage(&builder, SFTagMake('d', 'f', 'l', 't'));
     SFPatternBuilderBeginFeatures(&builder, positioning ? SFFeatureKindPositioning : SFFeatureKindSubstitution);
-    SFPatternBuilderAddFeature(&builder, SFTagMake('t', 'e', 's', 't'), 0);
+    SFPatternBuilderAddFeature(&builder, SFTagMake('t', 'e', 's', 't'), 1, 0);
     SFPatternBuilderAddLookup(&builder, 0);
     SFPatternBuilderMakeFeatureUnit(&builder);
     SFPatternBuilderEndFeatures(&builder);
