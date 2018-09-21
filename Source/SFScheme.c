@@ -205,6 +205,53 @@ static void _SFAddKnownFeatures(SFSchemeRef scheme, SFPatternBuilderRef patternB
     }
 }
 
+static SFBoolean _SFIsKnownFeature(SFTag featureTag, SFFeatureInfo *featureInfos, SFUInteger featureCount)
+{
+    SFUInteger index;
+
+    for (index = 0; index < featureCount; index++) {
+        if (featureInfos[index].tag == featureTag) {
+            return SFTrue;
+        }
+    }
+
+    return SFFalse;
+}
+
+static void _SFAddCustomFeatures(SFSchemeRef scheme, SFPatternBuilderRef patternBuilder,
+    SFData langSysTable, SFData featureListTable,
+    SFFeatureInfo *featureInfos, SFUInteger featureCount)
+{
+    SFBoolean exists = SFFalse;
+    SFUInteger index;
+
+    for (index = 0; index < scheme->_featureCount; index++) {
+        SFTag featureTag = scheme->_featureTags[index];
+
+        /* Check if it is a feature not known to the chosen shaping engine. */
+        if (_SFIsKnownFeature(featureTag, featureInfos, featureCount)) {
+            SFUInt16 featureValue = scheme->_featureValues[index];
+
+            /* Process the feature if it is enabled. */
+            if (featureValue != 0) {
+                SFData featureTable = _SFSearchFeatureTable(langSysTable, featureListTable, featureTag);
+
+                /* Add the feature if it exists in the language. */
+                if (featureTable) {
+                    SFPatternBuilderAddFeature(patternBuilder, featureTag, featureValue, 0);
+                    _SFAddFeatureLookups(patternBuilder, featureTable);
+
+                    exists = SFTrue;
+                }
+            }
+        }
+    }
+
+    if (exists) {
+        SFPatternBuilderMakeFeatureUnit(patternBuilder);
+    }
+}
+
 static void _SFAddHeaderTable(SFSchemeRef scheme, SFPatternBuilderRef patternBuilder,
     SFData headerTable, SFFeatureInfo *featureInfos, SFUInteger featureCount)
 {
@@ -222,6 +269,7 @@ static void _SFAddHeaderTable(SFSchemeRef scheme, SFPatternBuilderRef patternBui
 
         if (langSysTable) {
             _SFAddKnownFeatures(scheme, patternBuilder, langSysTable, featureListTable, featureInfos, featureCount);
+            _SFAddCustomFeatures(scheme, patternBuilder, langSysTable, featureListTable, featureInfos, featureCount);
         }
     }
 }
