@@ -31,6 +31,7 @@ typedef struct _SFTextProcessor {
     SFAlbumRef _album;
     SFData _glyphClassDef;
     SFData _lookupList;
+    SFUInt16 _lookupValue;
     SFBoolean (*_lookupOperation)(struct _SFTextProcessor *, SFLookupType, SFData);
     SFTextDirection _textDirection;
     SFTextMode _textMode;

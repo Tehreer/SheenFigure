@@ -186,21 +186,23 @@ static void _SFApplyFeatureRange(SFTextProcessorRef textProcessor, SFFeatureKind
 
     for (; index < limit; index++) {
         SFFeatureUnitRef featureUnit = &pattern->featureUnits.items[index];
-        SFUInt16 *lookupArray = featureUnit->lookupIndexes.items;
-        SFUInteger lookupCount = featureUnit->lookupIndexes.count;
+        SFLookupInfo *lookupArray = featureUnit->lookups.items;
+        SFUInteger lookupCount = featureUnit->lookups.count;
         SFUInteger lookupIndex;
 
         /* Apply all lookups of the feature unit. */
         for (lookupIndex = 0; lookupIndex < lookupCount; lookupIndex++) {
             SFAlbumRef album = textProcessor->_album;
             SFLocatorRef locator = &textProcessor->_locator;
+            SFLookupInfoRef lookupInfo = &lookupArray[lookupIndex];
             SFData lookupTable;
             SFLookupType lookupType;
 
             SFLocatorReset(locator, 0, album->glyphCount);
-            SFLocatorSetFeatureMask(locator, featureUnit->featureMask);
+            SFLocatorSetFeatureMask(locator, featureUnit->mask);
 
-            lookupType = _SFPrepareLookup(textProcessor, lookupArray[lookupIndex], &lookupTable);
+            lookupType = _SFPrepareLookup(textProcessor, lookupInfo->index, &lookupTable);
+            textProcessor->_lookupValue = lookupInfo->value;
 
             /* Apply current lookup on all glyphs. */
             if (!reversible || lookupType != SFLookupTypeReverseChainingContext) {
