@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Muhammad Tayyab Akram
+ * Copyright (C) 2016-2018 Muhammad Tayyab Akram
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -138,12 +138,12 @@ void SchemeTester::test()
         SFPatternRef pattern = SFSchemeBuildPattern(scheme);
 
         SFTag expectedTags[] = { SFTagMake('c', 'c', 'm', 'p') };
-        SFUInt16 expectedLookups[] = { 0 };
+        SFLookupInfo expectedLookups[] = { {0, 1} };
         SFFeatureUnit expectedUnits[] = {
             {
-                .lookupIndexes = { expectedLookups, 1 },
-                .coveredRange = { 0, 1 },
-                .featureMask = 0x00,
+                .lookups = { expectedLookups, 1 },
+                .range = { 0, 1 },
+                .mask = 0x00,
             }
         };
         SFPattern expectedPattern = {
@@ -165,12 +165,12 @@ void SchemeTester::test()
         SFPatternRef pattern = SFSchemeBuildPattern(scheme);
 
         SFTag expectedTags[] = { SFTagMake('c', 'c', 'm', 'p') };
-        SFUInt16 expectedLookups[] = { 0 };
+        SFLookupInfo expectedLookups[] = { {0, 1} };
         SFFeatureUnit expectedUnits[] = {
             {
-                .lookupIndexes = { expectedLookups, 1 },
-                .coveredRange = { 0, 1 },
-                .featureMask = 0x00,
+                .lookups = { expectedLookups, 1 },
+                .range = { 0, 1 },
+                .mask = 0x00,
             }
         };
         SFPattern expectedPattern = {
