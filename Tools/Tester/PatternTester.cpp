@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Muhammad Tayyab Akram
+ * Copyright (C) 2016-2018 Muhammad Tayyab Akram
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -70,13 +70,13 @@ void PatternTester::testDistinctFeatures()
 
         SFPatternBuilderBeginFeatures(&builder, SFFeatureKindSubstitution);
 
-        SFPatternBuilderAddFeature(&builder, SFTagMake('c', 'c', 'm', 'p'), 0x01);
+        SFPatternBuilderAddFeature(&builder, SFTagMake('c', 'c', 'm', 'p'), 1, 0x01);
         SFPatternBuilderMakeFeatureUnit(&builder);
 
-        SFPatternBuilderAddFeature(&builder, SFTagMake('l', 'i', 'g', 'a'), 0x02);
+        SFPatternBuilderAddFeature(&builder, SFTagMake('l', 'i', 'g', 'a'), 2, 0x02);
         SFPatternBuilderMakeFeatureUnit(&builder);
 
-        SFPatternBuilderAddFeature(&builder, SFTagMake('c', 'l', 'i', 'g'), 0x04);
+        SFPatternBuilderAddFeature(&builder, SFTagMake('c', 'l', 'i', 'g'), 3, 0x04);
         SFPatternBuilderMakeFeatureUnit(&builder);
 
         SFPatternBuilderEndFeatures(&builder);
@@ -91,19 +91,19 @@ void PatternTester::testDistinctFeatures()
         };
         SFFeatureUnit expectedUnits[] = {
             {
-                .lookupIndexes = { NULL, 0 },
-                .coveredRange = { 0, 1 },
-                .featureMask = 0x01,
+                .lookups = { NULL, 0 },
+                .range = { 0, 1 },
+                .mask = 0x01,
             },
             {
-                .lookupIndexes = { NULL, 0 },
-                .coveredRange = { 1, 1 },
-                .featureMask = 0x02,
+                .lookups = { NULL, 0 },
+                .range = { 1, 1 },
+                .mask = 0x02,
             },
             {
-                .lookupIndexes = { NULL, 0 },
-                .coveredRange = { 2, 1 },
-                .featureMask = 0x04,
+                .lookups = { NULL, 0 },
+                .range = { 2, 1 },
+                .mask = 0x04,
             },
         };
         SFPattern expectedPattern = {
@@ -128,13 +128,13 @@ void PatternTester::testDistinctFeatures()
 
         SFPatternBuilderBeginFeatures(&builder, SFFeatureKindPositioning);
 
-        SFPatternBuilderAddFeature(&builder, SFTagMake('d', 'i', 's', 't'), 0x01);
+        SFPatternBuilderAddFeature(&builder, SFTagMake('d', 'i', 's', 't'), 1, 0x01);
         SFPatternBuilderMakeFeatureUnit(&builder);
 
-        SFPatternBuilderAddFeature(&builder, SFTagMake('k', 'e', 'r', 'n'), 0x02);
+        SFPatternBuilderAddFeature(&builder, SFTagMake('k', 'e', 'r', 'n'), 2, 0x02);
         SFPatternBuilderMakeFeatureUnit(&builder);
 
-        SFPatternBuilderAddFeature(&builder, SFTagMake('m', 'a', 'r', 'k'), 0x04);
+        SFPatternBuilderAddFeature(&builder, SFTagMake('m', 'a', 'r', 'k'), 3, 0x04);
         SFPatternBuilderMakeFeatureUnit(&builder);
 
         SFPatternBuilderEndFeatures(&builder);
@@ -149,19 +149,19 @@ void PatternTester::testDistinctFeatures()
         };
         SFFeatureUnit expectedUnits[] = {
             {
-                .lookupIndexes = { NULL, 0 },
-                .coveredRange = { 0, 1 },
-                .featureMask = 0x01,
+                .lookups = { NULL, 0 },
+                .range = { 0, 1 },
+                .mask = 0x01,
             },
             {
-                .lookupIndexes = { NULL, 0 },
-                .coveredRange = { 1, 1 },
-                .featureMask = 0x02,
+                .lookups = { NULL, 0 },
+                .range = { 1, 1 },
+                .mask = 0x02,
             },
             {
-                .lookupIndexes = { NULL, 0 },
-                .coveredRange = { 2, 1 },
-                .featureMask = 0x04,
+                .lookups = { NULL, 0 },
+                .range = { 2, 1 },
+                .mask = 0x04,
             },
         };
         SFPattern expectedPattern = {
@@ -187,18 +187,18 @@ void PatternTester::testSimultaneousFeatures()
 
     SFPatternBuilderBeginFeatures(&builder, SFFeatureKindSubstitution);
 
-    SFPatternBuilderAddFeature(&builder, SFTagMake('c', 'c', 'm', 'p'), 0x01);
-    SFPatternBuilderAddFeature(&builder, SFTagMake('l', 'i', 'g', 'a'), 0x02);
-    SFPatternBuilderAddFeature(&builder, SFTagMake('c', 'l', 'i', 'g'), 0x04);
+    SFPatternBuilderAddFeature(&builder, SFTagMake('c', 'c', 'm', 'p'), 1, 0x01);
+    SFPatternBuilderAddFeature(&builder, SFTagMake('l', 'i', 'g', 'a'), 2, 0x02);
+    SFPatternBuilderAddFeature(&builder, SFTagMake('c', 'l', 'i', 'g'), 3, 0x04);
 
     SFPatternBuilderMakeFeatureUnit(&builder);
     SFPatternBuilderEndFeatures(&builder);
 
     SFPatternBuilderBeginFeatures(&builder, SFFeatureKindPositioning);
 
-    SFPatternBuilderAddFeature(&builder, SFTagMake('d', 'i', 's', 't'), 0x01);
-    SFPatternBuilderAddFeature(&builder, SFTagMake('k', 'e', 'r', 'n'), 0x02);
-    SFPatternBuilderAddFeature(&builder, SFTagMake('m', 'a', 'r', 'k'), 0x04);
+    SFPatternBuilderAddFeature(&builder, SFTagMake('d', 'i', 's', 't'), 1, 0x01);
+    SFPatternBuilderAddFeature(&builder, SFTagMake('k', 'e', 'r', 'n'), 2, 0x02);
+    SFPatternBuilderAddFeature(&builder, SFTagMake('m', 'a', 'r', 'k'), 3, 0x04);
 
     SFPatternBuilderMakeFeatureUnit(&builder);
     SFPatternBuilderEndFeatures(&builder);
@@ -216,14 +216,14 @@ void PatternTester::testSimultaneousFeatures()
     };
     SFFeatureUnit expectedUnits[] = {
         {
-            .lookupIndexes = { NULL, 0 },
-            .coveredRange = { 0, 3 },
-            .featureMask = (0x01 | 0x02 | 0x04),
+            .lookups = { NULL, 0 },
+            .range = { 0, 3 },
+            .mask = (0x01 | 0x02 | 0x04),
         },
         {
-            .lookupIndexes = { NULL, 0 },
-            .coveredRange = { 3, 3 },
-            .featureMask = (0x01 | 0x02 | 0x04),
+            .lookups = { NULL, 0 },
+            .range = { 3, 3 },
+            .mask = (0x01 | 0x02 | 0x04),
         },
     };
     SFPattern expectedPattern = {
@@ -250,7 +250,7 @@ void PatternTester::testLookupIndexSorting()
 
         SFPatternBuilderBeginFeatures(&builder, SFFeatureKindSubstitution);
 
-        SFPatternBuilderAddFeature(&builder, SFTagMake('c', 'c', 'm', 'p'), 0);
+        SFPatternBuilderAddFeature(&builder, SFTagMake('c', 'c', 'm', 'p'), 1, 0);
         SFPatternBuilderAddLookup(&builder, 4);
         SFPatternBuilderAddLookup(&builder, 0);
         SFPatternBuilderAddLookup(&builder, 2);
@@ -262,7 +262,7 @@ void PatternTester::testLookupIndexSorting()
 
         SFPatternBuilderBeginFeatures(&builder, SFFeatureKindPositioning);
 
-        SFPatternBuilderAddFeature(&builder, SFTagMake('d', 'i', 's', 't'), 0);
+        SFPatternBuilderAddFeature(&builder, SFTagMake('d', 'i', 's', 't'), 2, 0);
         SFPatternBuilderAddLookup(&builder, 7);
         SFPatternBuilderAddLookup(&builder, 5);
         SFPatternBuilderAddLookup(&builder, 6);
@@ -279,18 +279,18 @@ void PatternTester::testLookupIndexSorting()
             SFTagMake('c', 'c', 'm', 'p'),
             SFTagMake('d', 'i', 's', 't'),
         };
-        SFUInt16 expectedSubLookup[] = { 0, 1, 2, 3, 4 };
-        SFUInt16 expectedPosLookup[] = { 4, 5, 6, 7, 8 };
+        SFLookupInfo expectedSubLookup[] = { {0, 1}, {1, 1}, {2, 1}, {3, 1}, {4, 1} };
+        SFLookupInfo expectedPosLookup[] = { {4, 2}, {5, 2}, {6, 2}, {7, 2}, {8, 2} };
         SFFeatureUnit expectedUnits[] = {
             {
-                .lookupIndexes = { expectedSubLookup, sizeof(expectedSubLookup) / sizeof(SFUInt16) },
-                .coveredRange = { 0, 1 },
-                .featureMask = 0,
+                .lookups = { expectedSubLookup, sizeof(expectedSubLookup) / sizeof(SFUInt16) },
+                .range = { 0, 1 },
+                .mask = 0,
             },
             {
-                .lookupIndexes = { expectedPosLookup, sizeof(expectedPosLookup) / sizeof(SFUInt16) },
-                .coveredRange = { 1, 1 },
-                .featureMask = 0,
+                .lookups = { expectedPosLookup, sizeof(expectedPosLookup) / sizeof(SFUInt16) },
+                .range = { 1, 1 },
+                .mask = 0,
             },
         };
         SFPattern expectedPattern = {
@@ -315,14 +315,14 @@ void PatternTester::testLookupIndexSorting()
 
         SFPatternBuilderBeginFeatures(&builder, SFFeatureKindSubstitution);
 
-        SFPatternBuilderAddFeature(&builder, SFTagMake('c', 'c', 'm', 'p'), 0);
+        SFPatternBuilderAddFeature(&builder, SFTagMake('c', 'c', 'm', 'p'), 1, 0);
         SFPatternBuilderAddLookup(&builder, 7);
         SFPatternBuilderAddLookup(&builder, 3);
         SFPatternBuilderAddLookup(&builder, 5);
         SFPatternBuilderAddLookup(&builder, 1);
         SFPatternBuilderAddLookup(&builder, 0);
 
-        SFPatternBuilderAddFeature(&builder, SFTagMake('l', 'i', 'g', 'a'), 0);
+        SFPatternBuilderAddFeature(&builder, SFTagMake('l', 'i', 'g', 'a'), 2, 0);
         SFPatternBuilderAddLookup(&builder, 2);
         SFPatternBuilderAddLookup(&builder, 1);
         SFPatternBuilderAddLookup(&builder, 4);
@@ -339,12 +339,13 @@ void PatternTester::testLookupIndexSorting()
             SFTagMake('c', 'c', 'm', 'p'),
             SFTagMake('l', 'i', 'g', 'a'),
         };
-        SFUInt16 expectedSubLookup[] = { 0, 1, 2, 3, 4, 5, 6, 7 };
+        SFLookupInfo expectedSubLookup[] = { {0, 1}, {1, 2}, {2, 2}, {3, 1},
+                                             {4, 2}, {5, 1}, {6, 2}, {7, 2} };
         SFFeatureUnit expectedUnits[] = {
             {
-                .lookupIndexes = { expectedSubLookup, sizeof(expectedSubLookup) / sizeof(SFUInt16) },
-                .coveredRange = { 0, 2 },
-                .featureMask = 0,
+                .lookups = { expectedSubLookup, sizeof(expectedSubLookup) / sizeof(SFUInt16) },
+                .range = { 0, 2 },
+                .mask = 0,
             },
         };
         SFPattern expectedPattern = {
