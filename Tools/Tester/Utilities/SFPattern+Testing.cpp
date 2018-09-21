@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Muhammad Tayyab Akram
+ * Copyright (C) 2016-2018 Muhammad Tayyab Akram
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,13 +24,13 @@ static SFBoolean SFFeatureUnitListEqualToList(SFFeatureUnit *list1, SFFeatureUni
         SFFeatureUnitRef unit1 = &list1[i];
         SFFeatureUnitRef unit2 = &list2[i];
 
-        if (!(unit1->featureMask == unit2->featureMask
-              && unit1->coveredRange.start == unit2->coveredRange.start
-              && unit1->coveredRange.count == unit2->coveredRange.count
-              && unit1->lookupIndexes.count == unit2->lookupIndexes.count
-              && memcmp(unit1->lookupIndexes.items,
-                        unit2->lookupIndexes.items,
-                        unit1->lookupIndexes.count * sizeof(SFUInt16)) == 0)) {
+        if (!(unit1->mask == unit2->mask
+              && unit1->range.start == unit2->range.start
+              && unit1->range.count == unit2->range.count
+              && unit1->lookups.count == unit2->lookups.count
+              && memcmp(unit1->lookups.items,
+                        unit2->lookups.items,
+                        unit1->lookups.count * sizeof(SFLookupInfo)) == 0)) {
                   return SFFalse;
               }
     }
