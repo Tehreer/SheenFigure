@@ -74,6 +74,102 @@ Glyph *Builder::createGlyphs(const Collection &glyphs)
                         [](Glyph glyph) { return glyph; });
 }
 
+static void fillTagChars(UInt8 *chars, UInt32 tag)
+{
+    chars[0] = (tag >> 24) & 0xFF;
+    chars[1] = (tag >> 16) & 0xFF;
+    chars[2] = (tag >> 8) & 0xFF;
+    chars[3] = tag & 0xFF;
+}
+
+LangSysTable &Builder::createLangSys(const vector<UInt16> features, UInt16 req)
+{
+    LangSysTable &langSys = createObject<LangSysTable>();
+    langSys.lookupOrder = 0;
+    langSys.reqFeatureIndex = req;
+    langSys.featureCount = (UInt16)features.size();
+    langSys.featureIndex = createArray<UInt16>(features.size());
+
+    for (size_t i = 0; i < features.size(); i++) {
+        langSys.featureIndex[i] = features[i];
+    }
+
+    return langSys;
+}
+
+ScriptTable &Builder::createScript(reference_wrapper<LangSysTable> defaultLangSys,
+    const map<UInt32, reference_wrapper<LangSysTable>> records)
+{
+    ScriptTable &script = createObject<ScriptTable>();
+    script.defaultLangSys = &defaultLangSys.get();
+    script.langSysCount = (UInt16)records.size();
+    script.langSysRecord = createArray<LangSysRecord>(records.size());
+
+    size_t index = 0;
+
+    for (const auto &pair : records) {
+        LangSysRecord &langSysRecord = script.langSysRecord[index];
+        fillTagChars(langSysRecord.langSysTag, pair.first);
+        langSysRecord.langSys = &pair.second.get();
+
+        index++;
+    }
+
+    return script;
+}
+
+ScriptListTable &Builder::createScriptList(const map<UInt32, reference_wrapper<ScriptTable>> records)
+{
+    ScriptListTable &scriptList = createObject<ScriptListTable>();
+    scriptList.scriptCount = (UInt16)records.size();
+    scriptList.scriptRecord = createArray<ScriptRecord>(records.size());
+
+    size_t index = 0;
+
+    for (const auto &pair : records) {
+        ScriptRecord &scriptRecord = scriptList.scriptRecord[index];
+        fillTagChars(scriptRecord.scriptTag, pair.first);
+        scriptRecord.script = &pair.second.get();
+
+        index++;
+    }
+
+    return scriptList;
+}
+
+FeatureTable &Builder::createFeature(const vector<UInt16> lookups, UInt16 params)
+{
+    FeatureTable &feature = createObject<FeatureTable>();
+    feature.featureParams = params;
+    feature.lookupCount = (UInt16)lookups.size();
+    feature.lookupListIndex = createArray<UInt16>(lookups.size());
+
+    for (size_t j = 0; j < lookups.size(); j++) {
+        feature.lookupListIndex[j] = lookups[j];
+    }
+
+    return feature;
+}
+
+FeatureListTable &Builder::createFeatureList(const map<UInt32, reference_wrapper<FeatureTable>> records)
+{
+    FeatureListTable &featureList = createObject<FeatureListTable>();
+    featureList.featureCount = (UInt16)records.size();
+    featureList.featureRecord = createArray<FeatureRecord>(records.size());
+
+    size_t index = 0;
+
+    for (const auto &pair : records) {
+        FeatureRecord &record = featureList.featureRecord[index];
+        fillTagChars(record.featureTag, pair.first);
+        record.feature = &pair.second.get();
+
+        index++;
+    }
+
+    return featureList;
+}
+
 static void initCoverage(CoverageTable &coverage, Glyph *glyphs, UInt16 count)
 {
     coverage.coverageFormat = 1;

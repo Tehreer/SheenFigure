@@ -58,6 +58,14 @@ public:
     Builder();
     ~Builder();
 
+    LangSysTable &createLangSys(const std::vector<UInt16> features, UInt16 req = 0xFFFF);
+    ScriptTable &createScript(const std::reference_wrapper<LangSysTable> defaultLangSys,
+                              const std::map<UInt32, std::reference_wrapper<LangSysTable>> records);
+    ScriptListTable &createScriptList(const std::map<UInt32, std::reference_wrapper<ScriptTable>> records);
+
+    FeatureTable &createFeature(const std::vector<UInt16> lookups, UInt16 params = 0);
+    FeatureListTable &createFeatureList(const std::map<UInt32, std::reference_wrapper<FeatureTable>> records);
+
     ClassDefTable &createClassDef(Glyph startGlyph, UInt16 glyphCount, const std::vector<UInt16> classValues);
     ClassDefTable &createClassDef(const std::vector<class_range> classRanges);
 
