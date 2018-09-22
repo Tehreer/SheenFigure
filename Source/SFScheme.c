@@ -306,15 +306,34 @@ void SFSchemeSetLanguageTag(SFSchemeRef scheme, SFTag languageTag)
 void SFSchemeSetFeatureValues(SFSchemeRef scheme,
     SFTag *featureTags, SFUInt16 *featureValues, SFUInteger featureCount)
 {
-    const SFUInteger sizeTags = sizeof(SFTag) * featureCount;
-    const SFUInteger sizeValues = sizeof(SFUInt16) * featureCount;
+    SFTag *uniqueTags = realloc(scheme->_featureTags, sizeof(SFTag) * featureCount);
+    SFUInt16 *latestValues = realloc(scheme->_featureValues, sizeof(SFUInt16) * featureCount);
+    SFUInteger uniqueCount = 0;
+    SFUInteger featureIndex;
 
-    scheme->_featureTags = realloc(scheme->_featureTags, sizeTags);
-    scheme->_featureValues = realloc(scheme->_featureValues, sizeValues);
-    scheme->_featureCount = featureCount;
+    /* Copy the tags and values without duplicates. */
+    for (featureIndex = 0; featureIndex < featureCount; featureIndex++) {
+        SFTag currentTag = featureTags[featureIndex];
+        SFUInt16 currentValue = featureValues[featureIndex];
+        SFUInteger uniqueIndex;
 
-    memcpy(scheme->_featureTags, featureTags, sizeTags);
-    memcpy(scheme->_featureValues, featureValues, sizeValues);
+        for (uniqueIndex = 0; uniqueIndex < uniqueCount; uniqueIndex++) {
+            if (uniqueTags[uniqueIndex] == currentTag) {
+                latestValues[uniqueIndex] = currentValue;
+                break;
+            }
+        }
+
+        if (uniqueIndex == uniqueCount) {
+            uniqueTags[uniqueIndex] = currentTag;
+            latestValues[uniqueIndex] = currentValue;
+            uniqueCount += 1;
+        }
+    }
+
+    scheme->_featureTags = uniqueTags;
+    scheme->_featureValues = latestValues;
+    scheme->_featureCount = uniqueCount;
 }
 
 SFPatternRef SFSchemeBuildPattern(SFSchemeRef scheme)
