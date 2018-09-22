@@ -118,7 +118,71 @@ SchemeTester::SchemeTester()
 {
 }
 
-void SchemeTester::test()
+void SchemeTester::testFeatures()
+{
+    /* Test unique features. */
+    {
+        SFSchemeRef scheme = SFSchemeCreate();
+
+        SFTag featureTags[] = {
+            SFTagMake('c', 'c', 'm', 'p'),
+            SFTagMake('l', 'i', 'g', 'a'),
+            SFTagMake('d', 'i', 's', 't'),
+            SFTagMake('k', 'e', 'r', 'n'),
+        };
+        SFUInt16 featureValues[] = {
+            1, 2, 3, 4
+        };
+        SFUInteger featureCount = sizeof(featureValues) / sizeof(SFUInt16);
+
+        SFSchemeSetFeatureValues(scheme, featureTags, featureValues, featureCount);
+
+        assert(memcmp(scheme->_featureTags, featureTags, sizeof(featureTags)) == 0);
+        assert(memcmp(scheme->_featureValues, featureValues, sizeof(featureValues)) == 0);
+        assert(scheme->_featureCount == featureCount);
+
+        SFSchemeRelease(scheme);
+    }
+
+    /* Test duplicated features. */
+    {
+        SFSchemeRef scheme = SFSchemeCreate();
+
+        SFTag featureTags[] = {
+            SFTagMake('c', 'c', 'm', 'p'),
+            SFTagMake('l', 'i', 'g', 'a'),
+            SFTagMake('d', 'i', 's', 't'),
+            SFTagMake('k', 'e', 'r', 'n'),
+            SFTagMake('c', 'c', 'm', 'p'),
+            SFTagMake('k', 'e', 'r', 'n'),
+        };
+        SFUInt16 featureValues[] = {
+            1, 2, 3, 4, 5, 6
+        };
+        SFUInteger featureCount = sizeof(featureValues) / sizeof(SFUInt16);
+
+        SFSchemeSetFeatureValues(scheme, featureTags, featureValues, featureCount);
+
+        SFTag expectedTags[] = {
+            SFTagMake('c', 'c', 'm', 'p'),
+            SFTagMake('l', 'i', 'g', 'a'),
+            SFTagMake('d', 'i', 's', 't'),
+            SFTagMake('k', 'e', 'r', 'n'),
+        };
+        SFUInt16 expectedValues[] = {
+            5, 2, 3, 6
+        };
+        SFUInteger expectedCount = sizeof(expectedValues) / sizeof(SFUInt16);
+
+        assert(memcmp(scheme->_featureTags, expectedTags, sizeof(expectedTags)) == 0);
+        assert(memcmp(scheme->_featureValues, expectedValues, sizeof(expectedValues)) == 0);
+        assert(scheme->_featureCount == expectedCount);
+
+        SFSchemeRelease(scheme);
+    }
+}
+
+void SchemeTester::testBuild()
 {
     const SFFontProtocol protocol = {
         .finalize = NULL,
@@ -188,4 +252,10 @@ void SchemeTester::test()
 
     SFSchemeRelease(scheme);
     SFFontRelease(font);
+}
+
+void SchemeTester::test()
+{
+    testFeatures();
+    testBuild();
 }
