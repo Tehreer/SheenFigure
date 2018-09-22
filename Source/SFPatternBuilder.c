@@ -92,6 +92,11 @@ SF_INTERNAL void SFPatternBuilderSetLanguage(SFPatternBuilderRef builder, SFTag 
     builder->_languageTag = languageTag;
 }
 
+SF_INTERNAL SFBoolean SFPatternBuilderContainsFeature(SFPatternBuilderRef builder, SFTag featureTag)
+{
+    return SFListContainsItem(&builder->_featureTags, &featureTag);
+}
+
 SF_INTERNAL void SFPatternBuilderBeginFeatures(SFPatternBuilderRef builder, SFFeatureKind featureKind)
 {
     /* One kind of features must be ended before beginning new ones. */

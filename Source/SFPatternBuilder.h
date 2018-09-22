@@ -57,6 +57,11 @@ SF_INTERNAL void SFPatternBuilderSetScript(SFPatternBuilderRef builder, SFTag sc
 SF_INTERNAL void SFPatternBuilderSetLanguage(SFPatternBuilderRef builder, SFTag languageTag);
 
 /**
+ * Returns true if the specified feature tag is already added in the builder.
+ */
+SF_INTERNAL SFBoolean SFPatternBuilderContainsFeature(SFPatternBuilderRef builder, SFTag featureTag);
+
+/**
  * Begins building features of specified kind.
  */
 SF_INTERNAL void SFPatternBuilderBeginFeatures(SFPatternBuilderRef builder, SFFeatureKind featureKind);
