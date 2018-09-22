@@ -228,8 +228,12 @@ static void _SFAddCustomFeatures(SFSchemeRef scheme, SFPatternBuilderRef pattern
     for (index = 0; index < scheme->_featureCount; index++) {
         SFTag featureTag = scheme->_featureTags[index];
 
-        /* Check if it is a feature not known to the chosen shaping engine. */
-        if (_SFIsKnownFeature(featureTag, featureInfos, featureCount)) {
+        /*
+         * Make sure that the shaping engine does not recognize this feature and it is not already
+         * added as a substitution feature.
+         */
+        if (!_SFIsKnownFeature(featureTag, featureInfos, featureCount)
+            && !SFPatternBuilderContainsFeature(patternBuilder, featureTag)) {
             SFUInt16 featureValue = scheme->_featureValues[index];
 
             /* Process the feature if it is enabled. */
