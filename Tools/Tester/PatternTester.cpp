@@ -90,26 +90,14 @@ void PatternTester::testDistinctFeatures()
             SFTagMake('c', 'l', 'i', 'g'),
         };
         SFFeatureUnit expectedUnits[] = {
-            {
-                .lookups = { NULL, 0 },
-                .range = { 0, 1 },
-                .mask = 0x01,
-            },
-            {
-                .lookups = { NULL, 0 },
-                .range = { 1, 1 },
-                .mask = 0x02,
-            },
-            {
-                .lookups = { NULL, 0 },
-                .range = { 2, 1 },
-                .mask = 0x04,
-            },
+            { { NULL, 0 }, { 0, 1 }, 0x01 },
+            { { NULL, 0 }, { 1, 1 }, 0x02 },
+            { { NULL, 0 }, { 2, 1 }, 0x04 },
         };
         SFPattern expectedPattern = {
             .font = NULL,
-            .featureTags = { expectedTags, sizeof(expectedTags) / sizeof(SFTag) },
-            .featureUnits = { expectedUnits, sizeof(expectedUnits) / sizeof(SFFeatureUnit), 0 },
+            .featureTags = { expectedTags, 3 },
+            .featureUnits = { expectedUnits, 3, 0 },
             .scriptTag = 0,
             .languageTag = 0,
             .defaultDirection = SFTextDirectionLeftToRight,
@@ -148,26 +136,14 @@ void PatternTester::testDistinctFeatures()
             SFTagMake('m', 'a', 'r', 'k'),
         };
         SFFeatureUnit expectedUnits[] = {
-            {
-                .lookups = { NULL, 0 },
-                .range = { 0, 1 },
-                .mask = 0x01,
-            },
-            {
-                .lookups = { NULL, 0 },
-                .range = { 1, 1 },
-                .mask = 0x02,
-            },
-            {
-                .lookups = { NULL, 0 },
-                .range = { 2, 1 },
-                .mask = 0x04,
-            },
+            { { NULL, 0 }, { 0, 1 }, 0x01 },
+            { { NULL, 0 }, { 1, 1 }, 0x02 },
+            { { NULL, 0 }, { 2, 1 }, 0x04 },
         };
         SFPattern expectedPattern = {
             .font = NULL,
-            .featureTags = { expectedTags, sizeof(expectedTags) / sizeof(SFTag) },
-            .featureUnits = { expectedUnits, 0, sizeof(expectedUnits) / sizeof(SFFeatureUnit) },
+            .featureTags = { expectedTags, 3 },
+            .featureUnits = { expectedUnits, 0, 3 },
             .scriptTag = 0,
             .languageTag = 0,
             .defaultDirection = SFTextDirectionLeftToRight,
@@ -215,20 +191,12 @@ void PatternTester::testSimultaneousFeatures()
         SFTagMake('m', 'a', 'r', 'k'),
     };
     SFFeatureUnit expectedUnits[] = {
-        {
-            .lookups = { NULL, 0 },
-            .range = { 0, 3 },
-            .mask = (0x01 | 0x02 | 0x04),
-        },
-        {
-            .lookups = { NULL, 0 },
-            .range = { 3, 3 },
-            .mask = (0x01 | 0x02 | 0x04),
-        },
+        { { NULL, 0 }, { 0, 3 }, (0x01 | 0x02 | 0x04) },
+        { { NULL, 0 }, { 3, 3 }, (0x01 | 0x02 | 0x04) },
     };
     SFPattern expectedPattern = {
         .font = NULL,
-        .featureTags = { expectedTags, sizeof(expectedTags) / sizeof(SFTag) },
+        .featureTags = { expectedTags, 6 },
         .featureUnits = { expectedUnits, 1, 1 },
         .scriptTag = 0,
         .languageTag = 0,
@@ -282,20 +250,12 @@ void PatternTester::testLookupIndexSorting()
         SFLookupInfo expectedSubLookup[] = { {0, 1}, {1, 1}, {2, 1}, {3, 1}, {4, 1} };
         SFLookupInfo expectedPosLookup[] = { {4, 2}, {5, 2}, {6, 2}, {7, 2}, {8, 2} };
         SFFeatureUnit expectedUnits[] = {
-            {
-                .lookups = { expectedSubLookup, sizeof(expectedSubLookup) / sizeof(SFUInt16) },
-                .range = { 0, 1 },
-                .mask = 0,
-            },
-            {
-                .lookups = { expectedPosLookup, sizeof(expectedPosLookup) / sizeof(SFUInt16) },
-                .range = { 1, 1 },
-                .mask = 0,
-            },
+            { { expectedSubLookup, 5 }, { 0, 1 }, 0x00 },
+            { { expectedPosLookup, 5 }, { 1, 1 }, 0x00 },
         };
         SFPattern expectedPattern = {
             .font = NULL,
-            .featureTags = { expectedTags, sizeof(expectedTags) / sizeof(SFTag) },
+            .featureTags = { expectedTags, 2 },
             .featureUnits = { expectedUnits, 1, 1 },
             .scriptTag = 0,
             .languageTag = 0,
@@ -342,15 +302,11 @@ void PatternTester::testLookupIndexSorting()
         SFLookupInfo expectedSubLookup[] = { {0, 1}, {1, 2}, {2, 2}, {3, 1},
                                              {4, 2}, {5, 1}, {6, 2}, {7, 2} };
         SFFeatureUnit expectedUnits[] = {
-            {
-                .lookups = { expectedSubLookup, sizeof(expectedSubLookup) / sizeof(SFUInt16) },
-                .range = { 0, 2 },
-                .mask = 0,
-            },
+            { { expectedSubLookup, 8 }, { 0, 2 }, 0x00 }
         };
         SFPattern expectedPattern = {
             .font = NULL,
-            .featureTags = { expectedTags, sizeof(expectedTags) / sizeof(SFTag) },
+            .featureTags = { expectedTags, 2 },
             .featureUnits = { expectedUnits, 1, 0 },
             .scriptTag = 0,
             .languageTag = 0,
