@@ -17,10 +17,12 @@
 #include <cassert>
 #include <cstddef>
 #include <cstring>
+#include <vector>
 
 extern "C" {
 #include <Source/SFPattern.h>
 #include <Source/SFScheme.h>
+#include <Source/SFShapingKnowledge.h>
 }
 
 #include "OpenType/Builder.h"
@@ -29,35 +31,97 @@ extern "C" {
 #include "Utilities/SFPattern+Testing.h"
 #include "SchemeTester.h"
 
+using namespace std;
 using namespace SheenFigure::Tester;
 using namespace SheenFigure::Tester::OpenType;
 
-static const int CCMP = 0;
-static const int CLIG = 1;
-static const int CUST = 2;
-static const int DIST = 3;
-static const int KERN = 4;
-static const int LIGA = 5;
-static const int MARK = 6;
-static const int MKMK = 7;
-static const int TPOS = 8;
-static const int TSUB = 9;
+class TestKnowledge {
+public:
+    static SFShapingKnowledgeRef instance() { return &object->knowledge.shape; }
 
-static void loadTable(void *object, SFTag tag, SFUInt8 *buffer, SFUInteger *length)
+private:
+    static TestKnowledge *object;
+
+    struct {
+        vector<SFFeatureInfo> subst;
+        vector<SFFeatureInfo> pos;
+    } features;
+    struct {
+        SFScriptKnowledge script;
+        SFShapingKnowledge shape;
+    } knowledge;
+
+    static SFScriptKnowledgeRef seekScript(const void *, SFTag scriptTag)
+    {
+        if (scriptTag == 'test') {
+            return &object->knowledge.script;
+        }
+
+        return NULL;
+    }
+
+    TestKnowledge() {
+        features.subst = {
+            /* First Group. */
+            { 1, 'srqi', REQUIRED,       INDIVIDUAL,   0x00 },
+            { 1, 'srq1', REQUIRED,       SIMULTANEOUS, 0x00 },
+            { 1, 'son1', ON_BY_DEFAULT,  SIMULTANEOUS, 0x00 },
+            { 1, 'sof1', OFF_BY_DEFAULT, SIMULTANEOUS, 0x00 },
+            /* Second Group. */
+            { 2, 'sim1', REQUIRED,       SIMULTANEOUS, 0x00 },
+            { 2, 'sim2', REQUIRED,       SIMULTANEOUS, 0x00 },
+        };
+        features.pos = {
+            /* Third Group. */
+            { 3, 'pof1', OFF_BY_DEFAULT, SIMULTANEOUS, 0x00 },
+            { 3, 'pon1', ON_BY_DEFAULT,  SIMULTANEOUS, 0x00 },
+            { 3, 'prq1', REQUIRED,       SIMULTANEOUS, 0x00 },
+            { 3, 'prqi', REQUIRED,       INDIVIDUAL,   0x00 },
+        };
+        knowledge.script = {
+            SFTextDirectionLeftToRight,
+            { features.subst.data(), features.subst.size() },
+            { features.pos.data(), features.pos.size() }
+        };
+        knowledge.shape = {
+            &seekScript
+        };
+    }
+};
+TestKnowledge *TestKnowledge::object = new TestKnowledge();
+
+static const UInt16 CUST = 0;
+static const UInt16 PCST = 1;
+static const UInt16 POF1 = 2;
+static const UInt16 PON1 = 3;
+static const UInt16 PRQ1 = 4;
+static const UInt16 PRQI = 5;
+static const UInt16 SCST = 6;
+static const UInt16 SIM1 = 7;
+static const UInt16 SIM2 = 8;
+static const UInt16 SOF1 = 9;
+static const UInt16 SON1 = 10;
+static const UInt16 SRQ1 = 11;
+static const UInt16 SRQI = 12;
+
+static void loadTable(void *, SFTag tag, SFUInt8 *buffer, SFUInteger *length)
 {
     if (tag == 'GSUB') {
         Builder builder;
 
         FeatureListTable &featureList = builder.createFeatureList({
-            {'ccmp', builder.createFeature({ CCMP })},
-            {'clig', builder.createFeature({ CLIG })},
             {'cust', builder.createFeature({ CUST })},
-            {'liga', builder.createFeature({ LIGA })},
-            {'tsub', builder.createFeature({ TSUB })},
+            {'scst', builder.createFeature({ SCST })},
+            {'sim1', builder.createFeature({ SIM1 })},
+            {'sim2', builder.createFeature({ SIM2 })},
+            {'sof1', builder.createFeature({ SOF1 })},
+            {'son1', builder.createFeature({ SON1 })},
+            {'srq1', builder.createFeature({ SRQ1 })},
+            {'srqi', builder.createFeature({ SRQI })},
         });
         ScriptListTable &scriptList = builder.createScriptList({
-            {'latn', builder.createScript(builder.createLangSys({ 0, 1, 2, 3, 4 }), {
-                                              {'ENG ', builder.createLangSys({ 3 })}
+            {'test', builder.createScript(builder.createLangSys({ 0, 1, 2, 3, 4, 5, 6, 7 }), {
+                                              {'LNG ', builder.createLangSys({ 7 })}
                                           })}
         });
 
@@ -73,7 +137,6 @@ static void loadTable(void *object, SFTag tag, SFUInt8 *buffer, SFUInteger *leng
         if (length) {
             *length = (SFUInteger)writer.size();
         }
-
         if (buffer) {
             memcpy(buffer, writer.data(), (size_t)writer.size());
         }
@@ -82,15 +145,15 @@ static void loadTable(void *object, SFTag tag, SFUInt8 *buffer, SFUInteger *leng
 
         FeatureListTable &featureList = builder.createFeatureList({
             {'cust', builder.createFeature({ CUST })},
-            {'dist', builder.createFeature({ DIST })},
-            {'kern', builder.createFeature({ KERN })},
-            {'mark', builder.createFeature({ MARK })},
-            {'mkmk', builder.createFeature({ MKMK })},
-            {'tpos', builder.createFeature({ TPOS })},
+            {'pcst', builder.createFeature({ PCST })},
+            {'pof1', builder.createFeature({ POF1 })},
+            {'pon1', builder.createFeature({ PON1 })},
+            {'prq1', builder.createFeature({ PRQ1 })},
+            {'prqi', builder.createFeature({ PRQI })},
         });
         ScriptListTable &scriptList = builder.createScriptList({
-            {'latn', builder.createScript(builder.createLangSys({ 0, 1, 2, 3, 4, 5 }), {
-                                              {'ENG ', builder.createLangSys({ 2 })}
+            {'test', builder.createScript(builder.createLangSys({ 0, 1, 2, 3, 4, 5 }), {
+                                              {'LNG ', builder.createLangSys({ 2 })}
                                           })}
         });
 
@@ -106,19 +169,18 @@ static void loadTable(void *object, SFTag tag, SFUInt8 *buffer, SFUInteger *leng
         if (length) {
             *length = (SFUInteger)writer.size();
         }
-
         if (buffer) {
             memcpy(buffer, writer.data(), (size_t)writer.size());
         }
     }
 }
 
-static SFGlyphID getGlyphIDForCodepoint(void *object, SFCodepoint codepoint)
+static SFGlyphID getGlyphIDForCodepoint(void *, SFCodepoint)
 {
     return 0;
 }
 
-static SFAdvance getAdvanceForGlyph(void *object, SFFontLayout fontLayout, SFGlyphID glyphID)
+static SFAdvance getAdvanceForGlyph(void *, SFFontLayout, SFGlyphID)
 {
     return 0;
 }
@@ -190,37 +252,36 @@ void SchemeTester::testBuild()
     };
     SFFontRef font = SFFontCreateWithProtocol(&protocol, NULL);
 
-    SFSchemeRef scheme = SFSchemeCreate();
-    SFSchemeSetFont(scheme, font);
-    SFSchemeSetScriptTag(scheme, 'latn');
+    SFScheme scheme;
+    SFSchemeInitialize(&scheme, TestKnowledge::instance());
+    SFSchemeSetFont(&scheme, font);
+    SFSchemeSetScriptTag(&scheme, 'test');
 
     /* Test with default language. */
     {
-        SFSchemeSetLanguageTag(scheme, 'dflt');
-        SFPatternRef pattern = SFSchemeBuildPattern(scheme);
+        SFSchemeSetLanguageTag(&scheme, 'dflt');
+        SFPatternRef pattern = SFSchemeBuildPattern(&scheme);
 
         SFTag expectedTags[] = {
-            'ccmp', 'liga', 'clig',
-            'dist', 'kern', 'mark', 'mkmk',
+            'srqi', 'srq1', 'son1', 'sim1', 'sim2',
+            'pon1', 'prq1', 'prqi'
         };
         SFLookupInfo expectedLookups[] = {
-            {CCMP, 1}, {LIGA, 1}, {CLIG, 1},
-            {DIST, 1}, {KERN, 1}, {MARK, 1}, {MKMK, 1},
+            {SRQI, 1}, {SON1, 1}, {SRQ1, 1}, {SIM1, 1}, {SIM2, 1},
+            {PON1, 1}, {PRQ1, 1}, {PRQI, 1}
         };
         SFFeatureUnit expectedUnits[] = {
             { { &expectedLookups[0], 1 }, { 0, 1 }, 0x00 },
-            { { &expectedLookups[1], 1 }, { 1, 1 }, 0x00 },
-            { { &expectedLookups[2], 1 }, { 2, 1 }, 0x00 },
-            { { &expectedLookups[3], 1 }, { 3, 1 }, 0x00 },
-            { { &expectedLookups[4], 1 }, { 4, 1 }, 0x00 },
-            { { &expectedLookups[5], 1 }, { 5, 1 }, 0x00 },
-            { { &expectedLookups[6], 1 }, { 6, 1 }, 0x00 },
+            { { &expectedLookups[1], 2 }, { 1, 2 }, 0x00 },
+            { { &expectedLookups[3], 2 }, { 3, 2 }, 0x00 },
+            { { &expectedLookups[5], 2 }, { 5, 2 }, 0x00 },
+            { { &expectedLookups[7], 1 }, { 7, 1 }, 0x00 },
         };
         SFPattern expectedPattern = {
             .font = font,
-            .featureTags = { expectedTags, 7 },
-            .featureUnits = { expectedUnits, 3, 4 },
-            .scriptTag = 'latn',
+            .featureTags = { expectedTags, 8 },
+            .featureUnits = { expectedUnits, 3, 2 },
+            .scriptTag = 'test',
             .languageTag = 'dflt',
             .defaultDirection = SFTextDirectionLeftToRight,
         };
@@ -231,21 +292,20 @@ void SchemeTester::testBuild()
 
     /* Test with a non-default language. */
     {
-        SFSchemeSetLanguageTag(scheme, 'ENG ');
-        SFPatternRef pattern = SFSchemeBuildPattern(scheme);
+        SFSchemeSetLanguageTag(&scheme, 'LNG ');
+        SFPatternRef pattern = SFSchemeBuildPattern(&scheme);
 
-        SFTag expectedTags[] = { 'liga', 'kern' };
-        SFLookupInfo expectedLookups[] = { {LIGA, 1}, {KERN, 1} };
+        SFTag expectedTags[] = { 'srqi' };
+        SFLookupInfo expectedLookups[] = { {SRQI, 1} };
         SFFeatureUnit expectedUnits[] = {
             { { &expectedLookups[0], 1 }, { 0, 1 }, 0x00 },
-            { { &expectedLookups[1], 1 }, { 1, 1 }, 0x00 },
         };
         SFPattern expectedPattern = {
             .font = font,
-            .featureTags = { expectedTags, 2 },
-            .featureUnits = { expectedUnits, 1, 1 },
-            .scriptTag = 'latn',
-            .languageTag = 'ENG ',
+            .featureTags = { expectedTags, 1 },
+            .featureUnits = { expectedUnits, 1, 0 },
+            .scriptTag = 'test',
+            .languageTag = 'LNG ',
             .defaultDirection = SFTextDirectionLeftToRight,
         };
         assert(SFPatternEqualToPattern(pattern, &expectedPattern));
@@ -253,50 +313,50 @@ void SchemeTester::testBuild()
         SFPatternRelease(pattern);
     }
 
-    /* Test by trying to turn off a required feature. */
+    /* Test by trying to turn off required features. */
     /* Test by disabling a feature marked as on by default. */
-    /* Test by enabling a feature marked as off by default. (MISSING) */
+    /* Test by enabling a feature marked as off by default. */
     /* Test by setting custom value of a required feature. */
     /* Test by setting custom value of a feature marked as on by default. */
-    /* Test by enabling simultaneous features across multiple groups. (MISSING) */
+    /* Test by setting custom value of a feature marked as off by default. */
+    /* Test by enabling simultaneous features across multiple groups. */
     /* Test by enabling custom features of GSUB and GPOS. */
     /* Test by enabling a custom feature available in both GSUB and GPOS. */
     {
         SFTag featureTags[] = {
-            'mark', 'liga', 'mkmk', 'clig', 'tsub', 'tpos', 'cust'
+            'srqi', 'prq1', 'son1', 'sof1', 'prqi', 'pon1', 'pof1', 'scst', 'pcst', 'cust'
         };
         SFUInt16 featureValues[] = {
-            0, 0, 2, 3, 4, 5, 6
+            0, 0, 0, 1, 2, 3, 4, 5, 6, 7
         };
 
-        SFSchemeSetLanguageTag(scheme, 'dflt');
-        SFSchemeSetFeatureValues(scheme, featureTags, featureValues, sizeof(featureValues) / sizeof(SFUInt16));
+        SFSchemeSetLanguageTag(&scheme, 'dflt');
+        SFSchemeSetFeatureValues(&scheme, featureTags, featureValues, sizeof(featureValues) / sizeof(SFUInt16));
 
-        SFPatternRef pattern = SFSchemeBuildPattern(scheme);
+        SFPatternRef pattern = SFSchemeBuildPattern(&scheme);
 
         SFTag expectedTags[] = {
-            'ccmp', 'clig', 'tsub', 'cust',
-            'dist', 'kern', 'mark', 'mkmk', 'tpos'
+            'srqi', 'srq1', 'sof1', 'sim1', 'sim2', 'scst', 'cust',
+            'pof1', 'pon1', 'prq1', 'prqi', 'pcst'
         };
         SFLookupInfo expectedLookups[] = {
-            {CCMP, 1}, {CLIG, 3}, {CUST, 6}, {TSUB, 4},
-            {DIST, 1}, {KERN, 1}, {MARK, 1}, {MKMK, 2}, {TPOS, 5},
+            {SRQI, 1}, {SOF1, 1}, {SRQ1, 1}, {SIM1, 1}, {SIM2, 1}, {CUST, 7}, {SCST, 5},
+            {POF1, 4}, {PON1, 3}, {PRQ1, 1}, {PRQI, 2}, {PCST, 6}
         };
         SFFeatureUnit expectedUnits[] = {
-            { { &expectedLookups[0], 1 }, { 0, 1 }, 0x00 },
-            { { &expectedLookups[1], 1 }, { 1, 1 }, 0x00 },
-            { { &expectedLookups[2], 2 }, { 2, 2 }, 0x00 },
-            { { &expectedLookups[4], 1 }, { 4, 1 }, 0x00 },
-            { { &expectedLookups[5], 1 }, { 5, 1 }, 0x00 },
-            { { &expectedLookups[6], 1 }, { 6, 1 }, 0x00 },
-            { { &expectedLookups[7], 1 }, { 7, 1 }, 0x00 },
-            { { &expectedLookups[8], 1 }, { 8, 1 }, 0x00 },
+            { { &expectedLookups[0],  1 }, { 0,  1 }, 0x00 },
+            { { &expectedLookups[1],  2 }, { 1,  2 }, 0x00 },
+            { { &expectedLookups[3],  2 }, { 3,  2 }, 0x00 },
+            { { &expectedLookups[5],  2 }, { 5,  2 }, 0x00 },
+            { { &expectedLookups[7],  3 }, { 7,  3 }, 0x00 },
+            { { &expectedLookups[10], 1 }, { 10, 1 }, 0x00 },
+            { { &expectedLookups[11], 1 }, { 11, 1 }, 0x00 },
         };
         SFPattern expectedPattern = {
             .font = font,
-            .featureTags = { expectedTags, 9 },
-            .featureUnits = { expectedUnits, 3, 5 },
-            .scriptTag = 'latn',
+            .featureTags = { expectedTags, 12 },
+            .featureUnits = { expectedUnits, 4, 3 },
+            .scriptTag = 'test',
             .languageTag = 'dflt',
             .defaultDirection = SFTextDirectionLeftToRight,
         };
@@ -305,7 +365,7 @@ void SchemeTester::testBuild()
         SFPatternRelease(pattern);
     }
 
-    SFSchemeRelease(scheme);
+    SFSchemeFinalize(&scheme);
     SFFontRelease(font);
 }
 
