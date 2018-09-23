@@ -15,7 +15,6 @@
  */
 
 #include <SFConfig.h>
-
 #include <stddef.h>
 #include <stdlib.h>
 
@@ -32,6 +31,23 @@ static int _SFLookupIndexComparison(const void *item1, const void *item2)
     SFLookupInfo *ref2 = (SFLookupInfo *)item2;
 
     return (int)(ref1->index - ref2->index);
+}
+
+static SFLookupInfo *_SFFindLookupInfo(SFPatternBuilderRef builder, SFUInt16 lookupIndex)
+{
+    SFUInteger lookupCount = builder->_lookupInfos.count;
+    SFLookupInfo *lookupItems = builder->_lookupInfos.items;
+    SFUInteger index;
+
+    for (index = 0; index < lookupCount; index++) {
+        SFLookupInfo *currentItem = &lookupItems[index];
+
+        if (currentItem->index == lookupIndex) {
+            return currentItem;
+        }
+    }
+
+    return NULL;
 }
 
 SF_INTERNAL void SFPatternBuilderInitialize(SFPatternBuilderRef builder, SFPatternRef pattern)
@@ -127,16 +143,21 @@ SF_INTERNAL void SFPatternBuilderAddFeature(SFPatternBuilderRef builder,
 
 SF_INTERNAL void SFPatternBuilderAddLookup(SFPatternBuilderRef builder, SFUInt16 lookupIndex)
 {
-    SFLookupInfo lookupInfo;
+    SFLookupInfo *oldItem;
 
     /* A feature MUST be available before adding lookups. */
     SFAssert((builder->_featureTags.count - builder->_featureIndex) > 0);
 
-    lookupInfo.index = lookupIndex;
-    lookupInfo.value = builder->_featureValue;
+    oldItem = _SFFindLookupInfo(builder, lookupIndex);
 
     /* Add only unique lookup indexes. */
-    if (!SFListContainsItem(&builder->_lookupInfos, &lookupInfo)) {
+    if (oldItem) {
+        oldItem->value = builder->_featureValue;
+    } else {
+        SFLookupInfo lookupInfo;
+        lookupInfo.index = lookupIndex;
+        lookupInfo.value = builder->_featureValue;
+
         SFListAdd(&builder->_lookupInfos, lookupInfo);
     }
 }
