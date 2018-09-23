@@ -278,9 +278,9 @@ static void _SFAddHeaderTable(SFSchemeRef scheme, SFPatternBuilderRef patternBui
     }
 }
 
-SFSchemeRef SFSchemeCreate(void)
+SF_INTERNAL void SFSchemeInitialize(SFSchemeRef scheme, SFShapingKnowledgeRef shapingKnowledge)
 {
-    SFSchemeRef scheme = malloc(sizeof(SFScheme));
+    scheme->_knowledge = shapingKnowledge;
     scheme->_font = NULL;
     scheme->_scriptTag = 0;
     scheme->_languageTag = 0;
@@ -288,6 +288,18 @@ SFSchemeRef SFSchemeCreate(void)
     scheme->_featureValues = NULL;
     scheme->_featureCount = 0;
     scheme->_retainCount = 1;
+}
+
+SF_INTERNAL void SFSchemeFinalize(SFSchemeRef scheme)
+{
+    free(scheme->_featureTags);
+    free(scheme->_featureValues);
+}
+
+SFSchemeRef SFSchemeCreate(void)
+{
+    SFSchemeRef scheme = malloc(sizeof(SFScheme));
+    SFSchemeInitialize(scheme, &SFUnifiedKnowledgeInstance);
 
     return scheme;
 }
@@ -345,7 +357,7 @@ SFPatternRef SFSchemeBuildPattern(SFSchemeRef scheme)
     SFFontRef font = scheme->_font;
 
     if (font) {
-        SFScriptKnowledgeRef knowledge = SFShapingKnowledgeSeekScript(&SFUnifiedKnowledgeInstance, scheme->_scriptTag);
+        SFScriptKnowledgeRef knowledge = SFShapingKnowledgeSeekScript(scheme->_knowledge, scheme->_scriptTag);
         SFPatternRef pattern = SFPatternCreate();
         SFPatternBuilder builder;
 
@@ -387,8 +399,7 @@ SFSchemeRef SFSchemeRetain(SFSchemeRef scheme)
 void SFSchemeRelease(SFSchemeRef scheme)
 {
     if (scheme && --scheme->_retainCount == 0) {
-        free(scheme->_featureTags);
-        free(scheme->_featureValues);
+        SFSchemeFinalize(scheme);
         free(scheme);
     }
 }

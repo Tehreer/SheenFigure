@@ -24,14 +24,18 @@
 #include "SFShapingKnowledge.h"
 
 typedef struct _SFScheme {
-    SFFontRef _font;                /**< Font, whose scheme is being built. */
-    SFTag _scriptTag;               /**< Tag of the script. */
-    SFTag _languageTag;             /**< Tag of the language. */
-    SFTag *_featureTags;            /**< Tags of features to override. */
-    SFUInt16 *_featureValues;       /**< Values of features to override. */
-    SFUInteger _featureCount;       /**< The number of features to override. */
+    SFShapingKnowledgeRef _knowledge;   /**< Shaping knowledge to use for known features. */
+    SFFontRef _font;                    /**< Font, whose scheme is being built. */
+    SFTag _scriptTag;                   /**< Tag of the script. */
+    SFTag _languageTag;                 /**< Tag of the language. */
+    SFTag *_featureTags;                /**< Tags of features to override. */
+    SFUInt16 *_featureValues;           /**< Values of features to override. */
+    SFUInteger _featureCount;           /**< The number of features to override. */
 
     SFInteger _retainCount;
 } SFScheme;
+
+SF_INTERNAL void SFSchemeInitialize(SFSchemeRef scheme, SFShapingKnowledgeRef shapingEngine);
+SF_INTERNAL void SFSchemeFinalize(SFSchemeRef scheme);
 
 #endif
