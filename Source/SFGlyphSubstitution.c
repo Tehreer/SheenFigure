@@ -206,19 +206,24 @@ static SFBoolean _SFApplyAlternateSetTable(SFTextProcessorRef textProcessor, SFD
 {
     SFAlbumRef album = textProcessor->_album;
     SFLocatorRef locator = &textProcessor->_locator;
+    SFUInt16 altIndex = textProcessor->_lookupValue - 1;
     SFUInt16 glyphCount;
-    SFGlyphID altGlyph;
-    SFGlyphTraits altTraits;
 
     glyphCount = SFAlternateSet_GlyphCount(alternateSet);
-    altGlyph = SFAlternateSet_Alternate(alternateSet, 0);
-    altTraits = _SFGetGlyphTraits(textProcessor, altGlyph);
 
-    /* Substitute the glyph and set its traits. */
-    SFAlbumSetGlyph(album, locator->index, altGlyph);
-    SFAlbumReplaceBasicTraits(album, locator->index, altTraits);
+    /* Make sure that alternate index is valid. */
+    if (altIndex < glyphCount) {
+        SFGlyphID altGlyph = SFAlternateSet_Alternate(alternateSet, altIndex);
+        SFGlyphTraits altTraits = _SFGetGlyphTraits(textProcessor, altGlyph);
 
-    return SFTrue;
+        /* Substitute the glyph and set its traits. */
+        SFAlbumSetGlyph(album, locator->index, altGlyph);
+        SFAlbumReplaceBasicTraits(album, locator->index, altTraits);
+
+        return SFTrue;
+    }
+
+    return SFFalse;
 }
 
 static SFBoolean _SFApplyLigatureSubst(SFTextProcessorRef textProcessor, SFData ligatureSubst)
