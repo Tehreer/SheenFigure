@@ -28,6 +28,7 @@ extern "C" {
 }
 
 #include "OpenType/Base.h"
+#include "OpenType/Builder.h"
 #include "OpenType/Common.h"
 #include "OpenType/GSUB.h"
 #include "OpenType/Writer.h"
@@ -64,6 +65,8 @@ static SFGlyphID getGlyphID(void *object, SFCodepoint codepoint)
 static void writeTable(Writer &writer,
     LookupSubtable &subtable, LookupSubtable **referrals, SFUInteger count, LookupFlag lookupFlag)
 {
+    Builder builder;
+
     UInt16 lookupCount = (UInt16)(count + 1);
 
     /* Create the lookup tables. */
@@ -88,48 +91,12 @@ static void writeTable(Writer &writer,
     lookupList.lookupCount = lookupCount;
     lookupList.lookupTables = lookups;
 
-    UInt16 lookupIndex[1] = { 0 };
-
-    /* Create the feature table. */
-    FeatureTable testFeature;
-    testFeature.featureParams = 0;
-    testFeature.lookupCount = 1;
-    testFeature.lookupListIndex = lookupIndex;
-
-    /* Create the feature record. */
-    FeatureRecord featureRecord;
-    memcpy(&featureRecord.featureTag, "test", 4);
-    featureRecord.feature = &testFeature;
-
-    /* Create the feature list table. */
-    FeatureListTable featureList;
-    featureList.featureCount = 1;
-    featureList.featureRecord = &featureRecord;
-
-    UInt16 dfltFeatureIndex[] = { 0 };
-
-    /* Create the language system table. */
-    LangSysTable dfltLangSys;
-    dfltLangSys.lookupOrder = 0;
-    dfltLangSys.reqFeatureIndex = 0xFFFF;
-    dfltLangSys.featureCount = 1;
-    dfltLangSys.featureIndex = dfltFeatureIndex;
-
-    /* Create the script table. */
-    ScriptTable dfltScript;
-    dfltScript.defaultLangSys = &dfltLangSys;
-    dfltScript.langSysCount = 0;
-    dfltScript.langSysRecord = NULL;
-
-    /* Create the script record. */
-    ScriptRecord scripts[1];
-    memcpy(&scripts[0].scriptTag, "dflt", 4);
-    scripts[0].script = &dfltScript;
-
-    /* Create the script list table */
-    ScriptListTable scriptList;
-    scriptList.scriptCount = 1;
-    scriptList.scriptRecord = scripts;
+    FeatureListTable &featureList = builder.createFeatureList({
+        {'test', builder.createFeature({ 0 })},
+    });
+    ScriptListTable &scriptList = builder.createScriptList({
+        {'dflt', builder.createScript(builder.createLangSys({ 0 }))}
+    });
 
     /* Create the container table. */
     GSUB gsub;
