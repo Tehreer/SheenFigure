@@ -57,7 +57,7 @@ static void loadTable(void *object, SFTag tag, SFUInt8 *buffer, SFUInteger *leng
     }
 }
 
-static SFGlyphID getGlyphID(void *object, SFCodepoint codepoint)
+static SFGlyphID getGlyphID(void *, SFCodepoint codepoint)
 {
     return (SFGlyphID)codepoint;
 }
@@ -67,30 +67,13 @@ static void writeTable(Writer &writer,
 {
     Builder builder;
 
-    UInt16 lookupCount = (UInt16)(count + 1);
-
-    /* Create the lookup tables. */
-    LookupTable *lookups = new LookupTable[lookupCount];
-    lookups[0].lookupType = subtable.lookupType();
-    lookups[0].lookupFlag = lookupFlag;
-    lookups[0].subTableCount = 1;
-    lookups[0].subtables = &subtable;
-    lookups[0].markFilteringSet = 0;
-
-    for (SFUInteger i = 1; i < lookupCount; i++) {
-        LookupSubtable *other = referrals[i - 1];
-        lookups[i].lookupType = other->lookupType();
-        lookups[i].lookupFlag = lookupFlag;
-        lookups[i].subTableCount = 1;
-        lookups[i].subtables = other;
-        lookups[i].markFilteringSet = 0;
+    vector<reference_wrapper<LookupTable>> lookups;
+    lookups.push_back(builder.createLookup({&subtable, 1}, lookupFlag));
+    for (size_t i = 0; i < count; i++) {
+        lookups.push_back(builder.createLookup({referrals[i], 1}, lookupFlag));
     }
 
-    /* Create the lookup list table. */
-    LookupListTable lookupList;
-    lookupList.lookupCount = lookupCount;
-    lookupList.lookupTables = lookups;
-
+    LookupListTable &lookupList = builder.createLookupList(lookups);
     FeatureListTable &featureList = builder.createFeatureList({
         {'test', builder.createFeature({ 0 })},
     });
@@ -106,8 +89,6 @@ static void writeTable(Writer &writer,
     gsub.lookupList = &lookupList;
 
     writer.write(&gsub);
-
-    delete [] lookups;
 }
 
 static void processSubtable(SFAlbumRef album,
