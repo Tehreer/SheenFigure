@@ -170,6 +170,36 @@ FeatureListTable &Builder::createFeatureList(const map<UInt32, reference_wrapper
     return featureList;
 }
 
+LookupTable &Builder::createLookup(const tuple<LookupSubtable *, UInt16> subtables,
+                                   LookupFlag lookupFlag, UInt16 markFilteringSet)
+{
+    LookupTable &lookup = createObject<LookupTable>();
+    lookup.lookupType = (LookupType)0;
+    lookup.lookupFlag = lookupFlag;
+    lookup.subTableCount = get<1>(subtables);
+    lookup.subtables = get<0>(subtables);
+    lookup.markFilteringSet = markFilteringSet;
+
+    if (lookup.subTableCount > 0) {
+        lookup.lookupType = lookup.subtables->lookupType();
+    }
+
+    return lookup;
+}
+
+LookupListTable &Builder::createLookupList(const vector<reference_wrapper<LookupTable>> lookups)
+{
+    LookupListTable &lookupList = createObject<LookupListTable>();
+    lookupList.lookupCount = (UInt16)lookups.size();
+    lookupList.lookupTables = createArray<LookupTable>(lookups.size());
+
+    for (size_t i = 0; i < lookups.size(); i++) {
+        lookupList.lookupTables[i] = lookups[i].get();
+    }
+
+    return lookupList;
+}
+
 static void initCoverage(CoverageTable &coverage, Glyph *glyphs, UInt16 count)
 {
     coverage.coverageFormat = 1;

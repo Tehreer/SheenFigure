@@ -66,6 +66,10 @@ public:
     FeatureTable &createFeature(const std::vector<UInt16> lookups, UInt16 params = 0);
     FeatureListTable &createFeatureList(const std::map<UInt32, std::reference_wrapper<FeatureTable>> records);
 
+    LookupTable &createLookup(const std::tuple<LookupSubtable *, UInt16> subtables,
+                              LookupFlag lookupFlag, UInt16 markFilteringSet = 0);
+    LookupListTable &createLookupList(const std::vector<std::reference_wrapper<LookupTable>> lookups);
+
     ClassDefTable &createClassDef(Glyph startGlyph, UInt16 glyphCount, const std::vector<UInt16> classValues);
     ClassDefTable &createClassDef(const std::vector<class_range> classRanges);
 
