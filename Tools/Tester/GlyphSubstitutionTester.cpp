@@ -104,6 +104,12 @@ void TextProcessorTester::testAlternateSubstitution()
     testSubstitution(builder.createAlternateSubst({ {1, { 1 }} }), { 1 }, { 1 });
     /* Test with a different substitution. */
     testSubstitution(builder.createAlternateSubst({ {1, { 100 }} }), { 1 }, { 100 });
+    /* Test with an alternate at the start. */
+    testSubstitution(builder.createAlternateSubst({ {1, { 100, 200, 300 }} }), { 1 }, { 100 }, { }, 1);
+    /* Test with an alternate in the middle. */
+    testSubstitution(builder.createAlternateSubst({ {1, { 100, 200, 300 }} }), { 1 }, { 200 }, { }, 2);
+    /* Test with an alternate at the end. */
+    testSubstitution(builder.createAlternateSubst({ {1, { 100, 200, 300 }} }), { 1 }, { 300 }, { }, 3);
 }
 
 void TextProcessorTester::testLigatureSubstitution()
