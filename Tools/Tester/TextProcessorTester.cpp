@@ -94,7 +94,7 @@ static void writeTable(Writer &writer,
 static void processSubtable(SFAlbumRef album,
     const SFCodepoint *input, SFUInteger length, SFBoolean positioning,
     LookupSubtable &subtable, LookupSubtable **referrals, SFUInteger count,
-    SFBoolean isRTL = SFFalse)
+    SFBoolean isRTL, SFUInt16 featureValue)
 {
     /* Write the table for the given lookup. */
     Writer writer;
@@ -126,7 +126,7 @@ static void processSubtable(SFAlbumRef album,
     SFPatternBuilderSetScript(&builder, SFTagMake('d', 'f', 'l', 't'), direction);
     SFPatternBuilderSetLanguage(&builder, SFTagMake('d', 'f', 'l', 't'));
     SFPatternBuilderBeginFeatures(&builder, positioning ? SFFeatureKindPositioning : SFFeatureKindSubstitution);
-    SFPatternBuilderAddFeature(&builder, SFTagMake('t', 'e', 's', 't'), 1, 0);
+    SFPatternBuilderAddFeature(&builder, SFTagMake('t', 'e', 's', 't'), featureValue, 0);
     SFPatternBuilderAddLookup(&builder, 0);
     SFPatternBuilderMakeFeatureUnit(&builder);
     SFPatternBuilderEndFeatures(&builder);
@@ -163,12 +163,13 @@ TextProcessorTester::TextProcessorTester()
 void TextProcessorTester::testSubstitution(LookupSubtable &subtable,
     const vector<uint32_t> codepoints,
     const vector<Glyph> glyphs,
-    const vector<LookupSubtable *> referrals)
+    const vector<LookupSubtable *> referrals,
+    uint16_t featureValue)
 {
     SFAlbum album;
     SFAlbumInitialize(&album);
     processSubtable(&album, &codepoints[0], codepoints.size(), SFFalse, subtable,
-                    (LookupSubtable **)referrals.data(), referrals.size());
+                    (LookupSubtable **)referrals.data(), referrals.size(), SFFalse, featureValue);
 
     assert(SFAlbumGetGlyphCount(&album) == glyphs.size());
     assert(memcmp(SFAlbumGetGlyphIDsPtr(&album), glyphs.data(), sizeof(SFGlyphID) * glyphs.size()) == 0);
@@ -186,7 +187,7 @@ void TextProcessorTester::testPositioning(LookupSubtable &subtable,
     SFAlbum album;
     SFAlbumInitialize(&album);
     processSubtable(&album, &codepoints[0], codepoints.size(), SFTrue, subtable,
-                    (LookupSubtable **)referrals.data(), referrals.size(), isRTL);
+                    (LookupSubtable **)referrals.data(), referrals.size(), isRTL, 1);
 
     assert(SFAlbumGetGlyphCount(&album) == offsets.size());
     assert(memcmp(SFAlbumGetGlyphOffsetsPtr(&album), offsets.data(), sizeof(SFPoint) * offsets.size()) == 0);

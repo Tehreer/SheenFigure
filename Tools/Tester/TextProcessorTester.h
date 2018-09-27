@@ -54,7 +54,8 @@ private:
     void testSubstitution(OpenType::LookupSubtable &subtable,
                           const std::vector<uint32_t> codepoints,
                           const std::vector<OpenType::Glyph> glyphs,
-                          const std::vector<OpenType::LookupSubtable *> referrals = { });
+                          const std::vector<OpenType::LookupSubtable *> referrals = { },
+                          uint16_t featureValue = 1);
     void testPositioning(OpenType::LookupSubtable &subtable,
                          const std::vector<uint32_t> codepoints,
                          const std::vector<std::pair<int32_t, int32_t>> offsets,
