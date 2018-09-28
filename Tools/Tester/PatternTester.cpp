@@ -22,10 +22,12 @@ extern "C" {
 #include <Source/SFPatternBuilder.h>
 }
 
+#include "Utilities/General.h"
 #include "Utilities/SFPattern+Testing.h"
 #include "PatternTester.h"
 
 using namespace SheenFigure::Tester;
+using namespace SheenFigure::Tester::Utilities;
 
 PatternTester::PatternTester()
 {
@@ -40,8 +42,8 @@ void PatternTester::testNoFeatures()
 
     SFFont font;
     SFPatternBuilderSetFont(&builder, &font);
-    SFPatternBuilderSetScript(&builder, SFTagMake('a', 'r', 'a', 'b'), SFTextDirectionRightToLeft);
-    SFPatternBuilderSetLanguage(&builder, SFTagMake('U', 'R', 'D', 'U'));
+    SFPatternBuilderSetScript(&builder, tag("arab"), SFTextDirectionRightToLeft);
+    SFPatternBuilderSetLanguage(&builder, tag("URDU"));
     SFPatternBuilderBuild(&builder);
 
     SFPatternBuilderFinalize(&builder);
@@ -50,8 +52,8 @@ void PatternTester::testNoFeatures()
         .font = &font,
         .featureTags = { NULL, 0 },
         .featureUnits = { NULL, 0, 0 },
-        .scriptTag = SFTagMake('a', 'r', 'a', 'b'),
-        .languageTag = SFTagMake('U', 'R', 'D', 'U'),
+        .scriptTag = tag("arab"),
+        .languageTag = tag("URDU"),
         .defaultDirection = SFTextDirectionRightToLeft,
     };
     assert(SFPatternEqualToPattern(pattern, &expected));
@@ -70,13 +72,13 @@ void PatternTester::testDistinctFeatures()
 
         SFPatternBuilderBeginFeatures(&builder, SFFeatureKindSubstitution);
 
-        SFPatternBuilderAddFeature(&builder, SFTagMake('c', 'c', 'm', 'p'), 1, 0x01);
+        SFPatternBuilderAddFeature(&builder, tag("ccmp"), 1, 0x01);
         SFPatternBuilderMakeFeatureUnit(&builder);
 
-        SFPatternBuilderAddFeature(&builder, SFTagMake('l', 'i', 'g', 'a'), 2, 0x02);
+        SFPatternBuilderAddFeature(&builder, tag("liga"), 2, 0x02);
         SFPatternBuilderMakeFeatureUnit(&builder);
 
-        SFPatternBuilderAddFeature(&builder, SFTagMake('c', 'l', 'i', 'g'), 3, 0x04);
+        SFPatternBuilderAddFeature(&builder, tag("clig"), 3, 0x04);
         SFPatternBuilderMakeFeatureUnit(&builder);
 
         SFPatternBuilderEndFeatures(&builder);
@@ -85,9 +87,9 @@ void PatternTester::testDistinctFeatures()
         SFPatternBuilderFinalize(&builder);
 
         SFTag expectedTags[] = {
-            SFTagMake('c', 'c', 'm', 'p'),
-            SFTagMake('l', 'i', 'g', 'a'),
-            SFTagMake('c', 'l', 'i', 'g'),
+            tag("ccmp"),
+            tag("liga"),
+            tag("clig"),
         };
         SFFeatureUnit expectedUnits[] = {
             { { NULL, 0 }, { 0, 1 }, 0x01 },
@@ -116,13 +118,13 @@ void PatternTester::testDistinctFeatures()
 
         SFPatternBuilderBeginFeatures(&builder, SFFeatureKindPositioning);
 
-        SFPatternBuilderAddFeature(&builder, SFTagMake('d', 'i', 's', 't'), 1, 0x01);
+        SFPatternBuilderAddFeature(&builder, tag("dist"), 1, 0x01);
         SFPatternBuilderMakeFeatureUnit(&builder);
 
-        SFPatternBuilderAddFeature(&builder, SFTagMake('k', 'e', 'r', 'n'), 2, 0x02);
+        SFPatternBuilderAddFeature(&builder, tag("kern"), 2, 0x02);
         SFPatternBuilderMakeFeatureUnit(&builder);
 
-        SFPatternBuilderAddFeature(&builder, SFTagMake('m', 'a', 'r', 'k'), 3, 0x04);
+        SFPatternBuilderAddFeature(&builder, tag("mark"), 3, 0x04);
         SFPatternBuilderMakeFeatureUnit(&builder);
 
         SFPatternBuilderEndFeatures(&builder);
@@ -131,9 +133,9 @@ void PatternTester::testDistinctFeatures()
         SFPatternBuilderFinalize(&builder);
 
         SFTag expectedTags[] = {
-            SFTagMake('d', 'i', 's', 't'),
-            SFTagMake('k', 'e', 'r', 'n'),
-            SFTagMake('m', 'a', 'r', 'k'),
+            tag("dist"),
+            tag("kern"),
+            tag("mark"),
         };
         SFFeatureUnit expectedUnits[] = {
             { { NULL, 0 }, { 0, 1 }, 0x01 },
@@ -163,18 +165,18 @@ void PatternTester::testSimultaneousFeatures()
 
     SFPatternBuilderBeginFeatures(&builder, SFFeatureKindSubstitution);
 
-    SFPatternBuilderAddFeature(&builder, SFTagMake('c', 'c', 'm', 'p'), 1, 0x01);
-    SFPatternBuilderAddFeature(&builder, SFTagMake('l', 'i', 'g', 'a'), 2, 0x02);
-    SFPatternBuilderAddFeature(&builder, SFTagMake('c', 'l', 'i', 'g'), 3, 0x04);
+    SFPatternBuilderAddFeature(&builder, tag("ccmp"), 1, 0x01);
+    SFPatternBuilderAddFeature(&builder, tag("liga"), 2, 0x02);
+    SFPatternBuilderAddFeature(&builder, tag("clig"), 3, 0x04);
 
     SFPatternBuilderMakeFeatureUnit(&builder);
     SFPatternBuilderEndFeatures(&builder);
 
     SFPatternBuilderBeginFeatures(&builder, SFFeatureKindPositioning);
 
-    SFPatternBuilderAddFeature(&builder, SFTagMake('d', 'i', 's', 't'), 1, 0x01);
-    SFPatternBuilderAddFeature(&builder, SFTagMake('k', 'e', 'r', 'n'), 2, 0x02);
-    SFPatternBuilderAddFeature(&builder, SFTagMake('m', 'a', 'r', 'k'), 3, 0x04);
+    SFPatternBuilderAddFeature(&builder, tag("dist"), 1, 0x01);
+    SFPatternBuilderAddFeature(&builder, tag("kern"), 2, 0x02);
+    SFPatternBuilderAddFeature(&builder, tag("mark"), 3, 0x04);
 
     SFPatternBuilderMakeFeatureUnit(&builder);
     SFPatternBuilderEndFeatures(&builder);
@@ -183,12 +185,8 @@ void PatternTester::testSimultaneousFeatures()
     SFPatternBuilderFinalize(&builder);
 
     SFTag expectedTags[] = {
-        SFTagMake('c', 'c', 'm', 'p'),
-        SFTagMake('l', 'i', 'g', 'a'),
-        SFTagMake('c', 'l', 'i', 'g'),
-        SFTagMake('d', 'i', 's', 't'),
-        SFTagMake('k', 'e', 'r', 'n'),
-        SFTagMake('m', 'a', 'r', 'k'),
+        tag("ccmp"), tag("liga"), tag("clig"),
+        tag("dist"), tag("kern"), tag("mark"),
     };
     SFFeatureUnit expectedUnits[] = {
         { { NULL, 0 }, { 0, 3 }, (0x01 | 0x02 | 0x04) },
@@ -218,7 +216,7 @@ void PatternTester::testLookupIndexSorting()
 
         SFPatternBuilderBeginFeatures(&builder, SFFeatureKindSubstitution);
 
-        SFPatternBuilderAddFeature(&builder, SFTagMake('c', 'c', 'm', 'p'), 1, 0);
+        SFPatternBuilderAddFeature(&builder, tag("ccmp"), 1, 0);
         SFPatternBuilderAddLookup(&builder, 4);
         SFPatternBuilderAddLookup(&builder, 0);
         SFPatternBuilderAddLookup(&builder, 2);
@@ -230,7 +228,7 @@ void PatternTester::testLookupIndexSorting()
 
         SFPatternBuilderBeginFeatures(&builder, SFFeatureKindPositioning);
 
-        SFPatternBuilderAddFeature(&builder, SFTagMake('d', 'i', 's', 't'), 2, 0);
+        SFPatternBuilderAddFeature(&builder, tag("dist"), 2, 0);
         SFPatternBuilderAddLookup(&builder, 7);
         SFPatternBuilderAddLookup(&builder, 5);
         SFPatternBuilderAddLookup(&builder, 6);
@@ -244,8 +242,8 @@ void PatternTester::testLookupIndexSorting()
         SFPatternBuilderFinalize(&builder);
 
         SFTag expectedTags[] = {
-            SFTagMake('c', 'c', 'm', 'p'),
-            SFTagMake('d', 'i', 's', 't'),
+            tag("ccmp"),
+            tag("dist"),
         };
         SFLookupInfo expectedSubLookup[] = { {0, 1}, {1, 1}, {2, 1}, {3, 1}, {4, 1} };
         SFLookupInfo expectedPosLookup[] = { {4, 2}, {5, 2}, {6, 2}, {7, 2}, {8, 2} };
@@ -275,14 +273,14 @@ void PatternTester::testLookupIndexSorting()
 
         SFPatternBuilderBeginFeatures(&builder, SFFeatureKindSubstitution);
 
-        SFPatternBuilderAddFeature(&builder, SFTagMake('c', 'c', 'm', 'p'), 1, 0);
+        SFPatternBuilderAddFeature(&builder, tag("ccmp"), 1, 0);
         SFPatternBuilderAddLookup(&builder, 7);
         SFPatternBuilderAddLookup(&builder, 3);
         SFPatternBuilderAddLookup(&builder, 5);
         SFPatternBuilderAddLookup(&builder, 1);
         SFPatternBuilderAddLookup(&builder, 0);
 
-        SFPatternBuilderAddFeature(&builder, SFTagMake('l', 'i', 'g', 'a'), 2, 0);
+        SFPatternBuilderAddFeature(&builder, tag("liga"), 2, 0);
         SFPatternBuilderAddLookup(&builder, 2);
         SFPatternBuilderAddLookup(&builder, 1);
         SFPatternBuilderAddLookup(&builder, 4);
@@ -296,8 +294,8 @@ void PatternTester::testLookupIndexSorting()
         SFPatternBuilderFinalize(&builder);
 
         SFTag expectedTags[] = {
-            SFTagMake('c', 'c', 'm', 'p'),
-            SFTagMake('l', 'i', 'g', 'a'),
+            tag("ccmp"),
+            tag("liga"),
         };
         SFLookupInfo expectedSubLookup[] = { {0, 1}, {1, 2}, {2, 2}, {3, 1},
                                              {4, 2}, {5, 1}, {6, 2}, {7, 2} };
