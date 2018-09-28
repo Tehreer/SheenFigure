@@ -18,6 +18,8 @@
 #include <cstddef>
 #include <cstdint>
 #include <cstring>
+#include <functional>
+#include <vector>
 
 extern "C" {
 #include <Source/SFAlbum.h>
@@ -32,11 +34,13 @@ extern "C" {
 #include "OpenType/Common.h"
 #include "OpenType/GSUB.h"
 #include "OpenType/Writer.h"
+#include "Utilities/General.h"
 #include "TextProcessorTester.h"
 
 using namespace std;
 using namespace SheenFigure::Tester;
 using namespace SheenFigure::Tester::OpenType;
+using namespace SheenFigure::Tester::Utilities;
 
 struct FontObject {
     Writer &writer;
@@ -68,17 +72,17 @@ static void writeTable(Writer &writer,
     Builder builder;
 
     vector<reference_wrapper<LookupTable>> lookups;
-    lookups.push_back(builder.createLookup({&subtable, 1}, lookupFlag));
+    lookups.push_back(ref(builder.createLookup({&subtable, 1}, lookupFlag)));
     for (size_t i = 0; i < count; i++) {
-        lookups.push_back(builder.createLookup({referrals[i], 1}, lookupFlag));
+        lookups.push_back(ref(builder.createLookup({referrals[i], 1}, lookupFlag)));
     }
 
     LookupListTable &lookupList = builder.createLookupList(lookups);
     FeatureListTable &featureList = builder.createFeatureList({
-        {'test', builder.createFeature({ 0 })},
+        {tag("test"), builder.createFeature({ 0 })},
     });
     ScriptListTable &scriptList = builder.createScriptList({
-        {'dflt', builder.createScript(builder.createLangSys({ 0 }))}
+        {tag("dflt"), builder.createScript(builder.createLangSys({ 0 }))}
     });
 
     /* Create the container table. */
@@ -103,7 +107,7 @@ static void processSubtable(SFAlbumRef album,
     /* Create a font object containing writer and tag. */
     FontObject object = {
         .writer = writer,
-        .tag = (positioning ? SFTagMake('G', 'P', 'O', 'S') : SFTagMake('G', 'S', 'U', 'B')),
+        .tag = (positioning ? tag("GPOS") : tag("GSUB")),
     };
 
     /* Create the font with protocol. */
@@ -123,10 +127,10 @@ static void processSubtable(SFAlbumRef album,
     SFPatternBuilder builder;
     SFPatternBuilderInitialize(&builder, pattern);
     SFPatternBuilderSetFont(&builder, font);
-    SFPatternBuilderSetScript(&builder, SFTagMake('d', 'f', 'l', 't'), direction);
-    SFPatternBuilderSetLanguage(&builder, SFTagMake('d', 'f', 'l', 't'));
+    SFPatternBuilderSetScript(&builder, tag("dflt"), direction);
+    SFPatternBuilderSetLanguage(&builder, tag("dflt"));
     SFPatternBuilderBeginFeatures(&builder, positioning ? SFFeatureKindPositioning : SFFeatureKindSubstitution);
-    SFPatternBuilderAddFeature(&builder, SFTagMake('t', 'e', 's', 't'), featureValue, 0);
+    SFPatternBuilderAddFeature(&builder, tag("test"), featureValue, 0);
     SFPatternBuilderAddLookup(&builder, 0);
     SFPatternBuilderMakeFeatureUnit(&builder);
     SFPatternBuilderEndFeatures(&builder);
