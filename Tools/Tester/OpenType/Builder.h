@@ -58,6 +58,9 @@ public:
     Builder();
     ~Builder();
 
+    GSUB &createGSUB(ScriptListTable *scriptList, FeatureListTable *featureList, LookupListTable *lookupList);
+    GPOS &createGPOS(ScriptListTable *scriptList, FeatureListTable *featureList, LookupListTable *lookupList);
+
     LangSysTable &createLangSys(const std::vector<UInt16> features, UInt16 req = 0xFFFF);
     ScriptTable &createScript(const std::reference_wrapper<LangSysTable> defaultLangSys,
                               const std::map<UInt32, std::reference_wrapper<LangSysTable>> records = {});

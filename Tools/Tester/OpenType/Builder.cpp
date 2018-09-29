@@ -82,6 +82,28 @@ static void fillTagChars(UInt8 *chars, UInt32 tag)
     chars[3] = tag & 0xFF;
 }
 
+GSUB &Builder::createGSUB(ScriptListTable *scriptList, FeatureListTable *featureList, LookupListTable *lookupList)
+{
+    GSUB &gsub = createObject<GSUB>();
+    gsub.version = 0x00010000;
+    gsub.scriptList = scriptList;
+    gsub.featureList = featureList;
+    gsub.lookupList = lookupList;
+
+    return gsub;
+}
+
+GPOS &Builder::createGPOS(ScriptListTable *scriptList, FeatureListTable *featureList, LookupListTable *lookupList)
+{
+    GPOS &gpos = createObject<GPOS>();
+    gpos.version = 0x00010000;
+    gpos.scriptList = scriptList;
+    gpos.featureList = featureList;
+    gpos.lookupList = lookupList;
+
+    return gpos;
+}
+
 LangSysTable &Builder::createLangSys(const vector<UInt16> features, UInt16 req)
 {
     LangSysTable &langSys = createObject<LangSysTable>();
