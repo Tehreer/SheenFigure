@@ -52,7 +52,7 @@ T &Builder::createObject(Args&&... args)
 template<class T>
 T *Builder::createArray(size_t size)
 {
-    return &createObject<vector<T>>(size)[0];
+    return (size == 0 ? nullptr : &createObject<vector<T>>(size)[0]);
 }
 
 template<class InputIt, class Operation>
@@ -64,7 +64,7 @@ Glyph *Builder::createGlyphs(InputIt begin, InputIt end, Operation operation)
         glyphs.push_back(operation(*begin++));
     }
 
-    return &glyphs[0];
+    return (glyphs.size() == 0 ? nullptr : glyphs.data());
 }
 
 template<class Collection>
