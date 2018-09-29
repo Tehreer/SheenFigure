@@ -167,16 +167,6 @@ static void loadTable(void *, SFTag tableTag, SFUInt8 *buffer, SFUInteger *lengt
     }
 }
 
-static SFGlyphID getGlyphIDForCodepoint(void *, SFCodepoint)
-{
-    return 0;
-}
-
-static SFAdvance getAdvanceForGlyph(void *, SFFontLayout, SFGlyphID)
-{
-    return 0;
-}
-
 SchemeTester::SchemeTester()
 {
 }
@@ -237,10 +227,10 @@ void SchemeTester::testFeatures()
 void SchemeTester::testBuild()
 {
     const SFFontProtocol protocol = {
-        .finalize = NULL,
-        .loadTable = &loadTable,
-        .getGlyphIDForCodepoint = &getGlyphIDForCodepoint,
-        .getAdvanceForGlyph = &getAdvanceForGlyph,
+        NULL,
+        &loadTable,
+        [](void *, SFCodepoint) -> SFGlyphID { return 0; },
+        [](void *, SFFontLayout, SFGlyphID) -> SFInt32 { return 0; }
     };
     SFFontRef font = SFFontCreateWithProtocol(&protocol, NULL);
 
@@ -270,12 +260,13 @@ void SchemeTester::testBuild()
             { { &expectedLookups[7], 1 }, { 7, 1 }, 0x00 },
         };
         SFPattern expectedPattern = {
-            .font = font,
-            .featureTags = { expectedTags, 8 },
-            .featureUnits = { expectedUnits, 3, 2 },
-            .scriptTag = tag("test"),
-            .languageTag = tag("dflt"),
-            .defaultDirection = SFTextDirectionLeftToRight,
+            font,
+            { expectedTags, 8 },
+            { expectedUnits, 3, 2 },
+            tag("test"),
+            tag("dflt"),
+            SFTextDirectionLeftToRight,
+            1
         };
         assert(SFPatternEqualToPattern(pattern, &expectedPattern));
 
@@ -293,12 +284,13 @@ void SchemeTester::testBuild()
             { { &expectedLookups[0], 1 }, { 0, 1 }, 0x00 },
         };
         SFPattern expectedPattern = {
-            .font = font,
-            .featureTags = { expectedTags, 1 },
-            .featureUnits = { expectedUnits, 1, 0 },
-            .scriptTag = tag("test"),
-            .languageTag = tag("LNG "),
-            .defaultDirection = SFTextDirectionLeftToRight,
+            font,
+            { expectedTags, 1 },
+            { expectedUnits, 1, 0 },
+            tag("test"),
+            tag("LNG "),
+            SFTextDirectionLeftToRight,
+            1
         };
         assert(SFPatternEqualToPattern(pattern, &expectedPattern));
 
@@ -346,12 +338,13 @@ void SchemeTester::testBuild()
             { { &expectedLookups[11], 1 }, { 11, 1 }, 0x00 },
         };
         SFPattern expectedPattern = {
-            .font = font,
-            .featureTags = { expectedTags, 12 },
-            .featureUnits = { expectedUnits, 4, 3 },
-            .scriptTag = tag("test"),
-            .languageTag = tag("dflt"),
-            .defaultDirection = SFTextDirectionLeftToRight,
+            font,
+            { expectedTags, 12 },
+            { expectedUnits, 4, 3 },
+            tag("test"),
+            tag("dflt"),
+            SFTextDirectionLeftToRight,
+            1
         };
         assert(SFPatternEqualToPattern(pattern, &expectedPattern));
 
