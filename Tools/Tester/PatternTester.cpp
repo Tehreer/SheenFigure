@@ -49,12 +49,13 @@ void PatternTester::testNoFeatures()
     SFPatternBuilderFinalize(&builder);
 
     SFPattern expected = {
-        .font = &font,
-        .featureTags = { NULL, 0 },
-        .featureUnits = { NULL, 0, 0 },
-        .scriptTag = tag("arab"),
-        .languageTag = tag("URDU"),
-        .defaultDirection = SFTextDirectionRightToLeft,
+        &font,
+        { NULL, 0 },
+        { NULL, 0, 0 },
+        tag("arab"),
+        tag("URDU"),
+        SFTextDirectionRightToLeft,
+        1
     };
     assert(SFPatternEqualToPattern(pattern, &expected));
 
@@ -97,12 +98,13 @@ void PatternTester::testDistinctFeatures()
             { { NULL, 0 }, { 2, 1 }, 0x04 },
         };
         SFPattern expectedPattern = {
-            .font = NULL,
-            .featureTags = { expectedTags, 3 },
-            .featureUnits = { expectedUnits, 3, 0 },
-            .scriptTag = 0,
-            .languageTag = 0,
-            .defaultDirection = SFTextDirectionLeftToRight,
+            NULL,
+            { expectedTags, 3 },
+            { expectedUnits, 3, 0 },
+            0,
+            0,
+            SFTextDirectionLeftToRight,
+            1
         };
         assert(SFPatternEqualToPattern(pattern, &expectedPattern));
 
@@ -143,12 +145,13 @@ void PatternTester::testDistinctFeatures()
             { { NULL, 0 }, { 2, 1 }, 0x04 },
         };
         SFPattern expectedPattern = {
-            .font = NULL,
-            .featureTags = { expectedTags, 3 },
-            .featureUnits = { expectedUnits, 0, 3 },
-            .scriptTag = 0,
-            .languageTag = 0,
-            .defaultDirection = SFTextDirectionLeftToRight,
+            NULL,
+            { expectedTags, 3 },
+            { expectedUnits, 0, 3 },
+            0,
+            0,
+            SFTextDirectionLeftToRight,
+            1
         };
         assert(SFPatternEqualToPattern(pattern, &expectedPattern));
 
@@ -193,12 +196,13 @@ void PatternTester::testSimultaneousFeatures()
         { { NULL, 0 }, { 3, 3 }, (0x01 | 0x02 | 0x04) },
     };
     SFPattern expectedPattern = {
-        .font = NULL,
-        .featureTags = { expectedTags, 6 },
-        .featureUnits = { expectedUnits, 1, 1 },
-        .scriptTag = 0,
-        .languageTag = 0,
-        .defaultDirection = SFTextDirectionLeftToRight,
+        NULL,
+        { expectedTags, 6 },
+        { expectedUnits, 1, 1 },
+        0,
+        0,
+        SFTextDirectionLeftToRight,
+        1
     };
     assert(SFPatternEqualToPattern(pattern, &expectedPattern));
 
@@ -245,19 +249,22 @@ void PatternTester::testLookupIndexSorting()
             tag("ccmp"),
             tag("dist"),
         };
-        SFLookupInfo expectedSubLookup[] = { {0, 1}, {1, 1}, {2, 1}, {3, 1}, {4, 1} };
-        SFLookupInfo expectedPosLookup[] = { {4, 2}, {5, 2}, {6, 2}, {7, 2}, {8, 2} };
+        SFLookupInfo expectedLookups[] = {
+            {0, 1}, {1, 1}, {2, 1}, {3, 1}, {4, 1},
+            {4, 2}, {5, 2}, {6, 2}, {7, 2}, {8, 2},
+        };
         SFFeatureUnit expectedUnits[] = {
-            { { expectedSubLookup, 5 }, { 0, 1 }, 0x00 },
-            { { expectedPosLookup, 5 }, { 1, 1 }, 0x00 },
+            { { &expectedLookups[0], 5 }, { 0, 1 }, 0x00 },
+            { { &expectedLookups[5], 5 }, { 1, 1 }, 0x00 },
         };
         SFPattern expectedPattern = {
-            .font = NULL,
-            .featureTags = { expectedTags, 2 },
-            .featureUnits = { expectedUnits, 1, 1 },
-            .scriptTag = 0,
-            .languageTag = 0,
-            .defaultDirection = SFTextDirectionLeftToRight,
+            NULL,
+            { expectedTags, 2 },
+            { expectedUnits, 1, 1 },
+            0,
+            0,
+            SFTextDirectionLeftToRight,
+            1
         };
         assert(SFPatternEqualToPattern(pattern, &expectedPattern));
 
@@ -297,21 +304,22 @@ void PatternTester::testLookupIndexSorting()
             tag("ccmp"),
             tag("liga"),
         };
-        SFLookupInfo expectedSubLookup[] = { {0, 1}, {1, 2}, {2, 2}, {3, 1},
-                                             {4, 2}, {5, 1}, {6, 2}, {7, 2} };
+        SFLookupInfo expectedLookups[] = { {0, 1}, {1, 2}, {2, 2}, {3, 1},
+                                           {4, 2}, {5, 1}, {6, 2}, {7, 2} };
         SFFeatureUnit expectedUnits[] = {
-            { { expectedSubLookup, 8 }, { 0, 2 }, 0x00 }
+            { { expectedLookups, 8 }, { 0, 2 }, 0x00 }
         };
         SFPattern expectedPattern = {
-            .font = NULL,
-            .featureTags = { expectedTags, 2 },
-            .featureUnits = { expectedUnits, 1, 0 },
-            .scriptTag = 0,
-            .languageTag = 0,
-            .defaultDirection = SFTextDirectionLeftToRight,
+            NULL,
+            { expectedTags, 2 },
+            { expectedUnits, 1, 0 },
+            0,
+            0,
+            SFTextDirectionLeftToRight,
+            1
         };
         assert(SFPatternEqualToPattern(pattern, &expectedPattern));
-        
+
         SFPatternRelease(pattern);
     }
 }
