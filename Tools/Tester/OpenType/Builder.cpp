@@ -170,14 +170,14 @@ FeatureListTable &Builder::createFeatureList(const map<UInt32, reference_wrapper
     return featureList;
 }
 
-LookupTable &Builder::createLookup(const tuple<LookupSubtable *, UInt16> subtables,
+LookupTable &Builder::createLookup(const pair<LookupSubtable *, UInt16> subtables,
                                    LookupFlag lookupFlag, UInt16 markFilteringSet)
 {
     LookupTable &lookup = createObject<LookupTable>();
     lookup.lookupType = (LookupType)0;
     lookup.lookupFlag = lookupFlag;
-    lookup.subTableCount = get<1>(subtables);
-    lookup.subtables = get<0>(subtables);
+    lookup.subTableCount = subtables.second;
+    lookup.subtables = subtables.first;
     lookup.markFilteringSet = markFilteringSet;
 
     if (lookup.subTableCount > 0) {
