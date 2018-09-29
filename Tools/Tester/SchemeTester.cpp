@@ -126,13 +126,8 @@ static void loadTable(void *, SFTag tableTag, SFUInt8 *buffer, SFUInteger *lengt
                                                    {tag("LNG "), builder.createLangSys({ 7 })}
                                                })}
         });
+        GSUB &gsub = builder.createGSUB(&scriptList, &featureList, NULL);
 
-        GSUB gsub;
-        gsub.version = 0x00010000;
-        gsub.scriptList = &scriptList;
-        gsub.featureList = &featureList;
-        gsub.lookupList = NULL;
-        
         Writer writer;
         writer.write(&gsub);
 
@@ -155,15 +150,10 @@ static void loadTable(void *, SFTag tableTag, SFUInt8 *buffer, SFUInteger *lengt
         });
         ScriptListTable &scriptList = builder.createScriptList({
             {tag("test"), builder.createScript(builder.createLangSys({ 0, 1, 2, 3, 4, 5 }), {
-                                              {tag("LNG "), builder.createLangSys({ 2 })}
-                                          })}
+                                                   {tag("LNG "), builder.createLangSys({ 2 })}
+                                               })}
         });
-
-        GPOS gpos;
-        gpos.version = 0x00010000;
-        gpos.scriptList = &scriptList;
-        gpos.featureList = &featureList;
-        gpos.lookupList = NULL;
+        GPOS &gpos = builder.createGPOS(&scriptList, &featureList, NULL);
 
         Writer writer;
         writer.write(&gpos);
