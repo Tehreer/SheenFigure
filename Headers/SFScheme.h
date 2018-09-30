@@ -58,6 +58,23 @@ void SFSchemeSetScriptTag(SFSchemeRef scheme, SFTag scriptTag);
  */
 void SFSchemeSetLanguageTag(SFSchemeRef scheme, SFTag languageTag);
 
+/**
+ * Sets the OpenType feature values in a scheme.
+ *
+ * If the value of a feature is set to zero, it would be disabled provided that it is not a required
+ * feature of the script specific shaping engine. If the value of a feature is greater than zero, it
+ * would be enabled. In case of an alternate feature, this value would be used to pick the alternate
+ * glyph at this position.
+ *
+ * @param scheme
+ *      The scheme for which to set the feature values.
+ * @param featureTags
+ *      An array of feature tags whose values should be set.
+ * @param featureValues
+ *      An array of OpenType feature values.
+ * @param featureCount
+ *      The number of elements in feature tags and feature values array.
+ */
 void SFSchemeSetFeatureValues(SFSchemeRef scheme,
     SFTag *featureTags, SFUInt16 *featureValues, SFUInteger featureCount);
 
