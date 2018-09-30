@@ -100,16 +100,16 @@ static void processSubtable(SFAlbumRef album,
 
     /* Create a font object containing writer and tag. */
     FontObject object = {
-        .writer = writer,
-        .tag = (positioning ? tag("GPOS") : tag("GSUB")),
+        writer,
+        (positioning ? tag("GPOS") : tag("GSUB"))
     };
 
     /* Create the font with protocol. */
     SFFontProtocol protocol = {
-        .finalize = NULL,
-        .loadTable = &loadTable,
-        .getGlyphIDForCodepoint = &getGlyphID,
-        .getAdvanceForGlyph = NULL,
+        NULL,
+        &loadTable,
+        &getGlyphID,
+        NULL,
     };
     SFFontRef font = SFFontCreateWithProtocol(&protocol, &object);
     SFTextDirection direction = isRTL ? SFTextDirectionRightToLeft : SFTextDirectionLeftToRight;
@@ -148,7 +148,7 @@ static void processSubtable(SFAlbumRef album,
     SFTextProcessorSubstituteGlyphs(&processor);
     SFTextProcessorPositionGlyphs(&processor);
     SFTextProcessorWrapUp(&processor);
-    
+
     /* Release the allocated objects. */
     SFPatternRelease(pattern);
     SFFontRelease(font);
