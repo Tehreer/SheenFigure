@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Muhammad Tayyab Akram
+ * Copyright (C) 2016-2018 Muhammad Tayyab Akram
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,9 +22,11 @@ extern "C" {
 #include <Source/SFFont.h>
 }
 
+#include "Utilities/General.h"
 #include "FontTester.h"
 
 using namespace SheenFigure::Tester;
+using namespace SheenFigure::Tester::Utilities;
 
 static void *OBJECT_FONT = &OBJECT_FONT;
 static int FINALIZE_COUNT = 0;
@@ -39,12 +41,12 @@ static void finalize(void *object)
     FINALIZE_COUNT++;
 }
 
-static void loadTable(void *object, SFTag tag, SFUInt8 *buffer, SFUInteger *length)
+static void loadTable(void *object, SFTag tableTag, SFUInt8 *buffer, SFUInteger *length)
 {
     assert(object == OBJECT_FONT);
 
-    switch (tag) {
-    case SFTagMake('G', 'D', 'E', 'F'):
+    switch (tableTag) {
+    case tag("GDEF"):
         if (buffer) {
             memcpy(buffer, TABLE_GDEF, 4);
         }
@@ -53,7 +55,7 @@ static void loadTable(void *object, SFTag tag, SFUInt8 *buffer, SFUInteger *leng
         }
         break;
 
-    case SFTagMake('G', 'S', 'U', 'B'):
+    case tag("GSUB"):
         if (buffer) {
             memcpy(buffer, TABLE_GSUB, 4);
         }
@@ -62,7 +64,7 @@ static void loadTable(void *object, SFTag tag, SFUInt8 *buffer, SFUInteger *leng
         }
         break;
 
-    case SFTagMake('G', 'P', 'O', 'S'):
+    case tag("GPOS"):
         if (buffer) {
             memcpy(buffer, TABLE_GPOS, 4);
         }
@@ -105,10 +107,10 @@ static SFAdvance getAdvanceForGlyph(void *object, SFFontLayout fontLayout, SFGly
 static SFFontRef SFFontCreateWithCompleteFunctionality(void)
 {
     const SFFontProtocol protocol = {
-        .finalize = &finalize,
-        .loadTable = &loadTable,
-        .getGlyphIDForCodepoint = &getGlyphIDForCodepoint,
-        .getAdvanceForGlyph = &getAdvanceForGlyph,
+        &finalize,
+        &loadTable,
+        &getGlyphIDForCodepoint,
+        &getAdvanceForGlyph,
     };
     return SFFontCreateWithProtocol(&protocol, (void *)OBJECT_FONT);
 }
@@ -116,10 +118,10 @@ static SFFontRef SFFontCreateWithCompleteFunctionality(void)
 static SFFontRef SFFontCreateWithRequiredFunctionality(void)
 {
     const SFFontProtocol protocol = {
-        .finalize = NULL,
-        .loadTable = &loadTable,
-        .getGlyphIDForCodepoint = &getGlyphIDForCodepoint,
-        .getAdvanceForGlyph = NULL,
+        NULL,
+        &loadTable,
+        &getGlyphIDForCodepoint,
+        NULL,
     };
     return SFFontCreateWithProtocol(&protocol, (void *)OBJECT_FONT);
 }
@@ -139,10 +141,10 @@ void FontTester::testBadProtocol()
     /* Test with missing required functions. */
     {
         const SFFontProtocol protocol = {
-            .finalize = &finalize,
-            .loadTable = NULL,
-            .getGlyphIDForCodepoint = NULL,
-            .getAdvanceForGlyph = &getAdvanceForGlyph,
+            &finalize,
+            NULL,
+            NULL,
+            &getAdvanceForGlyph,
         };
         SFFontRef font = SFFontCreateWithProtocol(&protocol, NULL);
 
