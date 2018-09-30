@@ -72,9 +72,9 @@ static void writeTable(Writer &writer,
     Builder builder;
 
     vector<reference_wrapper<LookupTable>> lookups;
-    lookups.push_back(ref(builder.createLookup({&subtable, 1}, lookupFlag)));
+    lookups.push_back(builder.createLookup({&subtable, 1}, lookupFlag));
     for (size_t i = 0; i < count; i++) {
-        lookups.push_back(ref(builder.createLookup({referrals[i], 1}, lookupFlag)));
+        lookups.push_back(builder.createLookup({referrals[i], 1}, lookupFlag));
     }
 
     LookupListTable &lookupList = builder.createLookupList(lookups);
@@ -84,13 +84,7 @@ static void writeTable(Writer &writer,
     ScriptListTable &scriptList = builder.createScriptList({
         {tag("dflt"), builder.createScript(builder.createLangSys({ 0 }))}
     });
-
-    /* Create the container table. */
-    GSUB gsub;
-    gsub.version = 0x00010000;
-    gsub.scriptList = &scriptList;
-    gsub.featureList = &featureList;
-    gsub.lookupList = &lookupList;
+    GSUB &gsub = builder.createGSUB(&scriptList, &featureList, &lookupList);
 
     writer.write(&gsub);
 }
