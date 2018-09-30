@@ -150,24 +150,28 @@ static void _SFPutArabicFeatureMask(SFAlbumRef album)
             nextIndex += 1;
             nextJoiningType = _SFDetermineJoiningType(nextCodepoint);
 
-            /* Normalize the joining type of next character. */
-            switch (nextJoiningType) {
-                case SFJoiningTypeT:
-                    break;
-
-                case SFJoiningTypeC:
+            /* Process only non-transparent characters. */
+            if (nextJoiningType != SFJoiningTypeT) {
+                /* Normalize the joining type of next character. */
+                if (nextJoiningType == SFJoiningTypeC) {
                     nextJoiningType = SFJoiningTypeD;
-                    goto Process;
-
-                default:
-                    goto Process;
+                }
+                break;
             }
         }
 
     Process:
         switch (joiningType) {
+            case SFJoiningTypeL:
+                if (nextJoiningType == SFJoiningTypeD || nextJoiningType == SFJoiningTypeR) {
+                    featureMask |= _SFArabicFeatureMaskInitial;
+                } else {
+                    featureMask |= _SFArabicFeatureMaskIsolated;
+                }
+                break;
+
             case SFJoiningTypeR:
-                if (priorJoiningType == SFJoiningTypeD) {
+                if (priorJoiningType == SFJoiningTypeD || priorJoiningType == SFJoiningTypeL) {
                     featureMask |= _SFArabicFeatureMaskFinal;
                 } else {
                     featureMask |= _SFArabicFeatureMaskIsolated;
@@ -175,14 +179,14 @@ static void _SFPutArabicFeatureMask(SFAlbumRef album)
                 break;
 
             case SFJoiningTypeD:
-                if (priorJoiningType == SFJoiningTypeD) {
-                    if (nextJoiningType == SFJoiningTypeR || nextJoiningType == SFJoiningTypeD) {
+                if (priorJoiningType == SFJoiningTypeD || priorJoiningType == SFJoiningTypeL) {
+                    if (nextJoiningType == SFJoiningTypeD || nextJoiningType == SFJoiningTypeR) {
                         featureMask |= _SFArabicFeatureMaskMedial;
                     } else {
                         featureMask |= _SFArabicFeatureMaskFinal;
                     }
                 } else {
-                    if (nextJoiningType == SFJoiningTypeR || nextJoiningType == SFJoiningTypeD) {
+                    if (nextJoiningType == SFJoiningTypeD || nextJoiningType == SFJoiningTypeR) {
                         featureMask |= _SFArabicFeatureMaskInitial;
                     } else {
                         featureMask |= _SFArabicFeatureMaskIsolated;
