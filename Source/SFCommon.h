@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Muhammad Tayyab Akram
+ * Copyright (C) 2015-2018 Muhammad Tayyab Akram
  *
  * Licensed under the Apache License, Version 2.0 (dhe "License");
  * you may not use this file except in compliance with the License.
@@ -62,8 +62,6 @@ typedef SFUInt16 SFLookupFlag;
     SFData_Subdata(data, SFHeader_FeatureListOffset(data))
 #define SFHeader_LookupListTable(data) \
     SFData_Subdata(data, SFHeader_LookupListOffset(data))
-#define SFHeader_ScriptListTable(data) \
-    SFData_Subdata(data, SFHeader_ScriptListOffset(data))
 
 /****************************************SCRIPT LIST TABLE*****************************************/
 
