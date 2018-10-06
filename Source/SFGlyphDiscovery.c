@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Muhammad Tayyab Akram
+ * Copyright (C) 2015-2018 Muhammad Tayyab Akram
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,15 +27,15 @@
 #include "SFGlyphDiscovery.h"
 #include "SFTextProcessor.h"
 
-static SFBoolean _isZeroWidthCodepoint(SFCodepoint codepoint)
+static SFBoolean IsZeroWidthCodepoint(SFCodepoint codepoint)
 {
     /* TODO: Handle other control characters as well. */
     return SFCodepointInRange(codepoint, 0x200B, 0x200F);
 }
 
-SF_PRIVATE SFGlyphTraits _SFGetGlyphTraits(SFTextProcessorRef processor, SFGlyphID glyph)
+SF_PRIVATE SFGlyphTraits GetGlyphTraits(SFTextProcessorRef textProcessor, SFGlyphID glyph)
 {
-    SFData glyphClassDef = processor->_glyphClassDef;
+    SFData glyphClassDef = textProcessor->_glyphClassDef;
 
     if (glyphClassDef) {
         SFUInt16 glyphClass = SFOpenTypeSearchGlyphClass(glyphClassDef, glyph);
@@ -55,21 +55,21 @@ SF_PRIVATE SFGlyphTraits _SFGetGlyphTraits(SFTextProcessorRef processor, SFGlyph
                 return SFGlyphTraitComponent;
         }
     }
-    
+
     return SFGlyphTraitNone;
 }
 
-SF_INTERNAL void _SFDiscoverGlyphs(SFTextProcessorRef processor)
+SF_PRIVATE void DiscoverGlyphs(SFTextProcessorRef textProcessor)
 {
-    SFPatternRef pattern = processor->_pattern;
+    SFPatternRef pattern = textProcessor->_pattern;
     SFFontRef font = pattern->font;
-    SFAlbumRef album = processor->_album;
+    SFAlbumRef album = textProcessor->_album;
     SFCodepointsRef codepoints = album->codepoints;
-    SFBoolean isRTL = processor->_textDirection == SFTextDirectionRightToLeft;
+    SFBoolean isRTL = textProcessor->_textDirection == SFTextDirectionRightToLeft;
 
     SFCodepointsReset(album->codepoints);
 
-    switch (processor->_textMode) {
+    switch (textProcessor->_textMode) {
         case SFTextModeForward:
         case SFTextModeBackward: {
             SFCodepoint current;
@@ -87,10 +87,10 @@ SF_INTERNAL void _SFDiscoverGlyphs(SFTextProcessorRef processor)
                 }
 
                 glyph = SFFontGetGlyphIDForCodepoint(font, current);
-                traits = _SFGetGlyphTraits(processor, glyph);
+                traits = GetGlyphTraits(textProcessor, glyph);
 
-                if (_isZeroWidthCodepoint(current)) {
-                    processor->_containsZeroWidthCodepoints = SFTrue;
+                if (IsZeroWidthCodepoint(current)) {
+                    textProcessor->_containsZeroWidthCodepoints = SFTrue;
                     traits |= SFGlyphTraitZeroWidth;
                 }
 

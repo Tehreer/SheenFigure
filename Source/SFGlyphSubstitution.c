@@ -28,11 +28,11 @@
 #include "SFGlyphSubstitution.h"
 #include "SFTextProcessor.h"
 
-static SFBoolean _SFApplySequenceTable(SFTextProcessorRef textProcessor, SFData sequence);
-static SFBoolean _SFApplyAlternateSetTable(SFTextProcessorRef textProcessor, SFData alternateSet);
-static SFBoolean _SFApplyLigatureSetTable(SFTextProcessorRef textProcessor, SFData ligatureSet);
+static SFBoolean ApplySequenceTable(SFTextProcessorRef textProcessor, SFData sequence);
+static SFBoolean ApplyAlternateSetTable(SFTextProcessorRef textProcessor, SFData alternateSet);
+static SFBoolean ApplyLigatureSetTable(SFTextProcessorRef textProcessor, SFData ligatureSet);
 
-static SFBoolean _SFApplySingleSubst(SFTextProcessorRef textProcessor, SFData singleSubst)
+static SFBoolean ApplySingleSubst(SFTextProcessorRef textProcessor, SFData singleSubst)
 {
     SFAlbumRef album = textProcessor->_album;
     SFLocatorRef locator = &textProcessor->_locator;
@@ -52,7 +52,7 @@ static SFBoolean _SFApplySingleSubst(SFTextProcessorRef textProcessor, SFData si
 
             if (covIndex != SFInvalidIndex) {
                 SFGlyphID subGlyph = (SFGlyphID)(locGlyph + delta);
-                SFGlyphTraits subTraits = _SFGetGlyphTraits(textProcessor, subGlyph);
+                SFGlyphTraits subTraits = GetGlyphTraits(textProcessor, subGlyph);
 
                 /* Substitute the glyph and set its traits. */
                 SFAlbumSetGlyph(album, locator->index, subGlyph);
@@ -76,7 +76,7 @@ static SFBoolean _SFApplySingleSubst(SFTextProcessorRef textProcessor, SFData si
                 SFGlyphID subGlyph = SFSingleSubstF2_Substitute(singleSubst, covIndex);
                 SFGlyphTraits subTraits;
 
-                subTraits = _SFGetGlyphTraits(textProcessor, subGlyph);
+                subTraits = GetGlyphTraits(textProcessor, subGlyph);
 
                 /* Substitute the glyph and set its traits. */
                 SFAlbumSetGlyph(album, locator->index, subGlyph);
@@ -91,7 +91,7 @@ static SFBoolean _SFApplySingleSubst(SFTextProcessorRef textProcessor, SFData si
     return SFFalse;
 }
 
-static SFBoolean _SFApplyMultipleSubst(SFTextProcessorRef textProcessor, SFData multipleSubst)
+static SFBoolean ApplyMultipleSubst(SFTextProcessorRef textProcessor, SFData multipleSubst)
 {
     SFAlbumRef album = textProcessor->_album;
     SFLocatorRef locator = &textProcessor->_locator;
@@ -111,7 +111,7 @@ static SFBoolean _SFApplyMultipleSubst(SFTextProcessorRef textProcessor, SFData 
 
             if (covIndex < seqCount) {
                 SFData sequence = SFMultipleSubstF1_SequenceTable(multipleSubst, covIndex);
-                return _SFApplySequenceTable(textProcessor, sequence);
+                return ApplySequenceTable(textProcessor, sequence);
             }
             break;
         }
@@ -120,7 +120,7 @@ static SFBoolean _SFApplyMultipleSubst(SFTextProcessorRef textProcessor, SFData 
     return SFFalse;
 }
 
-static SFBoolean _SFApplySequenceTable(SFTextProcessorRef textProcessor, SFData sequence)
+static SFBoolean ApplySequenceTable(SFTextProcessorRef textProcessor, SFData sequence)
 {
     SFAlbumRef album = textProcessor->_album;
     SFLocatorRef locator = &textProcessor->_locator;
@@ -131,7 +131,7 @@ static SFBoolean _SFApplySequenceTable(SFTextProcessorRef textProcessor, SFData 
     if (glyphCount > 0) {
         /* Get first substitute and its traits. */
         SFGlyphID subGlyph = SFSequence_Substitute(sequence, 0);
-        SFGlyphTraits subTraits = _SFGetGlyphTraits(textProcessor, subGlyph);
+        SFGlyphTraits subTraits = GetGlyphTraits(textProcessor, subGlyph);
 
         /* Put substitute of first glyph and set its traits. */
         SFAlbumSetGlyph(album, locator->index, subGlyph);
@@ -150,7 +150,7 @@ static SFBoolean _SFApplySequenceTable(SFTextProcessorRef textProcessor, SFData 
 
                 /* Get substitute along with traits at current index. */
                 subGlyph = SFSequence_Substitute(sequence, subIndex);
-                subTraits = _SFGetGlyphTraits(textProcessor, subGlyph);
+                subTraits = GetGlyphTraits(textProcessor, subGlyph);
 
                 /* Initialize the glyph with substitute. */
                 SFAlbumSetGlyph(album, newIndex, subGlyph);
@@ -173,7 +173,7 @@ static SFBoolean _SFApplySequenceTable(SFTextProcessorRef textProcessor, SFData 
     return SFFalse;
 }
 
-static SFBoolean _SFApplyAlternateSubst(SFTextProcessorRef textProcessor, SFData alternateSubst)
+static SFBoolean ApplyAlternateSubst(SFTextProcessorRef textProcessor, SFData alternateSubst)
 {
     SFAlbumRef album = textProcessor->_album;
     SFLocatorRef locator = &textProcessor->_locator;
@@ -193,7 +193,7 @@ static SFBoolean _SFApplyAlternateSubst(SFTextProcessorRef textProcessor, SFData
 
             if (covIndex < altSetCount) {
                 SFData alternateSet = SFAlternateSubstF1_AlternateSetTable(alternateSubst, covIndex);
-                return _SFApplyAlternateSetTable(textProcessor, alternateSet);
+                return ApplyAlternateSetTable(textProcessor, alternateSet);
             }
             break;
         }
@@ -202,7 +202,7 @@ static SFBoolean _SFApplyAlternateSubst(SFTextProcessorRef textProcessor, SFData
     return SFFalse;
 }
 
-static SFBoolean _SFApplyAlternateSetTable(SFTextProcessorRef textProcessor, SFData alternateSet)
+static SFBoolean ApplyAlternateSetTable(SFTextProcessorRef textProcessor, SFData alternateSet)
 {
     SFAlbumRef album = textProcessor->_album;
     SFLocatorRef locator = &textProcessor->_locator;
@@ -214,7 +214,7 @@ static SFBoolean _SFApplyAlternateSetTable(SFTextProcessorRef textProcessor, SFD
     /* Make sure that alternate index is valid. */
     if (altIndex < glyphCount) {
         SFGlyphID altGlyph = SFAlternateSet_Alternate(alternateSet, altIndex);
-        SFGlyphTraits altTraits = _SFGetGlyphTraits(textProcessor, altGlyph);
+        SFGlyphTraits altTraits = GetGlyphTraits(textProcessor, altGlyph);
 
         /* Substitute the glyph and set its traits. */
         SFAlbumSetGlyph(album, locator->index, altGlyph);
@@ -226,7 +226,7 @@ static SFBoolean _SFApplyAlternateSetTable(SFTextProcessorRef textProcessor, SFD
     return SFFalse;
 }
 
-static SFBoolean _SFApplyLigatureSubst(SFTextProcessorRef textProcessor, SFData ligatureSubst)
+static SFBoolean ApplyLigatureSubst(SFTextProcessorRef textProcessor, SFData ligatureSubst)
 {
     SFAlbumRef album = textProcessor->_album;
     SFLocatorRef locator = &textProcessor->_locator;
@@ -246,7 +246,7 @@ static SFBoolean _SFApplyLigatureSubst(SFTextProcessorRef textProcessor, SFData 
 
             if (covIndex < ligSetCount) {
                 SFData ligatureSet = SFLigatureSubstF1_LigatureSetTable(ligatureSubst, covIndex);
-                return _SFApplyLigatureSetTable(textProcessor, ligatureSet);
+                return ApplyLigatureSetTable(textProcessor, ligatureSet);
             }
             break;
         }
@@ -255,7 +255,7 @@ static SFBoolean _SFApplyLigatureSubst(SFTextProcessorRef textProcessor, SFData 
     return SFFalse;
 }
 
-static SFBoolean _SFApplyLigatureSetTable(SFTextProcessorRef textProcessor, SFData ligatureSet)
+static SFBoolean ApplyLigatureSetTable(SFTextProcessorRef textProcessor, SFData ligatureSet)
 {
     SFAlbumRef album = textProcessor->_album;
     SFLocatorRef locator = &textProcessor->_locator;
@@ -304,7 +304,7 @@ static SFBoolean _SFApplyLigatureSetTable(SFTextProcessorRef textProcessor, SFDa
         /* Do the substitution, if all components are matched. */
         if (compIndex == compCount) {
             SFGlyphID ligGlyph = SFLigature_LigGlyph(ligature);
-            SFGlyphTraits ligTraits = _SFGetGlyphTraits(textProcessor, ligGlyph);
+            SFGlyphTraits ligTraits = GetGlyphTraits(textProcessor, ligGlyph);
             SFUInteger ligAssociation;
 
             /* Substitute the ligature glyph and set its traits. */
@@ -336,32 +336,32 @@ static SFBoolean _SFApplyLigatureSetTable(SFTextProcessorRef textProcessor, SFDa
     return SFFalse;
 }
 
-SF_PRIVATE SFBoolean _SFApplySubstitutionSubtable(SFTextProcessorRef textProcessor, SFLookupType lookupType, SFData subtable)
+SF_PRIVATE SFBoolean ApplySubstitutionSubtable(SFTextProcessorRef textProcessor, SFLookupType lookupType, SFData subtable)
 {
     switch (lookupType) {
         case SFLookupTypeSingle:
-            return _SFApplySingleSubst(textProcessor, subtable);
+            return ApplySingleSubst(textProcessor, subtable);
 
         case SFLookupTypeMultiple:
-            return _SFApplyMultipleSubst(textProcessor, subtable);
+            return ApplyMultipleSubst(textProcessor, subtable);
 
         case SFLookupTypeAlternate:
-            return _SFApplyAlternateSubst(textProcessor, subtable);
+            return ApplyAlternateSubst(textProcessor, subtable);
 
         case SFLookupTypeLigature:
-            return _SFApplyLigatureSubst(textProcessor, subtable);
+            return ApplyLigatureSubst(textProcessor, subtable);
 
         case SFLookupTypeContext:
-            return _SFApplyContextSubtable(textProcessor, subtable);
+            return ApplyContextSubtable(textProcessor, subtable);
 
         case SFLookupTypeChainingContext:
-            return _SFApplyChainContextSubtable(textProcessor, subtable);
+            return ApplyChainContextSubtable(textProcessor, subtable);
 
         case SFLookupTypeExtension:
-            return _SFApplyExtensionSubtable(textProcessor, subtable);
+            return ApplyExtensionSubtable(textProcessor, subtable);
 
         case SFLookupTypeReverseChainingContext:
-            return _SFApplyReverseChainSubst(textProcessor, subtable);
+            return ApplyReverseChainSubst(textProcessor, subtable);
     }
 
     return SFFalse;

@@ -48,6 +48,6 @@ SF_INTERNAL void SFTextProcessorSubstituteGlyphs(SFTextProcessorRef textProcesso
 SF_INTERNAL void SFTextProcessorPositionGlyphs(SFTextProcessorRef textProcessor);
 SF_INTERNAL void SFTextProcessorWrapUp(SFTextProcessorRef textProcessor);
 
-SF_PRIVATE void _SFApplyLookup(SFTextProcessorRef textProcessor, SFUInt16 lookupIndex);
+SF_PRIVATE void ApplyLookup(SFTextProcessorRef textProcessor, SFUInt16 lookupIndex);
 
 #endif
