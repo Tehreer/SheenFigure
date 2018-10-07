@@ -77,8 +77,7 @@ SF_INTERNAL void SFTextProcessorSubstituteGlyphs(SFTextProcessorRef textProcesso
     SFData gsubTable = pattern->font->tables.gsub;
 
     if (gsubTable) {
-        SFOffset lookupListOffset = SFHeader_LookupListOffset(gsubTable);
-        SFData lookupListTable = SFData_Subdata(gsubTable, lookupListOffset);
+        SFData lookupListTable = SFHeader_LookupListTable(gsubTable);
 
         textProcessor->_lookupList = lookupListTable;
         textProcessor->_lookupOperation = ApplySubstitutionSubtable;
@@ -154,8 +153,7 @@ SF_INTERNAL void SFTextProcessorPositionGlyphs(SFTextProcessorRef textProcessor)
     }
 
     if (gposTable) {
-        SFOffset lookupListOffset = SFHeader_LookupListOffset(gposTable);
-        SFData lookupListTable = SFData_Subdata(gposTable, lookupListOffset);
+        SFData lookupListTable = SFHeader_LookupListTable(gposTable);
 
         textProcessor->_lookupList = lookupListTable;
         textProcessor->_lookupOperation = ApplyPositioningSubtable;
