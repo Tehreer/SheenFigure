@@ -26,42 +26,42 @@
 #include "SFTextProcessor.h"
 #include "SFStandardEngine.h"
 
-static SFScriptKnowledgeRef _SFStandardKnowledgeSeekScript(const void *object, SFTag scriptTag);
-static void _SFStandardEngineProcessAlbum(const void *object, SFAlbumRef album);
+static SFScriptKnowledgeRef StandardKnowledgeSeekScript(const void *object, SFTag scriptTag);
+static void StandardEngineProcessAlbum(const void *object, SFAlbumRef album);
 
 enum {
-    _SFStandardFeatureMaskNone = 0 << 0
+    StandardFeatureMaskNone = 0 << 0
 };
 
-static SFFeatureInfo _SFStandardSubstFeatureArray[] = {
+static SFFeatureInfo StandardSubstFeatureArray[] = {
     /* Language based forms. */
-    { 0, TAG('c', 'c', 'm', 'p'), ON_BY_DEFAULT, INDIVIDUAL, _SFStandardFeatureMaskNone },
+    { 0, TAG('c', 'c', 'm', 'p'), ON_BY_DEFAULT, INDIVIDUAL, StandardFeatureMaskNone },
     /* Typographical forms */
-    { 1, TAG('l', 'i', 'g', 'a'), ON_BY_DEFAULT, INDIVIDUAL, _SFStandardFeatureMaskNone },
-    { 1, TAG('c', 'l', 'i', 'g'), ON_BY_DEFAULT, INDIVIDUAL, _SFStandardFeatureMaskNone },
+    { 1, TAG('l', 'i', 'g', 'a'), ON_BY_DEFAULT, INDIVIDUAL, StandardFeatureMaskNone },
+    { 1, TAG('c', 'l', 'i', 'g'), ON_BY_DEFAULT, INDIVIDUAL, StandardFeatureMaskNone },
 };
-#define _SFStandardSubstFeatureCount (sizeof(_SFStandardSubstFeatureArray) / sizeof(SFFeatureInfo))
+#define StandardSubstFeatureCount (sizeof(StandardSubstFeatureArray) / sizeof(SFFeatureInfo))
 
-static SFFeatureInfo _SFStandardPosFeatureArray[] = {
+static SFFeatureInfo StandardPosFeatureArray[] = {
     /* Positioning features. */
-    { 2, TAG('d', 'i', 's', 't'), REQUIRED,      INDIVIDUAL, _SFStandardFeatureMaskNone },
-    { 2, TAG('k', 'e', 'r', 'n'), ON_BY_DEFAULT, INDIVIDUAL, _SFStandardFeatureMaskNone },
-    { 2, TAG('m', 'a', 'r', 'k'), REQUIRED,      INDIVIDUAL, _SFStandardFeatureMaskNone },
-    { 2, TAG('m', 'k', 'm', 'k'), REQUIRED,      INDIVIDUAL, _SFStandardFeatureMaskNone }
+    { 2, TAG('d', 'i', 's', 't'), REQUIRED,      INDIVIDUAL, StandardFeatureMaskNone },
+    { 2, TAG('k', 'e', 'r', 'n'), ON_BY_DEFAULT, INDIVIDUAL, StandardFeatureMaskNone },
+    { 2, TAG('m', 'a', 'r', 'k'), REQUIRED,      INDIVIDUAL, StandardFeatureMaskNone },
+    { 2, TAG('m', 'k', 'm', 'k'), REQUIRED,      INDIVIDUAL, StandardFeatureMaskNone }
 };
-#define _SFStandardPosFeatureCount (sizeof(_SFStandardPosFeatureArray) / sizeof(SFFeatureInfo))
+#define StandardPosFeatureCount (sizeof(StandardPosFeatureArray) / sizeof(SFFeatureInfo))
 
-static SFScriptKnowledge _SFStandardScriptKnowledge = {
+static SFScriptKnowledge StandardScriptKnowledge = {
     SFTextDirectionLeftToRight,
-    { _SFStandardSubstFeatureArray, _SFStandardSubstFeatureCount },
-    { _SFStandardPosFeatureArray, _SFStandardPosFeatureCount }
+    { StandardSubstFeatureArray, StandardSubstFeatureCount },
+    { StandardPosFeatureArray, StandardPosFeatureCount }
 };
 
 SFShapingKnowledge SFStandardKnowledgeInstance = {
-    &_SFStandardKnowledgeSeekScript
+    &StandardKnowledgeSeekScript
 };
 
-static SFScriptKnowledgeRef _SFStandardKnowledgeSeekScript(const void *object, SFTag scriptTag)
+static SFScriptKnowledgeRef StandardKnowledgeSeekScript(const void *object, SFTag scriptTag)
 {
     switch (scriptTag) {
         case TAG('a', 'r', 'm', 'n'):
@@ -71,23 +71,23 @@ static SFScriptKnowledgeRef _SFStandardKnowledgeSeekScript(const void *object, S
         case TAG('l', 'a', 't', 'n'):
         case TAG('o', 'g', 'a', 'm'):
         case TAG('r', 'u', 'n', 'r'):
-            return &_SFStandardScriptKnowledge;
+            return &StandardScriptKnowledge;
     }
 
     return NULL;
 }
 
-static SFShapingEngine _SFStandardEngineBase = {
-    &_SFStandardEngineProcessAlbum
+static SFShapingEngine StandardEngineBase = {
+    &StandardEngineProcessAlbum
 };
 
 SF_INTERNAL void SFStandardEngineInitialize(SFStandardEngineRef standardEngine, SFArtistRef artist)
 {
-    standardEngine->_base = _SFStandardEngineBase;
+    standardEngine->_base = StandardEngineBase;
     standardEngine->_artist = artist;
 }
 
-static void _SFStandardEngineProcessAlbum(const void *object, SFAlbumRef album)
+static void StandardEngineProcessAlbum(const void *object, SFAlbumRef album)
 {
     SFStandardEngineRef standardEngine = (SFStandardEngineRef)object;
     SFArtistRef artist = standardEngine->_artist;

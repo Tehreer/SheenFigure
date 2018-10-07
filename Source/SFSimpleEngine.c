@@ -1,5 +1,5 @@
 /*
-* Copyright (C) 2018 Muhammad Tayyab Akram
+* Copyright (C) 2017-2018 Muhammad Tayyab Akram
 *
 * Licensed under the Apache License, Version 2.0 (the "License");
 * you may not use this file except in compliance with the License.
@@ -24,35 +24,35 @@
 #include "SFTextProcessor.h"
 #include "SFSimpleEngine.h"
 
-static SFScriptKnowledgeRef _SFSimpleKnowledgeSeekScript(const void *object, SFTag scriptTag);
-static void _SFSimpleEngineProcessAlbum(const void *object, SFAlbumRef album);
+static SFScriptKnowledgeRef SimpleKnowledgeSeekScript(const void *object, SFTag scriptTag);
+static void SimpleEngineProcessAlbum(const void *object, SFAlbumRef album);
 
-static SFScriptKnowledge _SFSimpleScriptKnowledge = {
+static SFScriptKnowledge SimpleScriptKnowledge = {
     SFTextDirectionLeftToRight,
     { NULL, 0 },
     { NULL, 0 }
 };
 
 SFShapingKnowledge SFSimpleKnowledgeInstance = {
-    &_SFSimpleKnowledgeSeekScript
+    &SimpleKnowledgeSeekScript
 };
 
-static SFScriptKnowledgeRef _SFSimpleKnowledgeSeekScript(const void *object, SFTag scriptTag)
+static SFScriptKnowledgeRef SimpleKnowledgeSeekScript(const void *object, SFTag scriptTag)
 {
-    return &_SFSimpleScriptKnowledge;
+    return &SimpleScriptKnowledge;
 }
 
-static SFShapingEngine _SFSimpleEngineBase = {
-    &_SFSimpleEngineProcessAlbum
+static SFShapingEngine SimpleEngineBase = {
+    &SimpleEngineProcessAlbum
 };
 
 SF_INTERNAL void SFSimpleEngineInitialize(SFSimpleEngineRef simpleEngine, SFArtistRef artist)
 {
-    simpleEngine->_base = _SFSimpleEngineBase;
+    simpleEngine->_base = SimpleEngineBase;
     simpleEngine->_artist = artist;
 }
 
-static void _SFSimpleEngineProcessAlbum(const void *object, SFAlbumRef album)
+static void SimpleEngineProcessAlbum(const void *object, SFAlbumRef album)
 {
     SFSimpleEngineRef simpleEngine = (SFSimpleEngineRef)object;
     SFArtistRef artist = simpleEngine->_artist;

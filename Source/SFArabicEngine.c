@@ -30,16 +30,15 @@
 #include "SFTextProcessor.h"
 #include "SFArabicEngine.h"
 
-static SFScriptKnowledgeRef _SFArabicKnowledgeSeekScript(const void *object, SFTag scriptTag);
-static void _SFPutArabicFeatureMask(SFAlbumRef album);
-static void _SFArabicEngineProcessAlbum(const void *object, SFAlbumRef album);
+static SFScriptKnowledgeRef ArabicKnowledgeSeekScript(const void *object, SFTag scriptTag);
+static void ArabicEngineProcessAlbum(const void *object, SFAlbumRef album);
 
 enum {
-    _SFArabicFeatureMaskNone     = 0 << 0,
-    _SFArabicFeatureMaskIsolated = 1 << 0,
-    _SFArabicFeatureMaskInitial  = 1 << 1,
-    _SFArabicFeatureMaskMedial   = 1 << 2,
-    _SFArabicFeatureMaskFinal    = 1 << 3
+    ArabicFeatureMaskNone     = 0 << 0,
+    ArabicFeatureMaskIsolated = 1 << 0,
+    ArabicFeatureMaskInitial  = 1 << 1,
+    ArabicFeatureMaskMedial   = 1 << 2,
+    ArabicFeatureMaskFinal    = 1 << 3
 };
 
 /**
@@ -47,64 +46,64 @@ enum {
  * backward compatibility. So they should be applied simultaneously to avoid the application of
  * duplicate lookups.
  */
-static SFFeatureInfo _SFArabicSubstFeatureArray[] = {
+static SFFeatureInfo ArabicSubstFeatureArray[] = {
     /* Language based forms */
-    { 0, TAG('c', 'c', 'm', 'p'), REQUIRED, INDIVIDUAL,   _SFArabicFeatureMaskNone },
-    { 0, TAG('i', 's', 'o', 'l'), REQUIRED, INDIVIDUAL,   _SFArabicFeatureMaskIsolated },
-    { 0, TAG('f', 'i', 'n', 'a'), REQUIRED, INDIVIDUAL,   _SFArabicFeatureMaskFinal },
-    { 0, TAG('m', 'e', 'd', 'i'), REQUIRED, INDIVIDUAL,   _SFArabicFeatureMaskMedial },
-    { 0, TAG('i', 'n', 'i', 't'), REQUIRED, INDIVIDUAL,   _SFArabicFeatureMaskInitial },
-    { 0, TAG('r', 'l', 'i', 'g'), REQUIRED, INDIVIDUAL,   _SFArabicFeatureMaskNone },
-    { 0, TAG('r', 'c', 'l', 't'), REQUIRED, SIMULTANEOUS, _SFArabicFeatureMaskNone },
-    { 0, TAG('c', 'a', 'l', 't'), REQUIRED, SIMULTANEOUS, _SFArabicFeatureMaskNone },
+    { 0, TAG('c', 'c', 'm', 'p'), REQUIRED, INDIVIDUAL,   ArabicFeatureMaskNone },
+    { 0, TAG('i', 's', 'o', 'l'), REQUIRED, INDIVIDUAL,   ArabicFeatureMaskIsolated },
+    { 0, TAG('f', 'i', 'n', 'a'), REQUIRED, INDIVIDUAL,   ArabicFeatureMaskFinal },
+    { 0, TAG('m', 'e', 'd', 'i'), REQUIRED, INDIVIDUAL,   ArabicFeatureMaskMedial },
+    { 0, TAG('i', 'n', 'i', 't'), REQUIRED, INDIVIDUAL,   ArabicFeatureMaskInitial },
+    { 0, TAG('r', 'l', 'i', 'g'), REQUIRED, INDIVIDUAL,   ArabicFeatureMaskNone },
+    { 0, TAG('r', 'c', 'l', 't'), REQUIRED, SIMULTANEOUS, ArabicFeatureMaskNone },
+    { 0, TAG('c', 'a', 'l', 't'), REQUIRED, SIMULTANEOUS, ArabicFeatureMaskNone },
     /* Typographical forms */
-    { 1, TAG('l', 'i', 'g', 'a'), ON_BY_DEFAULT,  INDIVIDUAL, _SFArabicFeatureMaskNone },
-    { 1, TAG('d', 'l', 'i', 'g'), OFF_BY_DEFAULT, INDIVIDUAL, _SFArabicFeatureMaskNone },
-    { 1, TAG('c', 's', 'w', 'h'), OFF_BY_DEFAULT, INDIVIDUAL, _SFArabicFeatureMaskNone },
-    { 1, TAG('m', 's', 'e', 't'), REQUIRED,       INDIVIDUAL, _SFArabicFeatureMaskNone },
+    { 1, TAG('l', 'i', 'g', 'a'), ON_BY_DEFAULT,  INDIVIDUAL, ArabicFeatureMaskNone },
+    { 1, TAG('d', 'l', 'i', 'g'), OFF_BY_DEFAULT, INDIVIDUAL, ArabicFeatureMaskNone },
+    { 1, TAG('c', 's', 'w', 'h'), OFF_BY_DEFAULT, INDIVIDUAL, ArabicFeatureMaskNone },
+    { 1, TAG('m', 's', 'e', 't'), REQUIRED,       INDIVIDUAL, ArabicFeatureMaskNone },
 };
-#define _SFArabicSubstFeatureCount (sizeof(_SFArabicSubstFeatureArray) / sizeof(SFFeatureInfo))
+#define ArabicSubstFeatureCount (sizeof(ArabicSubstFeatureArray) / sizeof(SFFeatureInfo))
 
-static SFFeatureInfo _SFArabicPosFeatureArray[] = {
+static SFFeatureInfo ArabicPosFeatureArray[] = {
     /* Positioning features */
-    { 2, TAG('c', 'u', 'r', 's'), REQUIRED, INDIVIDUAL, _SFArabicFeatureMaskNone },
-    { 2, TAG('k', 'e', 'r', 'n'), REQUIRED, INDIVIDUAL, _SFArabicFeatureMaskNone },
-    { 2, TAG('m', 'a', 'r', 'k'), REQUIRED, INDIVIDUAL, _SFArabicFeatureMaskNone },
-    { 2, TAG('m', 'k', 'm', 'k'), REQUIRED, INDIVIDUAL, _SFArabicFeatureMaskNone },
+    { 2, TAG('c', 'u', 'r', 's'), REQUIRED, INDIVIDUAL, ArabicFeatureMaskNone },
+    { 2, TAG('k', 'e', 'r', 'n'), REQUIRED, INDIVIDUAL, ArabicFeatureMaskNone },
+    { 2, TAG('m', 'a', 'r', 'k'), REQUIRED, INDIVIDUAL, ArabicFeatureMaskNone },
+    { 2, TAG('m', 'k', 'm', 'k'), REQUIRED, INDIVIDUAL, ArabicFeatureMaskNone },
 };
-#define _SFArabicPosFeatureCount (sizeof(_SFArabicPosFeatureArray) / sizeof(SFFeatureInfo))
+#define ArabicPosFeatureCount (sizeof(ArabicPosFeatureArray) / sizeof(SFFeatureInfo))
 
-static SFScriptKnowledge _SFArabicScriptKnowledge = {
+static SFScriptKnowledge ArabicScriptKnowledge = {
     SFTextDirectionRightToLeft,
-    { _SFArabicSubstFeatureArray, _SFArabicSubstFeatureCount },
-    { _SFArabicPosFeatureArray, _SFArabicPosFeatureCount }
+    { ArabicSubstFeatureArray, ArabicSubstFeatureCount },
+    { ArabicPosFeatureArray, ArabicPosFeatureCount }
 };
 
 SFShapingKnowledge SFArabicKnowledgeInstance = {
-    &_SFArabicKnowledgeSeekScript
+    &ArabicKnowledgeSeekScript
 };
 
-static SFScriptKnowledgeRef _SFArabicKnowledgeSeekScript(const void *object, SFTag scriptTag)
+static SFScriptKnowledgeRef ArabicKnowledgeSeekScript(const void *object, SFTag scriptTag)
 {
     switch (scriptTag) {
         case TAG('a', 'r', 'a', 'b'):
-            return &_SFArabicScriptKnowledge;
+            return &ArabicScriptKnowledge;
     }
 
     return NULL;
 }
 
-static SFShapingEngine _SFArabicEngineBase = {
-    &_SFArabicEngineProcessAlbum
+static SFShapingEngine ArabicEngineBase = {
+    &ArabicEngineProcessAlbum
 };
 
 SF_INTERNAL void SFArabicEngineInitialize(SFArabicEngineRef arabicEngine, SFArtistRef artist)
 {
-    arabicEngine->_base = _SFArabicEngineBase;
+    arabicEngine->_base = ArabicEngineBase;
     arabicEngine->_artist = artist;
 }
 
-static SFJoiningType _SFDetermineJoiningType(SFCodepoint codepoint)
+static SFJoiningType DetermineJoiningType(SFCodepoint codepoint)
 {
     SFJoiningType joiningType = SFJoiningTypeDetermine(codepoint);
 
@@ -127,7 +126,7 @@ static SFJoiningType _SFDetermineJoiningType(SFCodepoint codepoint)
     return joiningType;
 }
 
-static void _SFPutArabicFeatureMask(SFAlbumRef album)
+static void PutArabicFeatureMask(SFAlbumRef album)
 {
     SFCodepointsRef codepoints = album->codepoints;
     SFUInteger currentIndex = 0;
@@ -138,17 +137,17 @@ static void _SFPutArabicFeatureMask(SFAlbumRef album)
     SFCodepointsReset(codepoints);
 
     priorJoiningType = SFJoiningTypeU;
-    joiningType = _SFDetermineJoiningType(SFCodepointsNext(codepoints));
+    joiningType = DetermineJoiningType(SFCodepointsNext(codepoints));
 
     while (joiningType != SFJoiningTypeNil) {
-        SFUInt16 featureMask = _SFArabicFeatureMaskNone;
+        SFUInt16 featureMask = ArabicFeatureMaskNone;
         SFJoiningType nextJoiningType = SFJoiningTypeNil;
         SBCodepoint nextCodepoint;
 
         /* Find the joining type of next character. */
         while ((nextCodepoint = SFCodepointsNext(codepoints)) != SFCodepointInvalid) {
             nextIndex += 1;
-            nextJoiningType = _SFDetermineJoiningType(nextCodepoint);
+            nextJoiningType = DetermineJoiningType(nextCodepoint);
 
             /* Process only non-transparent characters. */
             if (nextJoiningType != SFJoiningTypeT) {
@@ -164,32 +163,32 @@ static void _SFPutArabicFeatureMask(SFAlbumRef album)
         switch (joiningType) {
             case SFJoiningTypeL:
                 if (nextJoiningType == SFJoiningTypeD || nextJoiningType == SFJoiningTypeR) {
-                    featureMask |= _SFArabicFeatureMaskInitial;
+                    featureMask |= ArabicFeatureMaskInitial;
                 } else {
-                    featureMask |= _SFArabicFeatureMaskIsolated;
+                    featureMask |= ArabicFeatureMaskIsolated;
                 }
                 break;
 
             case SFJoiningTypeR:
                 if (priorJoiningType == SFJoiningTypeD || priorJoiningType == SFJoiningTypeL) {
-                    featureMask |= _SFArabicFeatureMaskFinal;
+                    featureMask |= ArabicFeatureMaskFinal;
                 } else {
-                    featureMask |= _SFArabicFeatureMaskIsolated;
+                    featureMask |= ArabicFeatureMaskIsolated;
                 }
                 break;
 
             case SFJoiningTypeD:
                 if (priorJoiningType == SFJoiningTypeD || priorJoiningType == SFJoiningTypeL) {
                     if (nextJoiningType == SFJoiningTypeD || nextJoiningType == SFJoiningTypeR) {
-                        featureMask |= _SFArabicFeatureMaskMedial;
+                        featureMask |= ArabicFeatureMaskMedial;
                     } else {
-                        featureMask |= _SFArabicFeatureMaskFinal;
+                        featureMask |= ArabicFeatureMaskFinal;
                     }
                 } else {
                     if (nextJoiningType == SFJoiningTypeD || nextJoiningType == SFJoiningTypeR) {
-                        featureMask |= _SFArabicFeatureMaskInitial;
+                        featureMask |= ArabicFeatureMaskInitial;
                     } else {
-                        featureMask |= _SFArabicFeatureMaskIsolated;
+                        featureMask |= ArabicFeatureMaskIsolated;
                     }
                 }
                 break;
@@ -215,7 +214,7 @@ static void _SFPutArabicFeatureMask(SFAlbumRef album)
     }
 }
 
-static void _SFArabicEngineProcessAlbum(const void *object, SFAlbumRef album)
+static void ArabicEngineProcessAlbum(const void *object, SFAlbumRef album)
 {
     SFArabicEngineRef arabicEngine = (SFArabicEngineRef)object;
     SFArtistRef artist = arabicEngine->_artist;
@@ -223,7 +222,7 @@ static void _SFArabicEngineProcessAlbum(const void *object, SFAlbumRef album)
 
     SFTextProcessorInitialize(&processor, artist->pattern, album, artist->textDirection, artist->textMode, SFTrue);
     SFTextProcessorDiscoverGlyphs(&processor);
-    _SFPutArabicFeatureMask(album);
+    PutArabicFeatureMask(album);
     SFTextProcessorSubstituteGlyphs(&processor);
     SFTextProcessorPositionGlyphs(&processor);
     SFTextProcessorWrapUp(&processor);
