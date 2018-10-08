@@ -23,9 +23,6 @@
 #include "SFBase.h"
 #include "SFPattern.h"
 
-static void _SFFinalizeFeatureUnit(SFFeatureUnitRef featureUnit);
-static void _SFPatternFinalize(SFPatternRef pattern);
-
 SF_INTERNAL SFPatternRef SFPatternCreate(void)
 {
     SFPatternRef pattern = malloc(sizeof(SFPattern));
@@ -43,19 +40,19 @@ SF_INTERNAL SFPatternRef SFPatternCreate(void)
     return pattern;
 }
 
-static void _SFFinalizeFeatureUnit(SFFeatureUnitRef featureUnit)
+static void FinalizeFeatureUnit(SFFeatureUnitRef featureUnit)
 {
     free(featureUnit->lookups.items);
 }
 
-static void _SFPatternFinalize(SFPatternRef pattern)
+static void SFPatternFinalize(SFPatternRef pattern)
 {
     SFUInteger featureCount = pattern->featureUnits.gsub + pattern->featureUnits.gpos;
     SFUInteger index;
 
     /* Finalize all feature units. */
     for (index = 0; index < featureCount; index++) {
-        _SFFinalizeFeatureUnit((SFFeatureUnitRef)&pattern->featureUnits.items[index]);
+        FinalizeFeatureUnit((SFFeatureUnitRef)&pattern->featureUnits.items[index]);
     }
 
     free(pattern->featureUnits.items);
@@ -98,6 +95,6 @@ SFPatternRef SFPatternRetain(SFPatternRef pattern)
 void SFPatternRelease(SFPatternRef pattern)
 {
     if (pattern && --pattern->_retainCount == 0) {
-        _SFPatternFinalize(pattern);
+        SFPatternFinalize(pattern);
     }
 }

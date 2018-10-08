@@ -27,7 +27,7 @@
 #include "SFUnifiedEngine.h"
 #include "SFScheme.h"
 
-static SFData _SFSearchScriptTable(SFData scriptListTable, SFTag scriptTag)
+static SFData SearchScriptTable(SFData scriptListTable, SFTag scriptTag)
 {
     SFData scriptTable = NULL;
     SFUInt16 scriptCount;
@@ -50,7 +50,7 @@ static SFData _SFSearchScriptTable(SFData scriptListTable, SFTag scriptTag)
     return scriptTable;
 }
 
-static SFData _SFSearchLangSysTable(SFData scriptTable, SFTag languageTag)
+static SFData SearchLangSysTable(SFData scriptTable, SFTag languageTag)
 {
     SFData langSysTable = NULL;
 
@@ -80,7 +80,7 @@ static SFData _SFSearchLangSysTable(SFData scriptTable, SFTag languageTag)
     return langSysTable;
 }
 
-static SFData _SFSearchFeatureTable(SFData langSysTable, SFData featureListTable, SFTag featureTag)
+static SFData SearchFeatureTable(SFData langSysTable, SFData featureListTable, SFTag featureTag)
 {
     SFData featureTable = NULL;
     SFUInt16 featureCount;
@@ -104,7 +104,7 @@ static SFData _SFSearchFeatureTable(SFData langSysTable, SFData featureListTable
     return featureTable;
 }
 
-static void _SFAddFeatureLookups(SFPatternBuilderRef patternBuilder, SFData featureTable)
+static void AddFeatureLookups(SFPatternBuilderRef patternBuilder, SFData featureTable)
 {
     SFUInt16 lookupCount = SFFeature_LookupCount(featureTable);
     SFUInt16 index;
@@ -115,7 +115,7 @@ static void _SFAddFeatureLookups(SFPatternBuilderRef patternBuilder, SFData feat
     }
 }
 
-static SFBoolean _SFGetCustomValue(SFSchemeRef scheme, SFTag featureTag, SFUInt16 *featureValue)
+static SFBoolean GetCustomValue(SFSchemeRef scheme, SFTag featureTag, SFUInt16 *featureValue)
 {
     SFTag *featureTags = scheme->_featureTags;
     SFUInt16 *featureValues = scheme->_featureValues;
@@ -132,7 +132,7 @@ static SFBoolean _SFGetCustomValue(SFSchemeRef scheme, SFTag featureTag, SFUInt1
     return SFFalse;
 }
 
-static void _SFAddFeatureUnit(SFSchemeRef scheme, SFPatternBuilderRef patternBuilder,
+static void AddFeatureUnit(SFSchemeRef scheme, SFPatternBuilderRef patternBuilder,
     SFData langSysTable, SFData featureListTable,
     SFFeatureInfo *featureInfos, SFUInteger featureCount)
 {
@@ -148,7 +148,7 @@ static void _SFAddFeatureUnit(SFSchemeRef scheme, SFPatternBuilderRef patternBui
 
         featureValue = (featureStatus == OFF_BY_DEFAULT ? 0 : 1);
 
-        if (_SFGetCustomValue(scheme, featureTag, &customValue)) {
+        if (GetCustomValue(scheme, featureTag, &customValue)) {
             /* Override the value if applicable. */
             if ((featureStatus != REQUIRED) || (featureStatus == REQUIRED && customValue != 0)) {
                 featureValue = customValue;
@@ -157,12 +157,12 @@ static void _SFAddFeatureUnit(SFSchemeRef scheme, SFPatternBuilderRef patternBui
 
         /* Process the feature if it is enabled. */
         if (featureValue != 0) {
-            SFData featureTable = _SFSearchFeatureTable(langSysTable, featureListTable, featureTag);
+            SFData featureTable = SearchFeatureTable(langSysTable, featureListTable, featureTag);
 
             /* Add the feature if it exists in the language. */
             if (featureTable) {
                 SFPatternBuilderAddFeature(patternBuilder, featureTag, featureValue, featureInfo->mask);
-                _SFAddFeatureLookups(patternBuilder, featureTable);
+                AddFeatureLookups(patternBuilder, featureTable);
 
                 exists = SFTrue;
             }
@@ -174,7 +174,7 @@ static void _SFAddFeatureUnit(SFSchemeRef scheme, SFPatternBuilderRef patternBui
     }
 }
 
-static void _SFAddKnownFeatures(SFSchemeRef scheme, SFPatternBuilderRef patternBuilder,
+static void AddKnownFeatures(SFSchemeRef scheme, SFPatternBuilderRef patternBuilder,
     SFData langSysTable, SFData featureListTable,
     SFFeatureInfo *featureInfos, SFUInteger featureCount)
 {
@@ -200,12 +200,12 @@ static void _SFAddKnownFeatures(SFSchemeRef scheme, SFPatternBuilderRef patternB
             unitLength = next - index;
         }
 
-        _SFAddFeatureUnit(scheme, patternBuilder, langSysTable, featureListTable, featureInfo, unitLength);
+        AddFeatureUnit(scheme, patternBuilder, langSysTable, featureListTable, featureInfo, unitLength);
         index += unitLength;
     }
 }
 
-static SFBoolean _SFIsKnownFeature(SFTag featureTag, SFFeatureInfo *featureInfos, SFUInteger featureCount)
+static SFBoolean IsKnownFeature(SFTag featureTag, SFFeatureInfo *featureInfos, SFUInteger featureCount)
 {
     SFUInteger index;
 
@@ -218,7 +218,7 @@ static SFBoolean _SFIsKnownFeature(SFTag featureTag, SFFeatureInfo *featureInfos
     return SFFalse;
 }
 
-static void _SFAddCustomFeatures(SFSchemeRef scheme, SFPatternBuilderRef patternBuilder,
+static void AddCustomFeatures(SFSchemeRef scheme, SFPatternBuilderRef patternBuilder,
     SFData langSysTable, SFData featureListTable,
     SFFeatureInfo *featureInfos, SFUInteger featureCount)
 {
@@ -232,18 +232,18 @@ static void _SFAddCustomFeatures(SFSchemeRef scheme, SFPatternBuilderRef pattern
          * Make sure that the shaping engine does not recognize this feature and it is not already
          * added as a substitution feature.
          */
-        if (!_SFIsKnownFeature(featureTag, featureInfos, featureCount)
+        if (!IsKnownFeature(featureTag, featureInfos, featureCount)
             && !SFPatternBuilderContainsFeature(patternBuilder, featureTag)) {
             SFUInt16 featureValue = scheme->_featureValues[index];
 
             /* Process the feature if it is enabled. */
             if (featureValue != 0) {
-                SFData featureTable = _SFSearchFeatureTable(langSysTable, featureListTable, featureTag);
+                SFData featureTable = SearchFeatureTable(langSysTable, featureListTable, featureTag);
 
                 /* Add the feature if it exists in the language. */
                 if (featureTable) {
                     SFPatternBuilderAddFeature(patternBuilder, featureTag, featureValue, 0);
-                    _SFAddFeatureLookups(patternBuilder, featureTable);
+                    AddFeatureLookups(patternBuilder, featureTable);
 
                     exists = SFTrue;
                 }
@@ -256,7 +256,7 @@ static void _SFAddCustomFeatures(SFSchemeRef scheme, SFPatternBuilderRef pattern
     }
 }
 
-static void _SFAddHeaderTable(SFSchemeRef scheme, SFPatternBuilderRef patternBuilder,
+static void AddHeaderTable(SFSchemeRef scheme, SFPatternBuilderRef patternBuilder,
     SFData headerTable, SFFeatureInfo *featureInfos, SFUInteger featureCount)
 {
     SFData scriptListTable = SFHeader_ScriptListTable(headerTable);
@@ -265,15 +265,15 @@ static void _SFAddHeaderTable(SFSchemeRef scheme, SFPatternBuilderRef patternBui
     SFData langSysTable;
 
     /* Get script table belonging to the desired tag. */
-    scriptTable = _SFSearchScriptTable(scriptListTable, scheme->_scriptTag);
+    scriptTable = SearchScriptTable(scriptListTable, scheme->_scriptTag);
 
     if (scriptTable) {
         /* Get lang sys table belonging to the desired tag. */
-        langSysTable = _SFSearchLangSysTable(scriptTable, scheme->_languageTag);
+        langSysTable = SearchLangSysTable(scriptTable, scheme->_languageTag);
 
         if (langSysTable) {
-            _SFAddKnownFeatures(scheme, patternBuilder, langSysTable, featureListTable, featureInfos, featureCount);
-            _SFAddCustomFeatures(scheme, patternBuilder, langSysTable, featureListTable, featureInfos, featureCount);
+            AddKnownFeatures(scheme, patternBuilder, langSysTable, featureListTable, featureInfos, featureCount);
+            AddCustomFeatures(scheme, patternBuilder, langSysTable, featureListTable, featureInfos, featureCount);
         }
     }
 }
@@ -368,13 +368,13 @@ SFPatternRef SFSchemeBuildPattern(SFSchemeRef scheme)
 
         if (font->tables.gsub) {
             SFPatternBuilderBeginFeatures(&builder, SFFeatureKindSubstitution);
-            _SFAddHeaderTable(scheme, &builder, font->tables.gsub, knowledge->substFeatures.items, knowledge->substFeatures.count);
+            AddHeaderTable(scheme, &builder, font->tables.gsub, knowledge->substFeatures.items, knowledge->substFeatures.count);
             SFPatternBuilderEndFeatures(&builder);
         }
 
         if (font->tables.gpos) {
             SFPatternBuilderBeginFeatures(&builder, SFFeatureKindPositioning);
-            _SFAddHeaderTable(scheme, &builder, font->tables.gpos, knowledge->posFeatures.items, knowledge->posFeatures.count);
+            AddHeaderTable(scheme, &builder, font->tables.gpos, knowledge->posFeatures.items, knowledge->posFeatures.count);
             SFPatternBuilderEndFeatures(&builder);
         }
 
