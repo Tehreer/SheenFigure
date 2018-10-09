@@ -82,7 +82,7 @@ typedef struct _SFAlbum {
     SFUInteger _retainCount;
 } SFAlbum;
 
-SF_PRIVATE SFUInt16 _SFAlbumGetAntiFeatureMask(SFUInt16 featureMask);
+SF_PRIVATE SFUInt16 GetAntiFeatureMask(SFUInt16 featureMask);
 
 SF_INTERNAL void SFAlbumInitialize(SFAlbumRef album);
 

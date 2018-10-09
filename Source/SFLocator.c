@@ -63,7 +63,7 @@ SF_INTERNAL void SFLocatorReserveGlyphs(SFLocatorRef locator, SFUInteger glyphCo
 
 SF_INTERNAL void SFLocatorSetFeatureMask(SFLocatorRef locator, SFUInt16 featureMask)
 {
-    locator->_ignoreMask.section.feature = _SFAlbumGetAntiFeatureMask(featureMask);
+    locator->_ignoreMask.section.feature = GetAntiFeatureMask(featureMask);
 }
 
 SF_INTERNAL void SFLocatorSetLookupFlag(SFLocatorRef locator, SFLookupFlag lookupFlag)
@@ -121,7 +121,7 @@ SF_INTERNAL void SFLocatorReset(SFLocatorRef locator, SFUInteger index, SFUInteg
     locator->index = SFInvalidIndex;
 }
 
-static SFBoolean _SFIsIgnoredGlyph(SFLocatorRef locator, SFUInteger index) {
+static SFBoolean IsIgnoredGlyph(SFLocatorRef locator, SFUInteger index) {
     SFAlbumRef album = locator->_album;
     SFLookupFlag lookupFlag = locator->lookupFlag;
     SFGlyphMask glyphMask = _SFAlbumGetGlyphMask(album, index);
@@ -171,7 +171,7 @@ SF_INTERNAL SFBoolean SFLocatorMoveNext(SFLocatorRef locator)
     while (locator->_stateIndex < locator->_limitIndex) {
         SFUInteger index = locator->_stateIndex++;
 
-        if (!_SFIsIgnoredGlyph(locator, index)) {
+        if (!IsIgnoredGlyph(locator, index)) {
             locator->index = index;
             return SFTrue;
         }
@@ -191,7 +191,7 @@ SF_INTERNAL SFBoolean SFLocatorMovePrevious(SFLocatorRef locator)
     while (locator->_stateIndex > locator->_startIndex) {
         SFUInteger index = --locator->_stateIndex;
 
-        if (!_SFIsIgnoredGlyph(locator, index)) {
+        if (!IsIgnoredGlyph(locator, index)) {
             locator->index = index;
             return SFTrue;
         }
@@ -243,7 +243,7 @@ SF_INTERNAL SFUInteger SFLocatorGetAfter(SFLocatorRef locator, SFUInteger index,
     SFAssert(locator->_version == locator->_album->_version);
 
     while (++index < limit) {
-        if (!_SFIsIgnoredGlyph(locator, index)) {
+        if (!IsIgnoredGlyph(locator, index)) {
             return index;
         }
     }
@@ -261,7 +261,7 @@ SF_INTERNAL SFUInteger SFLocatorGetBefore(SFLocatorRef locator, SFUInteger index
     SFAssert(locator->_version == locator->_album->_version);
 
     while (index-- > start) {
-        if (!_SFIsIgnoredGlyph(locator, index)) {
+        if (!IsIgnoredGlyph(locator, index)) {
             return index;
         }
     }

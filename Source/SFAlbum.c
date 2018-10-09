@@ -24,14 +24,14 @@
 #include "SFCodepoints.h"
 #include "SFAlbum.h"
 
-static const SFGlyphMask _SFGlyphMaskEmpty = { { SFUInt16Max, 0 } };
+static const SFGlyphMask EmptyGlyphMask = { { SFUInt16Max, 0 } };
 
-SF_PRIVATE SFUInt16 _SFAlbumGetAntiFeatureMask(SFUInt16 featureMask)
+SF_PRIVATE SFUInt16 GetAntiFeatureMask(SFUInt16 featureMask)
 {
     /* The assumtion must NOT break that the feature mask will never be equal to default mask. */
-    SFAssert(featureMask != _SFGlyphMaskEmpty.section.feature);
+    SFAssert(featureMask != EmptyGlyphMask.section.feature);
 
-    return !featureMask ? ~_SFGlyphMaskEmpty.section.feature : ~featureMask;
+    return !featureMask ? ~EmptyGlyphMask.section.feature : ~featureMask;
 }
 
 SFAlbumRef SFAlbumCreate(void)
