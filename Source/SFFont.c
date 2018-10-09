@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Muhammad Tayyab Akram
+ * Copyright (C) 2015-2018 Muhammad Tayyab Akram
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,7 +15,6 @@
  */
 
 #include <SFConfig.h>
-
 #include <stddef.h>
 #include <stdlib.h>
 
@@ -23,7 +22,7 @@
 #include "SFData.h"
 #include "SFFont.h"
 
-static SFUInt8 *_SFFontCopyTable(SFFontRef font, SFTag tag) {
+static SFUInt8 *CopySFNTTable(SFFontRef font, SFTag tag) {
     SFUInt8 *data = NULL;
     SFUInteger length = 0;
 
@@ -47,9 +46,9 @@ SFFontRef SFFontCreateWithProtocol(const SFFontProtocol *protocol, void *object)
         font->_retainCount = 1;
 
         /* Load open type tables. */
-        font->tables.gdef = _SFFontCopyTable(font, SFTagMake('G', 'D', 'E', 'F'));
-        font->tables.gsub = _SFFontCopyTable(font, SFTagMake('G', 'S', 'U', 'B'));
-        font->tables.gpos = _SFFontCopyTable(font, SFTagMake('G', 'P', 'O', 'S'));
+        font->tables.gdef = CopySFNTTable(font, SFTagMake('G', 'D', 'E', 'F'));
+        font->tables.gsub = CopySFNTTable(font, SFTagMake('G', 'S', 'U', 'B'));
+        font->tables.gpos = CopySFNTTable(font, SFTagMake('G', 'P', 'O', 'S'));
 
         return font;
     }
