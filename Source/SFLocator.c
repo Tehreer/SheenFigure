@@ -124,7 +124,7 @@ SF_INTERNAL void SFLocatorReset(SFLocatorRef locator, SFUInteger index, SFUInteg
 static SFBoolean IsIgnoredGlyph(SFLocatorRef locator, SFUInteger index) {
     SFAlbumRef album = locator->_album;
     SFLookupFlag lookupFlag = locator->lookupFlag;
-    SFGlyphMask glyphMask = _SFAlbumGetGlyphMask(album, index);
+    SFGlyphMask glyphMask = SFAlbumGetGlyphMask(album, index);
 
     if (locator->_ignoreMask.full & glyphMask.full) {
         return SFTrue;
