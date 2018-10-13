@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Muhammad Tayyab Akram
+ * Copyright (C) 2015-2018 Muhammad Tayyab Akram
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,12 +22,12 @@
 #include "SFAssert.h"
 #include "SFBase.h"
 
-typedef struct _SFList {
+typedef struct {
     SFUInt8 *_data;
     SFUInteger count;
     SFUInteger capacity;
     SFUInteger _itemSize;
-} _SFList, *_SFListRef;
+} List, *ListRef;
 
 #define SF_LIST(type)       \
 struct {                    \
@@ -39,77 +39,78 @@ struct {                    \
 
 typedef int (*SFComparison)(const void *item1, const void *item2);
 
-SF_PRIVATE void _SFListInitialize(_SFListRef list, SFUInteger itemSize);
-SF_PRIVATE void _SFListFinalize(_SFListRef list);
-SF_PRIVATE void _SFListFinalizeKeepingArray(_SFListRef list, void **outArray, SFUInteger *outCount);
+SF_PRIVATE void InitializeList(ListRef list, SFUInteger itemSize);
+SF_PRIVATE void FinalizeItemsBuffer(ListRef list);
+SF_PRIVATE void ExtractItemsBuffer(ListRef list, void **outArray, SFUInteger *outCount);
 
-SF_PRIVATE void _SFListSetCapacity(_SFListRef list, SFUInteger capacity);
-SF_PRIVATE void _SFListReserveRange(_SFListRef list, SFUInteger index, SFUInteger count);
-SF_PRIVATE void _SFListRemoveRange(_SFListRef list, SFUInteger index, SFUInteger count);
+SF_PRIVATE void SetItemCapacity(ListRef list, SFUInteger capacity);
+SF_PRIVATE void ReserveItemRange(ListRef list, SFUInteger index, SFUInteger count);
+SF_PRIVATE void RemoveItemRange(ListRef list, SFUInteger index, SFUInteger count);
 
-SF_PRIVATE void _SFListClear(_SFListRef list);
-SF_PRIVATE void _SFListTrimExcess(_SFListRef list);
+SF_PRIVATE void RemoveAllItems(ListRef list);
+SF_PRIVATE void TrimExcessCapacity(ListRef list);
 
-SF_PRIVATE SFUInteger _SFListIndexOfItem(_SFListRef list, const void *itemPtr, SFUInteger index, SFUInteger count);
-SF_PRIVATE void _SFListSort(_SFListRef list, SFUInteger index, SFUInteger count, SFComparison comparison);
+SF_PRIVATE SFUInteger SearchItemInRange(ListRef list, const void *itemPtr, SFUInteger index, SFUInteger count);
+SF_PRIVATE void SortItemRange(ListRef list, SFUInteger index, SFUInteger count, SFComparison comparison);
 
-#define _SFListValidateIndex(list_, index_)             \
+#define CheckItemIndex(list_, index_)                   \
 (                                                       \
     SFAssert(index_ < (list_)->count)                   \
 )
 
-#define _SFListGetRef(list_, index_)                    \
+#define GetItemReference(list_, index_)                 \
 (                                                       \
-    _SFListValidateIndex(list_, index_),                \
+    CheckItemIndex(list_, index_),                      \
     &(list_)->items[index_]                             \
 )
 
-#define _SFListGetVal(list_, index_)                    \
+#define GetItemAtIndex(list_, index_)                   \
 (                                                       \
-    _SFListValidateIndex(list_, index_),                \
+    CheckItemIndex(list_, index_),                      \
     (list_)->items[index_]                              \
 )
 
-#define _SFListSetVal(list_, index_, item_)             \
+#define SetItemAtIndex(list_, index_, item_)            \
 do {                                                    \
-    _SFListValidateIndex(list_, index_),                \
+    CheckItemIndex(list_, index_),                      \
     (list_)->items[index_] = item_;                     \
 } while (0)
 
-#define _SFListInsert(list_, index_, item_)             \
+#define InsertItemAtIndex(list_, index_, item_)         \
 do {                                                    \
     SFUInteger __insertIndex = index_;                  \
-    _SFListReserveRange((_SFListRef)(list_), __insertIndex, 1); \
-    _SFListSetVal(list_, __insertIndex, item_);         \
+    ReserveItemRange((ListRef)(list_), __insertIndex, 1); \
+    SetItemAtIndex(list_, __insertIndex, item_);        \
 } while (0)
 
-#define _SFListAdd(list_, item_)                        \
-        _SFListInsert(list_, (list_)->count, item_)
+#define InsertItemAtEnd(list_, item_)                   \
+    InsertItemAtIndex(list_, (list_)->count, item_)
 
 
-#define SFListInitialize(list, itemSize)            _SFListInitialize((_SFListRef)(list), itemSize)
-#define SFListFinalize(list)                        _SFListFinalize((_SFListRef)(list))
+#define SFListInitialize(list, itemSize)            InitializeList((ListRef)(list), itemSize)
+#define SFListFinalize(list)                        FinalizeItemsBuffer((ListRef)(list))
 #define SFListFinalizeKeepingArray(list, outArray, outCount) \
-                                    _SFListFinalizeKeepingArray((_SFListRef)(list), (void **)outArray, outCount)
+    ExtractItemsBuffer((ListRef)(list), (void **)outArray, outCount)
 
-#define SFListSetCapacity(list, capacity)           _SFListSetCapacity((_SFListRef)(list), capacity)
-#define SFListReserveRange(list, index, count)      _SFListReserveRange((_SFListRef)(list), index, count)
-#define SFListRemoveRange(list, index, count)       _SFListRemoveRange((_SFListRef)(list), index, count)
+#define SFListSetCapacity(list, capacity)           SetItemCapacity((ListRef)(list), capacity)
+#define SFListReserveRange(list, index, count)      ReserveItemRange((ListRef)(list), index, count)
+#define SFListRemoveRange(list, index, count)       RemoveItemRange((ListRef)(list), index, count)
 
-#define SFListClear(list)                           _SFListClear((_SFListRef)(list))
-#define SFListTrimExcess(list)                      _SFListTrimExcess((_SFListRef)(list))
+#define SFListClear(list)                           RemoveAllItems((ListRef)(list))
+#define SFListTrimExcess(list)                      TrimExcessCapacity((ListRef)(list))
 
-#define SFListGetRef(list, index)                   _SFListGetRef(list, index)
-#define SFListGetVal(list, index)                   _SFListGetVal(list, index)
-#define SFListSetVal(list, index, item)             _SFListSetVal(list, index, item)
+#define SFListGetRef(list, index)                   GetItemReference(list, index)
+#define SFListGetVal(list, index)                   GetItemAtIndex(list, index)
+#define SFListSetVal(list, index, item)             SetItemAtIndex(list, index, item)
 
-#define SFListAdd(list, item)                       _SFListAdd(list, item)
-#define SFListInsert(list, index, item)             _SFListInsert(list, index, item)
-#define SFListRemoveAt(list, index)                 _SFListRemoveRange((_SFListRef)(list), index, 1)
+#define SFListAdd(list, item)                       InsertItemAtEnd(list, item)
+#define SFListInsert(list, index, item)             InsertItemAtIndex(list, index, item)
+#define SFListRemoveAt(list, index)                 RemoveItemRange((ListRef)(list), index, 1)
 
-#define SFListIndexOfItem(list, item, index, count) _SFListIndexOfItem((_SFListRef)(list), item, index, count)
-#define SFListContainsItem(list, item)             (_SFListIndexOfItem((_SFListRef)(list), item, 0, (list)->count) != SFInvalidIndex)
+#define SFListIndexOfItem(list, item, index, count) SearchItemInRange((ListRef)(list), item, index, count)
+#define SFListContainsItem(list, item) \
+    (SearchItemInRange((ListRef)(list), item, 0, (list)->count) != SFInvalidIndex)
 
-#define SFListSort(list, index, count, comparison)  _SFListSort((_SFListRef)(list), index, count, comparison);
+#define SFListSort(list, index, count, comparison)  SortItemRange((ListRef)(list), index, count, comparison);
 
 #endif
