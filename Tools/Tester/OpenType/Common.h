@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Muhammad Tayyab Akram
+ * Copyright (C) 2016-2018 Muhammad Tayyab Akram
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -346,17 +346,27 @@ struct DeviceTable : public Table {
     //2     4   Signed 4-bit value, 4 values per uint16
     //3     8   Signed 8-bit value, 2 values per uint16
 
-    UInt16 deltaValue;              // Array of compressed data
+    UInt16 *deltaValue;             // Array of compressed data
 
     void write(Writer &writer) override {
-        writer.enter();
+        switch (deltaFormat) {
+        case 1:
+        case 2:
+        case 3:
+            writer.enter();
 
-        writer.write(startSize);
-        writer.write(endSize);
-        writer.write(deltaFormat);
-        writer.write(deltaValue);
+            UInt16 sizeCount = endSize - startSize + 1;
+            UInt16 perDelta = (UInt16)(1 << (4 - deltaFormat));
+            UInt16 deltaCount = sizeCount / perDelta + (sizeCount % perDelta != 0);
 
-        writer.exit();
+            writer.write(startSize);
+            writer.write(endSize);
+            writer.write(deltaFormat);
+            writer.write(deltaValue, deltaCount);
+
+            writer.exit();
+            break;
+        }
     }
 };
 
