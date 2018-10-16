@@ -267,6 +267,51 @@ ClassDefTable &Builder::createClassDef(const vector<class_range> classRanges)
     return classDef;
 }
 
+DeviceTable &Builder::createDevice(const pair<UInt16, UInt16> sizeRange, const vector<Int8> values)
+{
+    UInt16 format = 1;
+
+    for (Int8 value : values) {
+        if (value >= -2 && value <= 1) {
+            // Ignore.
+        } else if (value >= -8 && value <= 7) {
+            format = (format < 2 ? 2 : format);
+        } else {
+            format = 3;
+        }
+    }
+
+    const UInt16 perDelta = (UInt16)(1 << (4 - format));
+    const UInt16 valueBits = 16 / perDelta;
+    const UInt16 valueMask = 0xFFFF >> (16 - valueBits);
+    const UInt16 valueCount = (UInt16)values.size();
+    const UInt16 deltaCount = valueCount / perDelta + (valueCount % perDelta != 0);
+
+    UInt16 *deltaArray = createArray<UInt16>(deltaCount);
+    size_t valueIndex = 0;
+
+    for (size_t i = 0; i < deltaCount; i++) {
+        UInt16 deltaShift = 16 - valueBits;
+        UInt16 currentDelta = 0;
+
+        for (size_t j = 0; j < perDelta && valueIndex < valueCount; j++) {
+            currentDelta |= (values[valueIndex] & valueMask) << deltaShift;
+            deltaShift -= valueBits;
+            valueIndex++;
+        }
+
+        deltaArray[i] = currentDelta;
+    }
+
+    DeviceTable &device = createObject<DeviceTable>();
+    device.startSize = sizeRange.first;
+    device.endSize = sizeRange.second;
+    device.deltaFormat = format;
+    device.deltaValue = deltaArray;
+
+    return device;
+}
+
 UInt16 Builder::findMaxClass(ClassDefTable &classDef)
 {
     UInt16 maxClass = 0;

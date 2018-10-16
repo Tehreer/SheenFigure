@@ -76,6 +76,8 @@ public:
     ClassDefTable &createClassDef(Glyph startGlyph, UInt16 glyphCount, const std::vector<UInt16> classValues);
     ClassDefTable &createClassDef(const std::vector<class_range> classRanges);
 
+    DeviceTable &createDevice(const std::pair<UInt16, UInt16> sizeRange, const std::vector<Int8> values);
+
     SingleSubstSubtable &createSingleSubst(const std::set<Glyph> glyphs, Int16 delta);
     SingleSubstSubtable &createSingleSubst(const std::map<Glyph, Glyph> glyphs);
     MultipleSubstSubtable &createMultipleSubst(const std::map<Glyph, std::vector<Glyph>> glyphs);
