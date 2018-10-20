@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Muhammad Tayyab Akram
+ * Copyright (C) 2015-2018 Muhammad Tayyab Akram
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,5 +24,7 @@
 
 SF_INTERNAL SFUInteger SFOpenTypeSearchCoverageIndex(SFData coverageTable, SFGlyphID glyphID);
 SF_INTERNAL SFUInt16 SFOpenTypeSearchGlyphClass(SFData classDefTable, SFGlyphID glyphID);
+
+SF_INTERNAL SFInt32 SFOpenTypeGetDevicePixels(SFData deviceTable, SFUInt16 ppemSize);
 
 #endif

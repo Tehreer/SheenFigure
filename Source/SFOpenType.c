@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Muhammad Tayyab Akram
+ * Copyright (C) 2015-2018 Muhammad Tayyab Akram
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,7 +15,6 @@
  */
 
 #include <SFConfig.h>
-
 #include <stdlib.h>
 
 #include "SFAssert.h"
@@ -144,5 +143,47 @@ SF_INTERNAL SFUInt16 SFOpenTypeSearchGlyphClass(SFData classDefTable, SFGlyphID 
     }
 
     /* A glyph not assigned a class value falls into Class 0. */
+    return 0;
+}
+
+SF_INTERNAL SFInt32 SFOpenTypeGetDevicePixels(SFData deviceTable, SFUInt16 ppemSize)
+{
+    SFUInt16 startSize = SFDevice_StartSize(deviceTable);
+    SFUInt16 endSize = SFDevice_EndSize(deviceTable);
+    SFUInt16 deltaFormat = SFDevice_DeltaFormat(deviceTable);
+
+    if (ppemSize >= startSize && ppemSize <= endSize) {
+        SFUInt16 sizeIndex = ppemSize - startSize;
+
+        switch (deltaFormat) {
+            /* Signed 2-bit value, 8 values per UInt16 */
+            case 1: {
+                SFUInt16 valueIndex = sizeIndex >> 3;
+                SFUInt16 leftShift = 16 + (2 * (sizeIndex & 0x0007));
+                SFUInt16 deltaValue = SFDevice_DeltaValue(deviceTable, valueIndex);
+
+                return (SFInt32)(deltaValue << leftShift) >> 30;
+            }
+
+            /* Signed 4-bit value, 4 values per UInt16 */
+            case 2: {
+                SFUInt16 valueIndex = sizeIndex >> 2;
+                SFUInt16 leftShift = 16 + (4 * (sizeIndex & 0x0003));
+                SFUInt16 deltaValue = SFDevice_DeltaValue(deviceTable, valueIndex);
+
+                return (SFInt32)(deltaValue << leftShift) >> 28;
+            }
+
+            /* Signed 8-bit value, 2 values per UInt16 */
+            case 3: {
+                SFUInt16 valueIndex = sizeIndex >> 1;
+                SFUInt16 leftShift = 16 + (8 * (sizeIndex & 0x0001));
+                SFUInt16 deltaValue = SFDevice_DeltaValue(deviceTable, valueIndex);
+
+                return (SFInt32)(deltaValue << leftShift) >> 24;
+            }
+        }
+    }
+
     return 0;
 }
