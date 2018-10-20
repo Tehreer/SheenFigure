@@ -66,37 +66,30 @@ SF_PRIVATE void DiscoverGlyphs(SFTextProcessorRef textProcessor)
     SFAlbumRef album = textProcessor->_album;
     SFCodepointsRef codepoints = album->codepoints;
     SFBoolean isRTL = textProcessor->_textDirection == SFTextDirectionRightToLeft;
+    SFCodepoint current;
 
-    SFCodepointsReset(album->codepoints);
+    SFCodepointsReset(codepoints);
 
-    switch (textProcessor->_textMode) {
-        case SFTextModeForward:
-        case SFTextModeBackward: {
-            SFCodepoint current;
+    while ((current = SFCodepointsNext(codepoints)) != SFCodepointInvalid) {
+        SFGlyphID glyph;
+        SFGlyphTraits traits;
 
-            while ((current = SFCodepointsNext(codepoints)) != SFCodepointInvalid) {
-                SFGlyphID glyph;
-                SFGlyphTraits traits;
+        if (isRTL) {
+            SFCodepoint mirror = SFCodepointsGetMirror(current);
 
-                if (isRTL) {
-                    SFCodepoint mirror = SFCodepointsGetMirror(current);
-
-                    if (mirror) {
-                        current = mirror;
-                    }
-                }
-
-                glyph = SFFontGetGlyphIDForCodepoint(font, current);
-                traits = GetGlyphTraits(textProcessor, glyph);
-
-                if (IsZeroWidthCodepoint(current)) {
-                    textProcessor->_containsZeroWidthCodepoints = SFTrue;
-                    traits |= SFGlyphTraitZeroWidth;
-                }
-
-                SFAlbumAddGlyph(album, glyph, traits, codepoints->index);
+            if (mirror) {
+                current = mirror;
             }
-            break;
         }
+
+        glyph = SFFontGetGlyphIDForCodepoint(font, current);
+        traits = GetGlyphTraits(textProcessor, glyph);
+
+        if (IsZeroWidthCodepoint(current)) {
+            textProcessor->_containsZeroWidthCodepoints = SFTrue;
+            traits |= SFGlyphTraitZeroWidth;
+        }
+
+        SFAlbumAddGlyph(album, glyph, traits, codepoints->index);
     }
 }
