@@ -38,8 +38,9 @@ static void ApplyFeatureRange(SFTextProcessorRef textProcessor, SFFeatureKind fe
 static SFLookupType PrepareLookup(SFTextProcessorRef textProcessor, SFUInt16 lookupIndex, SFData *outLookupTable);
 static void ApplySubtables(SFTextProcessorRef textProcessor, SFData lookupTable, SFLookupType lookupType);
 
-SF_INTERNAL void SFTextProcessorInitialize(SFTextProcessorRef textProcessor, SFPatternRef pattern,
-    SFAlbumRef album, SFTextDirection textDirection, SFTextMode textMode, SFBoolean zeroWidthMarks)
+SF_INTERNAL void SFTextProcessorInitialize(SFTextProcessorRef textProcessor,
+    SFPatternRef pattern, SFAlbumRef album, SFTextDirection textDirection,
+    SFUInt16 ppemWidth, SFUInt16 ppemHeight, SFBoolean zeroWidthMarks)
 {
     SFData gdef;
 
@@ -52,7 +53,8 @@ SF_INTERNAL void SFTextProcessorInitialize(SFTextProcessorRef textProcessor, SFP
     textProcessor->_album = album;
     textProcessor->_glyphClassDef = NULL;
     textProcessor->_textDirection = textDirection;
-    textProcessor->_textMode = textMode;
+    textProcessor->_ppemWidth = ppemWidth;
+    textProcessor->_ppemHeight = ppemHeight;
     textProcessor->_zeroWidthMarks = zeroWidthMarks;
     textProcessor->_containsZeroWidthCodepoints = SFFalse;
 

@@ -20,7 +20,6 @@
 #include <SFConfig.h>
 
 #include "SFAlbum.h"
-#include "SFArtist.h"
 #include "SFBase.h"
 #include "SFFont.h"
 #include "SFLocator.h"
@@ -34,14 +33,16 @@ typedef struct _SFTextProcessor {
     SFUInt16 _lookupValue;
     SFBoolean (*_lookupOperation)(struct _SFTextProcessor *, SFLookupType, SFData);
     SFTextDirection _textDirection;
-    SFTextMode _textMode;
+    SFUInt16 _ppemWidth;
+    SFUInt16 _ppemHeight;
     SFBoolean _zeroWidthMarks;
     SFBoolean _containsZeroWidthCodepoints;
     SFLocator _locator;
 } SFTextProcessor, *SFTextProcessorRef;
 
-SF_INTERNAL void SFTextProcessorInitialize(SFTextProcessorRef textProcessor, SFPatternRef pattern,
-   SFAlbumRef album, SFTextDirection textDirection, SFTextMode textMode, SFBoolean zeroWidthMarks);
+SF_INTERNAL void SFTextProcessorInitialize(SFTextProcessorRef textProcessor,
+   SFPatternRef pattern, SFAlbumRef album, SFTextDirection textDirection,
+   SFUInt16 ppemWidth, SFUInt16 ppemHeight, SFBoolean zeroWidthMarks);
 
 SF_INTERNAL void SFTextProcessorDiscoverGlyphs(SFTextProcessorRef textProcessor);
 SF_INTERNAL void SFTextProcessorSubstituteGlyphs(SFTextProcessorRef textProcessor);
