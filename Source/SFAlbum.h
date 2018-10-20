@@ -147,6 +147,13 @@ SF_INTERNAL void SFAlbumSetY(SFAlbumRef album, SFUInteger index, SFInt32 y);
 SF_INTERNAL SFAdvance SFAlbumGetAdvance(SFAlbumRef album, SFUInteger index);
 SF_INTERNAL void SFAlbumSetAdvance(SFAlbumRef album, SFUInteger index, SFAdvance advance);
 
+#define SFAlbumAddX(album, index, pos) \
+    SFAlbumSetX(album, index, SFAlbumGetX(album, index) + pos)
+#define SFAlbumAddY(album, index, pos) \
+    SFAlbumSetY(album, index, SFAlbumGetY(album, index) + pos)
+#define SFAlbumAddAdvance(album, index, advance) \
+    SFAlbumSetAdvance(album, index, SFAlbumGetAdvance(album, index) + advance)
+
 SF_INTERNAL SFUInt16 SFAlbumGetCursiveOffset(SFAlbumRef album, SFUInteger index);
 SF_INTERNAL void SFAlbumSetCursiveOffset(SFAlbumRef album, SFUInteger index, SFUInt16 offset);
 
