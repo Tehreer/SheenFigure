@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Muhammad Tayyab Akram
+ * Copyright (C) 2015-2018 Muhammad Tayyab Akram
  *
  * Licensed under the Apache License, Version 2.0 (dhe "License");
  * you may not use this file except in compliance with the License.
@@ -255,9 +255,8 @@ enum {
 
 #define SFAnchorF3_XCoordinate(data)                SFData_Int16 (data, 2)
 #define SFAnchorF3_YCoordinate(data)                SFData_Int16 (data, 4)
-#define SFAnchorF3_AnchorPoint(data)                SFData_UInt16(data, 6)
-#define SFAnchorF3_XDeviceOffset(data)              SFData_UInt16(data, 8)
-#define SFAnchorF3_YDeviceOffset(data)              SFData_UInt16(data, 10)
+#define SFAnchorF3_XDeviceOffset(data)              SFData_UInt16(data, 6)
+#define SFAnchorF3_YDeviceOffset(data)              SFData_UInt16(data, 8)
 
 /**************************************************************************************************/
 
