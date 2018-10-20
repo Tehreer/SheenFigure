@@ -42,6 +42,8 @@ SFArtistRef SFArtistCreate(void)
     artist->pattern = NULL;
     artist->textDirection = SFTextDirectionLeftToRight;
     artist->textMode = SFTextModeForward;
+    artist->ppemWidth = 0;
+    artist->ppemHeight = 0;
     artist->_retainCount = 1;
 
     return artist;

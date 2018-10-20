@@ -28,6 +28,8 @@ typedef struct _SFArtist {
     SFPatternRef pattern;
     SFTextDirection textDirection;
     SFTextMode textMode;
+    SFUInt16 ppemWidth;
+    SFUInt16 ppemHeight;
     SFUInteger _retainCount;
 } SFArtist;
 
