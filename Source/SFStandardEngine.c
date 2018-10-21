@@ -93,7 +93,8 @@ static void StandardEngineProcessAlbum(const void *object, SFAlbumRef album)
     SFArtistRef artist = standardEngine->_artist;
     SFTextProcessor processor;
 
-    SFTextProcessorInitialize(&processor, artist->pattern, album, artist->textDirection, artist->textMode, SFFalse);
+    SFTextProcessorInitialize(&processor, artist->pattern, album, artist->textDirection,
+                              artist->ppemWidth, artist->ppemHeight, SFFalse);
     SFTextProcessorDiscoverGlyphs(&processor);
     SFTextProcessorSubstituteGlyphs(&processor);
     SFTextProcessorPositionGlyphs(&processor);
