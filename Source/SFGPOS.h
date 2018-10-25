@@ -64,7 +64,6 @@ enum {
  + SFValueFormat_Reserved(format)                   \
 )
 
-#define SFValueRecord_NextValue(data, offset)       SFData_UInt16(data, offset), (offset += 2)
 #define SFValueRecord_Size(format)                  \
 (                                                   \
    (format)                                         \
@@ -139,7 +138,7 @@ enum {
 #define SFClass1Record_Class2Record(data, index, c2Size)\
                                                     SFData_Subdata(data, (index) * (c2Size))
 
-#define SFClass2Record_Value(v1Size, v2Size)        ((v1Size) + (v2Size))
+#define SFClass2Record_Size(v1Size, v2Size)         ((v1Size) + (v2Size))
 #define SFClass2Record_Value1(data)                 SFData_Subdata(data, 0)
 #define SFClass2Record_Value2(data, v1Size)         SFData_Subdata(data, v1Size)
 
