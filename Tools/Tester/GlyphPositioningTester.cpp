@@ -43,6 +43,14 @@ void TextProcessorTester::testSinglePositioning()
         /* Test with positive values. */
         testPositioning(builder.createSinglePos({ 1 }, builder.createValueRecord({ 100, 200, 300, 0 })),
                         { 1 }, { {100, 200} }, { 300 });
+        /* Test with device adjustments. */
+        testPositioning(builder.createSinglePos({ 1 }, builder.createValueRecord({ -100, 0, 100, 0 }, {
+                            &builder.createDevice({8, 10}, { -10, -20, -30 }),
+                            &builder.createDevice({8, 10}, { 10, 20, 30 }),
+                            &builder.createDevice({8, 10}, { 40, 50, 60 }),
+                            nullptr
+                        })),
+                        { 1 }, { {-110, 30} }, { 140 });
     }
 
     /* Test the second format. */
@@ -63,6 +71,16 @@ void TextProcessorTester::testSinglePositioning()
         testPositioning(builder.createSinglePos({ 1 },
                         { builder.createValueRecord({ 100, 200, 300, 0 }) }),
                         { 1 }, { {100, 200} }, { 300 });
+        /* Test with device adjustments. */
+        testPositioning(builder.createSinglePos({ 1 }, {
+                            builder.createValueRecord({ -100, 0, 100, 0 }, {
+                                &builder.createDevice({8, 10}, { -10, -20, -30 }),
+                                &builder.createDevice({8, 10}, { 10, 20, 30 }),
+                                &builder.createDevice({8, 10}, { 40, 50, 60 }),
+                                nullptr
+                            })
+                        }),
+                        { 1 }, { {-110, 30} }, { 140 });
     }
 }
 
@@ -75,6 +93,18 @@ void TextProcessorTester::testPairPositioning()
     ValueRecord &positive2 = builder.createValueRecord({ 600, 700, 800, 900 });
     ValueRecord &negative1 = builder.createValueRecord({ -900, -800, -700, -600 });
     ValueRecord &negative2 = builder.createValueRecord({ -400, -300, -200, -100 });
+    ValueRecord &device1 = builder.createValueRecord({ 100, 200, 300, 400 }, {
+        &builder.createDevice({8, 10}, { -10, -20, -30 }),
+        &builder.createDevice({8, 10}, { 10, 20, 30 }),
+        &builder.createDevice({8, 10}, { 40, 50, 60 }),
+        nullptr
+    });
+    ValueRecord &device2 = builder.createValueRecord({ -100, -200, -300, -400 }, {
+        &builder.createDevice({8, 10}, { 10, 20, 30 }),
+        &builder.createDevice({8, 10}, { 40, 50, 60 }),
+        &builder.createDevice({8, 10}, { -10, -20, -30 }),
+        nullptr
+    });
 
     /* Test the first format. */
     {
@@ -103,6 +133,11 @@ void TextProcessorTester::testPairPositioning()
                             pair_rule { 1, 2, negative1, negative2 }
                         }),
                         { 1, 2 }, { {-900, -800}, {-400, -300} }, { -700, -200 });
+        /* Test with device values. */
+        testPositioning(builder.createPairPos({
+                            pair_rule { 1, 2, device1, device2 }
+                        }),
+                        { 1, 2 }, { {90, 230}, {-90, -140} }, { 340, -310 });
         /* Test by letting middle pair match in a single pair set. */
         testPositioning(builder.createPairPos({
                             pair_rule { 1, 2, positive1, positive2 },
@@ -165,6 +200,11 @@ void TextProcessorTester::testPairPositioning()
                             pair_rule { 1, 4, negative1, negative2 }
                         }),
                         { 11, 21 }, { {-900, -800}, {-400, -300} }, { -700, -200 });
+        /* Test with device values. */
+        testPositioning(builder.createPairPos({ 11 }, classDefs, {
+                            pair_rule { 1, 4, device1, device2 }
+                        }),
+                        { 11, 21 }, { {90, 230}, {-90, -140} }, { 340, -310 });
         /* Test by letting middle pair match in a single class set. */
         testPositioning(builder.createPairPos({ 11 }, classDefs, {
                             pair_rule { 1, 4, positive1, positive2 },
