@@ -176,6 +176,14 @@ typedef SFUInt16 SFLookupFlag;
 
 /**************************************************************************************************/
 
+/**************************************VARIATION INDEX TABLE***************************************/
+
+#define SFVarIndex_DeltaSetOuterIndex(data)             SFData_UInt16(data, 0)
+#define SFVarIndex_DeltaSetInnerIndex(data)             SFData_UInt16(data, 2)
+#define SFVarIndex_DeltaFormat(data)                    SFData_UInt16(data, 4)
+
+/**************************************************************************************************/
+
 /******************************************LOOKUP RECORD*******************************************/
 
 #define SFLookupRecord_SequenceIndex(data)              SFData_UInt16(data, 0)
