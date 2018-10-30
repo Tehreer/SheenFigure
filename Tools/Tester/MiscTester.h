@@ -24,6 +24,7 @@ class MiscTester {
 public:
     MiscTester();
 
+    void testDevicePixels();
     void test();
 };
 
