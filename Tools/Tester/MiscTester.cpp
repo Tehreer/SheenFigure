@@ -63,6 +63,45 @@ void MiscTester::testDevicePixels()
         assert(SFOpenTypeGetDevicePixels(data, 21) == -1);
         assert(SFOpenTypeGetDevicePixels(data, 22) == -2);
     }
+
+    /* Test the second format. */
+    {
+        DeviceTable *device = &builder.createDevice({11, 16}, { -8, 0, 7, 1, -1, -7 });
+
+        Writer writer;
+        writer.write(device);
+
+        SFData data = writer.data();
+
+        /* Test with out of range values. */
+        assert(SFOpenTypeGetDevicePixels(data, 10) == 0);
+        assert(SFOpenTypeGetDevicePixels(data, 17) == 0);
+        /* Test with inside the range values. */
+        assert(SFOpenTypeGetDevicePixels(data, 11) == -8);
+        assert(SFOpenTypeGetDevicePixels(data, 12) == 0);
+        assert(SFOpenTypeGetDevicePixels(data, 13) == 7);
+        assert(SFOpenTypeGetDevicePixels(data, 14) == 1);
+        assert(SFOpenTypeGetDevicePixels(data, 15) == -1);
+        assert(SFOpenTypeGetDevicePixels(data, 16) == -7);
+    }
+
+    /* Test the third format. */
+    {
+        DeviceTable *device = &builder.createDevice({11, 13}, { -128, 0, 127 });
+
+        Writer writer;
+        writer.write(device);
+
+        SFData data = writer.data();
+
+        /* Test with out of range values. */
+        assert(SFOpenTypeGetDevicePixels(data, 10) == 0);
+        assert(SFOpenTypeGetDevicePixels(data, 14) == 0);
+        /* Test with inside the range values. */
+        assert(SFOpenTypeGetDevicePixels(data, 11) == -128);
+        assert(SFOpenTypeGetDevicePixels(data, 12) == 0);
+        assert(SFOpenTypeGetDevicePixels(data, 13) == 127);
+    }
 }
 
 void MiscTester::test()
