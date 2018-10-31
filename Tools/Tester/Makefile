@@ -14,6 +14,7 @@ TESTER_SRCS = $(TESTER_DIR)/AlbumTester.cpp \
               $(TESTER_DIR)/JoiningTypeLookupTester.cpp \
               $(TESTER_DIR)/ListTester.cpp \
               $(TESTER_DIR)/LocatorTester.cpp \
+              $(TESTER_DIR)/MiscTester.cpp \
               $(TESTER_DIR)/main.cpp \
               $(TESTER_DIR)/PatternTester.cpp \
               $(TESTER_DIR)/SchemeTester.cpp \
