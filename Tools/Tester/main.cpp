@@ -21,6 +21,7 @@
 #include "JoiningTypeLookupTester.h"
 #include "ListTester.h"
 #include "LocatorTester.h"
+#include "MiscTester.h"
 #include "PatternTester.h"
 #include "SchemeTester.h"
 #include "TextProcessorTester.h"
@@ -42,6 +43,7 @@ int main(int argc, const char * argv[])
     PatternTester patternTester;
     SchemeTester schemeTester;
     TextProcessorTester textProcessorTester;
+    MiscTester miscTester;
 
     albumTester.test();
     fontTester.test();
@@ -51,6 +53,7 @@ int main(int argc, const char * argv[])
     patternTester.test();
     schemeTester.test();
     textProcessorTester.test();
+    miscTester.test();
 
     return 0;
 }
