@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Muhammad Tayyab Akram
+ * Copyright (C) 2015-2018 Muhammad Tayyab Akram
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,6 +37,18 @@ SFArtistRef SFArtistCreate(void);
  *      A pattern that should be used while shaping.
  */
 void SFArtistSetPattern(SFArtistRef artist, SFPatternRef pattern);
+
+/**
+ * Sets the target ppem sizes which the artist will use to refine glyph positioning.
+ *
+ * @param artist
+ *      The artist for which to set the ppem sizes.
+ * @param ppemWidth
+ *      The target ppem width. If zero, it will be assumed same as the units per em of the font.
+ * @param ppemHeight
+ *      The target ppem height. If zero, it will be assumed same as the units per em of the font.
+ */
+void SFArtistSetPPEMSizes(SFArtistRef artist, SFUInt16 ppemWidth, SFUInt16 ppemHeight);
 
 /**
  * Sets the source string which an artist will shape.

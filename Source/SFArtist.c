@@ -49,6 +49,12 @@ SFArtistRef SFArtistCreate(void)
     return artist;
 }
 
+void SFArtistSetPPEMSizes(SFArtistRef artist, SFUInt16 ppemWidth, SFUInt16 ppemHeight)
+{
+    artist->ppemWidth = ppemWidth;
+    artist->ppemHeight = ppemHeight;
+}
+
 void SFArtistSetString(SFArtistRef artist, SFStringEncoding stringEncoding, void *stringBuffer, SFUInteger stringLength)
 {
     LoadCodepointSequence(&artist->codepointSequence, stringEncoding, stringBuffer, stringLength);
