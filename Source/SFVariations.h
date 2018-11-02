@@ -32,4 +32,21 @@
 
 /**************************************************************************************************/
 
+/***********************************ITEM VARIATION DATA SUBTABLE***********************************/
+
+#define SFItemVarData_ItemCount(data)                   SFData_UInt16(data, 0)
+#define SFItemVarData_ShortDeltaCount(data)             SFData_UInt16(data, 2)
+#define SFItemVarData_RegionIndexCount(data)            SFData_UInt16(data, 4)
+#define SFItemVarData_RegionIndexItem(data, index)      SFData_UInt16(data, 6 + ((index) * 2))
+#define SFItemVarData_DeltaSetRowsArray(data, riCount)  SFData_Subdata(data, 6 + ((riCount) * 2))
+
+#define SFDeltaSetRowsArray_DeltaSetRecord(data, index, dsrSize) \
+                                                        SFData_Subdata(data, (index) * (dsrSize))
+
+#define SFDeltaSetRecord_Size(sdCount, riCount)         ((sdCount) + (riCount))
+#define SFDeltaSetRecord_I16Delta(data, index)          SFData_Int16(data, (index) * 2)
+#define SFDeltaSetRecord_I8Delta(data, sdCount, index)  SFData_Int8(data, ((sdCount) * 2) + (index))
+
+/**************************************************************************************************/
+
 #endif
