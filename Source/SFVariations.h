@@ -19,6 +19,21 @@
 
 #include "SFData.h"
 
+/**************************************VARIATION REGION LIST***************************************/
+
+#define SFVarRegionList_AxisCount(data)                 SFData_UInt16(data, 0)
+#define SFVarRegionList_RegionCount(data)               SFData_UInt16(data, 2)
+#define SFVarRegionList_VarRegionRecord(data, index, axisCount) \
+                                                        SFData_Subdata(data, 4 + ((index) * ((axisCount) * 6)))
+
+#define SFVarRegionRecord_RegionAxisCoords(data, index) SFData_Subdata(data, (index) * 6)
+
+#define SFRegionAxisCoords_StartCoord(data)             SFData_Int16(data, 0)
+#define SFRegionAxisCoords_PeakCoord(data)              SFData_Int16(data, 2)
+#define SFRegionAxisCoords_EndCoord(data)               SFData_Int16(data, 4)
+
+/**************************************************************************************************/
+
 /************************************ITEM VARIATION STORE TABLE************************************/
 
 #define SFItemVarStore_Format(data)                     SFData_UInt16(data, 0)
