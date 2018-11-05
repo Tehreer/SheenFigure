@@ -232,3 +232,34 @@ static double CalculateScalarForRegion(SFData regionListTable, SFUInt16 regionIn
 
     return regionScalar;
 }
+
+static SFInt32 CalculateVariationAdjustment(SFData varDataTable, SFData regionListTable,
+    SFUInt16 rowIndex, SFInt32 *coordArray, SFUInteger coordCount)
+{
+    SFUInt16 itemCount = SFItemVarData_ItemCount(varDataTable);
+    SFUInt16 shortDeltaCount = SFItemVarData_ShortDeltaCount(varDataTable);
+    SFUInt16 regionCount = SFItemVarData_RegionIndexCount(varDataTable);
+    double adjustment = 0.0;
+
+    if (rowIndex < itemCount) {
+        SFUInteger recordSize = SFDeltaSetRecord_Size(shortDeltaCount, regionCount);
+        SFData rowsArray = SFItemVarData_DeltaSetRowsArray(varDataTable, regionCount);
+        SFData deltaSet = SFDeltaSetRowsArray_DeltaSetRecord(rowsArray, rowIndex, recordSize);
+        SFUInt16 valueIndex;
+
+        for (valueIndex = 0; valueIndex < regionCount; valueIndex++) {
+            SFUInt16 regionIndex = SFItemVarData_RegionIndexItem(varDataTable, valueIndex);
+            SFInt16 delta;
+
+            if (valueIndex < shortDeltaCount) {
+                delta = SFDeltaSetRecord_I16Delta(deltaSet, valueIndex);
+            } else {
+                delta = SFDeltaSetRecord_I8Delta(deltaSet, shortDeltaCount, valueIndex - shortDeltaCount);
+            }
+
+            adjustment += CalculateScalarForRegion(regionListTable, regionIndex, coordArray, coordCount) * delta;
+        }
+    }
+
+    return (SFInt32)((adjustment * 0x4000) + 0.5);
+}
