@@ -21,6 +21,7 @@
 #include "SFBase.h"
 #include "SFCommon.h"
 #include "SFData.h"
+#include "SFVariations.h"
 #include "SFOpenType.h"
 
 static int _SFUInt16ItemsComparison(const void *item1, const void *item2)
@@ -186,4 +187,48 @@ SF_INTERNAL SFInt32 SFOpenTypeGetDevicePixels(SFData deviceTable, SFUInt16 ppemS
     }
 
     return 0;
+}
+
+static double CalculateScalarForRegion(SFData regionListTable, SFUInt16 regionIndex,
+    SFInt32 *coordArray, SFUInteger coordCount)
+{
+    SFUInt16 axisCount = SFVarRegionList_AxisCount(regionListTable);
+    SFUInt16 regionCount = SFVarRegionList_RegionCount(regionListTable);
+    double regionScalar = 1.0;
+
+    if (regionIndex < regionCount) {
+        SFData regionRecord = SFVarRegionList_VarRegionRecord(regionListTable, regionIndex, axisCount);
+        SFUInt16 axisIndex;
+
+        for (axisIndex = 0; axisIndex < axisCount; axisIndex++) {
+            SFData axisCoords = SFVarRegionRecord_RegionAxisCoords(regionRecord, axisIndex);
+            SFInt16 startCoord = SFRegionAxisCoords_StartCoord(axisCoords);
+            SFInt16 peakCoord = SFRegionAxisCoords_PeakCoord(axisCoords);
+            SFInt16 endCoord = SFRegionAxisCoords_EndCoord(axisCoords);
+            SFInt32 instanceCoord = (axisIndex < coordCount ? coordArray[axisIndex] : 0);
+            double axisScalar;
+
+            if (startCoord > peakCoord || peakCoord > endCoord) {
+                axisScalar = 1.0;
+            } else if (startCoord < 0 && endCoord > 0 && peakCoord != 0) {
+                axisScalar = 1.0;
+            } else if (peakCoord == 0) {
+                axisScalar = 1.0;
+            } else if (instanceCoord < startCoord || instanceCoord > endCoord) {
+                axisScalar = 0.0;
+            } else {
+                if (instanceCoord == peakCoord) {
+                    axisScalar = 1.0;
+                } else if (instanceCoord < peakCoord) {
+                    axisScalar = (double)(instanceCoord - startCoord) / (peakCoord - startCoord);
+                } else {
+                    axisScalar = (double)(endCoord - instanceCoord) / (endCoord - peakCoord);
+                }
+            }
+
+            regionScalar *= axisScalar;
+        }
+    }
+
+    return regionScalar;
 }
