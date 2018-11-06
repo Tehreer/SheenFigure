@@ -263,3 +263,38 @@ static SFInt32 CalculateVariationAdjustment(SFData varDataTable, SFData regionLi
 
     return (SFInt32)((adjustment * 0x4000) + 0.5);
 }
+
+static SFInt32 GetDeltaFromVariationStore(SFData varStoreTable,
+    SFUInt16 dataIndex, SFUInt16 rowIndex, SFInt32 *coordArray, SFUInteger coordCount)
+{
+    SFUInt16 format = SFItemVarStore_Format(varStoreTable);
+
+    switch (format) {
+        case 1: {
+            SFData regionList = SFItemVarStore_VarRegionListTable(varStoreTable);
+            SFUInt16 dataCount = SFItemVarStore_ItemVarDataCount(varStoreTable);
+
+            if (dataIndex < dataCount) {
+                SFData varDataTable = SFItemVarStore_ItemVarDataTable(varStoreTable, dataIndex);
+                return CalculateVariationAdjustment(varDataTable, regionList, rowIndex, coordArray, coordCount);
+            }
+            break;
+        }
+    }
+
+    return 0;
+}
+
+SF_INTERNAL SFInt32 SFOpenTypeGetVariationPixels(SFData varIndexTable, SFData varStoreTable,
+    SFInt32 *coordArray, SFUInteger coordCount)
+{
+    SFUInt16 outerIndex = SFVarIndex_DeltaSetOuterIndex(varIndexTable);
+    SFUInt16 innerIndex = SFVarIndex_DeltaSetInnerIndex(varIndexTable);
+    SFUInt16 deltaFormat = SFVarIndex_DeltaFormat(varIndexTable);
+
+    if (deltaFormat == 0x8000) {
+        return GetDeltaFromVariationStore(varStoreTable, outerIndex, innerIndex, coordArray, coordCount);
+    }
+
+    return 0;
+}
