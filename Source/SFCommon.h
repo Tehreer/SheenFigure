@@ -196,6 +196,24 @@ typedef SFUInt16 SFLookupFlag;
 
 /**************************************************************************************************/
 
+/***************************************CONDITION SET TABLE****************************************/
+
+#define SFConditionSet_ConditionCount(data)             SFData_UInt16(data, 0)
+#define SFConditionSet_ConditionOffset(data, index)     SFData_UInt32(data, 2 + ((index) * 4))
+#define SFConditionSet_ConditionTable(data, index) \
+    SFData_Subdata(data, SFConditionSet_ConditionOffset(data, index))
+
+/**************************************************************************************************/
+
+/*****************************************CONDITION TABLE******************************************/
+
+#define SFCondition_Format(data)                        SFData_UInt16(data, 0)
+#define SFCondition_AxisIndex(data)                     SFData_UInt16(data, 2)
+#define SFCondition_FilterRangeMinValue(data)           SFData_Int16(data, 4)
+#define SFCondition_FilterRangeMaxValue(data)           SFData_Int16(data, 6)
+
+/**************************************************************************************************/
+
 /******************************************LOOKUP RECORD*******************************************/
 
 #define SFLookupRecord_SequenceIndex(data)              SFData_UInt16(data, 0)
