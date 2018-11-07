@@ -184,6 +184,18 @@ typedef SFUInt16 SFLookupFlag;
 
 /**************************************************************************************************/
 
+/*************************************FEATURE VARIATIONS TABLE*************************************/
+
+#define SFFeatureVars_MajorVersion(data)                SFData_UInt16(data, 0)
+#define SFFeatureVars_MinorVersion(data)                SFData_UInt16(data, 2)
+#define SFFeatureVars_FeatureVarCount(data)             SFData_UInt32(data, 4)
+#define SFFeatureVars_FeatureVarRecord(data, index)     SFData_Subdata(data, 8 + ((index) * 8))
+
+#define SFFeatureVarRecord_ConditionSetOffset(data)     SFData_UInt32(data, 0)
+#define SFFeatureVarRecord_FeatureSubstOffset(data)     SFData_UInt32(data, 4)
+
+/**************************************************************************************************/
+
 /******************************************LOOKUP RECORD*******************************************/
 
 #define SFLookupRecord_SequenceIndex(data)              SFData_UInt16(data, 0)
