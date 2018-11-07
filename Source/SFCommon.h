@@ -214,6 +214,18 @@ typedef SFUInt16 SFLookupFlag;
 
 /**************************************************************************************************/
 
+/*********************************FEATURE TABLE SUBSTITUTION TABLE*********************************/
+
+#define SFFeatureSubst_MajorVersion(data)               SFData_UInt16(data, 0)
+#define SFFeatureSubst_MinorVersion(data)               SFData_UInt16(data, 2)
+#define SFFeatureSubst_SubstCount(data)                 SFData_UInt16(data, 4)
+#define SFFeatureSubst_FeatureSubstRecord(data, index)  SFData_Subdata(data, 6 + ((index) * 6))
+
+#define SFFeatureSubstRecord_FeatureIndex(data)         SFData_UInt16(data, 0)
+#define SFFeatureSubstRecord_AltFeatureOffset(data)     SFData_UInt32(data, 2)
+
+/**************************************************************************************************/
+
 /******************************************LOOKUP RECORD*******************************************/
 
 #define SFLookupRecord_SequenceIndex(data)              SFData_UInt16(data, 0)
