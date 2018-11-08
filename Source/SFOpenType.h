@@ -29,4 +29,7 @@ SF_INTERNAL SFInt32 SFOpenTypeGetDevicePixels(SFData deviceTable, SFUInt16 ppemS
 SF_INTERNAL SFInt32 SFOpenTypeGetVariationPixels(SFData varIndexTable, SFData varStoreTable,
     SFInt32 *coordArray, SFUInteger coordCount);
 
+SF_INTERNAL SFData SFOpenTypeSearchFeatureSubstitutionTable(SFData featureVarsTable,
+    SFInt32 *coordArray, SFUInteger coordCount);
+
 #endif

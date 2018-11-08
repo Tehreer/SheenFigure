@@ -298,3 +298,59 @@ SF_INTERNAL SFInt32 SFOpenTypeGetVariationPixels(SFData varIndexTable, SFData va
 
     return 0;
 }
+
+static SFBoolean MatchCondition(SFData condTable, SFInt32 *coordArray, SFUInteger coordCount)
+{
+    SFUInt16 format = SFCondition_Format(condTable);
+
+    switch (format) {
+        case 1: {
+            SFUInt16 axisIndex = SFCondition_AxisIndex(condTable);
+            SFInt16 minValue = SFCondition_FilterRangeMinValue(condTable);
+            SFInt16 maxValue = SFCondition_FilterRangeMaxValue(condTable);
+            SFInt32 coordValue = (axisIndex < coordCount ? coordArray[axisIndex] : 0);
+
+            if (coordValue >= minValue && coordValue <= maxValue) {
+                return SFTrue;
+            }
+        }
+    }
+
+    return SFFalse;
+}
+
+static SFBoolean MatchConditionSet(SFData condSetTable, SFInt32 *coordArray, SFUInteger coordCount)
+{
+    SFUInt16 condCount = SFConditionSet_ConditionCount(condSetTable);
+    SFUInt16 condIndex;
+
+    for (condIndex = 0; condIndex < condCount; condIndex++) {
+        SFData condTable = SFConditionSet_ConditionTable(condSetTable, condIndex);
+
+        if (!MatchCondition(condTable, coordArray, coordCount)) {
+            return SFFalse;
+        }
+    }
+
+    return SFTrue;
+}
+
+SF_INTERNAL SFData SFOpenTypeSearchFeatureSubstitutionTable(SFData featureVarsTable,
+    SFInt32 *coordArray, SFUInteger coordCount)
+{
+    SFUInt32 recordCount = SFFeatureVars_FeatureVarCount(featureVarsTable);
+    SFUInt32 recordIndex;
+
+    for (recordIndex = 0; recordIndex < recordCount; recordIndex++) {
+        SFData varRecord = SFFeatureVars_FeatureVarRecord(featureVarsTable, recordIndex);
+        SFUInt32 condSetOffset = SFFeatureVarRecord_ConditionSetOffset(varRecord);
+        SFData condSetTable = SFData_Subdata(featureVarsTable, condSetOffset);
+
+        if (MatchConditionSet(condSetTable, coordArray, coordCount)) {
+            SFUInt32 featureSubstOffset = SFFeatureVarRecord_FeatureSubstOffset(varRecord);
+            return SFData_Subdata(featureVarsTable, featureSubstOffset);
+        }
+    }
+
+    return NULL;
+}
