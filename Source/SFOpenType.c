@@ -354,3 +354,26 @@ SF_INTERNAL SFData SFOpenTypeSearchFeatureSubstitutionTable(SFData featureVarsTa
 
     return NULL;
 }
+
+SF_INTERNAL SFData SFOpenTypeSearchAlternateFeatureTable(SFData featureSubstTable, SFUInt16 featureIndex)
+{
+    SFUInt16 substCount = SFFeatureSubst_SubstCount(featureSubstTable);
+    SFUInt16 substIndex;
+
+    for (substIndex = 0; substIndex < substCount; substIndex++) {
+        SFData substRec = SFFeatureSubst_FeatureSubstRecord(featureSubstTable, substIndex);
+        SFUInt16 recFeatureIndex = SFFeatureSubstRecord_FeatureIndex(substRec);
+
+        if (recFeatureIndex == featureIndex) {
+            SFUInt32 altFeatureOffset = SFFeatureSubstRecord_AltFeatureOffset(substRec);
+            return SFData_Subdata(featureSubstTable, altFeatureOffset);
+        }
+
+        /* Stop searching if a higher feature index value is encountered. */
+        if (recFeatureIndex > featureIndex) {
+            break;
+        }
+    }
+
+    return NULL;
+}

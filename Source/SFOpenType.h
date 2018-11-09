@@ -31,5 +31,6 @@ SF_INTERNAL SFInt32 SFOpenTypeGetVariationPixels(SFData varIndexTable, SFData va
 
 SF_INTERNAL SFData SFOpenTypeSearchFeatureSubstitutionTable(SFData featureVarsTable,
     SFInt32 *coordArray, SFUInteger coordCount);
+SF_INTERNAL SFData SFOpenTypeSearchAlternateFeatureTable(SFData featureSubstTable, SFUInt16 featureIndex);
 
 #endif
