@@ -24,7 +24,7 @@
 #include "SFVariations.h"
 #include "SFOpenType.h"
 
-static int _SFUInt16ItemsComparison(const void *item1, const void *item2)
+static int UInt16ItemsComparison(const void *item1, const void *item2)
 {
     SFUInt16 *ref1 = (SFUInt16 *)item1;
     SFUInt16 val1 = *ref1;
@@ -34,9 +34,9 @@ static int _SFUInt16ItemsComparison(const void *item1, const void *item2)
     return (int)val1 - (int)val2;
 }
 
-static SFUInteger _SFBinarySearchUInt16(SFData uint16Array, SFUInteger length, SFUInt16 value)
+static SFUInteger BinarySearchUInt16(SFData uint16Array, SFUInteger length, SFUInt16 value)
 {
-    void *item = bsearch(&value, uint16Array, length, sizeof(SFUInt16), _SFUInt16ItemsComparison);
+    void *item = bsearch(&value, uint16Array, length, sizeof(SFUInt16), UInt16ItemsComparison);
     if (!item) {
         return SFInvalidIndex;
     }
@@ -44,7 +44,7 @@ static SFUInteger _SFBinarySearchUInt16(SFData uint16Array, SFUInteger length, S
     return (SFUInteger)((SFData)item - uint16Array) / sizeof(SFUInt16);
 }
 
-static int _SFGlyphRangeComparison(const void *item1, const void *item2)
+static int GlyphRangeComparison(const void *item1, const void *item2)
 {
     SFUInt16 *ref1 = (SFUInt16 *)item1;
     SFUInt16 val1 = *ref1;
@@ -63,9 +63,9 @@ static int _SFGlyphRangeComparison(const void *item1, const void *item2)
     return 0;
 }
 
-static SFData _SFBinarySearchGlyphRange(SFData rangeArray, SFUInteger length, SFUInt16 value)
+static SFData BinarySearchGlyphRange(SFData rangeArray, SFUInteger length, SFUInt16 value)
 {
-    return bsearch(&value, rangeArray, length, SFGlyphRange_Size(), _SFGlyphRangeComparison);
+    return bsearch(&value, rangeArray, length, SFGlyphRange_Size(), GlyphRangeComparison);
 }
 
 SF_INTERNAL SFUInteger SFOpenTypeSearchCoverageIndex(SFData coverageTable, SFGlyphID glyphID)
@@ -82,7 +82,7 @@ SF_INTERNAL SFUInteger SFOpenTypeSearchCoverageIndex(SFData coverageTable, SFGly
             SFUInt16 glyphCount = SFCoverageF1_GlyphCount(coverageTable);
             SFData glyphArray = SFCoverageF1_GlyphArray(coverageTable);
 
-            return _SFBinarySearchUInt16(glyphArray, glyphCount, glyphID);
+            return BinarySearchUInt16(glyphArray, glyphCount, glyphID);
         }
 
         case 2: {
@@ -90,7 +90,7 @@ SF_INTERNAL SFUInteger SFOpenTypeSearchCoverageIndex(SFData coverageTable, SFGly
             SFData rangeArray = SFCoverageF2_GlyphRangeArray(coverageTable);
             SFData rangeRecord;
 
-            rangeRecord = _SFBinarySearchGlyphRange(rangeArray, rangeCount, glyphID);
+            rangeRecord = BinarySearchGlyphRange(rangeArray, rangeCount, glyphID);
 
             if (rangeRecord) {
                 SFUInt16 startGlyphID = SFRangeRecord_StartGlyphID(rangeRecord);
@@ -134,7 +134,7 @@ SF_INTERNAL SFUInt16 SFOpenTypeSearchGlyphClass(SFData classDefTable, SFGlyphID 
             SFData rangeArray = SFClassDefF2_GlyphRangeArray(classDefTable);
             SFData rangeRecord;
 
-            rangeRecord = _SFBinarySearchGlyphRange(rangeArray, rangeCount, glyphID);
+            rangeRecord = BinarySearchGlyphRange(rangeArray, rangeCount, glyphID);
 
             if (rangeRecord) {
                 return SFClassRangeRecord_Class(rangeRecord);
