@@ -41,9 +41,9 @@ typedef struct _SFPatternBuilder {
     SFFeatureKind _featureKind;     /**< Kind of features being added. */
     SFBoolean _canBuild;
 
-    SF_LIST(SFTag) _featureTags;
-    SF_LIST(SFFeatureUnit) _featureUnits;
-    SF_LIST(SFLookupInfo) _lookupInfos;
+    LIST(SFTag) _featureTags;
+    LIST(SFFeatureUnit) _featureUnits;
+    LIST(SFLookupInfo) _lookupInfos;
 } SFPatternBuilder, *SFPatternBuilderRef;
 
 /**

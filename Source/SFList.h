@@ -29,7 +29,7 @@ typedef struct {
     SFUInteger _itemSize;
 } List, *ListRef;
 
-#define SF_LIST(type)       \
+#define LIST(type)          \
 struct {                    \
     type *items;            \
     SFUInteger count;       \
@@ -87,30 +87,30 @@ do {                                                    \
     InsertItemAtIndex(list_, (list_)->count, item_)
 
 
-#define SFListInitialize(list, itemSize)            InitializeList((ListRef)(list), itemSize)
-#define SFListFinalize(list)                        FinalizeItemsBuffer((ListRef)(list))
-#define SFListFinalizeKeepingArray(list, outArray, outCount) \
+#define ListInitialize(list, itemSize)              InitializeList((ListRef)(list), itemSize)
+#define ListFinalize(list)                          FinalizeItemsBuffer((ListRef)(list))
+#define ListFinalizeKeepingArray(list, outArray, outCount) \
     ExtractItemsBuffer((ListRef)(list), (void **)outArray, outCount)
 
-#define SFListSetCapacity(list, capacity)           SetItemCapacity((ListRef)(list), capacity)
-#define SFListReserveRange(list, index, count)      ReserveItemRange((ListRef)(list), index, count)
-#define SFListRemoveRange(list, index, count)       RemoveItemRange((ListRef)(list), index, count)
+#define ListSetCapacity(list, capacity)             SetItemCapacity((ListRef)(list), capacity)
+#define ListReserveRange(list, index, count)        ReserveItemRange((ListRef)(list), index, count)
+#define ListRemoveRange(list, index, count)         RemoveItemRange((ListRef)(list), index, count)
 
-#define SFListClear(list)                           RemoveAllItems((ListRef)(list))
-#define SFListTrimExcess(list)                      TrimExcessCapacity((ListRef)(list))
+#define ListClear(list)                             RemoveAllItems((ListRef)(list))
+#define ListTrimExcess(list)                        TrimExcessCapacity((ListRef)(list))
 
-#define SFListGetRef(list, index)                   GetItemReference(list, index)
-#define SFListGetVal(list, index)                   GetItemAtIndex(list, index)
-#define SFListSetVal(list, index, item)             SetItemAtIndex(list, index, item)
+#define ListGetRef(list, index)                     GetItemReference(list, index)
+#define ListGetVal(list, index)                     GetItemAtIndex(list, index)
+#define ListSetVal(list, index, item)               SetItemAtIndex(list, index, item)
 
-#define SFListAdd(list, item)                       InsertItemAtEnd(list, item)
-#define SFListInsert(list, index, item)             InsertItemAtIndex(list, index, item)
-#define SFListRemoveAt(list, index)                 RemoveItemRange((ListRef)(list), index, 1)
+#define ListAdd(list, item)                         InsertItemAtEnd(list, item)
+#define ListInsert(list, index, item)               InsertItemAtIndex(list, index, item)
+#define ListRemoveAt(list, index)                   RemoveItemRange((ListRef)(list), index, 1)
 
-#define SFListIndexOfItem(list, item, index, count) SearchItemInRange((ListRef)(list), item, index, count)
-#define SFListContainsItem(list, item) \
+#define ListIndexOfItem(list, item, index, count)   SearchItemInRange((ListRef)(list), item, index, count)
+#define ListContainsItem(list, item) \
     (SearchItemInRange((ListRef)(list), item, 0, (list)->count) != SFInvalidIndex)
 
-#define SFListSort(list, index, count, comparison)  SortItemRange((ListRef)(list), index, count, comparison);
+#define ListSort(list, index, count, comparison)    SortItemRange((ListRef)(list), index, count, comparison);
 
 #endif

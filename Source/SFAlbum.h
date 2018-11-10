@@ -70,11 +70,11 @@ typedef struct _SFAlbum {
     SFUInteger codeunitCount;           /**< Number of code units to process. */
     SFUInteger glyphCount;              /**< Total number of glyphs in the album. */
 
-    SF_LIST(SFUInteger) _indexMap;      /**< Code unit index to glyph index mapping list. */
-    SF_LIST(SFGlyphID) _glyphs;         /**< List of ids of all glyphs in the album. */
-    SF_LIST(SFGlyphDetail) _details;    /**< List of details of all glyphs in the album. */
-    SF_LIST(SFPoint) _offsets;          /**< List of offsets of all glyphs in the album. */
-    SF_LIST(SFAdvance) _advances;       /**< List of advances of all glyphs in the album. */
+    LIST(SFUInteger) _indexMap;         /**< Code unit index to glyph index mapping list. */
+    LIST(SFGlyphID) _glyphs;            /**< List of ids of all glyphs in the album. */
+    LIST(SFGlyphDetail) _details;       /**< List of details of all glyphs in the album. */
+    LIST(SFPoint) _offsets;             /**< List of offsets of all glyphs in the album. */
+    LIST(SFAdvance) _advances;          /**< List of advances of all glyphs in the album. */
 
     SFUInteger _version;                /**< Current version of the album. */
     _SFAlbumState _state;               /**< Current state of the album. */

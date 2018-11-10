@@ -68,14 +68,14 @@ SF_INTERNAL void SFPatternBuilderInitialize(SFPatternBuilderRef builder, SFPatte
     builder->_featureKind = 0;
     builder->_canBuild = SFTrue;
 
-    SFListInitialize(&builder->_featureTags, sizeof(SFTag));
-    SFListSetCapacity(&builder->_featureTags, 24);
+    ListInitialize(&builder->_featureTags, sizeof(SFTag));
+    ListSetCapacity(&builder->_featureTags, 24);
 
-    SFListInitialize(&builder->_featureUnits, sizeof(SFFeatureUnit));
-    SFListSetCapacity(&builder->_featureUnits, 24);
+    ListInitialize(&builder->_featureUnits, sizeof(SFFeatureUnit));
+    ListSetCapacity(&builder->_featureUnits, 24);
 
-    SFListInitialize(&builder->_lookupInfos, sizeof(SFLookupInfo));
-    SFListSetCapacity(&builder->_lookupInfos, 32);
+    ListInitialize(&builder->_lookupInfos, sizeof(SFLookupInfo));
+    ListSetCapacity(&builder->_lookupInfos, 32);
 }
 
 SF_INTERNAL void SFPatternBuilderFinalize(SFPatternBuilderRef builder)
@@ -83,7 +83,7 @@ SF_INTERNAL void SFPatternBuilderFinalize(SFPatternBuilderRef builder)
     /* The pattern MUST be built before finalizing the builder. */
     SFAssert(builder->_canBuild == SFFalse);
 
-    SFListFinalize(&builder->_lookupInfos);
+    ListFinalize(&builder->_lookupInfos);
 }
 
 SF_INTERNAL void SFPatternBuilderSetFont(SFPatternBuilderRef builder, SFFontRef font)
@@ -110,7 +110,7 @@ SF_INTERNAL void SFPatternBuilderSetLanguage(SFPatternBuilderRef builder, SFTag 
 
 SF_INTERNAL SFBoolean SFPatternBuilderContainsFeature(SFPatternBuilderRef builder, SFTag featureTag)
 {
-    return SFListContainsItem(&builder->_featureTags, &featureTag);
+    return ListContainsItem(&builder->_featureTags, &featureTag);
 }
 
 SF_INTERNAL void SFPatternBuilderBeginFeatures(SFPatternBuilderRef builder, SFFeatureKind featureKind)
@@ -129,12 +129,12 @@ SF_INTERNAL void SFPatternBuilderAddFeature(SFPatternBuilderRef builder,
     /* The kind of features must be specified before adding them. */
     SFAssert(builder->_featureKind != 0);
     /* Only unique features can be added. */
-    SFAssert(!SFListContainsItem(&builder->_featureTags, &featureTag));
+    SFAssert(!ListContainsItem(&builder->_featureTags, &featureTag));
     /* Feature value must be non-zero. */
     SFAssert(featureValue != 0);
 
     /* Add the feature in the list. */
-    SFListAdd(&builder->_featureTags, featureTag);
+    ListAdd(&builder->_featureTags, featureTag);
     /* Set the value of the feature. */
     builder->_featureValue = featureValue;
     /* Insert the mask of the feature. */
@@ -158,7 +158,7 @@ SF_INTERNAL void SFPatternBuilderAddLookup(SFPatternBuilderRef builder, SFUInt16
         lookupInfo.index = lookupIndex;
         lookupInfo.value = builder->_featureValue;
 
-        SFListAdd(&builder->_lookupInfos, lookupInfo);
+        ListAdd(&builder->_lookupInfos, lookupInfo);
     }
 }
 
@@ -170,16 +170,16 @@ SF_INTERNAL void SFPatternBuilderMakeFeatureUnit(SFPatternBuilderRef builder)
     SFAssert((builder->_featureTags.count - builder->_featureIndex) > 0);
 
     /* Sort all lookup indexes. */
-    SFListSort(&builder->_lookupInfos, 0, builder->_lookupInfos.count, LookupIndexComparison);
+    ListSort(&builder->_lookupInfos, 0, builder->_lookupInfos.count, LookupIndexComparison);
     /* Set lookup indexes in current feature unit. */
-    SFListFinalizeKeepingArray(&builder->_lookupInfos, &featureUnit.lookups.items, &featureUnit.lookups.count);
+    ListFinalizeKeepingArray(&builder->_lookupInfos, &featureUnit.lookups.items, &featureUnit.lookups.count);
     /* Set covered range of feature unit. */
     featureUnit.range.start = builder->_featureIndex;
     featureUnit.range.count = builder->_featureTags.count - builder->_featureIndex;
     featureUnit.mask = builder->_featureMask;
 
     /* Add the feature unit in the list. */
-    SFListAdd(&builder->_featureUnits, featureUnit);
+    ListAdd(&builder->_featureUnits, featureUnit);
 
     /* Increase feature unit count. */
     switch (builder->_featureKind) {
@@ -201,8 +201,8 @@ SF_INTERNAL void SFPatternBuilderMakeFeatureUnit(SFPatternBuilderRef builder)
     builder->_featureIndex += featureUnit.range.count;
 
     /* Initialize lookup indexes array. */
-    SFListInitialize(&builder->_lookupInfos, sizeof(SFLookupInfo));
-    SFListSetCapacity(&builder->_lookupInfos, 32);
+    ListInitialize(&builder->_lookupInfos, sizeof(SFLookupInfo));
+    ListSetCapacity(&builder->_lookupInfos, 32);
     /* Reset feature mask. */
     builder->_featureMask = 0;
 }
@@ -235,8 +235,8 @@ SF_INTERNAL void SFPatternBuilderBuild(SFPatternBuilderRef builder)
     pattern->languageTag = builder->_languageTag;
     pattern->defaultDirection = builder->_defaultDirection;
 
-    SFListFinalizeKeepingArray(&builder->_featureTags, &pattern->featureTags.items, &pattern->featureTags.count);
-    SFListFinalizeKeepingArray(&builder->_featureUnits, &pattern->featureUnits.items, &unitCount);
+    ListFinalizeKeepingArray(&builder->_featureTags, &pattern->featureTags.items, &pattern->featureTags.count);
+    ListFinalizeKeepingArray(&builder->_featureUnits, &pattern->featureUnits.items, &unitCount);
 
     builder->_canBuild = SFFalse;
 }

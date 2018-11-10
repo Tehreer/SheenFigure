@@ -94,11 +94,11 @@ SF_INTERNAL void SFAlbumInitialize(SFAlbumRef album)
     album->codeunitCount = 0;
     album->glyphCount = 0;
 
-    SFListInitialize(&album->_indexMap, sizeof(SFUInteger));
-    SFListInitialize(&album->_glyphs, sizeof(SFGlyphID));
-    SFListInitialize(&album->_details, sizeof(SFGlyphDetail));
-    SFListInitialize(&album->_offsets, sizeof(SFPoint));
-    SFListInitialize(&album->_advances, sizeof(SFAdvance));
+    ListInitialize(&album->_indexMap, sizeof(SFUInteger));
+    ListInitialize(&album->_glyphs, sizeof(SFGlyphID));
+    ListInitialize(&album->_details, sizeof(SFGlyphDetail));
+    ListInitialize(&album->_offsets, sizeof(SFPoint));
+    ListInitialize(&album->_advances, sizeof(SFAdvance));
 
     album->_version = 0;
     album->_state = _SFAlbumStateEmpty;
@@ -118,13 +118,13 @@ SF_INTERNAL void SFAlbumReset(SFAlbumRef album, SFCodepointsRef codepoints)
     album->codeunitCount = codeunitCount;
     album->glyphCount = 0;
 
-    SFListClear(&album->_indexMap);
-    SFListReserveRange(&album->_indexMap, 0, codeunitCount);
+    ListClear(&album->_indexMap);
+    ListReserveRange(&album->_indexMap, 0, codeunitCount);
 
-    SFListClear(&album->_glyphs);
-    SFListClear(&album->_details);
-    SFListClear(&album->_offsets);
-    SFListClear(&album->_advances);
+    ListClear(&album->_glyphs);
+    ListClear(&album->_details);
+    ListClear(&album->_offsets);
+    ListClear(&album->_advances);
 
     album->_version = 0;
     album->_state = _SFAlbumStateEmpty;
@@ -134,8 +134,8 @@ SF_INTERNAL void SFAlbumBeginFilling(SFAlbumRef album)
 {
 	SFUInteger glyphCapacity = album->codeunitCount;
 
-    SFListReserveRange(&album->_glyphs, 0, glyphCapacity);
-    SFListReserveRange(&album->_details, 0, glyphCapacity);
+    ListReserveRange(&album->_glyphs, 0, glyphCapacity);
+    ListReserveRange(&album->_details, 0, glyphCapacity);
 
 	album->_state = _SFAlbumStateFilling;
 }
@@ -150,10 +150,10 @@ SF_INTERNAL void SFAlbumAddGlyph(SFAlbumRef album, SFGlyphID glyph, SFGlyphTrait
 
     album->_version++;
     index = album->glyphCount++;
-    detail = SFListGetRef(&album->_details, index);
+    detail = ListGetRef(&album->_details, index);
 
     /* Initialize the glyph along with its details. */
-    SFListSetVal(&album->_glyphs, index, glyph);
+    ListSetVal(&album->_glyphs, index, glyph);
     detail->association = association;
     detail->mask.section.feature = SFUInt16Max;
     detail->mask.section.traits = traits;
@@ -165,7 +165,7 @@ SF_INTERNAL SFUInteger *SFAlbumGetTemporaryIndexArray(SFAlbumRef album, SFUInteg
     SFAssert(album->_state == _SFAlbumStateFilling);
 
     if (album->_indexMap.capacity < count) {
-        SFListSetCapacity(&album->_indexMap, count);
+        ListSetCapacity(&album->_indexMap, count);
     }
 
     return album->_indexMap.items;
@@ -179,23 +179,23 @@ SF_INTERNAL void SFAlbumReserveGlyphs(SFAlbumRef album, SFUInteger index, SFUInt
     album->_version++;
     album->glyphCount += count;
 
-    SFListReserveRange(&album->_glyphs, index, count);
-    SFListReserveRange(&album->_details, index, count);
+    ListReserveRange(&album->_glyphs, index, count);
+    ListReserveRange(&album->_details, index, count);
 }
 
 SF_INTERNAL SFGlyphID SFAlbumGetGlyph(SFAlbumRef album, SFUInteger index)
 {
-    return SFListGetVal(&album->_glyphs, index);
+    return ListGetVal(&album->_glyphs, index);
 }
 
 SF_INTERNAL void SFAlbumSetGlyph(SFAlbumRef album, SFUInteger index, SFGlyphID glyph)
 {
-    SFListSetVal(&album->_glyphs, index, glyph);
+    ListSetVal(&album->_glyphs, index, glyph);
 }
 
 SF_INTERNAL SFUInteger SFAlbumGetAssociation(SFAlbumRef album, SFUInteger index)
 {
-    return SFListGetRef(&album->_details, index)->association;
+    return ListGetRef(&album->_details, index)->association;
 }
 
 SF_INTERNAL void SFAlbumSetAssociation(SFAlbumRef album, SFUInteger index, SFUInteger association)
@@ -203,17 +203,17 @@ SF_INTERNAL void SFAlbumSetAssociation(SFAlbumRef album, SFUInteger index, SFUIn
     /* The album must be in filling state. */
     SFAssert(album->_state == _SFAlbumStateFilling);
 
-    SFListGetRef(&album->_details, index)->association = association;
+    ListGetRef(&album->_details, index)->association = association;
 }
 
 SF_PRIVATE SFGlyphMask SFAlbumGetGlyphMask(SFAlbumRef album, SFUInteger index)
 {
-    return SFListGetRef(&album->_details, index)->mask;
+    return ListGetRef(&album->_details, index)->mask;
 }
 
 SF_INTERNAL SFUInt16 SFAlbumGetFeatureMask(SFAlbumRef album, SFUInteger index)
 {
-    return SFListGetRef(&album->_details, index)->mask.section.feature;
+    return ListGetRef(&album->_details, index)->mask.section.feature;
 }
 
 SF_INTERNAL void SFAlbumSetFeatureMask(SFAlbumRef album, SFUInteger index, SFUInt16 featureMask)
@@ -221,12 +221,12 @@ SF_INTERNAL void SFAlbumSetFeatureMask(SFAlbumRef album, SFUInteger index, SFUIn
     /* The album must be in filling state. */
     SFAssert(album->_state == _SFAlbumStateFilling);
 
-    SFListGetRef(&album->_details, index)->mask.section.feature = featureMask;
+    ListGetRef(&album->_details, index)->mask.section.feature = featureMask;
 }
 
 SF_INTERNAL SFGlyphTraits SFAlbumGetAllTraits(SFAlbumRef album, SFUInteger index)
 {
-    return (SFGlyphTraits)SFListGetRef(&album->_details, index)->mask.section.traits;
+    return (SFGlyphTraits)ListGetRef(&album->_details, index)->mask.section.traits;
 }
 
 SF_INTERNAL void SFAlbumSetAllTraits(SFAlbumRef album, SFUInteger index, SFGlyphTraits traits)
@@ -234,7 +234,7 @@ SF_INTERNAL void SFAlbumSetAllTraits(SFAlbumRef album, SFUInteger index, SFGlyph
     /* The album must be in filling state. */
     SFAssert(album->_state == _SFAlbumStateFilling);
 
-    SFListGetRef(&album->_details, index)->mask.section.traits = traits;
+    ListGetRef(&album->_details, index)->mask.section.traits = traits;
 }
 
 SF_INTERNAL void SFAlbumReplaceBasicTraits(SFAlbumRef album, SFUInteger index, SFGlyphTraits traits)
@@ -244,7 +244,7 @@ SF_INTERNAL void SFAlbumReplaceBasicTraits(SFAlbumRef album, SFUInteger index, S
     /* The album must be in filling state. */
     SFAssert(album->_state == _SFAlbumStateFilling);
 
-    all = &SFListGetRef(&album->_details, index)->mask.section.traits;
+    all = &ListGetRef(&album->_details, index)->mask.section.traits;
     *all = (*all & 0xFF00) | (traits & 0x00FF);
 }
 
@@ -261,8 +261,8 @@ SF_INTERNAL void SFAlbumBeginArranging(SFAlbumRef album)
     /* The album must be filled before arranging it. */
     SFAssert(album->_state == _SFAlbumStateFilled);
 
-    SFListReserveRange(&album->_offsets, 0, album->glyphCount);
-    SFListReserveRange(&album->_advances, 0, album->glyphCount);
+    ListReserveRange(&album->_offsets, 0, album->glyphCount);
+    ListReserveRange(&album->_advances, 0, album->glyphCount);
 
     album->_state = _SFAlbumStateArranging;
 }
@@ -274,7 +274,7 @@ SF_INTERNAL void SFAlbumInsertHelperTraits(SFAlbumRef album, SFUInteger index, S
     /* Traits must be helping ones only. */
     SFAssert((traits & 0x0F00) == traits);
 
-    SFListGetRef(&album->_details, index)->mask.section.traits |= traits;
+    ListGetRef(&album->_details, index)->mask.section.traits |= traits;
 }
 
 SF_INTERNAL void SFAlbumRemoveHelperTraits(SFAlbumRef album, SFUInteger index, SFGlyphTraits traits)
@@ -284,12 +284,12 @@ SF_INTERNAL void SFAlbumRemoveHelperTraits(SFAlbumRef album, SFUInteger index, S
     /* Traits must be helping ones only. */
     SFAssert((traits & 0x0F00) == traits);
 
-    SFListGetRef(&album->_details, index)->mask.section.traits &= (SFUInt16)~traits;
+    ListGetRef(&album->_details, index)->mask.section.traits &= (SFUInt16)~traits;
 }
 
 SF_INTERNAL SFInt32 SFAlbumGetX(SFAlbumRef album, SFUInteger index)
 {
-    return SFListGetRef(&album->_offsets, index)->x;
+    return ListGetRef(&album->_offsets, index)->x;
 }
 
 SF_INTERNAL void SFAlbumSetX(SFAlbumRef album, SFUInteger index, SFInt32 x)
@@ -297,12 +297,12 @@ SF_INTERNAL void SFAlbumSetX(SFAlbumRef album, SFUInteger index, SFInt32 x)
     /* The album must be in arranging or arranged state. */
     SFAssert(album->_state == _SFAlbumStateArranging || album->_state == _SFAlbumStateArranged);
 
-    SFListGetRef(&album->_offsets, index)->x = x;
+    ListGetRef(&album->_offsets, index)->x = x;
 }
 
 SF_INTERNAL SFInt32 SFAlbumGetY(SFAlbumRef album, SFUInteger index)
 {
-    return SFListGetRef(&album->_offsets, index)->y;
+    return ListGetRef(&album->_offsets, index)->y;
 }
 
 SF_INTERNAL void SFAlbumSetY(SFAlbumRef album, SFUInteger index, SFInt32 y)
@@ -310,12 +310,12 @@ SF_INTERNAL void SFAlbumSetY(SFAlbumRef album, SFUInteger index, SFInt32 y)
     /* The album must be in arranging or arranged state. */
     SFAssert(album->_state == _SFAlbumStateArranging || album->_state == _SFAlbumStateArranged);
 
-    SFListGetRef(&album->_offsets, index)->y = y;
+    ListGetRef(&album->_offsets, index)->y = y;
 }
 
 SF_INTERNAL SFAdvance SFAlbumGetAdvance(SFAlbumRef album, SFUInteger index)
 {
-    return SFListGetVal(&album->_advances, index);
+    return ListGetVal(&album->_advances, index);
 }
 
 SF_INTERNAL void SFAlbumSetAdvance(SFAlbumRef album, SFUInteger index, SFAdvance advance)
@@ -323,12 +323,12 @@ SF_INTERNAL void SFAlbumSetAdvance(SFAlbumRef album, SFUInteger index, SFAdvance
     /* The album must be in arranging or arranged state. */
     SFAssert(album->_state == _SFAlbumStateArranging || album->_state == _SFAlbumStateArranged);
 
-    SFListSetVal(&album->_advances, index, advance);
+    ListSetVal(&album->_advances, index, advance);
 }
 
 SF_INTERNAL SFUInt16 SFAlbumGetCursiveOffset(SFAlbumRef album, SFUInteger index)
 {
-    return SFListGetRef(&album->_details, index)->cursiveOffset;
+    return ListGetRef(&album->_details, index)->cursiveOffset;
 }
 
 SF_INTERNAL void SFAlbumSetCursiveOffset(SFAlbumRef album, SFUInteger index, SFUInt16 offset)
@@ -336,12 +336,12 @@ SF_INTERNAL void SFAlbumSetCursiveOffset(SFAlbumRef album, SFUInteger index, SFU
     /* The album must be in arranging state. */
     SFAssert(album->_state == _SFAlbumStateArranging);
 
-    SFListGetRef(&album->_details, index)->cursiveOffset = offset;
+    ListGetRef(&album->_details, index)->cursiveOffset = offset;
 }
 
 SF_INTERNAL SFUInt16 SFAlbumGetAttachmentOffset(SFAlbumRef album, SFUInteger index)
 {
-    return SFListGetRef(&album->_details, index)->attachmentOffset;
+    return ListGetRef(&album->_details, index)->attachmentOffset;
 }
 
 SF_INTERNAL void SFAlbumSetAttachmentOffset(SFAlbumRef album, SFUInteger index, SFUInt16 offset)
@@ -349,7 +349,7 @@ SF_INTERNAL void SFAlbumSetAttachmentOffset(SFAlbumRef album, SFUInteger index, 
     /* The album must be in arranging state. */
     SFAssert(album->_state == _SFAlbumStateArranging);
 
-    SFListGetRef(&album->_details, index)->attachmentOffset = offset;
+    ListGetRef(&album->_details, index)->attachmentOffset = offset;
 }
 
 SF_INTERNAL void SFAlbumEndArranging(SFAlbumRef album)
@@ -362,10 +362,10 @@ SF_INTERNAL void SFAlbumEndArranging(SFAlbumRef album)
 
 static void RemoveGlyphRange(SFAlbumRef album, SFUInteger index, SFUInteger count)
 {
-    SFListRemoveRange(&album->_glyphs, index, count);
-    SFListRemoveRange(&album->_details, index, count);
-    SFListRemoveRange(&album->_offsets, index, count);
-    SFListRemoveRange(&album->_advances, index, count);
+    ListRemoveRange(&album->_glyphs, index, count);
+    ListRemoveRange(&album->_details, index, count);
+    ListRemoveRange(&album->_offsets, index, count);
+    ListRemoveRange(&album->_advances, index, count);
 }
 
 static void RemovePlaceholderGlyphs(SFAlbumRef album)
@@ -400,32 +400,32 @@ static void BuildCodeUnitToGlyphMap(SFAlbumRef album)
 
     /* Initialize the map array. */
     for (index = 0; index < codeunitCount; index++) {
-        SFListSetVal(&album->_indexMap, index, SFInvalidIndex);
+        ListSetVal(&album->_indexMap, index, SFInvalidIndex);
     }
 
     /* Traverse in reverse order so that first glyph takes priority in case of multiple substitution. */
     for (index = album->glyphCount; index--;) {
         association = SFAlbumGetAssociation(album, index);
-        SFListSetVal(&album->_indexMap, association, index);
+        ListSetVal(&album->_indexMap, association, index);
     }
 
     if (!album->codepoints->backward) {
         /* Assign the same glyph index to subsequent codeunits. */
         for (index = 0; index < codeunitCount; index++) {
-            if (SFListGetVal(&album->_indexMap, index) == SFInvalidIndex) {
-                SFListSetVal(&album->_indexMap, index, association);
+            if (ListGetVal(&album->_indexMap, index) == SFInvalidIndex) {
+                ListSetVal(&album->_indexMap, index, association);
             }
 
-            association = SFListGetVal(&album->_indexMap, index);
+            association = ListGetVal(&album->_indexMap, index);
         }
     } else {
         /* Assign the same glyph index to preceding codeunits. */
         for (index = codeunitCount; index--;) {
-            if (SFListGetVal(&album->_indexMap, index) == SFInvalidIndex) {
-                SFListSetVal(&album->_indexMap, index, association);
+            if (ListGetVal(&album->_indexMap, index) == SFInvalidIndex) {
+                ListSetVal(&album->_indexMap, index, association);
             }
 
-            association = SFListGetVal(&album->_indexMap, index);
+            association = ListGetVal(&album->_indexMap, index);
         }
     }
 }
@@ -442,9 +442,9 @@ SF_INTERNAL void SFAlbumWrapUp(SFAlbumRef album)
 }
 
 SF_INTERNAL void SFAlbumFinalize(SFAlbumRef album) {
-    SFListFinalize(&album->_indexMap);
-    SFListFinalize(&album->_glyphs);
-    SFListFinalize(&album->_details);
-    SFListFinalize(&album->_offsets);
-    SFListFinalize(&album->_advances);
+    ListFinalize(&album->_indexMap);
+    ListFinalize(&album->_glyphs);
+    ListFinalize(&album->_details);
+    ListFinalize(&album->_offsets);
+    ListFinalize(&album->_advances);
 }
