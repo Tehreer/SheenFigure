@@ -103,8 +103,8 @@ static void HandleZeroWidthGlyphs(TextProcessorRef textProcessor)
         spaceGlyph = SFFontGetGlyphIDForCodepoint(font, ' ');
 
         for (index = 0; index < glyphCount; index++) {
-            SFGlyphTraits traits = SFAlbumGetAllTraits(album, index);
-            if (traits & SFGlyphTraitZeroWidth) {
+            GlyphTraits traits = SFAlbumGetAllTraits(album, index);
+            if (traits & GlyphTraitZeroWidth) {
                 SFAlbumSetGlyph(album, index, spaceGlyph);
                 SFAlbumSetX(album, index, 0);
                 SFAlbumSetY(album, index, 0);
@@ -121,8 +121,8 @@ static void MakeMarksZeroWidth(TextProcessorRef textProcessor)
     SFUInteger index;
 
     for (index = 0; index < count; index++) {
-        SFGlyphTraits traits = SFAlbumGetAllTraits(album, index);
-        if (traits & SFGlyphTraitMark) {
+        GlyphTraits traits = SFAlbumGetAllTraits(album, index);
+        if (traits & GlyphTraitMark) {
             SFAlbumSetAdvance(album, index, 0);
         }
     }
@@ -142,11 +142,11 @@ SF_INTERNAL void TextProcessorPositionGlyphs(TextProcessorRef textProcessor)
     /* Set positions and advances of all glyphs. */
     for (index = 0; index < glyphCount; index++) {
         SFGlyphID glyphID = SFAlbumGetGlyph(album, index);
-        SFGlyphTraits traits = SFAlbumGetAllTraits(album, index);
+        GlyphTraits traits = SFAlbumGetAllTraits(album, index);
         SFAdvance advance = 0;
 
         /* Ignore placeholder glyphs. */
-        if (traits != SFGlyphTraitPlaceholder) {
+        if (traits != GlyphTraitPlaceholder) {
             advance = SFFontGetAdvanceForGlyph(font, SFFontLayoutHorizontal, glyphID);
         }
 

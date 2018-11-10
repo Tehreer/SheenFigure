@@ -25,30 +25,30 @@
 #include "SFList.h"
 
 typedef enum {
-    _SFAlbumStateEmpty,
-    _SFAlbumStateFilling,
-    _SFAlbumStateFilled,
-    _SFAlbumStateArranging,
-    _SFAlbumStateArranged
-} _SFAlbumState;
+    AlbumStateEmpty,
+    AlbumStateFilling,
+    AlbumStateFilled,
+    AlbumStateArranging,
+    AlbumStateArranged
+} AlbumState;
 
 enum {
-    SFGlyphTraitNone        = 0 << 0,
-    SFGlyphTraitPlaceholder = 1 << 0,   /**< BASIC: Insignificant, placeholder glyph. */
-    SFGlyphTraitBase        = 1 << 1,   /**< BASIC: Single character, spacing glyph. */
-    SFGlyphTraitLigature    = 1 << 2,   /**< BASIC: Multiple character, spacing glyph. */
-    SFGlyphTraitMark        = 1 << 3,   /**< BASIC: Non-spacing combining glyph. */
-    SFGlyphTraitComponent   = 1 << 4,   /**< BASIC: Part of single character, spacing glyph. */
-    SFGlyphTraitSequence    = 1 << 5,   /**< BASIC: Multiple substituted, sequence glyph. */
+    GlyphTraitNone        = 0 << 0,
+    GlyphTraitPlaceholder = 1 << 0,     /**< BASIC: Insignificant, placeholder glyph. */
+    GlyphTraitBase        = 1 << 1,     /**< BASIC: Single character, spacing glyph. */
+    GlyphTraitLigature    = 1 << 2,     /**< BASIC: Multiple character, spacing glyph. */
+    GlyphTraitMark        = 1 << 3,     /**< BASIC: Non-spacing combining glyph. */
+    GlyphTraitComponent   = 1 << 4,     /**< BASIC: Part of single character, spacing glyph. */
+    GlyphTraitSequence    = 1 << 5,     /**< BASIC: Multiple substituted, sequence glyph. */
 
-    SFGlyphTraitAttached    = 1 << 8,   /**< HELPER: Attached with a previous glyph. */
-    SFGlyphTraitCursive     = 1 << 9,   /**< HELPER: Cursively connected glyph. */
-    SFGlyphTraitRightToLeft = 1 << 10,  /**< HELPER: Right-to-Left cursive glyph. */
-    SFGlyphTraitResolved    = 1 << 11,  /**< HELPER: Resolved cursive glyph. */
+    GlyphTraitAttached    = 1 << 8,     /**< HELPER: Attached with a previous glyph. */
+    GlyphTraitCursive     = 1 << 9,     /**< HELPER: Cursively connected glyph. */
+    GlyphTraitRightToLeft = 1 << 10,    /**< HELPER: Right-to-Left cursive glyph. */
+    GlyphTraitResolved    = 1 << 11,    /**< HELPER: Resolved cursive glyph. */
 
-    SFGlyphTraitZeroWidth   = 1 << 12   /**< CONTROL: Zero width, space glyph.*/
+    GlyphTraitZeroWidth   = 1 << 12     /**< CONTROL: Zero width, space glyph.*/
 };
-typedef SFUInt16 SFGlyphTraits;
+typedef SFUInt16 GlyphTraits;
 
 typedef union {
     struct {
@@ -56,14 +56,14 @@ typedef union {
         SFUInt16 traits;
     } section;
     SFUInt32 full;
-} SFGlyphMask;
+} GlyphMask;
 
-typedef struct _SFGlyphDetail {
+typedef struct _GlyphDetail {
     SFUInteger association;     /**< Index of the code point to which the glyph maps. */
-    SFGlyphMask mask;           /**< Mask of the glyph. */
+    GlyphMask mask;             /**< Mask of the glyph. */
     SFUInt16 cursiveOffset;     /**< Offset to the next cursively connected glyph. */
     SFUInt16 attachmentOffset;  /**< Offset to the previous glyph attached with this one. */
-} SFGlyphDetail, *SFGlyphDetailRef;
+} GlyphDetail, *GlyphDetailRef;
 
 typedef struct _SFAlbum {
     SFCodepointsRef codepoints;         /**< Code points to be shaped. */
@@ -72,12 +72,12 @@ typedef struct _SFAlbum {
 
     LIST(SFUInteger) _indexMap;         /**< Code unit index to glyph index mapping list. */
     LIST(SFGlyphID) _glyphs;            /**< List of ids of all glyphs in the album. */
-    LIST(SFGlyphDetail) _details;       /**< List of details of all glyphs in the album. */
+    LIST(GlyphDetail) _details;         /**< List of details of all glyphs in the album. */
     LIST(SFPoint) _offsets;             /**< List of offsets of all glyphs in the album. */
     LIST(SFAdvance) _advances;          /**< List of advances of all glyphs in the album. */
 
     SFUInteger _version;                /**< Current version of the album. */
-    _SFAlbumState _state;               /**< Current state of the album. */
+    AlbumState _state;                  /**< Current state of the album. */
 
     SFUInteger _retainCount;
 } SFAlbum;
@@ -101,7 +101,7 @@ SF_INTERNAL SFUInteger *SFAlbumGetTemporaryIndexArray(SFAlbumRef album, SFUInteg
 /**
  * Adds a new glyph into the album.
  */
-SF_INTERNAL void SFAlbumAddGlyph(SFAlbumRef album, SFGlyphID glyph, SFGlyphTraits traits, SFUInteger association);
+SF_INTERNAL void SFAlbumAddGlyph(SFAlbumRef album, SFGlyphID glyph, GlyphTraits traits, SFUInteger association);
 
 /**
  * Reserves specified number of glyphs at the given index.
@@ -116,14 +116,14 @@ SF_INTERNAL void SFAlbumSetGlyph(SFAlbumRef album, SFUInteger index, SFGlyphID g
 SF_INTERNAL SFUInteger SFAlbumGetAssociation(SFAlbumRef album, SFUInteger index);
 SF_INTERNAL void SFAlbumSetAssociation(SFAlbumRef album, SFUInteger index, SFUInteger association);
 
-SF_PRIVATE SFGlyphMask SFAlbumGetGlyphMask(SFAlbumRef album, SFUInteger index);
+SF_PRIVATE GlyphMask SFAlbumGetGlyphMask(SFAlbumRef album, SFUInteger index);
 
 SF_INTERNAL SFUInt16 SFAlbumGetFeatureMask(SFAlbumRef album, SFUInteger index);
 SF_INTERNAL void SFAlbumSetFeatureMask(SFAlbumRef album, SFUInteger index, SFUInt16 featureMask);
 
-SF_INTERNAL SFGlyphTraits SFAlbumGetAllTraits(SFAlbumRef album, SFUInteger index);
-SF_INTERNAL void SFAlbumSetAllTraits(SFAlbumRef album, SFUInteger index, SFGlyphTraits traits);
-SF_INTERNAL void SFAlbumReplaceBasicTraits(SFAlbumRef album, SFUInteger index, SFGlyphTraits traits);
+SF_INTERNAL GlyphTraits SFAlbumGetAllTraits(SFAlbumRef album, SFUInteger index);
+SF_INTERNAL void SFAlbumSetAllTraits(SFAlbumRef album, SFUInteger index, GlyphTraits traits);
+SF_INTERNAL void SFAlbumReplaceBasicTraits(SFAlbumRef album, SFUInteger index, GlyphTraits traits);
 
 /**
  * Ends filling the album with glyphs.
@@ -135,8 +135,8 @@ SF_INTERNAL void SFAlbumEndFilling(SFAlbumRef album);
  */
 SF_INTERNAL void SFAlbumBeginArranging(SFAlbumRef album);
 
-SF_INTERNAL void SFAlbumInsertHelperTraits(SFAlbumRef album, SFUInteger index, SFGlyphTraits traits);
-SF_INTERNAL void SFAlbumRemoveHelperTraits(SFAlbumRef album, SFUInteger index, SFGlyphTraits traits);
+SF_INTERNAL void SFAlbumInsertHelperTraits(SFAlbumRef album, SFUInteger index, GlyphTraits traits);
+SF_INTERNAL void SFAlbumRemoveHelperTraits(SFAlbumRef album, SFUInteger index, GlyphTraits traits);
 
 SF_INTERNAL SFInt32 SFAlbumGetX(SFAlbumRef album, SFUInteger index);
 SF_INTERNAL void SFAlbumSetX(SFAlbumRef album, SFUInteger index, SFInt32 x);

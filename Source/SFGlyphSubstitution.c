@@ -52,7 +52,7 @@ static SFBoolean ApplySingleSubst(TextProcessorRef textProcessor, SFData singleS
 
             if (covIndex != SFInvalidIndex) {
                 SFGlyphID subGlyph = (SFGlyphID)(locGlyph + delta);
-                SFGlyphTraits subTraits = GetGlyphTraits(textProcessor, subGlyph);
+                GlyphTraits subTraits = GetGlyphTraits(textProcessor, subGlyph);
 
                 /* Substitute the glyph and set its traits. */
                 SFAlbumSetGlyph(album, locator->index, subGlyph);
@@ -74,7 +74,7 @@ static SFBoolean ApplySingleSubst(TextProcessorRef textProcessor, SFData singleS
 
             if (covIndex < glyphCount) {
                 SFGlyphID subGlyph = SFSingleSubstF2_Substitute(singleSubst, covIndex);
-                SFGlyphTraits subTraits;
+                GlyphTraits subTraits;
 
                 subTraits = GetGlyphTraits(textProcessor, subGlyph);
 
@@ -131,7 +131,7 @@ static SFBoolean ApplySequenceTable(TextProcessorRef textProcessor, SFData seque
     if (glyphCount > 0) {
         /* Get first substitute and its traits. */
         SFGlyphID subGlyph = SFSequence_Substitute(sequence, 0);
-        SFGlyphTraits subTraits = GetGlyphTraits(textProcessor, subGlyph);
+        GlyphTraits subTraits = GetGlyphTraits(textProcessor, subGlyph);
 
         /* Put substitute of first glyph and set its traits. */
         SFAlbumSetGlyph(album, locator->index, subGlyph);
@@ -154,7 +154,7 @@ static SFBoolean ApplySequenceTable(TextProcessorRef textProcessor, SFData seque
 
                 /* Initialize the glyph with substitute. */
                 SFAlbumSetGlyph(album, newIndex, subGlyph);
-                SFAlbumSetAllTraits(album, newIndex, subTraits | SFGlyphTraitSequence);
+                SFAlbumSetAllTraits(album, newIndex, subTraits | GlyphTraitSequence);
                 SFAlbumSetAssociation(album, newIndex, association);
             }
 
@@ -214,7 +214,7 @@ static SFBoolean ApplyAlternateSetTable(TextProcessorRef textProcessor, SFData a
     /* Make sure that alternate index is valid. */
     if (altIndex < glyphCount) {
         SFGlyphID altGlyph = SFAlternateSet_Alternate(alternateSet, altIndex);
-        SFGlyphTraits altTraits = GetGlyphTraits(textProcessor, altGlyph);
+        GlyphTraits altTraits = GetGlyphTraits(textProcessor, altGlyph);
 
         /* Substitute the glyph and set its traits. */
         SFAlbumSetGlyph(album, locator->index, altGlyph);
@@ -304,7 +304,7 @@ static SFBoolean ApplyLigatureSetTable(TextProcessorRef textProcessor, SFData li
         /* Do the substitution, if all components are matched. */
         if (compIndex == compCount) {
             SFGlyphID ligGlyph = SFLigature_LigGlyph(ligature);
-            SFGlyphTraits ligTraits = GetGlyphTraits(textProcessor, ligGlyph);
+            GlyphTraits ligTraits = GetGlyphTraits(textProcessor, ligGlyph);
             SFUInteger ligAssociation;
 
             /* Substitute the ligature glyph and set its traits. */
@@ -321,7 +321,7 @@ static SFBoolean ApplyLigatureSetTable(TextProcessorRef textProcessor, SFData li
 
                 /* Make the glyph placeholder. */
                 SFAlbumSetGlyph(album, nextIndex, 0);
-                SFAlbumReplaceBasicTraits(album, nextIndex, SFGlyphTraitPlaceholder);
+                SFAlbumReplaceBasicTraits(album, nextIndex, GlyphTraitPlaceholder);
 
                 /* Form a cluster by setting the association of in-between glyphs. */
                 for (; prevIndex <= nextIndex; prevIndex++) {

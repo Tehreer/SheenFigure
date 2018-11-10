@@ -68,21 +68,21 @@ SF_INTERNAL void LocatorSetFeatureMask(LocatorRef locator, SFUInt16 featureMask)
 
 SF_INTERNAL void LocatorSetLookupFlag(LocatorRef locator, SFLookupFlag lookupFlag)
 {
-    SFGlyphTraits ignoreTraits = SFGlyphTraitNone;
+    GlyphTraits ignoreTraits = GlyphTraitNone;
 
     if (lookupFlag & SFLookupFlagIgnoreBaseGlyphs) {
-        ignoreTraits |= SFGlyphTraitBase;
+        ignoreTraits |= GlyphTraitBase;
     }
 
     if (lookupFlag & SFLookupFlagIgnoreLigatures) {
-        ignoreTraits |= SFGlyphTraitLigature;
+        ignoreTraits |= GlyphTraitLigature;
     }
 
     if (lookupFlag & SFLookupFlagIgnoreMarks) {
-        ignoreTraits |= SFGlyphTraitMark;
+        ignoreTraits |= GlyphTraitMark;
     }
 
-    ignoreTraits |= SFGlyphTraitPlaceholder;
+    ignoreTraits |= GlyphTraitPlaceholder;
 
     locator->lookupFlag = lookupFlag;
     locator->_ignoreMask.section.traits = ignoreTraits;
@@ -124,13 +124,13 @@ SF_INTERNAL void LocatorReset(LocatorRef locator, SFUInteger index, SFUInteger c
 static SFBoolean IsIgnoredGlyph(LocatorRef locator, SFUInteger index) {
     SFAlbumRef album = locator->_album;
     SFLookupFlag lookupFlag = locator->lookupFlag;
-    SFGlyphMask glyphMask = SFAlbumGetGlyphMask(album, index);
+    GlyphMask glyphMask = SFAlbumGetGlyphMask(album, index);
 
     if (locator->_ignoreMask.full & glyphMask.full) {
         return SFTrue;
     }
 
-    if (glyphMask.section.traits & SFGlyphTraitMark) {
+    if (glyphMask.section.traits & GlyphTraitMark) {
         if (lookupFlag & SFLookupFlagUseMarkFilteringSet) {
             SFData markFilteringCoverage = locator->_markFilteringCoverage;
 
@@ -271,7 +271,7 @@ SF_INTERNAL SFUInteger LocatorGetBefore(LocatorRef locator, SFUInteger index, SF
 
 SFUInteger LocatorGetPrecedingBaseIndex(LocatorRef locator)
 {
-    SFGlyphTraits ignoreTraits = locator->_ignoreMask.section.traits;
+    GlyphTraits ignoreTraits = locator->_ignoreMask.section.traits;
     SFUInteger baseIndex;
 
     /*
@@ -281,7 +281,7 @@ SFUInteger LocatorGetPrecedingBaseIndex(LocatorRef locator)
      *      Multiple substitution sequence is also ignored to make sure that mark aligns with first
      *      corresponding glyph of a base.
      */
-    locator->_ignoreMask.section.traits = SFGlyphTraitPlaceholder | SFGlyphTraitMark | SFGlyphTraitSequence;
+    locator->_ignoreMask.section.traits = GlyphTraitPlaceholder | GlyphTraitMark | GlyphTraitSequence;
 
     /* Get preeding glyph. */
     baseIndex = LocatorGetBefore(locator, locator->index, SFFalse);
@@ -295,14 +295,14 @@ SFUInteger LocatorGetPrecedingBaseIndex(LocatorRef locator)
 SF_INTERNAL SFUInteger LocatorGetPrecedingLigatureIndex(LocatorRef locator, SFUInteger *outComponent)
 {
     SFAlbumRef album = locator->_album;
-    SFGlyphTraits ignoreTraits = locator->_ignoreMask.section.traits;
+    GlyphTraits ignoreTraits = locator->_ignoreMask.section.traits;
     SFUInteger ligIndex;
 
     /* Initialize component counter. */
     *outComponent = 0;
 
     /* Ignore marks only. */
-    locator->_ignoreMask.section.traits = SFGlyphTraitPlaceholder | SFGlyphTraitMark;
+    locator->_ignoreMask.section.traits = GlyphTraitPlaceholder | GlyphTraitMark;
 
     /* Get preeding glyph. */
     ligIndex = LocatorGetBefore(locator, locator->index, SFFalse);
@@ -313,7 +313,7 @@ SF_INTERNAL SFUInteger LocatorGetPrecedingLigatureIndex(LocatorRef locator, SFUI
         /*
          * REMARKS:
          *      The glyphs acting as components of a ligature are not removed from the album, but
-         *      their trait is set to SFGlyphTraitPlaceholder.
+         *      their trait is set to GlyphTraitPlaceholder.
          *
          * PROCESS:
          *      1) Start loop from ligature index to input index.
@@ -321,7 +321,7 @@ SF_INTERNAL SFUInteger LocatorGetPrecedingLigatureIndex(LocatorRef locator, SFUI
          *      3) Increase component counter for each placeholder.
          */
         for (nextIndex = ligIndex + 1; nextIndex < locator->index; nextIndex++) {
-            if (SFAlbumGetAllTraits(album, nextIndex) & SFGlyphTraitPlaceholder) {
+            if (SFAlbumGetAllTraits(album, nextIndex) & GlyphTraitPlaceholder) {
                 (*outComponent)++;
             }
         }
@@ -335,7 +335,7 @@ SF_INTERNAL SFUInteger LocatorGetPrecedingLigatureIndex(LocatorRef locator, SFUI
 
 SF_INTERNAL SFUInteger LocatorGetPrecedingMarkIndex(LocatorRef locator)
 {
-    SFGlyphTraits ignoreTraits = locator->_ignoreMask.section.traits;
+    GlyphTraits ignoreTraits = locator->_ignoreMask.section.traits;
     SFUInteger markIndex;
 
     /*
@@ -345,7 +345,7 @@ SF_INTERNAL SFUInteger LocatorGetPrecedingMarkIndex(LocatorRef locator)
      *      Placeholders are also considered to make sure that marks belong to the same component of
      *      a ligature.
      */
-    locator->_ignoreMask.section.traits = SFGlyphTraitNone;
+    locator->_ignoreMask.section.traits = GlyphTraitNone;
 
     /* Get preeding glyph. */
     markIndex = LocatorGetBefore(locator, locator->index, SFFalse);
@@ -353,10 +353,10 @@ SF_INTERNAL SFUInteger LocatorGetPrecedingMarkIndex(LocatorRef locator)
     /* Fix mark index in case of placeholder. */
     if (markIndex != SFInvalidIndex) {
         SFAlbumRef album = locator->_album;
-        SFGlyphTraits traits;
+        GlyphTraits traits;
 
         traits = SFAlbumGetAllTraits(album, markIndex);
-        if (traits & SFGlyphTraitPlaceholder) {
+        if (traits & GlyphTraitPlaceholder) {
             markIndex = SFInvalidIndex;
         }
     }

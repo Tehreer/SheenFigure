@@ -33,7 +33,7 @@ typedef struct _SFLocator {
     SFUInteger _limitIndex;
     SFUInteger _stateIndex;
     SFUInteger index;
-    SFGlyphMask _ignoreMask;
+    GlyphMask _ignoreMask;
     SFLookupFlag lookupFlag;
 } Locator, *LocatorRef;
 

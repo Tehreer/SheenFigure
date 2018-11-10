@@ -33,7 +33,7 @@ static SFBoolean IsZeroWidthCodepoint(SFCodepoint codepoint)
     return SFCodepointInRange(codepoint, 0x200B, 0x200F);
 }
 
-SF_PRIVATE SFGlyphTraits GetGlyphTraits(TextProcessorRef textProcessor, SFGlyphID glyph)
+SF_PRIVATE GlyphTraits GetGlyphTraits(TextProcessorRef textProcessor, SFGlyphID glyph)
 {
     SFData glyphClassDef = textProcessor->_glyphClassDef;
 
@@ -43,20 +43,20 @@ SF_PRIVATE SFGlyphTraits GetGlyphTraits(TextProcessorRef textProcessor, SFGlyphI
         /* Convert glyph class to traits options. */
         switch (glyphClass) {
             case SFGlyphClassValueBase:
-                return SFGlyphTraitBase;
+                return GlyphTraitBase;
 
             case SFGlyphClassValueLigature:
-                return SFGlyphTraitLigature;
+                return GlyphTraitLigature;
 
             case SFGlyphClassValueMark:
-                return SFGlyphTraitMark;
+                return GlyphTraitMark;
 
             case SFGlyphClassValueComponent:
-                return SFGlyphTraitComponent;
+                return GlyphTraitComponent;
         }
     }
 
-    return SFGlyphTraitNone;
+    return GlyphTraitNone;
 }
 
 SF_PRIVATE void DiscoverGlyphs(TextProcessorRef textProcessor)
@@ -72,7 +72,7 @@ SF_PRIVATE void DiscoverGlyphs(TextProcessorRef textProcessor)
 
     while ((current = SFCodepointsNext(codepoints)) != SFCodepointInvalid) {
         SFGlyphID glyph;
-        SFGlyphTraits traits;
+        GlyphTraits traits;
 
         if (isRTL) {
             SFCodepoint mirror = SFCodepointsGetMirror(current);
@@ -87,7 +87,7 @@ SF_PRIVATE void DiscoverGlyphs(TextProcessorRef textProcessor)
 
         if (IsZeroWidthCodepoint(current)) {
             textProcessor->_containsZeroWidthCodepoints = SFTrue;
-            traits |= SFGlyphTraitZeroWidth;
+            traits |= GlyphTraitZeroWidth;
         }
 
         SFAlbumAddGlyph(album, glyph, traits, codepoints->index);

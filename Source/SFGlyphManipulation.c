@@ -505,7 +505,7 @@ SF_PRIVATE SFBoolean ApplyReverseChainSubst(TextProcessorRef textProcessor, SFDa
                     && AssessLookaheadGlyphs(textProcessor, lookaheadOffsets, lookaheadCount, AssessGlyphByCoverage, (void *)reverseChain, locator->index)
                     && covIndex < substCount) {
                     SFGlyphID subGlyph = SFRevSubstRecord_Substitute(substRecord, covIndex);
-                    SFGlyphTraits subTraits;
+                    GlyphTraits subTraits;
 
                     subTraits = GetGlyphTraits(textProcessor, subGlyph);
 

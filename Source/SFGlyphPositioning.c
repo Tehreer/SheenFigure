@@ -460,11 +460,11 @@ static SFBoolean ApplyCursiveAnchors(TextProcessorRef textProcessor,
     LocatorRef locator = &textProcessor->_locator;
     SFPoint exitPoint = ConvertAnchorToPoint(textProcessor, exitAnchor);
     SFPoint entryPoint = ConvertAnchorToPoint(textProcessor, entryAnchor);
-    SFGlyphTraits traits;
+    GlyphTraits traits;
     SFInt32 offset;
     SFAdvance advance;
 
-    traits = SFGlyphTraitCursive;
+    traits = GlyphTraitCursive;
 
     switch (textProcessor->_textDirection) {
         case SFTextDirectionLeftToRight:
@@ -490,7 +490,7 @@ static SFBoolean ApplyCursiveAnchors(TextProcessorRef textProcessor,
 
             /* Set y of second glyph taking RTL flag into account. */
             if (locator->lookupFlag & SFLookupFlagRightToLeft) {
-                traits |= SFGlyphTraitRightToLeft;
+                traits |= GlyphTraitRightToLeft;
                 SFAlbumSetY(album, secondIndex, entryPoint.y - exitPoint.y);
             } else {
                 SFAlbumSetY(album, secondIndex, exitPoint.y - entryPoint.y);
@@ -524,7 +524,7 @@ static SFBoolean ApplyCursiveAnchors(TextProcessorRef textProcessor,
 
             /* Set y of first glyph taking RTL flag into account. */
             if (locator->lookupFlag & SFLookupFlagRightToLeft) {
-                traits |= SFGlyphTraitRightToLeft;
+                traits |= GlyphTraitRightToLeft;
                 SFAlbumSetY(album, firstIndex, entryPoint.y - exitPoint.y);
             } else {
                 SFAlbumSetY(album, firstIndex, exitPoint.y - entryPoint.y);
@@ -644,7 +644,7 @@ static SFBoolean ApplyMarkToBaseArrays(TextProcessorRef textProcessor, SFData ma
             SFAlbumSetY(album, locator->index, basePoint.y - markPoint.y);
             /* Update the details of mark glyph. */
             SFAlbumSetAttachmentOffset(album, locator->index, (SFUInt16)(locator->index - attachmentIndex));
-            SFAlbumInsertHelperTraits(album, locator->index, SFGlyphTraitAttached);
+            SFAlbumInsertHelperTraits(album, locator->index, GlyphTraitAttached);
 
             return SFTrue;
         }
@@ -748,7 +748,7 @@ static SFBoolean ApplyMarkToLigArrays(TextProcessorRef textProcessor, SFData mar
             SFAlbumSetY(album, locator->index, ligPoint.y - markPoint.y);
             /* Update the details of mark glyph. */
             SFAlbumSetAttachmentOffset(album, locator->index, (SFUInt16)(locator->index - attachmentIndex));
-            SFAlbumInsertHelperTraits(album, locator->index, SFGlyphTraitAttached);
+            SFAlbumInsertHelperTraits(album, locator->index, GlyphTraitAttached);
 
             return SFTrue;
         }
@@ -837,7 +837,7 @@ static SFBoolean ApplyMarkToMarkArrays(TextProcessorRef textProcessor, SFData ma
             SFAlbumSetY(album, locator->index, mark2Point.y - mark1Point.y);
             /* Update the details of mark1 glyph. */
             SFAlbumSetAttachmentOffset(album, locator->index, (SFUInt16)(locator->index - attachmentIndex));
-            SFAlbumInsertHelperTraits(album, locator->index, SFGlyphTraitAttached);
+            SFAlbumInsertHelperTraits(album, locator->index, GlyphTraitAttached);
 
             return SFTrue;
         }
@@ -892,11 +892,11 @@ static void ResolveLeftCursiveSegment(TextProcessorRef textProcessor, SFUInteger
     SFUInteger offset;
 
     /* The glyph MUST be cursive and right-to-left. */
-    SFAssert(SFAlbumGetAllTraits(album, inputIndex) & SFGlyphTraitCursive);
+    SFAssert(SFAlbumGetAllTraits(album, inputIndex) & GlyphTraitCursive);
     /* The glyph must NOT be right-to-left. */
-    SFAssert(!(SFAlbumGetAllTraits(album, inputIndex) & SFGlyphTraitRightToLeft));
+    SFAssert(!(SFAlbumGetAllTraits(album, inputIndex) & GlyphTraitRightToLeft));
     /* The glyph must NOT be resolved yet. */
-    SFAssert(!(SFAlbumGetAllTraits(album, inputIndex) & SFGlyphTraitResolved));
+    SFAssert(!(SFAlbumGetAllTraits(album, inputIndex) & GlyphTraitResolved));
 
     offset = SFAlbumGetCursiveOffset(album, inputIndex);
 
@@ -919,7 +919,7 @@ static void ResolveLeftCursiveSegment(TextProcessorRef textProcessor, SFUInteger
         ResolveLeftCursiveSegment(textProcessor, nextIndex);
 
         /* Mark this glyph as resolved. */
-        SFAlbumInsertHelperTraits(album, inputIndex, SFGlyphTraitResolved);
+        SFAlbumInsertHelperTraits(album, inputIndex, GlyphTraitResolved);
     }
 }
 
@@ -935,9 +935,9 @@ static void ResolveRightCursiveSegment(TextProcessorRef textProcessor, SFUIntege
     SFUInteger offset;
 
     /* The glyph MUST be cursive and right-to-left. */
-    SFAssert(SFAlbumGetAllTraits(album, inputIndex) & (SFGlyphTraitCursive | SFGlyphTraitRightToLeft));
+    SFAssert(SFAlbumGetAllTraits(album, inputIndex) & (GlyphTraitCursive | GlyphTraitRightToLeft));
     /* The glyph must NOT be resolved yet. */
-    SFAssert(!(SFAlbumGetAllTraits(album, inputIndex) & SFGlyphTraitResolved));
+    SFAssert(!(SFAlbumGetAllTraits(album, inputIndex) & GlyphTraitResolved));
 
     offset = SFAlbumGetCursiveOffset(album, inputIndex);
 
@@ -960,7 +960,7 @@ static void ResolveRightCursiveSegment(TextProcessorRef textProcessor, SFUIntege
         }
 
         /* Mark this glyph as resolved. */
-        SFAlbumInsertHelperTraits(album, inputIndex, SFGlyphTraitResolved);
+        SFAlbumInsertHelperTraits(album, inputIndex, GlyphTraitResolved);
     }
 }
 
@@ -971,10 +971,10 @@ static void ResolveCursivePositions(TextProcessorRef textProcessor, LocatorRef l
 
     while (LocatorMoveNext(locator)) {
         SFUInteger locatorIndex = locator->index;
-        SFGlyphTraits traits = SFAlbumGetAllTraits(album, locatorIndex);
+        GlyphTraits traits = SFAlbumGetAllTraits(album, locatorIndex);
 
-        if ((traits & (SFGlyphTraitCursive | SFGlyphTraitResolved)) == SFGlyphTraitCursive) {
-            if (traits & SFGlyphTraitRightToLeft) {
+        if ((traits & (GlyphTraitCursive | GlyphTraitResolved)) == GlyphTraitCursive) {
+            if (traits & GlyphTraitRightToLeft) {
                 ResolveRightCursiveSegment(textProcessor, locator->index);
             } else {
                 ResolveLeftCursiveSegment(textProcessor, locator->index);
@@ -990,9 +990,9 @@ static void ResolveMarkPositions(TextProcessorRef textProcessor, LocatorRef loca
 
     while (LocatorMoveNext(locator)) {
         SFUInteger locIndex = locator->index;
-        SFGlyphTraits traits = SFAlbumGetAllTraits(album, locIndex);
+        GlyphTraits traits = SFAlbumGetAllTraits(album, locIndex);
 
-        if (traits & SFGlyphTraitAttached) {
+        if (traits & GlyphTraitAttached) {
             SFUInteger attachmentIndex = locIndex - SFAlbumGetAttachmentOffset(album, locIndex);
             SFInt32 markX = SFAlbumGetX(album, locIndex);
             SFInt32 markY = SFAlbumGetY(album, locIndex);
