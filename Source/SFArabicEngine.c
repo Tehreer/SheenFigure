@@ -30,7 +30,7 @@
 #include "SFTextProcessor.h"
 #include "SFArabicEngine.h"
 
-static SFScriptKnowledgeRef ArabicKnowledgeSeekScript(const void *object, SFTag scriptTag);
+static ScriptKnowledgeRef ArabicKnowledgeSeekScript(const void *object, SFTag scriptTag);
 static void ArabicEngineProcessAlbum(const void *object, SFAlbumRef album);
 
 enum {
@@ -46,7 +46,7 @@ enum {
  * backward compatibility. So they should be applied simultaneously to avoid the application of
  * duplicate lookups.
  */
-static SFFeatureInfo ArabicSubstFeatureArray[] = {
+static FeatureInfo ArabicSubstFeatureArray[] = {
     /* Language based forms */
     { 0, TAG('c', 'c', 'm', 'p'), REQUIRED, INDIVIDUAL,   ArabicFeatureMaskNone },
     { 0, TAG('i', 's', 'o', 'l'), REQUIRED, INDIVIDUAL,   ArabicFeatureMaskIsolated },
@@ -62,28 +62,28 @@ static SFFeatureInfo ArabicSubstFeatureArray[] = {
     { 1, TAG('c', 's', 'w', 'h'), OFF_BY_DEFAULT, INDIVIDUAL, ArabicFeatureMaskNone },
     { 1, TAG('m', 's', 'e', 't'), REQUIRED,       INDIVIDUAL, ArabicFeatureMaskNone },
 };
-#define ArabicSubstFeatureCount (sizeof(ArabicSubstFeatureArray) / sizeof(SFFeatureInfo))
+#define ArabicSubstFeatureCount (sizeof(ArabicSubstFeatureArray) / sizeof(FeatureInfo))
 
-static SFFeatureInfo ArabicPosFeatureArray[] = {
+static FeatureInfo ArabicPosFeatureArray[] = {
     /* Positioning features */
     { 2, TAG('c', 'u', 'r', 's'), REQUIRED, INDIVIDUAL, ArabicFeatureMaskNone },
     { 2, TAG('k', 'e', 'r', 'n'), REQUIRED, INDIVIDUAL, ArabicFeatureMaskNone },
     { 2, TAG('m', 'a', 'r', 'k'), REQUIRED, INDIVIDUAL, ArabicFeatureMaskNone },
     { 2, TAG('m', 'k', 'm', 'k'), REQUIRED, INDIVIDUAL, ArabicFeatureMaskNone },
 };
-#define ArabicPosFeatureCount (sizeof(ArabicPosFeatureArray) / sizeof(SFFeatureInfo))
+#define ArabicPosFeatureCount (sizeof(ArabicPosFeatureArray) / sizeof(FeatureInfo))
 
-static SFScriptKnowledge ArabicScriptKnowledge = {
+static ScriptKnowledge ArabicScriptKnowledge = {
     SFTextDirectionRightToLeft,
     { ArabicSubstFeatureArray, ArabicSubstFeatureCount },
     { ArabicPosFeatureArray, ArabicPosFeatureCount }
 };
 
-SFShapingKnowledge SFArabicKnowledgeInstance = {
+ShapingKnowledge ArabicKnowledgeInstance = {
     &ArabicKnowledgeSeekScript
 };
 
-static SFScriptKnowledgeRef ArabicKnowledgeSeekScript(const void *object, SFTag scriptTag)
+static ScriptKnowledgeRef ArabicKnowledgeSeekScript(const void *object, SFTag scriptTag)
 {
     switch (scriptTag) {
         case TAG('a', 'r', 'a', 'b'):
@@ -93,11 +93,11 @@ static SFScriptKnowledgeRef ArabicKnowledgeSeekScript(const void *object, SFTag 
     return NULL;
 }
 
-static SFShapingEngine ArabicEngineBase = {
+static ShapingEngine ArabicEngineBase = {
     &ArabicEngineProcessAlbum
 };
 
-SF_INTERNAL void SFArabicEngineInitialize(SFArabicEngineRef arabicEngine, SFArtistRef artist)
+SF_INTERNAL void ArabicEngineInitialize(ArabicEngineRef arabicEngine, SFArtistRef artist)
 {
     arabicEngine->_base = ArabicEngineBase;
     arabicEngine->_artist = artist;
@@ -216,7 +216,7 @@ static void PutArabicFeatureMask(SFAlbumRef album)
 
 static void ArabicEngineProcessAlbum(const void *object, SFAlbumRef album)
 {
-    SFArabicEngineRef arabicEngine = (SFArabicEngineRef)object;
+    ArabicEngineRef arabicEngine = (ArabicEngineRef)object;
     SFArtistRef artist = arabicEngine->_artist;
     SFTextProcessor processor;
 

@@ -102,18 +102,18 @@ void SFArtistFillAlbum(SFArtistRef artist, SFAlbumRef album)
     SFCodepoints codepoints;
 
     if (artist->pattern && IsValidCodepointSequence(&artist->codepointSequence)) {
-        SFUnifiedEngine unifiedEngine;
-        SFShapingEngineRef shapingEngine;
+        UnifiedEngine unifiedEngine;
+        ShapingEngineRef shapingEngine;
 
         SFCodepointsInitialize(&codepoints,
                                &artist->codepointSequence,
                                artist->textMode == SFTextModeBackward);
 
-        SFUnifiedEngineInitialize(&unifiedEngine, artist);
-        shapingEngine = (SFShapingEngineRef)&unifiedEngine;
+        UnifiedEngineInitialize(&unifiedEngine, artist);
+        shapingEngine = (ShapingEngineRef)&unifiedEngine;
 
         SFAlbumReset(album, &codepoints);
-        SFShapingEngineProcessAlbum(shapingEngine, album);
+        ShapingEngineProcessAlbum(shapingEngine, album);
     } else {
         LoadCodepointSequence(&artist->codepointSequence, 0, NULL, 0);
         SFCodepointsInitialize(&codepoints, &artist->codepointSequence, 0);

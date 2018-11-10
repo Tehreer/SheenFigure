@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Muhammad Tayyab Akram
+ * Copyright (C) 2015-2018 Muhammad Tayyab Akram
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,15 +26,15 @@
 #include "SFSimpleEngine.h"
 #include "SFStandardEngine.h"
 
-typedef union _SFUnifiedEngine {
-    SFShapingEngine _base;
-    SFArabicEngine _arabicEngine;
-    SFStandardEngine _standardEngine;
-    SFSimpleEngine _simpleEngine;
-} SFUnifiedEngine, *SFUnifiedEngineRef;
+typedef union _UnifiedEngine {
+    ShapingEngine _base;
+    ArabicEngine _arabicEngine;
+    StandardEngine _standardEngine;
+    SimpleEngine _simpleEngine;
+} UnifiedEngine, *UnifiedEngineRef;
 
-extern SFShapingKnowledge SFUnifiedKnowledgeInstance;
+extern ShapingKnowledge UnifiedKnowledgeInstance;
 
-SF_INTERNAL void SFUnifiedEngineInitialize(SFUnifiedEngineRef unifiedEngine, SFArtistRef artist);
+SF_INTERNAL void UnifiedEngineInitialize(UnifiedEngineRef unifiedEngine, SFArtistRef artist);
 
 #endif

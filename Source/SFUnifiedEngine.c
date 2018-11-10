@@ -18,50 +18,49 @@
 
 #include "SFArabicEngine.h"
 #include "SFArtist.h"
-#include "SFStandardEngine.h"
 #include "SFShapingKnowledge.h"
 #include "SFSimpleEngine.h"
 #include "SFStandardEngine.h"
 #include "SFUnifiedEngine.h"
 
-static SFScriptKnowledgeRef UnifiedKnowledgeSeekScript(const void *object, SFTag scriptTag);
+static ScriptKnowledgeRef UnifiedKnowledgeSeekScript(const void *object, SFTag scriptTag);
 
-SFShapingKnowledge SFUnifiedKnowledgeInstance = {
+ShapingKnowledge UnifiedKnowledgeInstance = {
     &UnifiedKnowledgeSeekScript
 };
 
-static SFScriptKnowledgeRef UnifiedKnowledgeSeekScript(const void *object, SFTag scriptTag)
+static ScriptKnowledgeRef UnifiedKnowledgeSeekScript(const void *object, SFTag scriptTag)
 {
-    SFScriptKnowledgeRef knowledge;
+    ScriptKnowledgeRef knowledge;
 
-    knowledge = SFShapingKnowledgeSeekScript(&SFArabicKnowledgeInstance, scriptTag);
+    knowledge = ShapingKnowledgeSeekScript(&ArabicKnowledgeInstance, scriptTag);
 
     if (!knowledge) {
-        knowledge = SFShapingKnowledgeSeekScript(&SFStandardKnowledgeInstance, scriptTag);
+        knowledge = ShapingKnowledgeSeekScript(&StandardKnowledgeInstance, scriptTag);
     }
 
     if (!knowledge) {
-        knowledge = SFShapingKnowledgeSeekScript(&SFSimpleKnowledgeInstance, scriptTag);
+        knowledge = ShapingKnowledgeSeekScript(&SimpleKnowledgeInstance, scriptTag);
     }
 
     return knowledge;
 }
 
-SF_INTERNAL void SFUnifiedEngineInitialize(SFUnifiedEngineRef unifiedEngine, SFArtistRef artist)
+SF_INTERNAL void UnifiedEngineInitialize(UnifiedEngineRef unifiedEngine, SFArtistRef artist)
 {
-    SFScriptKnowledgeRef knowledge;
+    ScriptKnowledgeRef knowledge;
 
-    knowledge = SFShapingKnowledgeSeekScript(&SFArabicKnowledgeInstance, artist->pattern->scriptTag);
+    knowledge = ShapingKnowledgeSeekScript(&ArabicKnowledgeInstance, artist->pattern->scriptTag);
     if (knowledge) {
-        SFArabicEngineInitialize(&unifiedEngine->_arabicEngine, artist);
+        ArabicEngineInitialize(&unifiedEngine->_arabicEngine, artist);
         return;
     }
 
-    knowledge = SFShapingKnowledgeSeekScript(&SFStandardKnowledgeInstance, artist->pattern->scriptTag);
+    knowledge = ShapingKnowledgeSeekScript(&StandardKnowledgeInstance, artist->pattern->scriptTag);
     if (knowledge) {
-        SFStandardEngineInitialize(&unifiedEngine->_standardEngine, artist);
+        StandardEngineInitialize(&unifiedEngine->_standardEngine, artist);
         return;
     }
 
-    SFSimpleEngineInitialize(&unifiedEngine->_simpleEngine, artist);
+    SimpleEngineInitialize(&unifiedEngine->_simpleEngine, artist);
 }

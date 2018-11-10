@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Muhammad Tayyab Akram
+ * Copyright (C) 2015-2018 Muhammad Tayyab Akram
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,13 +23,13 @@
 #include "SFShapingEngine.h"
 #include "SFShapingKnowledge.h"
 
-typedef struct _SFStandardEngine {
-    SFShapingEngine _base;
+typedef struct _StandardEngine {
+    ShapingEngine _base;
     SFArtistRef _artist;
-} SFStandardEngine, *SFStandardEngineRef;
+} StandardEngine, *StandardEngineRef;
 
-extern SFShapingKnowledge SFStandardKnowledgeInstance;
+extern ShapingKnowledge StandardKnowledgeInstance;
 
-SF_INTERNAL void SFStandardEngineInitialize(SFStandardEngineRef standardEngine, SFArtistRef artist);
+SF_INTERNAL void StandardEngineInitialize(StandardEngineRef standardEngine, SFArtistRef artist);
 
 #endif

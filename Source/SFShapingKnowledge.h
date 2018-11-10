@@ -27,23 +27,23 @@ enum {
     ON_BY_DEFAULT = 1,
     OFF_BY_DEFAULT = 2
 };
-typedef SFUInt8 SFFeatureStatus;
+typedef SFUInt8 FeatureStatus;
 
 enum {
     INDIVIDUAL = 0,
     SIMULTANEOUS = 1
 };
-typedef SFUInt8 SFFeatureExecution;
+typedef SFUInt8 FeatureExecution;
 
-typedef struct _SFFeatureInfo {
+typedef struct _FeatureInfo {
     SFUInt8 group;
     SFTag tag;
-    SFFeatureStatus status;
-    SFFeatureExecution execution;
+    FeatureStatus status;
+    FeatureExecution execution;
     SFUInt16 mask;
-} SFFeatureInfo, *SFFeatureInfoRef;
+} FeatureInfo, *FeatureInfoRef;
 
-typedef struct _SFScriptKnowledge {
+typedef struct _ScriptKnowledge {
     /**
      * Default direction of the script.
      */
@@ -52,25 +52,25 @@ typedef struct _SFScriptKnowledge {
      * Information of all features supported by the script in implementation order.
      */
     struct {
-        SFFeatureInfo *items;
+        FeatureInfo *items;
         SFUInteger count;
     } substFeatures;
     struct {
-        SFFeatureInfo *items;
+        FeatureInfo *items;
         SFUInteger count;
     } posFeatures;
-} SFScriptKnowledge, *SFScriptKnowledgeRef;
+} ScriptKnowledge, *ScriptKnowledgeRef;
 
 /**
  * A common interface for the knowledge of a shaping engine.
  */
-typedef struct _SFShapingKnowledge {
-    SFScriptKnowledgeRef (*_seekScript)(const void *, SFTag);
-} SFShapingKnowledge, *SFShapingKnowledgeRef;
+typedef struct _ShapingKnowledge {
+    ScriptKnowledgeRef (*_seekScript)(const void *, SFTag);
+} ShapingKnowledge, *ShapingKnowledgeRef;
 
 /**
  * Returns script knowledge related to given script, or NULL.
  */
-SF_INTERNAL SFScriptKnowledgeRef SFShapingKnowledgeSeekScript(SFShapingKnowledgeRef shapingKnowledge, SFTag scriptTag);
+SF_INTERNAL ScriptKnowledgeRef ShapingKnowledgeSeekScript(ShapingKnowledgeRef shapingKnowledge, SFTag scriptTag);
 
 #endif

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Muhammad Tayyab Akram
+ * Copyright (C) 2016-2018 Muhammad Tayyab Akram
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,13 +15,12 @@
  */
 
 #include <SFConfig.h>
-
 #include <stddef.h>
 
 #include "SFAssert.h"
 #include "SFShapingKnowledge.h"
 
-SF_INTERNAL SFScriptKnowledgeRef SFShapingKnowledgeSeekScript(SFShapingKnowledgeRef shapingKnowledge, SFTag scriptTag)
+SF_INTERNAL ScriptKnowledgeRef ShapingKnowledgeSeekScript(ShapingKnowledgeRef shapingKnowledge, SFTag scriptTag)
 {
     /* The function must be implemented by the concrete instance. */
     SFAssert(shapingKnowledge->_seekScript != NULL);

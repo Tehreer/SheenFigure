@@ -24,7 +24,7 @@
 #include "SFShapingKnowledge.h"
 
 typedef struct _SFScheme {
-    SFShapingKnowledgeRef _knowledge;   /**< Shaping knowledge to use for known features. */
+    ShapingKnowledgeRef _knowledge;   /**< Shaping knowledge to use for known features. */
     SFFontRef _font;                    /**< Font, whose scheme is being built. */
     SFTag _scriptTag;                   /**< Tag of the script. */
     SFTag _languageTag;                 /**< Tag of the language. */
@@ -35,7 +35,7 @@ typedef struct _SFScheme {
     SFInteger _retainCount;
 } SFScheme;
 
-SF_INTERNAL void SFSchemeInitialize(SFSchemeRef scheme, SFShapingKnowledgeRef shapingEngine);
+SF_INTERNAL void SFSchemeInitialize(SFSchemeRef scheme, ShapingKnowledgeRef shapingEngine);
 SF_INTERNAL void SFSchemeFinalize(SFSchemeRef scheme);
 
 #endif

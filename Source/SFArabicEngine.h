@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Muhammad Tayyab Akram
+ * Copyright (C) 2015-2018 Muhammad Tayyab Akram
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,13 +23,13 @@
 #include "SFShapingEngine.h"
 #include "SFShapingKnowledge.h"
 
-typedef struct _SFArabicEngine {
-    SFShapingEngine _base;
+typedef struct _ArabicEngine {
+    ShapingEngine _base;
     SFArtistRef _artist;
-} SFArabicEngine, *SFArabicEngineRef;
+} ArabicEngine, *ArabicEngineRef;
 
-extern SFShapingKnowledge SFArabicKnowledgeInstance;
+extern ShapingKnowledge ArabicKnowledgeInstance;
 
-SF_INTERNAL void SFArabicEngineInitialize(SFArabicEngineRef arabicEngine, SFArtistRef artist);
+SF_INTERNAL void ArabicEngineInitialize(ArabicEngineRef arabicEngine, SFArtistRef artist);
 
 #endif

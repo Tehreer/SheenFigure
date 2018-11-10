@@ -543,7 +543,7 @@ static SFBoolean ApplyCursiveAnchors(SFTextProcessorRef textProcessor,
     return SFTrue;
 }
 
-static SFData _SFMarkArrayGetAnchorTable(SFData markArray, SFUInteger markIndex, SFUInt16 *outClass)
+static SFData GetMarkArrayFromAnchorTable(SFData markArray, SFUInteger markIndex, SFUInt16 *outClass)
 {
     SFUInt16 markCount = SFMarkArray_MarkCount(markArray);
 
@@ -619,7 +619,7 @@ static SFBoolean ApplyMarkToBaseArrays(SFTextProcessorRef textProcessor, SFData 
     markArray = SFMarkBasePos_MarkArrayTable(markBasePos);
 
     /* Get mark anchor and its class value. */
-    markAnchor = _SFMarkArrayGetAnchorTable(markArray, markIndex, &classValue);
+    markAnchor = GetMarkArrayFromAnchorTable(markArray, markIndex, &classValue);
     /* Validate mark anchor and its class value. */
     if (markAnchor && classValue < classCount) {
         SFData baseArray = SFMarkBasePos_BaseArrayTable(markBasePos);
@@ -714,7 +714,7 @@ static SFBoolean ApplyMarkToLigArrays(SFTextProcessorRef textProcessor, SFData m
     markArray = SFMarkLigPos_MarkArrayTable(markLigPos);
 
     /* Get mark anchor and its class value. */
-    markAnchor = _SFMarkArrayGetAnchorTable(markArray, markIndex, &classValue);
+    markAnchor = GetMarkArrayFromAnchorTable(markArray, markIndex, &classValue);
     /* Validate mark anchor and its class value. */
     if (markAnchor && classValue < classCount) {
         SFData ligArray = SFMarkLigPos_LigatureArrayTable(markLigPos);
@@ -814,7 +814,7 @@ static SFBoolean ApplyMarkToMarkArrays(SFTextProcessorRef textProcessor, SFData 
     mark1Array = SFMarkMarkPos_Mark1ArrayTable(markMarkPos);
 
     /* Get mark anchor and its class value. */
-    mark1Anchor = _SFMarkArrayGetAnchorTable(mark1Array, mark1Index, &classValue);
+    mark1Anchor = GetMarkArrayFromAnchorTable(mark1Array, mark1Index, &classValue);
     /* Validate mark anchor and its class value. */
     if (mark1Anchor && classValue < classCount) {
         SFData mark2Array = SFMarkMarkPos_Mark2ArrayTable(markMarkPos);

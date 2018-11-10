@@ -134,15 +134,15 @@ static SFBoolean GetCustomValue(SFSchemeRef scheme, SFTag featureTag, SFUInt16 *
 
 static void AddFeatureUnit(SFSchemeRef scheme, SFPatternBuilderRef patternBuilder,
     SFData langSysTable, SFData featureListTable,
-    SFFeatureInfo *featureInfos, SFUInteger featureCount)
+    FeatureInfo *featureInfos, SFUInteger featureCount)
 {
     SFBoolean exists = SFFalse;
     SFUInteger index;
 
     for (index = 0; index < featureCount; index++) {
-        SFFeatureInfoRef featureInfo = &featureInfos[index];
+        FeatureInfoRef featureInfo = &featureInfos[index];
         SFTag featureTag = featureInfo->tag;
-        SFFeatureStatus featureStatus = featureInfo->status;
+        FeatureStatus featureStatus = featureInfo->status;
         SFUInt16 featureValue;
         SFUInt16 customValue;
 
@@ -176,12 +176,12 @@ static void AddFeatureUnit(SFSchemeRef scheme, SFPatternBuilderRef patternBuilde
 
 static void AddKnownFeatures(SFSchemeRef scheme, SFPatternBuilderRef patternBuilder,
     SFData langSysTable, SFData featureListTable,
-    SFFeatureInfo *featureInfos, SFUInteger featureCount)
+    FeatureInfo *featureInfos, SFUInteger featureCount)
 {
     SFUInteger index = 0;
 
     while (index < featureCount) {
-        SFFeatureInfoRef featureInfo = &featureInfos[index];
+        FeatureInfoRef featureInfo = &featureInfos[index];
         SFUInteger unitLength = 1;
 
         if (featureInfo->execution == SIMULTANEOUS) {
@@ -205,7 +205,7 @@ static void AddKnownFeatures(SFSchemeRef scheme, SFPatternBuilderRef patternBuil
     }
 }
 
-static SFBoolean IsKnownFeature(SFTag featureTag, SFFeatureInfo *featureInfos, SFUInteger featureCount)
+static SFBoolean IsKnownFeature(SFTag featureTag, FeatureInfo *featureInfos, SFUInteger featureCount)
 {
     SFUInteger index;
 
@@ -220,7 +220,7 @@ static SFBoolean IsKnownFeature(SFTag featureTag, SFFeatureInfo *featureInfos, S
 
 static void AddCustomFeatures(SFSchemeRef scheme, SFPatternBuilderRef patternBuilder,
     SFData langSysTable, SFData featureListTable,
-    SFFeatureInfo *featureInfos, SFUInteger featureCount)
+    FeatureInfo *featureInfos, SFUInteger featureCount)
 {
     SFBoolean exists = SFFalse;
     SFUInteger index;
@@ -257,7 +257,7 @@ static void AddCustomFeatures(SFSchemeRef scheme, SFPatternBuilderRef patternBui
 }
 
 static void AddHeaderTable(SFSchemeRef scheme, SFPatternBuilderRef patternBuilder,
-    SFData headerTable, SFFeatureInfo *featureInfos, SFUInteger featureCount)
+    SFData headerTable, FeatureInfo *featureInfos, SFUInteger featureCount)
 {
     SFData scriptListTable = SFHeader_ScriptListTable(headerTable);
     SFData featureListTable = SFHeader_FeatureListTable(headerTable);
@@ -278,7 +278,7 @@ static void AddHeaderTable(SFSchemeRef scheme, SFPatternBuilderRef patternBuilde
     }
 }
 
-SF_INTERNAL void SFSchemeInitialize(SFSchemeRef scheme, SFShapingKnowledgeRef shapingKnowledge)
+SF_INTERNAL void SFSchemeInitialize(SFSchemeRef scheme, ShapingKnowledgeRef shapingKnowledge)
 {
     scheme->_knowledge = shapingKnowledge;
     scheme->_font = NULL;
@@ -299,7 +299,7 @@ SF_INTERNAL void SFSchemeFinalize(SFSchemeRef scheme)
 SFSchemeRef SFSchemeCreate(void)
 {
     SFSchemeRef scheme = malloc(sizeof(SFScheme));
-    SFSchemeInitialize(scheme, &SFUnifiedKnowledgeInstance);
+    SFSchemeInitialize(scheme, &UnifiedKnowledgeInstance);
 
     return scheme;
 }
@@ -357,7 +357,7 @@ SFPatternRef SFSchemeBuildPattern(SFSchemeRef scheme)
     SFFontRef font = scheme->_font;
 
     if (font) {
-        SFScriptKnowledgeRef knowledge = SFShapingKnowledgeSeekScript(scheme->_knowledge, scheme->_scriptTag);
+        ScriptKnowledgeRef knowledge = ShapingKnowledgeSeekScript(scheme->_knowledge, scheme->_scriptTag);
         SFPatternRef pattern = SFPatternCreate();
         SFPatternBuilder builder;
 
