@@ -87,7 +87,7 @@ static SFBoolean AssessGlyphByClass(SFGlyphAgent *glyphAgent)
             break;
     }
 
-    glyphClass = SFOpenTypeSearchGlyphClass(classDef, glyphAgent->glyphID);
+    glyphClass = SearchGlyphClass(classDef, glyphAgent->glyphID);
 
     return (glyphClass == glyphAgent->recordValue);
 }
@@ -97,7 +97,7 @@ static SFBoolean AssessGlyphByCoverage(SFGlyphAgent *glyphAgent)
     SFData coverage = SFData_Subdata((SFData)glyphAgent->helperPtr, glyphAgent->recordValue);
     SFUInteger covIndex;
 
-    covIndex = SFOpenTypeSearchCoverageIndex(coverage, glyphAgent->glyphID);
+    covIndex = SearchCoverageIndex(coverage, glyphAgent->glyphID);
 
     return (covIndex != SFInvalidIndex);
 }
@@ -224,7 +224,7 @@ SF_PRIVATE SFBoolean ApplyContextSubtable(TextProcessorRef textProcessor, SFData
             SFUInteger covIndex;
 
             locGlyph = SFAlbumGetGlyph(album, locator->index);
-            covIndex = SFOpenTypeSearchCoverageIndex(coverage, locGlyph);
+            covIndex = SearchCoverageIndex(coverage, locGlyph);
 
             if (covIndex < ruleSetCount) {
                 SFData ruleSet = SFContextF1_RuleSetTable(context, covIndex);
@@ -239,14 +239,14 @@ SF_PRIVATE SFBoolean ApplyContextSubtable(TextProcessorRef textProcessor, SFData
             SFUInteger covIndex;
 
             locGlyph = SFAlbumGetGlyph(album, locator->index);
-            covIndex = SFOpenTypeSearchCoverageIndex(coverage, locGlyph);
+            covIndex = SearchCoverageIndex(coverage, locGlyph);
 
             if (covIndex != SFInvalidIndex) {
                 SFData classDef = SFContextF2_ClassDefTable(context);
                 SFUInt16 ruleSetCount = SFContextF2_RuleSetCount(context);
                 SFUInt16 locClass;
 
-                locClass = SFOpenTypeSearchGlyphClass(classDef, locGlyph);
+                locClass = SearchGlyphClass(classDef, locGlyph);
 
                 if (locClass < ruleSetCount) {
                     SFData ruleSet = SFContextF2_RuleSetTable(context, locClass);
@@ -324,7 +324,7 @@ SF_PRIVATE SFBoolean ApplyChainContextSubtable(TextProcessorRef textProcessor, S
             SFUInteger covIndex;
 
             locGlyph = SFAlbumGetGlyph(album, locator->index);
-            covIndex = SFOpenTypeSearchCoverageIndex(coverage, locGlyph);
+            covIndex = SearchCoverageIndex(coverage, locGlyph);
 
             if (covIndex < ruleSetCount) {
                 SFData chainRuleSet = SFChainContextF1_ChainRuleSetTable(chainContext, covIndex);
@@ -339,7 +339,7 @@ SF_PRIVATE SFBoolean ApplyChainContextSubtable(TextProcessorRef textProcessor, S
             SFUInteger covIndex;
 
             locGlyph = SFAlbumGetGlyph(album, locator->index);
-            covIndex = SFOpenTypeSearchCoverageIndex(coverage, locGlyph);
+            covIndex = SearchCoverageIndex(coverage, locGlyph);
 
             if (covIndex != SFInvalidIndex) {
                 SFData backtrackClassDef = SFChainContextF2_BacktrackClassDefTable(chainContext);
@@ -348,7 +348,7 @@ SF_PRIVATE SFBoolean ApplyChainContextSubtable(TextProcessorRef textProcessor, S
                 SFUInt16 chainRuleSetCount = SFChainContextF2_ChainRuleSetCount(chainContext);
                 SFUInt16 inputClass;
 
-                inputClass = SFOpenTypeSearchGlyphClass(inputClassDef, locGlyph);
+                inputClass = SearchGlyphClass(inputClassDef, locGlyph);
 
                 if (inputClass < chainRuleSetCount) {
                     SFData chainRuleSet = SFChainContextF2_ChainRuleSetTable(chainContext, inputClass);
@@ -489,7 +489,7 @@ SF_PRIVATE SFBoolean ApplyReverseChainSubst(TextProcessorRef textProcessor, SFDa
             SFUInteger covIndex;
 
             locGlyph = SFAlbumGetGlyph(album, locator->index);
-            covIndex = SFOpenTypeSearchCoverageIndex(coverage, locGlyph);
+            covIndex = SearchCoverageIndex(coverage, locGlyph);
 
             if (covIndex != SFInvalidIndex) {
                 SFData backtrackRecord = SFReverseChainSubstF1_RevBacktrackRecord(reverseChain);

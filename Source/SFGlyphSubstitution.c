@@ -48,7 +48,7 @@ static SFBoolean ApplySingleSubst(TextProcessorRef textProcessor, SFData singleS
             SFUInteger covIndex;
 
             locGlyph = SFAlbumGetGlyph(album, locator->index);
-            covIndex = SFOpenTypeSearchCoverageIndex(coverage, locGlyph);
+            covIndex = SearchCoverageIndex(coverage, locGlyph);
 
             if (covIndex != SFInvalidIndex) {
                 SFGlyphID subGlyph = (SFGlyphID)(locGlyph + delta);
@@ -70,7 +70,7 @@ static SFBoolean ApplySingleSubst(TextProcessorRef textProcessor, SFData singleS
             SFUInteger covIndex;
 
             locGlyph = SFAlbumGetGlyph(album, locator->index);
-            covIndex = SFOpenTypeSearchCoverageIndex(coverage, locGlyph);
+            covIndex = SearchCoverageIndex(coverage, locGlyph);
 
             if (covIndex < glyphCount) {
                 SFGlyphID subGlyph = SFSingleSubstF2_Substitute(singleSubst, covIndex);
@@ -107,7 +107,7 @@ static SFBoolean ApplyMultipleSubst(TextProcessorRef textProcessor, SFData multi
             SFUInteger covIndex;
 
             locGlyph = SFAlbumGetGlyph(album, locator->index);
-            covIndex = SFOpenTypeSearchCoverageIndex(coverage, locGlyph);
+            covIndex = SearchCoverageIndex(coverage, locGlyph);
 
             if (covIndex < seqCount) {
                 SFData sequence = SFMultipleSubstF1_SequenceTable(multipleSubst, covIndex);
@@ -189,7 +189,7 @@ static SFBoolean ApplyAlternateSubst(TextProcessorRef textProcessor, SFData alte
             SFUInteger covIndex;
 
             locGlyph = SFAlbumGetGlyph(album, locator->index);
-            covIndex = SFOpenTypeSearchCoverageIndex(coverage, locGlyph);
+            covIndex = SearchCoverageIndex(coverage, locGlyph);
 
             if (covIndex < altSetCount) {
                 SFData alternateSet = SFAlternateSubstF1_AlternateSetTable(alternateSubst, covIndex);
@@ -242,7 +242,7 @@ static SFBoolean ApplyLigatureSubst(TextProcessorRef textProcessor, SFData ligat
             SFUInteger covIndex;
 
             locGlyph = SFAlbumGetGlyph(album, locator->index);
-            covIndex = SFOpenTypeSearchCoverageIndex(coverage, locGlyph);
+            covIndex = SearchCoverageIndex(coverage, locGlyph);
 
             if (covIndex < ligSetCount) {
                 SFData ligatureSet = SFLigatureSubstF1_LigatureSetTable(ligatureSubst, covIndex);

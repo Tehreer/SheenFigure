@@ -136,7 +136,7 @@ static SFBoolean IsIgnoredGlyph(SFLocatorRef locator, SFUInteger index) {
 
             if (markFilteringCoverage) {
                 SFGlyphID glyph = SFAlbumGetGlyph(album, index);
-                SFUInteger coverageIndex = SFOpenTypeSearchCoverageIndex(markFilteringCoverage, glyph);
+                SFUInteger coverageIndex = SearchCoverageIndex(markFilteringCoverage, glyph);
 
                 if (coverageIndex == SFInvalidIndex) {
                     return SFTrue;
@@ -149,7 +149,7 @@ static SFBoolean IsIgnoredGlyph(SFLocatorRef locator, SFUInteger index) {
 
             if (markAttachClassDef) {
                 SFGlyphID glyph = SFAlbumGetGlyph(album, index);
-                SFUInt16 glyphClass = SFOpenTypeSearchGlyphClass(markAttachClassDef, glyph);
+                SFUInt16 glyphClass = SearchGlyphClass(markAttachClassDef, glyph);
 
                 if (glyphClass != (lookupFlag >> 8)) {
                     return SFTrue;

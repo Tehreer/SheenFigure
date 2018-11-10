@@ -22,15 +22,15 @@
 #include "SFBase.h"
 #include "SFData.h"
 
-SF_INTERNAL SFUInteger SFOpenTypeSearchCoverageIndex(SFData coverageTable, SFGlyphID glyphID);
-SF_INTERNAL SFUInt16 SFOpenTypeSearchGlyphClass(SFData classDefTable, SFGlyphID glyphID);
+SF_INTERNAL SFUInteger SearchCoverageIndex(SFData coverageTable, SFGlyphID glyphID);
+SF_INTERNAL SFUInt16 SearchGlyphClass(SFData classDefTable, SFGlyphID glyphID);
 
-SF_INTERNAL SFInt32 SFOpenTypeGetDevicePixels(SFData deviceTable, SFUInt16 ppemSize);
-SF_INTERNAL SFInt32 SFOpenTypeGetVariationPixels(SFData varIndexTable, SFData varStoreTable,
+SF_INTERNAL SFInt32 GetDevicePixels(SFData deviceTable, SFUInt16 ppemSize);
+SF_INTERNAL SFInt32 GetVariationPixels(SFData varIndexTable, SFData varStoreTable,
     SFInt32 *coordArray, SFUInteger coordCount);
 
-SF_INTERNAL SFData SFOpenTypeSearchFeatureSubstitutionTable(SFData featureVarsTable,
+SF_INTERNAL SFData SearchFeatureSubstitutionTable(SFData featureVarsTable,
     SFInt32 *coordArray, SFUInteger coordCount);
-SF_INTERNAL SFData SFOpenTypeSearchAlternateFeatureTable(SFData featureSubstTable, SFUInt16 featureIndex);
+SF_INTERNAL SFData SearchAlternateFeatureTable(SFData featureSubstTable, SFUInt16 featureIndex);
 
 #endif

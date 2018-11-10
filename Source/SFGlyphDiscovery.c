@@ -38,7 +38,7 @@ SF_PRIVATE SFGlyphTraits GetGlyphTraits(TextProcessorRef textProcessor, SFGlyphI
     SFData glyphClassDef = textProcessor->_glyphClassDef;
 
     if (glyphClassDef) {
-        SFUInt16 glyphClass = SFOpenTypeSearchGlyphClass(glyphClassDef, glyph);
+        SFUInt16 glyphClass = SearchGlyphClass(glyphClassDef, glyph);
 
         /* Convert glyph class to traits options. */
         switch (glyphClass) {
