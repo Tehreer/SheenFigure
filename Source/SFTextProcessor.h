@@ -37,7 +37,7 @@ typedef struct _TextProcessor {
     SFUInt16 _ppemHeight;
     SFBoolean _zeroWidthMarks;
     SFBoolean _containsZeroWidthCodepoints;
-    SFLocator _locator;
+    Locator _locator;
 } TextProcessor, *TextProcessorRef;
 
 SF_INTERNAL void TextProcessorInitialize(TextProcessorRef textProcessor,

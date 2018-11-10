@@ -138,7 +138,7 @@ static void ApplyValueRecord(TextProcessorRef textProcessor, SFData parentTable,
 static SFBoolean ApplySinglePos(TextProcessorRef textProcessor, SFData singlePos)
 {
     SFAlbumRef album = textProcessor->_album;
-    SFLocatorRef locator = &textProcessor->_locator;
+    LocatorRef locator = &textProcessor->_locator;
     SFUInt16 posFormat;
 
     posFormat = SFSinglePos_Format(singlePos);
@@ -200,14 +200,14 @@ static int PairRecordGlyphComparison(const void *item1, const void *item2)
 
 static SFBoolean ApplyPairPos(TextProcessorRef textProcessor, SFData pairPos)
 {
-    SFLocatorRef locator = &textProcessor->_locator;
+    LocatorRef locator = &textProcessor->_locator;
     SFBoolean didPosition = SFFalse;
     SFBoolean shouldSkip = SFFalse;
     SFUInteger firstIndex;
     SFUInteger secondIndex;
 
     firstIndex = locator->index;
-    secondIndex = SFLocatorGetAfter(locator, firstIndex, SFTrue);
+    secondIndex = LocatorGetAfter(locator, firstIndex, SFTrue);
 
     /* Proceed only if pair glyph is available. */
     if (secondIndex != SFInvalidIndex) {
@@ -225,7 +225,7 @@ static SFBoolean ApplyPairPos(TextProcessorRef textProcessor, SFData pairPos)
     }
 
     if (shouldSkip) {
-        SFLocatorJumpTo(locator, secondIndex);
+        LocatorJumpTo(locator, secondIndex);
     }
 
     return didPosition;
@@ -418,7 +418,7 @@ static void SearchCursiveAnchors(SFData cursivePos, SFGlyphID glyph,
 static SFBoolean ApplyCursivePos(TextProcessorRef textProcessor, SFData cursivePos)
 {
     SFAlbumRef album = textProcessor->_album;
-    SFLocatorRef locator = &textProcessor->_locator;
+    LocatorRef locator = &textProcessor->_locator;
     SFUInt16 posFormat;
 
     posFormat = SFCursivePos_Format(cursivePos);
@@ -433,7 +433,7 @@ static SFBoolean ApplyCursivePos(TextProcessorRef textProcessor, SFData cursiveP
 
             /* Proceed only if exit anchor of first glyph exists. */
             if (exitAnchor) {
-                SFUInteger secondIndex = SFLocatorGetAfter(locator, firstIndex, SFTrue);
+                SFUInteger secondIndex = LocatorGetAfter(locator, firstIndex, SFTrue);
 
                 if (secondIndex != SFInvalidIndex) {
                     SFGlyphID secondGlyph = SFAlbumGetGlyph(album, secondIndex);
@@ -457,7 +457,7 @@ static SFBoolean ApplyCursiveAnchors(TextProcessorRef textProcessor,
     SFData exitAnchor, SFData entryAnchor, SFUInteger firstIndex, SFUInteger secondIndex)
 {
     SFAlbumRef album = textProcessor->_album;
-    SFLocatorRef locator = &textProcessor->_locator;
+    LocatorRef locator = &textProcessor->_locator;
     SFPoint exitPoint = ConvertAnchorToPoint(textProcessor, exitAnchor);
     SFPoint entryPoint = ConvertAnchorToPoint(textProcessor, entryAnchor);
     SFGlyphTraits traits;
@@ -564,7 +564,7 @@ static SFData GetMarkArrayFromAnchorTable(SFData markArray, SFUInteger markIndex
 static SFBoolean ApplyMarkToBasePos(TextProcessorRef textProcessor, SFData markBasePos)
 {
     SFAlbumRef album = textProcessor->_album;
-    SFLocatorRef locator = &textProcessor->_locator;
+    LocatorRef locator = &textProcessor->_locator;
     SFUInt16 posFormat;
 
     posFormat = SFMarkBasePos_Format(markBasePos);
@@ -579,7 +579,7 @@ static SFBoolean ApplyMarkToBasePos(TextProcessorRef textProcessor, SFData markB
             markIndex = SearchCoverageIndex(markCoverage, locGlyph);
 
             if (markIndex != SFInvalidIndex) {
-                SFUInteger prevIndex = SFLocatorGetPrecedingBaseIndex(locator);
+                SFUInteger prevIndex = LocatorGetPrecedingBaseIndex(locator);
                 SFGlyphID prevGlyph;
 
                 /* Proceed only if there is a previous base glyph. */
@@ -606,7 +606,7 @@ static SFBoolean ApplyMarkToBaseArrays(TextProcessorRef textProcessor, SFData ma
     SFUInteger markIndex, SFUInteger baseIndex, SFUInteger attachmentIndex)
 {
     SFAlbumRef album = textProcessor->_album;
-    SFLocatorRef locator = &textProcessor->_locator;
+    LocatorRef locator = &textProcessor->_locator;
     SFUInt16 classCount;
     SFData markArray;
     SFUInt16 classValue;
@@ -656,7 +656,7 @@ static SFBoolean ApplyMarkToBaseArrays(TextProcessorRef textProcessor, SFData ma
 static SFBoolean ApplyMarkToLigPos(TextProcessorRef textProcessor, SFData markLigPos)
 {
     SFAlbumRef album = textProcessor->_album;
-    SFLocatorRef locator = &textProcessor->_locator;
+    LocatorRef locator = &textProcessor->_locator;
     SFUInt16 posFormat;
 
     posFormat = SFMarkLigPos_Format(markLigPos);
@@ -675,7 +675,7 @@ static SFBoolean ApplyMarkToLigPos(TextProcessorRef textProcessor, SFData markLi
                 SFUInteger ligComponent;
                 SFGlyphID prevGlyph;
 
-                prevIndex = SFLocatorGetPrecedingLigatureIndex(locator, &ligComponent);
+                prevIndex = LocatorGetPrecedingLigatureIndex(locator, &ligComponent);
 
                 /* Proceed only if there is a previous ligature glyph. */
                 if (prevIndex != SFInvalidIndex) {
@@ -701,7 +701,7 @@ static SFBoolean ApplyMarkToLigArrays(TextProcessorRef textProcessor, SFData mar
     SFUInteger markIndex, SFUInteger ligIndex, SFUInteger ligComponent, SFUInteger attachmentIndex)
 {
     SFAlbumRef album = textProcessor->_album;
-    SFLocatorRef locator = &textProcessor->_locator;
+    LocatorRef locator = &textProcessor->_locator;
     SFUInt16 classCount;
     SFData markArray;
     SFUInt16 classValue;
@@ -760,7 +760,7 @@ static SFBoolean ApplyMarkToLigArrays(TextProcessorRef textProcessor, SFData mar
 static SFBoolean ApplyMarkToMarkPos(TextProcessorRef textProcessor, SFData markMarkPos)
 {
     SFAlbumRef album = textProcessor->_album;
-    SFLocatorRef locator = &textProcessor->_locator;
+    LocatorRef locator = &textProcessor->_locator;
     SFGlyphID inputGlyph = SFAlbumGetGlyph(album, locator->index);
     SFUInt16 posFormat;
 
@@ -774,7 +774,7 @@ static SFBoolean ApplyMarkToMarkPos(TextProcessorRef textProcessor, SFData markM
             mark1Index = SearchCoverageIndex(mark1Coverage, inputGlyph);
 
             if (mark1Index != SFInvalidIndex) {
-                SFUInteger prevIndex = SFLocatorGetPrecedingMarkIndex(locator);
+                SFUInteger prevIndex = LocatorGetPrecedingMarkIndex(locator);
                 SFGlyphID prevGlyph;
 
                 /* Proceed only if there is a previous mark glyph. */
@@ -801,7 +801,7 @@ static SFBoolean ApplyMarkToMarkArrays(TextProcessorRef textProcessor, SFData ma
     SFUInteger mark1Index, SFUInteger mark2Index, SFUInteger attachmentIndex)
 {
     SFAlbumRef album = textProcessor->_album;
-    SFLocatorRef locator = &textProcessor->_locator;
+    LocatorRef locator = &textProcessor->_locator;
     SFUInt16 classCount;
     SFData mark1Array;
     SFUInt16 classValue;
@@ -964,12 +964,12 @@ static void ResolveRightCursiveSegment(TextProcessorRef textProcessor, SFUIntege
     }
 }
 
-static void ResolveCursivePositions(TextProcessorRef textProcessor, SFLocatorRef locator)
+static void ResolveCursivePositions(TextProcessorRef textProcessor, LocatorRef locator)
 {
     SFAlbumRef album = textProcessor->_album;
-    SFLocatorReset(locator, 0, album->glyphCount);
+    LocatorReset(locator, 0, album->glyphCount);
 
-    while (SFLocatorMoveNext(locator)) {
+    while (LocatorMoveNext(locator)) {
         SFUInteger locatorIndex = locator->index;
         SFGlyphTraits traits = SFAlbumGetAllTraits(album, locatorIndex);
 
@@ -983,12 +983,12 @@ static void ResolveCursivePositions(TextProcessorRef textProcessor, SFLocatorRef
     }
 }
 
-static void ResolveMarkPositions(TextProcessorRef textProcessor, SFLocatorRef locator)
+static void ResolveMarkPositions(TextProcessorRef textProcessor, LocatorRef locator)
 {
     SFAlbumRef album = textProcessor->_album;
-    SFLocatorReset(locator, 0, album->glyphCount);
+    LocatorReset(locator, 0, album->glyphCount);
 
-    while (SFLocatorMoveNext(locator)) {
+    while (LocatorMoveNext(locator)) {
         SFUInteger locIndex = locator->index;
         SFGlyphTraits traits = SFAlbumGetAllTraits(album, locIndex);
 
@@ -1027,9 +1027,9 @@ static void ResolveMarkPositions(TextProcessorRef textProcessor, SFLocatorRef lo
 SF_PRIVATE void ResolveAttachments(TextProcessorRef textProcessor)
 {
     SFAlbumRef album = textProcessor->_album;
-    SFLocator locator;
+    Locator locator;
 
-    SFLocatorInitialize(&locator, album, NULL);
+    LocatorInitialize(&locator, album, NULL);
 
     ResolveCursivePositions(textProcessor, &locator);
     ResolveMarkPositions(textProcessor, &locator);

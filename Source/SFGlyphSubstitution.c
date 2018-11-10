@@ -35,7 +35,7 @@ static SFBoolean ApplyLigatureSetTable(TextProcessorRef textProcessor, SFData li
 static SFBoolean ApplySingleSubst(TextProcessorRef textProcessor, SFData singleSubst)
 {
     SFAlbumRef album = textProcessor->_album;
-    SFLocatorRef locator = &textProcessor->_locator;
+    LocatorRef locator = &textProcessor->_locator;
     SFUInt16 substFormat;
 
     substFormat = SFSingleSubst_Format(singleSubst);
@@ -94,7 +94,7 @@ static SFBoolean ApplySingleSubst(TextProcessorRef textProcessor, SFData singleS
 static SFBoolean ApplyMultipleSubst(TextProcessorRef textProcessor, SFData multipleSubst)
 {
     SFAlbumRef album = textProcessor->_album;
-    SFLocatorRef locator = &textProcessor->_locator;
+    LocatorRef locator = &textProcessor->_locator;
     SFUInt16 substformat;
 
     substformat = SFMultipleSubst_Format(multipleSubst);
@@ -123,7 +123,7 @@ static SFBoolean ApplyMultipleSubst(TextProcessorRef textProcessor, SFData multi
 static SFBoolean ApplySequenceTable(TextProcessorRef textProcessor, SFData sequence)
 {
     SFAlbumRef album = textProcessor->_album;
-    SFLocatorRef locator = &textProcessor->_locator;
+    LocatorRef locator = &textProcessor->_locator;
     SFUInt16 glyphCount;
 
     glyphCount = SFSequence_GlyphCount(sequence);
@@ -142,7 +142,7 @@ static SFBoolean ApplySequenceTable(TextProcessorRef textProcessor, SFData seque
             SFUInteger subIndex;
 
             /* Reserve glyphs for remaining substitutes in the album. */
-            SFLocatorReserveGlyphs(locator, glyphCount - 1);
+            LocatorReserveGlyphs(locator, glyphCount - 1);
 
             /* Initialize reserved glyphs. */
             for (subIndex = 1; subIndex < glyphCount; subIndex++) {
@@ -159,7 +159,7 @@ static SFBoolean ApplySequenceTable(TextProcessorRef textProcessor, SFData seque
             }
 
             /* Skip added elements in the locator. */
-            SFLocatorJumpTo(locator, locator->index + glyphCount);
+            LocatorJumpTo(locator, locator->index + glyphCount);
         }
 
         return SFTrue;
@@ -176,7 +176,7 @@ static SFBoolean ApplySequenceTable(TextProcessorRef textProcessor, SFData seque
 static SFBoolean ApplyAlternateSubst(TextProcessorRef textProcessor, SFData alternateSubst)
 {
     SFAlbumRef album = textProcessor->_album;
-    SFLocatorRef locator = &textProcessor->_locator;
+    LocatorRef locator = &textProcessor->_locator;
     SFUInt16 substFormat;
 
     substFormat = SFAlternateSubst_Format(alternateSubst);
@@ -205,7 +205,7 @@ static SFBoolean ApplyAlternateSubst(TextProcessorRef textProcessor, SFData alte
 static SFBoolean ApplyAlternateSetTable(TextProcessorRef textProcessor, SFData alternateSet)
 {
     SFAlbumRef album = textProcessor->_album;
-    SFLocatorRef locator = &textProcessor->_locator;
+    LocatorRef locator = &textProcessor->_locator;
     SFUInt16 altIndex = textProcessor->_lookupValue - 1;
     SFUInt16 glyphCount;
 
@@ -229,7 +229,7 @@ static SFBoolean ApplyAlternateSetTable(TextProcessorRef textProcessor, SFData a
 static SFBoolean ApplyLigatureSubst(TextProcessorRef textProcessor, SFData ligatureSubst)
 {
     SFAlbumRef album = textProcessor->_album;
-    SFLocatorRef locator = &textProcessor->_locator;
+    LocatorRef locator = &textProcessor->_locator;
     SFUInt16 substFormat;
 
     substFormat = SFLigatureSubst_Format(ligatureSubst);
@@ -258,7 +258,7 @@ static SFBoolean ApplyLigatureSubst(TextProcessorRef textProcessor, SFData ligat
 static SFBoolean ApplyLigatureSetTable(TextProcessorRef textProcessor, SFData ligatureSet)
 {
     SFAlbumRef album = textProcessor->_album;
-    SFLocatorRef locator = &textProcessor->_locator;
+    LocatorRef locator = &textProcessor->_locator;
     SFUInt16 ligCount;
     SFUInteger ligIndex;
 
@@ -284,7 +284,7 @@ static SFBoolean ApplyLigatureSetTable(TextProcessorRef textProcessor, SFData li
          *      it does not accidently overflow if the component count is zero.
          */
         for (compIndex = 1; compIndex < compCount; compIndex++) {
-            nextIndex = SFLocatorGetAfter(locator, prevIndex, SFTrue);
+            nextIndex = LocatorGetAfter(locator, prevIndex, SFTrue);
 
             if (nextIndex != SFInvalidIndex) {
                 SFGlyphID component = SFLigature_Component(ligature, compIndex - 1);

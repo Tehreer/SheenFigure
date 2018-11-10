@@ -106,7 +106,7 @@ static SFBoolean AssessBacktrackGlyphs(TextProcessorRef textProcessor,
     SFData valueArray, SFUInteger valueCount, SFGlyphAssessment glyphAssessment, void *helperPtr)
 {
     SFAlbumRef album = textProcessor->_album;
-    SFLocatorRef locator = &textProcessor->_locator;
+    LocatorRef locator = &textProcessor->_locator;
     SFUInteger backIndex = locator->index;
     SFUInteger valueIndex;
     SFGlyphAgent glyphAgent;
@@ -115,7 +115,7 @@ static SFBoolean AssessBacktrackGlyphs(TextProcessorRef textProcessor,
     glyphAgent.glyphZone = SFGlyphZoneBacktrack;
 
     for (valueIndex = 0; valueIndex < valueCount; valueIndex++) {
-        backIndex = SFLocatorGetBefore(locator, backIndex, SFFalse);
+        backIndex = LocatorGetBefore(locator, backIndex, SFFalse);
 
         if (backIndex != SFInvalidIndex) {
             glyphAgent.glyphID = SFAlbumGetGlyph(album, backIndex);
@@ -137,7 +137,7 @@ static SFBoolean AssessInputGlyphs(TextProcessorRef textProcessor,
     SFGlyphAssessment glyphAssessment, void *helperPtr, SFUInteger *contextEnd)
 {
     SFAlbumRef album = textProcessor->_album;
-    SFLocatorRef locator = &textProcessor->_locator;
+    LocatorRef locator = &textProcessor->_locator;
     SFUInteger inputIndex = locator->index;
     SFUInteger valueIndex = 0;
     SFGlyphAgent glyphAgent;
@@ -159,7 +159,7 @@ static SFBoolean AssessInputGlyphs(TextProcessorRef textProcessor,
     }
 
     for (; valueIndex < valueCount; valueIndex++) {
-        inputIndex = SFLocatorGetAfter(locator, inputIndex, SFTrue);
+        inputIndex = LocatorGetAfter(locator, inputIndex, SFTrue);
 
         if (inputIndex != SFInvalidIndex) {
             glyphAgent.glyphID = SFAlbumGetGlyph(album, inputIndex);
@@ -182,7 +182,7 @@ static SFBoolean AssessLookaheadGlyphs(TextProcessorRef textProcessor,
     SFGlyphAssessment glyphAssessment, void *helperPtr, SFUInteger contextEnd)
 {
     SFAlbumRef album = textProcessor->_album;
-    SFLocatorRef locator = &textProcessor->_locator;
+    LocatorRef locator = &textProcessor->_locator;
     SFUInteger aheadIndex = contextEnd;
     SFUInteger valueIndex;
     SFGlyphAgent glyphAgent;
@@ -191,7 +191,7 @@ static SFBoolean AssessLookaheadGlyphs(TextProcessorRef textProcessor,
     glyphAgent.glyphZone = SFGlyphZoneLookahead;
 
     for (valueIndex = 0; valueIndex < valueCount; valueIndex++) {
-        aheadIndex = SFLocatorGetAfter(locator, aheadIndex, SFFalse);
+        aheadIndex = LocatorGetAfter(locator, aheadIndex, SFFalse);
 
         if (aheadIndex != SFInvalidIndex) {
             glyphAgent.glyphID = SFAlbumGetGlyph(album, aheadIndex);
@@ -211,7 +211,7 @@ static SFBoolean AssessLookaheadGlyphs(TextProcessorRef textProcessor,
 SF_PRIVATE SFBoolean ApplyContextSubtable(TextProcessorRef textProcessor, SFData context)
 {
     SFAlbumRef album = textProcessor->_album;
-    SFLocatorRef locator = &textProcessor->_locator;
+    LocatorRef locator = &textProcessor->_locator;
     SFUInt16 tblFormat;
 
     tblFormat = SFContext_Format(context);
@@ -311,7 +311,7 @@ static SFBoolean ApplyRuleTable(TextProcessorRef textProcessor,
 SF_PRIVATE SFBoolean ApplyChainContextSubtable(TextProcessorRef textProcessor, SFData chainContext)
 {
     SFAlbumRef album = textProcessor->_album;
-    SFLocatorRef locator = &textProcessor->_locator;
+    LocatorRef locator = &textProcessor->_locator;
     SFUInt16 tblFormat;
 
     tblFormat = SFChainContext_Format(chainContext);
@@ -426,12 +426,12 @@ static SFBoolean ApplyChainRuleTable(TextProcessorRef textProcessor,
 static SFBoolean ApplyContextLookups(TextProcessorRef textProcessor,
     SFData lookupArray, SFUInteger lookupCount, SFUInteger contextStart, SFUInteger contextEnd)
 {
-    SFLocatorRef contextLocator = &textProcessor->_locator;
-    SFLocator originalLocator = *contextLocator;
+    LocatorRef contextLocator = &textProcessor->_locator;
+    Locator originalLocator = *contextLocator;
     SFUInteger lookupIndex;
 
     /* Make the context locator cover only context range. */
-    SFLocatorReset(contextLocator, contextStart, (contextEnd - contextStart) + 1);
+    LocatorReset(contextLocator, contextStart, (contextEnd - contextStart) + 1);
 
     /* Apply the lookup records sequentially as they are ordered by preference. */
     for (lookupIndex = 0; lookupIndex < lookupCount; lookupIndex++) {
@@ -440,18 +440,18 @@ static SFBoolean ApplyContextLookups(TextProcessorRef textProcessor,
         SFUInt16 lookupListIndex = SFLookupRecord_LookupListIndex(lookupRecord);
 
         /* Jump the locator to context index. */
-        SFLocatorJumpTo(contextLocator, contextStart);
+        LocatorJumpTo(contextLocator, contextStart);
 
-        if (SFLocatorMoveNext(contextLocator)) {
+        if (LocatorMoveNext(contextLocator)) {
             /* Skip the glyphs till sequence index and apply the lookup. */
-            if (SFLocatorSkip(contextLocator, sequenceIndex)) {
+            if (LocatorSkip(contextLocator, sequenceIndex)) {
                 ApplyLookup(textProcessor, lookupListIndex);
             }
         }
     }
 
     /* Take the state of context locator so that input glyphs are skipped properly. */
-    SFLocatorTakeState(&originalLocator, contextLocator);
+    LocatorTakeState(&originalLocator, contextLocator);
     /* Switch back to the original locator. */
     textProcessor->_locator = originalLocator;
 
@@ -477,7 +477,7 @@ SF_PRIVATE SFBoolean ApplyExtensionSubtable(TextProcessorRef textProcessor, SFDa
 SF_PRIVATE SFBoolean ApplyReverseChainSubst(TextProcessorRef textProcessor, SFData reverseChain)
 {
     SFAlbumRef album = textProcessor->_album;
-    SFLocatorRef locator = &textProcessor->_locator;
+    LocatorRef locator = &textProcessor->_locator;
     SFUInt16 substFormat;
 
     substFormat = SFReverseChainSubst_Format(reverseChain);

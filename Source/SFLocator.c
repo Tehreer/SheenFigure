@@ -24,7 +24,7 @@
 #include "SFOpenType.h"
 #include "SFLocator.h"
 
-SF_INTERNAL void SFLocatorInitialize(SFLocatorRef locator, SFAlbumRef album, SFData gdef)
+SF_INTERNAL void LocatorInitialize(LocatorRef locator, SFAlbumRef album, SFData gdef)
 {
     /* Album must NOT be null. */
     SFAssert(album != NULL);
@@ -50,7 +50,7 @@ SF_INTERNAL void SFLocatorInitialize(SFLocatorRef locator, SFAlbumRef album, SFD
     }
 }
 
-SF_INTERNAL void SFLocatorReserveGlyphs(SFLocatorRef locator, SFUInteger glyphCount)
+SF_INTERNAL void LocatorReserveGlyphs(LocatorRef locator, SFUInteger glyphCount)
 {
     /* The album version MUST be same. */
     SFAssert(locator->_version == locator->_album->_version);
@@ -61,12 +61,12 @@ SF_INTERNAL void SFLocatorReserveGlyphs(SFLocatorRef locator, SFUInteger glyphCo
     locator->_limitIndex += glyphCount;
 }
 
-SF_INTERNAL void SFLocatorSetFeatureMask(SFLocatorRef locator, SFUInt16 featureMask)
+SF_INTERNAL void LocatorSetFeatureMask(LocatorRef locator, SFUInt16 featureMask)
 {
     locator->_ignoreMask.section.feature = GetAntiFeatureMask(featureMask);
 }
 
-SF_INTERNAL void SFLocatorSetLookupFlag(SFLocatorRef locator, SFLookupFlag lookupFlag)
+SF_INTERNAL void LocatorSetLookupFlag(LocatorRef locator, SFLookupFlag lookupFlag)
 {
     SFGlyphTraits ignoreTraits = SFGlyphTraitNone;
 
@@ -88,7 +88,7 @@ SF_INTERNAL void SFLocatorSetLookupFlag(SFLocatorRef locator, SFLookupFlag looku
     locator->_ignoreMask.section.traits = ignoreTraits;
 }
 
-SF_INTERNAL void SFLocatorSetMarkFilteringSet(SFLocatorRef locator, SFUInt16 markFilteringSet)
+SF_INTERNAL void LocatorSetMarkFilteringSet(LocatorRef locator, SFUInt16 markFilteringSet)
 {
     SFData markGlyphSetsDef = locator->_markGlyphSetsDef;
 
@@ -109,7 +109,7 @@ SF_INTERNAL void SFLocatorSetMarkFilteringSet(SFLocatorRef locator, SFUInt16 mar
     }
 }
 
-SF_INTERNAL void SFLocatorReset(SFLocatorRef locator, SFUInteger index, SFUInteger count)
+SF_INTERNAL void LocatorReset(LocatorRef locator, SFUInteger index, SFUInteger count)
 {
     /* The index must be valid and there should be no integer overflow. */
     SFAssert(index <= locator->_album->glyphCount && index <= (index + count));
@@ -121,7 +121,7 @@ SF_INTERNAL void SFLocatorReset(SFLocatorRef locator, SFUInteger index, SFUInteg
     locator->index = SFInvalidIndex;
 }
 
-static SFBoolean IsIgnoredGlyph(SFLocatorRef locator, SFUInteger index) {
+static SFBoolean IsIgnoredGlyph(LocatorRef locator, SFUInteger index) {
     SFAlbumRef album = locator->_album;
     SFLookupFlag lookupFlag = locator->lookupFlag;
     SFGlyphMask glyphMask = SFAlbumGetGlyphMask(album, index);
@@ -161,7 +161,7 @@ static SFBoolean IsIgnoredGlyph(SFLocatorRef locator, SFUInteger index) {
     return SFFalse;
 }
 
-SF_INTERNAL SFBoolean SFLocatorMoveNext(SFLocatorRef locator)
+SF_INTERNAL SFBoolean LocatorMoveNext(LocatorRef locator)
 {
     /* The state of locator must be valid. */
     SFAssert(locator->_stateIndex >= locator->_startIndex && locator->_stateIndex <= locator->_limitIndex);
@@ -181,7 +181,7 @@ SF_INTERNAL SFBoolean SFLocatorMoveNext(SFLocatorRef locator)
     return SFFalse;
 }
 
-SF_INTERNAL SFBoolean SFLocatorMovePrevious(SFLocatorRef locator)
+SF_INTERNAL SFBoolean LocatorMovePrevious(LocatorRef locator)
 {
     /* The state of locator must be valid. */
     SFAssert(locator->_stateIndex >= locator->_startIndex && locator->_stateIndex <= locator->_limitIndex);
@@ -201,12 +201,12 @@ SF_INTERNAL SFBoolean SFLocatorMovePrevious(SFLocatorRef locator)
     return SFFalse;
 }
 
-SF_INTERNAL SFBoolean SFLocatorSkip(SFLocatorRef locator, SFUInteger count)
+SF_INTERNAL SFBoolean LocatorSkip(LocatorRef locator, SFUInteger count)
 {
     SFUInteger skip;
 
     for (skip = count; skip != 0; skip--) {
-        if (SFLocatorMoveNext(locator)) {
+        if (LocatorMoveNext(locator)) {
             continue;
         }
 
@@ -216,7 +216,7 @@ SF_INTERNAL SFBoolean SFLocatorSkip(SFLocatorRef locator, SFUInteger count)
     return SFTrue;
 }
 
-SF_INTERNAL void SFLocatorJumpTo(SFLocatorRef locator, SFUInteger index)
+SF_INTERNAL void LocatorJumpTo(LocatorRef locator, SFUInteger index)
 {
     /*
      * The index must be valid.
@@ -233,7 +233,7 @@ SF_INTERNAL void SFLocatorJumpTo(SFLocatorRef locator, SFUInteger index)
     locator->_stateIndex = index;
 }
 
-SF_INTERNAL SFUInteger SFLocatorGetAfter(SFLocatorRef locator, SFUInteger index, SFBoolean bounded)
+SF_INTERNAL SFUInteger LocatorGetAfter(LocatorRef locator, SFUInteger index, SFBoolean bounded)
 {
     SFUInteger limit = (bounded ? locator->_limitIndex : locator->_album->glyphCount);
 
@@ -251,7 +251,7 @@ SF_INTERNAL SFUInteger SFLocatorGetAfter(SFLocatorRef locator, SFUInteger index,
     return SFInvalidIndex;
 }
 
-SF_INTERNAL SFUInteger SFLocatorGetBefore(SFLocatorRef locator, SFUInteger index, SFBoolean bounded)
+SF_INTERNAL SFUInteger LocatorGetBefore(LocatorRef locator, SFUInteger index, SFBoolean bounded)
 {
     SFUInteger start = (bounded ? locator->_startIndex : 0);
 
@@ -269,7 +269,7 @@ SF_INTERNAL SFUInteger SFLocatorGetBefore(SFLocatorRef locator, SFUInteger index
     return SFInvalidIndex;
 }
 
-SFUInteger SFLocatorGetPrecedingBaseIndex(SFLocatorRef locator)
+SFUInteger LocatorGetPrecedingBaseIndex(LocatorRef locator)
 {
     SFGlyphTraits ignoreTraits = locator->_ignoreMask.section.traits;
     SFUInteger baseIndex;
@@ -284,7 +284,7 @@ SFUInteger SFLocatorGetPrecedingBaseIndex(SFLocatorRef locator)
     locator->_ignoreMask.section.traits = SFGlyphTraitPlaceholder | SFGlyphTraitMark | SFGlyphTraitSequence;
 
     /* Get preeding glyph. */
-    baseIndex = SFLocatorGetBefore(locator, locator->index, SFFalse);
+    baseIndex = LocatorGetBefore(locator, locator->index, SFFalse);
 
     /* Restore ignore traits. */
     locator->_ignoreMask.section.traits = ignoreTraits;
@@ -292,7 +292,7 @@ SFUInteger SFLocatorGetPrecedingBaseIndex(SFLocatorRef locator)
     return baseIndex;
 }
 
-SF_INTERNAL SFUInteger SFLocatorGetPrecedingLigatureIndex(SFLocatorRef locator, SFUInteger *outComponent)
+SF_INTERNAL SFUInteger LocatorGetPrecedingLigatureIndex(LocatorRef locator, SFUInteger *outComponent)
 {
     SFAlbumRef album = locator->_album;
     SFGlyphTraits ignoreTraits = locator->_ignoreMask.section.traits;
@@ -305,7 +305,7 @@ SF_INTERNAL SFUInteger SFLocatorGetPrecedingLigatureIndex(SFLocatorRef locator, 
     locator->_ignoreMask.section.traits = SFGlyphTraitPlaceholder | SFGlyphTraitMark;
 
     /* Get preeding glyph. */
-    ligIndex = SFLocatorGetBefore(locator, locator->index, SFFalse);
+    ligIndex = LocatorGetBefore(locator, locator->index, SFFalse);
 
     if (ligIndex != SFInvalidIndex) {
         SFUInteger nextIndex;
@@ -333,7 +333,7 @@ SF_INTERNAL SFUInteger SFLocatorGetPrecedingLigatureIndex(SFLocatorRef locator, 
     return ligIndex;
 }
 
-SF_INTERNAL SFUInteger SFLocatorGetPrecedingMarkIndex(SFLocatorRef locator)
+SF_INTERNAL SFUInteger LocatorGetPrecedingMarkIndex(LocatorRef locator)
 {
     SFGlyphTraits ignoreTraits = locator->_ignoreMask.section.traits;
     SFUInteger markIndex;
@@ -348,7 +348,7 @@ SF_INTERNAL SFUInteger SFLocatorGetPrecedingMarkIndex(SFLocatorRef locator)
     locator->_ignoreMask.section.traits = SFGlyphTraitNone;
 
     /* Get preeding glyph. */
-    markIndex = SFLocatorGetBefore(locator, locator->index, SFFalse);
+    markIndex = LocatorGetBefore(locator, locator->index, SFFalse);
 
     /* Fix mark index in case of placeholder. */
     if (markIndex != SFInvalidIndex) {
@@ -367,7 +367,7 @@ SF_INTERNAL SFUInteger SFLocatorGetPrecedingMarkIndex(SFLocatorRef locator)
     return markIndex;
 }
 
-SF_INTERNAL void SFLocatorTakeState(SFLocatorRef locator, SFLocatorRef sibling) {
+SF_INTERNAL void LocatorTakeState(LocatorRef locator, LocatorRef sibling) {
     /* Both of the locators MUST belong to the same album. */
     SFAssert(locator->_album == sibling->_album);
     /* The state of sibling must be valid. */

@@ -25,6 +25,7 @@
 #include "SFFont.h"
 #include "SFGDEF.h"
 #include "SFGSUB.h"
+#include "SFLocator.h"
 #include "SFPattern.h"
 
 #include "SFGlyphDiscovery.h"
@@ -63,7 +64,7 @@ SF_INTERNAL void TextProcessorInitialize(TextProcessorRef textProcessor,
         textProcessor->_glyphClassDef = SFGDEF_GlyphClassDefTable(gdef);
     }
 
-    SFLocatorInitialize(&textProcessor->_locator, album, gdef);
+    LocatorInitialize(&textProcessor->_locator, album, gdef);
 }
 
 SF_INTERNAL void TextProcessorDiscoverGlyphs(TextProcessorRef textProcessor)
@@ -193,26 +194,26 @@ static void ApplyFeatureRange(TextProcessorRef textProcessor, SFFeatureKind feat
         /* Apply all lookups of the feature unit. */
         for (lookupIndex = 0; lookupIndex < lookupCount; lookupIndex++) {
             SFAlbumRef album = textProcessor->_album;
-            SFLocatorRef locator = &textProcessor->_locator;
+            LocatorRef locator = &textProcessor->_locator;
             SFLookupInfoRef lookupInfo = &lookupArray[lookupIndex];
             SFData lookupTable;
             SFLookupType lookupType;
 
-            SFLocatorReset(locator, 0, album->glyphCount);
-            SFLocatorSetFeatureMask(locator, featureUnit->mask);
+            LocatorReset(locator, 0, album->glyphCount);
+            LocatorSetFeatureMask(locator, featureUnit->mask);
 
             lookupType = PrepareLookup(textProcessor, lookupInfo->index, &lookupTable);
             textProcessor->_lookupValue = lookupInfo->value;
 
             /* Apply current lookup on all glyphs. */
             if (!reversible || lookupType != SFLookupTypeReverseChainingContext) {
-                while (SFLocatorMoveNext(locator)) {
+                while (LocatorMoveNext(locator)) {
                     ApplySubtables(textProcessor, lookupTable, lookupType);
                 }
             } else {
-                SFLocatorJumpTo(locator, album->glyphCount);
+                LocatorJumpTo(locator, album->glyphCount);
 
-                while (SFLocatorMovePrevious(locator)) {
+                while (LocatorMovePrevious(locator)) {
                     ApplySubtables(textProcessor, lookupTable, lookupType);
                 }
             }
@@ -240,13 +241,13 @@ static SFLookupType PrepareLookup(TextProcessorRef textProcessor, SFUInt16 looku
     lookupType = SFLookup_LookupType(lookupTable);
     lookupFlag = SFLookup_LookupFlag(lookupTable);
 
-    SFLocatorSetLookupFlag(&textProcessor->_locator, lookupFlag);
+    LocatorSetLookupFlag(&textProcessor->_locator, lookupFlag);
 
     if (lookupFlag & SFLookupFlagUseMarkFilteringSet) {
         SFUInt16 subtableCount = SFLookup_SubtableCount(lookupTable);
         SFUInt16 markFilteringSet = SFLookup_MarkFilteringSet(lookupTable, subtableCount);
 
-        SFLocatorSetMarkFilteringSet(&textProcessor->_locator, markFilteringSet);
+        LocatorSetMarkFilteringSet(&textProcessor->_locator, markFilteringSet);
     }
 
     *outLookupTable = lookupTable;

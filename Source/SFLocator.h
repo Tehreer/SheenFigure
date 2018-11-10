@@ -35,25 +35,25 @@ typedef struct _SFLocator {
     SFUInteger index;
     SFGlyphMask _ignoreMask;
     SFLookupFlag lookupFlag;
-} SFLocator, *SFLocatorRef;
+} Locator, *LocatorRef;
 
-SF_INTERNAL void SFLocatorInitialize(SFLocatorRef locator, SFAlbumRef album, SFData gdef);
+SF_INTERNAL void LocatorInitialize(LocatorRef locator, SFAlbumRef album, SFData gdef);
 
-SF_INTERNAL void SFLocatorSetFeatureMask(SFLocatorRef locator, SFUInt16 featureMask);
+SF_INTERNAL void LocatorSetFeatureMask(LocatorRef locator, SFUInt16 featureMask);
 
 /**
  * Sets the lookup flag describing the criterion for ignoring glyphs.
  */
-SF_INTERNAL void SFLocatorSetLookupFlag(SFLocatorRef locator, SFLookupFlag lookupFlag);
+SF_INTERNAL void LocatorSetLookupFlag(LocatorRef locator, SFLookupFlag lookupFlag);
 
 /**
  * Sets the mark filtering set to use, if needed.
  */
-SF_INTERNAL void SFLocatorSetMarkFilteringSet(SFLocatorRef locator, SFUInt16 markFilteringSet);
+SF_INTERNAL void LocatorSetMarkFilteringSet(LocatorRef locator, SFUInt16 markFilteringSet);
 
-SF_INTERNAL void SFLocatorReset(SFLocatorRef locator, SFUInteger index, SFUInteger count);
+SF_INTERNAL void LocatorReset(LocatorRef locator, SFUInteger index, SFUInteger count);
 
-SF_INTERNAL void SFLocatorReserveGlyphs(SFLocatorRef locator, SFUInteger glyphCount);
+SF_INTERNAL void LocatorReserveGlyphs(LocatorRef locator, SFUInteger glyphCount);
 
 /**
  * Advances the locator to next glyph within the contextual boundary.
@@ -61,7 +61,7 @@ SF_INTERNAL void SFLocatorReserveGlyphs(SFLocatorRef locator, SFUInteger glyphCo
  *      SFTrue if the locator was successfully advanced to the next glyph; SFFalse if the locator
  *      has passed the end of the album.
  */
-SF_INTERNAL SFBoolean SFLocatorMoveNext(SFLocatorRef locator);
+SF_INTERNAL SFBoolean LocatorMoveNext(LocatorRef locator);
 
 /**
  * Advances the locator to previous glyph within the contextual boundary.
@@ -69,7 +69,7 @@ SF_INTERNAL SFBoolean SFLocatorMoveNext(SFLocatorRef locator);
  *      SFTrue if the locator was successfully advanced to the previous glyph; SFFalse if the
  *      locator has passed the start of the album.
  */
-SF_INTERNAL SFBoolean SFLocatorMovePrevious(SFLocatorRef locator);
+SF_INTERNAL SFBoolean LocatorMovePrevious(LocatorRef locator);
 
 /**
  * Skips the given number of legitimate glyphs.
@@ -77,13 +77,13 @@ SF_INTERNAL SFBoolean SFLocatorMovePrevious(SFLocatorRef locator);
  *      SFTrue if the given number of glyphs were successfully skipped; SFFalse if the locator could
  *      not find enough legitimate glyphs to skip.
  */
-SF_INTERNAL SFBoolean SFLocatorSkip(SFLocatorRef locator, SFUInteger count);
+SF_INTERNAL SFBoolean LocatorSkip(LocatorRef locator, SFUInteger count);
 
 /**
  * Jumps the locator to given index in such a way that next call to MoveNext starts looking
  * legitimate glyphs from this index.
  */
-SF_INTERNAL void SFLocatorJumpTo(SFLocatorRef locator, SFUInteger index);
+SF_INTERNAL void LocatorJumpTo(LocatorRef locator, SFUInteger index);
 
 /**
  * Determines the index of next legitimate glyph after the specified index.
@@ -94,7 +94,7 @@ SF_INTERNAL void SFLocatorJumpTo(SFLocatorRef locator, SFUInteger index);
  *      The index of next legitimate glyph if available, or SFInvalidIndex if there was no
  *      legitimate glyph after the specified index.
  */
-SF_INTERNAL SFUInteger SFLocatorGetAfter(SFLocatorRef locator, SFUInteger index, SFBoolean bounded);
+SF_INTERNAL SFUInteger LocatorGetAfter(LocatorRef locator, SFUInteger index, SFBoolean bounded);
 
 /**
  * Determines the index of previous legitimate glyph before the specified index.
@@ -105,7 +105,7 @@ SF_INTERNAL SFUInteger SFLocatorGetAfter(SFLocatorRef locator, SFUInteger index,
  *      The index of previous legitimate glyph if available, or SFInvalidIndex if there was no
  *      legitimate glyph after the specified index.
  */
-SF_INTERNAL SFUInteger SFLocatorGetBefore(SFLocatorRef locator, SFUInteger index, SFBoolean bounded);
+SF_INTERNAL SFUInteger LocatorGetBefore(LocatorRef locator, SFUInteger index, SFBoolean bounded);
 
 /**
  * Returns the index of appropriate preceding base glyph.
@@ -113,7 +113,7 @@ SF_INTERNAL SFUInteger SFLocatorGetBefore(SFLocatorRef locator, SFUInteger index
  *      The index of preceding base glyph if available, or SFInvalidIndex if there was no
  *      appropriate base glyph.
  */
-SF_INTERNAL SFUInteger SFLocatorGetPrecedingBaseIndex(SFLocatorRef locator);
+SF_INTERNAL SFUInteger LocatorGetPrecedingBaseIndex(LocatorRef locator);
 
 /**
  * Returns the index of appropriate preceding ligature glyph.
@@ -121,7 +121,7 @@ SF_INTERNAL SFUInteger SFLocatorGetPrecedingBaseIndex(SFLocatorRef locator);
  *      The index of preceding ligature glyph if available, or SFInvalidIndex if there was no
  *      appropriate ligature glyph.
  */
-SF_INTERNAL SFUInteger SFLocatorGetPrecedingLigatureIndex(SFLocatorRef locator, SFUInteger *outComponent);
+SF_INTERNAL SFUInteger LocatorGetPrecedingLigatureIndex(LocatorRef locator, SFUInteger *outComponent);
 
 /**
  * Returns the index of appropriate preceding mark glyph.
@@ -129,12 +129,12 @@ SF_INTERNAL SFUInteger SFLocatorGetPrecedingLigatureIndex(SFLocatorRef locator, 
  *      The index of preceding mark glyph if available, or SFInvalidIndex if there was no
  *      appropriate mark glyph.
  */
-SF_INTERNAL SFUInteger SFLocatorGetPrecedingMarkIndex(SFLocatorRef locator);
+SF_INTERNAL SFUInteger LocatorGetPrecedingMarkIndex(LocatorRef locator);
 
 /**
  * Takes the state of other locator provided that it also belong to the same album and is subset of
  * the input locator.
  */
-SF_INTERNAL void SFLocatorTakeState(SFLocatorRef locator, SFLocatorRef sibling);
+SF_INTERNAL void LocatorTakeState(LocatorRef locator, LocatorRef sibling);
 
 #endif
