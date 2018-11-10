@@ -31,22 +31,22 @@
 #include "SFGlyphPositioning.h"
 #include "SFTextProcessor.h"
 
-static SFBoolean ApplyPairPosF1(SFTextProcessorRef textProcessor, SFData pairPos,
+static SFBoolean ApplyPairPosF1(TextProcessorRef textProcessor, SFData pairPos,
     SFUInteger firstIndex, SFUInteger secondIndex, SFBoolean *outShouldSkip);
-static SFBoolean ApplyPairPosF2(SFTextProcessorRef textProcessor, SFData pairPos,
+static SFBoolean ApplyPairPosF2(TextProcessorRef textProcessor, SFData pairPos,
     SFUInteger firstIndex, SFUInteger secondIndex, SFBoolean *outShouldSkip);
 
-static SFBoolean ApplyCursiveAnchors(SFTextProcessorRef textProcessor,
+static SFBoolean ApplyCursiveAnchors(TextProcessorRef textProcessor,
     SFData exitAnchor, SFData entryAnchor, SFUInteger firstIndex, SFUInteger secondIndex);
 
-static SFBoolean ApplyMarkToBaseArrays(SFTextProcessorRef textProcessor, SFData markBasePos,
+static SFBoolean ApplyMarkToBaseArrays(TextProcessorRef textProcessor, SFData markBasePos,
     SFUInteger markIndex, SFUInteger baseIndex, SFUInteger attachmentIndex);
-static SFBoolean ApplyMarkToLigArrays(SFTextProcessorRef textProcessor, SFData markLigPos,
+static SFBoolean ApplyMarkToLigArrays(TextProcessorRef textProcessor, SFData markLigPos,
     SFUInteger markIndex, SFUInteger ligIndex, SFUInteger ligComponent, SFUInteger attachmentIndex);
-static SFBoolean ApplyMarkToMarkArrays(SFTextProcessorRef textProcessor, SFData markMarkPos,
+static SFBoolean ApplyMarkToMarkArrays(TextProcessorRef textProcessor, SFData markMarkPos,
     SFUInteger mark1Index, SFUInteger mark2Index, SFUInteger attachmentIndex);
 
-static void ApplyValueRecord(SFTextProcessorRef textProcessor, SFData parentTable,
+static void ApplyValueRecord(TextProcessorRef textProcessor, SFData parentTable,
     SFData valueRecord, SFUInt16 valueFormat, SFUInteger inputIndex)
 {
     SFAlbumRef album = textProcessor->_album;
@@ -135,7 +135,7 @@ static void ApplyValueRecord(SFTextProcessorRef textProcessor, SFData parentTabl
     }
 }
 
-static SFBoolean ApplySinglePos(SFTextProcessorRef textProcessor, SFData singlePos)
+static SFBoolean ApplySinglePos(TextProcessorRef textProcessor, SFData singlePos)
 {
     SFAlbumRef album = textProcessor->_album;
     SFLocatorRef locator = &textProcessor->_locator;
@@ -198,7 +198,7 @@ static int PairRecordGlyphComparison(const void *item1, const void *item2)
     return val1 - val2;
 }
 
-static SFBoolean ApplyPairPos(SFTextProcessorRef textProcessor, SFData pairPos)
+static SFBoolean ApplyPairPos(TextProcessorRef textProcessor, SFData pairPos)
 {
     SFLocatorRef locator = &textProcessor->_locator;
     SFBoolean didPosition = SFFalse;
@@ -231,7 +231,7 @@ static SFBoolean ApplyPairPos(SFTextProcessorRef textProcessor, SFData pairPos)
     return didPosition;
 }
 
-static SFBoolean ApplyPairPosF1(SFTextProcessorRef textProcessor, SFData pairPos,
+static SFBoolean ApplyPairPosF1(TextProcessorRef textProcessor, SFData pairPos,
     SFUInteger firstIndex, SFUInteger secondIndex, SFBoolean *outShouldSkip)
 {
     SFAlbumRef album = textProcessor->_album;
@@ -284,7 +284,7 @@ static SFBoolean ApplyPairPosF1(SFTextProcessorRef textProcessor, SFData pairPos
     return SFFalse;
 }
 
-static SFBoolean ApplyPairPosF2(SFTextProcessorRef textProcessor, SFData pairPos,
+static SFBoolean ApplyPairPosF2(TextProcessorRef textProcessor, SFData pairPos,
     SFUInteger firstIndex, SFUInteger secondIndex, SFBoolean *outShouldSkip)
 {
     SFAlbumRef album = textProcessor->_album;
@@ -342,7 +342,7 @@ static SFBoolean ApplyPairPosF2(SFTextProcessorRef textProcessor, SFData pairPos
     return SFFalse;
 }
 
-static SFPoint ConvertAnchorToPoint(SFTextProcessorRef textProcessor, SFData anchor)
+static SFPoint ConvertAnchorToPoint(TextProcessorRef textProcessor, SFData anchor)
 {
     SFUInt16 format;
     SFPoint point;
@@ -415,7 +415,7 @@ static void SearchCursiveAnchors(SFData cursivePos, SFGlyphID glyph,
     }
 }
 
-static SFBoolean ApplyCursivePos(SFTextProcessorRef textProcessor, SFData cursivePos)
+static SFBoolean ApplyCursivePos(TextProcessorRef textProcessor, SFData cursivePos)
 {
     SFAlbumRef album = textProcessor->_album;
     SFLocatorRef locator = &textProcessor->_locator;
@@ -453,7 +453,7 @@ static SFBoolean ApplyCursivePos(SFTextProcessorRef textProcessor, SFData cursiv
     return SFFalse;
 }
 
-static SFBoolean ApplyCursiveAnchors(SFTextProcessorRef textProcessor,
+static SFBoolean ApplyCursiveAnchors(TextProcessorRef textProcessor,
     SFData exitAnchor, SFData entryAnchor, SFUInteger firstIndex, SFUInteger secondIndex)
 {
     SFAlbumRef album = textProcessor->_album;
@@ -561,7 +561,7 @@ static SFData GetMarkArrayFromAnchorTable(SFData markArray, SFUInteger markIndex
     return NULL;
 }
 
-static SFBoolean ApplyMarkToBasePos(SFTextProcessorRef textProcessor, SFData markBasePos)
+static SFBoolean ApplyMarkToBasePos(TextProcessorRef textProcessor, SFData markBasePos)
 {
     SFAlbumRef album = textProcessor->_album;
     SFLocatorRef locator = &textProcessor->_locator;
@@ -602,7 +602,7 @@ static SFBoolean ApplyMarkToBasePos(SFTextProcessorRef textProcessor, SFData mar
     return SFFalse;
 }
 
-static SFBoolean ApplyMarkToBaseArrays(SFTextProcessorRef textProcessor, SFData markBasePos,
+static SFBoolean ApplyMarkToBaseArrays(TextProcessorRef textProcessor, SFData markBasePos,
     SFUInteger markIndex, SFUInteger baseIndex, SFUInteger attachmentIndex)
 {
     SFAlbumRef album = textProcessor->_album;
@@ -653,7 +653,7 @@ static SFBoolean ApplyMarkToBaseArrays(SFTextProcessorRef textProcessor, SFData 
     return SFFalse;
 }
 
-static SFBoolean ApplyMarkToLigPos(SFTextProcessorRef textProcessor, SFData markLigPos)
+static SFBoolean ApplyMarkToLigPos(TextProcessorRef textProcessor, SFData markLigPos)
 {
     SFAlbumRef album = textProcessor->_album;
     SFLocatorRef locator = &textProcessor->_locator;
@@ -697,7 +697,7 @@ static SFBoolean ApplyMarkToLigPos(SFTextProcessorRef textProcessor, SFData mark
     return SFFalse;
 }
 
-static SFBoolean ApplyMarkToLigArrays(SFTextProcessorRef textProcessor, SFData markLigPos,
+static SFBoolean ApplyMarkToLigArrays(TextProcessorRef textProcessor, SFData markLigPos,
     SFUInteger markIndex, SFUInteger ligIndex, SFUInteger ligComponent, SFUInteger attachmentIndex)
 {
     SFAlbumRef album = textProcessor->_album;
@@ -757,7 +757,7 @@ static SFBoolean ApplyMarkToLigArrays(SFTextProcessorRef textProcessor, SFData m
     return SFFalse;
 }
 
-static SFBoolean ApplyMarkToMarkPos(SFTextProcessorRef textProcessor, SFData markMarkPos)
+static SFBoolean ApplyMarkToMarkPos(TextProcessorRef textProcessor, SFData markMarkPos)
 {
     SFAlbumRef album = textProcessor->_album;
     SFLocatorRef locator = &textProcessor->_locator;
@@ -797,7 +797,7 @@ static SFBoolean ApplyMarkToMarkPos(SFTextProcessorRef textProcessor, SFData mar
     return SFFalse;
 }
 
-static SFBoolean ApplyMarkToMarkArrays(SFTextProcessorRef textProcessor, SFData markMarkPos,
+static SFBoolean ApplyMarkToMarkArrays(TextProcessorRef textProcessor, SFData markMarkPos,
     SFUInteger mark1Index, SFUInteger mark2Index, SFUInteger attachmentIndex)
 {
     SFAlbumRef album = textProcessor->_album;
@@ -846,7 +846,7 @@ static SFBoolean ApplyMarkToMarkArrays(SFTextProcessorRef textProcessor, SFData 
     return SFFalse;
 }
 
-SF_PRIVATE SFBoolean ApplyPositioningSubtable(SFTextProcessorRef textProcessor, SFLookupType lookupType, SFData subtable)
+SF_PRIVATE SFBoolean ApplyPositioningSubtable(TextProcessorRef textProcessor, SFLookupType lookupType, SFData subtable)
 {
     switch (lookupType) {
         case SFLookupTypeSingleAdjustment:
@@ -880,7 +880,7 @@ SF_PRIVATE SFBoolean ApplyPositioningSubtable(SFTextProcessorRef textProcessor, 
     return SFFalse;
 }
 
-static void ResolveLeftCursiveSegment(SFTextProcessorRef textProcessor, SFUInteger inputIndex)
+static void ResolveLeftCursiveSegment(TextProcessorRef textProcessor, SFUInteger inputIndex)
 {
     /*
      * REMARKS:
@@ -923,7 +923,7 @@ static void ResolveLeftCursiveSegment(SFTextProcessorRef textProcessor, SFUInteg
     }
 }
 
-static void ResolveRightCursiveSegment(SFTextProcessorRef textProcessor, SFUInteger inputIndex)
+static void ResolveRightCursiveSegment(TextProcessorRef textProcessor, SFUInteger inputIndex)
 {
     /*
      * REMARKS:
@@ -964,7 +964,7 @@ static void ResolveRightCursiveSegment(SFTextProcessorRef textProcessor, SFUInte
     }
 }
 
-static void ResolveCursivePositions(SFTextProcessorRef textProcessor, SFLocatorRef locator)
+static void ResolveCursivePositions(TextProcessorRef textProcessor, SFLocatorRef locator)
 {
     SFAlbumRef album = textProcessor->_album;
     SFLocatorReset(locator, 0, album->glyphCount);
@@ -983,7 +983,7 @@ static void ResolveCursivePositions(SFTextProcessorRef textProcessor, SFLocatorR
     }
 }
 
-static void ResolveMarkPositions(SFTextProcessorRef textProcessor, SFLocatorRef locator)
+static void ResolveMarkPositions(TextProcessorRef textProcessor, SFLocatorRef locator)
 {
     SFAlbumRef album = textProcessor->_album;
     SFLocatorReset(locator, 0, album->glyphCount);
@@ -1024,7 +1024,7 @@ static void ResolveMarkPositions(SFTextProcessorRef textProcessor, SFLocatorRef 
     }
 }
 
-SF_PRIVATE void ResolveAttachments(SFTextProcessorRef textProcessor)
+SF_PRIVATE void ResolveAttachments(TextProcessorRef textProcessor)
 {
     SFAlbumRef album = textProcessor->_album;
     SFLocator locator;

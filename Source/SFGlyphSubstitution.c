@@ -28,11 +28,11 @@
 #include "SFGlyphSubstitution.h"
 #include "SFTextProcessor.h"
 
-static SFBoolean ApplySequenceTable(SFTextProcessorRef textProcessor, SFData sequence);
-static SFBoolean ApplyAlternateSetTable(SFTextProcessorRef textProcessor, SFData alternateSet);
-static SFBoolean ApplyLigatureSetTable(SFTextProcessorRef textProcessor, SFData ligatureSet);
+static SFBoolean ApplySequenceTable(TextProcessorRef textProcessor, SFData sequence);
+static SFBoolean ApplyAlternateSetTable(TextProcessorRef textProcessor, SFData alternateSet);
+static SFBoolean ApplyLigatureSetTable(TextProcessorRef textProcessor, SFData ligatureSet);
 
-static SFBoolean ApplySingleSubst(SFTextProcessorRef textProcessor, SFData singleSubst)
+static SFBoolean ApplySingleSubst(TextProcessorRef textProcessor, SFData singleSubst)
 {
     SFAlbumRef album = textProcessor->_album;
     SFLocatorRef locator = &textProcessor->_locator;
@@ -91,7 +91,7 @@ static SFBoolean ApplySingleSubst(SFTextProcessorRef textProcessor, SFData singl
     return SFFalse;
 }
 
-static SFBoolean ApplyMultipleSubst(SFTextProcessorRef textProcessor, SFData multipleSubst)
+static SFBoolean ApplyMultipleSubst(TextProcessorRef textProcessor, SFData multipleSubst)
 {
     SFAlbumRef album = textProcessor->_album;
     SFLocatorRef locator = &textProcessor->_locator;
@@ -120,7 +120,7 @@ static SFBoolean ApplyMultipleSubst(SFTextProcessorRef textProcessor, SFData mul
     return SFFalse;
 }
 
-static SFBoolean ApplySequenceTable(SFTextProcessorRef textProcessor, SFData sequence)
+static SFBoolean ApplySequenceTable(TextProcessorRef textProcessor, SFData sequence)
 {
     SFAlbumRef album = textProcessor->_album;
     SFLocatorRef locator = &textProcessor->_locator;
@@ -173,7 +173,7 @@ static SFBoolean ApplySequenceTable(SFTextProcessorRef textProcessor, SFData seq
     return SFFalse;
 }
 
-static SFBoolean ApplyAlternateSubst(SFTextProcessorRef textProcessor, SFData alternateSubst)
+static SFBoolean ApplyAlternateSubst(TextProcessorRef textProcessor, SFData alternateSubst)
 {
     SFAlbumRef album = textProcessor->_album;
     SFLocatorRef locator = &textProcessor->_locator;
@@ -202,7 +202,7 @@ static SFBoolean ApplyAlternateSubst(SFTextProcessorRef textProcessor, SFData al
     return SFFalse;
 }
 
-static SFBoolean ApplyAlternateSetTable(SFTextProcessorRef textProcessor, SFData alternateSet)
+static SFBoolean ApplyAlternateSetTable(TextProcessorRef textProcessor, SFData alternateSet)
 {
     SFAlbumRef album = textProcessor->_album;
     SFLocatorRef locator = &textProcessor->_locator;
@@ -226,7 +226,7 @@ static SFBoolean ApplyAlternateSetTable(SFTextProcessorRef textProcessor, SFData
     return SFFalse;
 }
 
-static SFBoolean ApplyLigatureSubst(SFTextProcessorRef textProcessor, SFData ligatureSubst)
+static SFBoolean ApplyLigatureSubst(TextProcessorRef textProcessor, SFData ligatureSubst)
 {
     SFAlbumRef album = textProcessor->_album;
     SFLocatorRef locator = &textProcessor->_locator;
@@ -255,7 +255,7 @@ static SFBoolean ApplyLigatureSubst(SFTextProcessorRef textProcessor, SFData lig
     return SFFalse;
 }
 
-static SFBoolean ApplyLigatureSetTable(SFTextProcessorRef textProcessor, SFData ligatureSet)
+static SFBoolean ApplyLigatureSetTable(TextProcessorRef textProcessor, SFData ligatureSet)
 {
     SFAlbumRef album = textProcessor->_album;
     SFLocatorRef locator = &textProcessor->_locator;
@@ -336,7 +336,7 @@ static SFBoolean ApplyLigatureSetTable(SFTextProcessorRef textProcessor, SFData 
     return SFFalse;
 }
 
-SF_PRIVATE SFBoolean ApplySubstitutionSubtable(SFTextProcessorRef textProcessor, SFLookupType lookupType, SFData subtable)
+SF_PRIVATE SFBoolean ApplySubstitutionSubtable(TextProcessorRef textProcessor, SFLookupType lookupType, SFData subtable)
 {
     switch (lookupType) {
         case SFLookupTypeSingle:

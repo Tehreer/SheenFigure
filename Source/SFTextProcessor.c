@@ -33,12 +33,12 @@
 #include "SFGlyphSubstitution.h"
 #include "SFTextProcessor.h"
 
-static void ApplyFeatureRange(SFTextProcessorRef textProcessor, SFFeatureKind featureKind, SFUInteger index, SFUInteger count);
+static void ApplyFeatureRange(TextProcessorRef textProcessor, SFFeatureKind featureKind, SFUInteger index, SFUInteger count);
 
-static SFLookupType PrepareLookup(SFTextProcessorRef textProcessor, SFUInt16 lookupIndex, SFData *outLookupTable);
-static void ApplySubtables(SFTextProcessorRef textProcessor, SFData lookupTable, SFLookupType lookupType);
+static SFLookupType PrepareLookup(TextProcessorRef textProcessor, SFUInt16 lookupIndex, SFData *outLookupTable);
+static void ApplySubtables(TextProcessorRef textProcessor, SFData lookupTable, SFLookupType lookupType);
 
-SF_INTERNAL void SFTextProcessorInitialize(SFTextProcessorRef textProcessor,
+SF_INTERNAL void TextProcessorInitialize(TextProcessorRef textProcessor,
     SFPatternRef pattern, SFAlbumRef album, SFTextDirection textDirection,
     SFUInt16 ppemWidth, SFUInt16 ppemHeight, SFBoolean zeroWidthMarks)
 {
@@ -66,13 +66,13 @@ SF_INTERNAL void SFTextProcessorInitialize(SFTextProcessorRef textProcessor,
     SFLocatorInitialize(&textProcessor->_locator, album, gdef);
 }
 
-SF_INTERNAL void SFTextProcessorDiscoverGlyphs(SFTextProcessorRef textProcessor)
+SF_INTERNAL void TextProcessorDiscoverGlyphs(TextProcessorRef textProcessor)
 {
     SFAlbumBeginFilling(textProcessor->_album);
     DiscoverGlyphs(textProcessor);
 }
 
-SF_INTERNAL void SFTextProcessorSubstituteGlyphs(SFTextProcessorRef textProcessor)
+SF_INTERNAL void TextProcessorSubstituteGlyphs(TextProcessorRef textProcessor)
 {
     SFAlbumRef album = textProcessor->_album;
     SFPatternRef pattern = textProcessor->_pattern;
@@ -90,7 +90,7 @@ SF_INTERNAL void SFTextProcessorSubstituteGlyphs(SFTextProcessorRef textProcesso
     SFAlbumEndFilling(album);
 }
 
-static void HandleZeroWidthGlyphs(SFTextProcessorRef textProcessor)
+static void HandleZeroWidthGlyphs(TextProcessorRef textProcessor)
 {
     if (textProcessor->_containsZeroWidthCodepoints) {
         SFFontRef font = textProcessor->_pattern->font;
@@ -113,7 +113,7 @@ static void HandleZeroWidthGlyphs(SFTextProcessorRef textProcessor)
     }
 }
 
-static void MakeMarksZeroWidth(SFTextProcessorRef textProcessor)
+static void MakeMarksZeroWidth(TextProcessorRef textProcessor)
 {
     SFAlbumRef album = textProcessor->_album;
     SFUInteger count = SFAlbumGetGlyphCount(album);
@@ -127,7 +127,7 @@ static void MakeMarksZeroWidth(SFTextProcessorRef textProcessor)
     }
 }
 
-SF_INTERNAL void SFTextProcessorPositionGlyphs(SFTextProcessorRef textProcessor)
+SF_INTERNAL void TextProcessorPositionGlyphs(TextProcessorRef textProcessor)
 {
     SFAlbumRef album = textProcessor->_album;
     SFPatternRef pattern = textProcessor->_pattern;
@@ -173,12 +173,12 @@ SF_INTERNAL void SFTextProcessorPositionGlyphs(SFTextProcessorRef textProcessor)
     SFAlbumEndArranging(album);
 }
 
-SF_INTERNAL void SFTextProcessorWrapUp(SFTextProcessorRef textProcessor)
+SF_INTERNAL void TextProcessorWrapUp(TextProcessorRef textProcessor)
 {
     SFAlbumWrapUp(textProcessor->_album);
 }
 
-static void ApplyFeatureRange(SFTextProcessorRef textProcessor, SFFeatureKind featureKind, SFUInteger index, SFUInteger count)
+static void ApplyFeatureRange(TextProcessorRef textProcessor, SFFeatureKind featureKind, SFUInteger index, SFUInteger count)
 {
     SFPatternRef pattern = textProcessor->_pattern;
     SFUInteger limit = index + count;
@@ -220,7 +220,7 @@ static void ApplyFeatureRange(SFTextProcessorRef textProcessor, SFFeatureKind fe
     }
 }
 
-SF_PRIVATE void ApplyLookup(SFTextProcessorRef textProcessor, SFUInt16 lookupIndex)
+SF_PRIVATE void ApplyLookup(TextProcessorRef textProcessor, SFUInt16 lookupIndex)
 {
     SFData lookupTable;
     SFLookupType lookupType;
@@ -229,7 +229,7 @@ SF_PRIVATE void ApplyLookup(SFTextProcessorRef textProcessor, SFUInt16 lookupInd
     ApplySubtables(textProcessor, lookupTable, lookupType);
 }
 
-static SFLookupType PrepareLookup(SFTextProcessorRef textProcessor, SFUInt16 lookupIndex, SFData *outLookupTable)
+static SFLookupType PrepareLookup(TextProcessorRef textProcessor, SFUInt16 lookupIndex, SFData *outLookupTable)
 {
     SFData lookupListTable = textProcessor->_lookupList;
     SFData lookupTable;
@@ -253,7 +253,7 @@ static SFLookupType PrepareLookup(SFTextProcessorRef textProcessor, SFUInt16 loo
     return lookupType;
 }
 
-static void ApplySubtables(SFTextProcessorRef textProcessor, SFData lookupTable, SFLookupType lookupType)
+static void ApplySubtables(TextProcessorRef textProcessor, SFData lookupTable, SFLookupType lookupType)
 {
     SFUInt16 subtableCount = SFLookup_SubtableCount(lookupTable);
     SFUInteger subtableIndex;

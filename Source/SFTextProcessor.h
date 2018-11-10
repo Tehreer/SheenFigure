@@ -25,7 +25,7 @@
 #include "SFLocator.h"
 #include "SFPattern.h"
 
-typedef struct _SFTextProcessor {
+typedef struct _TextProcessor {
     SFPatternRef _pattern;
     SFAlbumRef _album;
     SFData _glyphClassDef;
@@ -38,17 +38,17 @@ typedef struct _SFTextProcessor {
     SFBoolean _zeroWidthMarks;
     SFBoolean _containsZeroWidthCodepoints;
     SFLocator _locator;
-} SFTextProcessor, *SFTextProcessorRef;
+} TextProcessor, *TextProcessorRef;
 
-SF_INTERNAL void SFTextProcessorInitialize(SFTextProcessorRef textProcessor,
+SF_INTERNAL void TextProcessorInitialize(TextProcessorRef textProcessor,
    SFPatternRef pattern, SFAlbumRef album, SFTextDirection textDirection,
    SFUInt16 ppemWidth, SFUInt16 ppemHeight, SFBoolean zeroWidthMarks);
 
-SF_INTERNAL void SFTextProcessorDiscoverGlyphs(SFTextProcessorRef textProcessor);
-SF_INTERNAL void SFTextProcessorSubstituteGlyphs(SFTextProcessorRef textProcessor);
-SF_INTERNAL void SFTextProcessorPositionGlyphs(SFTextProcessorRef textProcessor);
-SF_INTERNAL void SFTextProcessorWrapUp(SFTextProcessorRef textProcessor);
+SF_INTERNAL void TextProcessorDiscoverGlyphs(TextProcessorRef textProcessor);
+SF_INTERNAL void TextProcessorSubstituteGlyphs(TextProcessorRef textProcessor);
+SF_INTERNAL void TextProcessorPositionGlyphs(TextProcessorRef textProcessor);
+SF_INTERNAL void TextProcessorWrapUp(TextProcessorRef textProcessor);
 
-SF_PRIVATE void ApplyLookup(SFTextProcessorRef textProcessor, SFUInt16 lookupIndex);
+SF_PRIVATE void ApplyLookup(TextProcessorRef textProcessor, SFUInt16 lookupIndex);
 
 #endif

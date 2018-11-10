@@ -218,13 +218,13 @@ static void ArabicEngineProcessAlbum(const void *object, SFAlbumRef album)
 {
     ArabicEngineRef arabicEngine = (ArabicEngineRef)object;
     SFArtistRef artist = arabicEngine->_artist;
-    SFTextProcessor processor;
+    TextProcessor processor;
 
-    SFTextProcessorInitialize(&processor, artist->pattern, album, artist->textDirection,
+    TextProcessorInitialize(&processor, artist->pattern, album, artist->textDirection,
                               artist->ppemWidth, artist->ppemHeight, SFTrue);
-    SFTextProcessorDiscoverGlyphs(&processor);
+    TextProcessorDiscoverGlyphs(&processor);
     PutArabicFeatureMask(album);
-    SFTextProcessorSubstituteGlyphs(&processor);
-    SFTextProcessorPositionGlyphs(&processor);
-    SFTextProcessorWrapUp(&processor);
+    TextProcessorSubstituteGlyphs(&processor);
+    TextProcessorPositionGlyphs(&processor);
+    TextProcessorWrapUp(&processor);
 }

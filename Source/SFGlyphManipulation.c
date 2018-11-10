@@ -50,17 +50,17 @@ typedef struct {
 
 typedef SFBoolean (*SFGlyphAssessment)(SFGlyphAgent *glyphAgent);
 
-static SFBoolean ApplyRuleSetTable(SFTextProcessorRef textProcessor,
+static SFBoolean ApplyRuleSetTable(TextProcessorRef textProcessor,
     SFData ruleSet, SFGlyphAssessment glyphAsessment, void *helperPtr);
-static SFBoolean ApplyRuleTable(SFTextProcessorRef textProcessor,
+static SFBoolean ApplyRuleTable(TextProcessorRef textProcessor,
     SFData rule, SFBoolean includeFirst, SFGlyphAssessment glyphAsessment, void *helperPtr);
 
-static SFBoolean ApplyChainRuleSetTable(SFTextProcessorRef textProcessor,
+static SFBoolean ApplyChainRuleSetTable(TextProcessorRef textProcessor,
     SFData chainRuleSet, SFGlyphAssessment glyphAsessment, void *helperPtr);
-static SFBoolean ApplyChainRuleTable(SFTextProcessorRef textProcessor,
+static SFBoolean ApplyChainRuleTable(TextProcessorRef textProcessor,
     SFData chainRule, SFBoolean includeFirst, SFGlyphAssessment glyphAsessment, void *helperPtr);
 
-static SFBoolean ApplyContextLookups(SFTextProcessorRef textProcessor,
+static SFBoolean ApplyContextLookups(TextProcessorRef textProcessor,
     SFData lookupArray, SFUInteger lookupCount, SFUInteger contextStart, SFUInteger contextEnd);
 
 static SFBoolean AssessGlyphByEquality(SFGlyphAgent *glyphAgent)
@@ -102,7 +102,7 @@ static SFBoolean AssessGlyphByCoverage(SFGlyphAgent *glyphAgent)
     return (covIndex != SFInvalidIndex);
 }
 
-static SFBoolean AssessBacktrackGlyphs(SFTextProcessorRef textProcessor,
+static SFBoolean AssessBacktrackGlyphs(TextProcessorRef textProcessor,
     SFData valueArray, SFUInteger valueCount, SFGlyphAssessment glyphAssessment, void *helperPtr)
 {
     SFAlbumRef album = textProcessor->_album;
@@ -132,7 +132,7 @@ static SFBoolean AssessBacktrackGlyphs(SFTextProcessorRef textProcessor,
     return SFTrue;
 }
 
-static SFBoolean AssessInputGlyphs(SFTextProcessorRef textProcessor,
+static SFBoolean AssessInputGlyphs(TextProcessorRef textProcessor,
     SFData valueArray, SFUInteger valueCount, SFBoolean includeFirst,
     SFGlyphAssessment glyphAssessment, void *helperPtr, SFUInteger *contextEnd)
 {
@@ -177,7 +177,7 @@ static SFBoolean AssessInputGlyphs(SFTextProcessorRef textProcessor,
     return SFTrue;
 }
 
-static SFBoolean AssessLookaheadGlyphs(SFTextProcessorRef textProcessor,
+static SFBoolean AssessLookaheadGlyphs(TextProcessorRef textProcessor,
     SFData valueArray, SFUInteger valueCount,
     SFGlyphAssessment glyphAssessment, void *helperPtr, SFUInteger contextEnd)
 {
@@ -208,7 +208,7 @@ static SFBoolean AssessLookaheadGlyphs(SFTextProcessorRef textProcessor,
     return SFTrue;
 }
 
-SF_PRIVATE SFBoolean ApplyContextSubtable(SFTextProcessorRef textProcessor, SFData context)
+SF_PRIVATE SFBoolean ApplyContextSubtable(TextProcessorRef textProcessor, SFData context)
 {
     SFAlbumRef album = textProcessor->_album;
     SFLocatorRef locator = &textProcessor->_locator;
@@ -266,7 +266,7 @@ SF_PRIVATE SFBoolean ApplyContextSubtable(SFTextProcessorRef textProcessor, SFDa
     return SFFalse;
 }
 
-static SFBoolean ApplyRuleSetTable(SFTextProcessorRef textProcessor,
+static SFBoolean ApplyRuleSetTable(TextProcessorRef textProcessor,
     SFData ruleSet, SFGlyphAssessment glyphAsessment, void *helperPtr)
 {
     SFUInt16 ruleCount = SFRuleSet_RuleCount(ruleSet);
@@ -288,7 +288,7 @@ static SFBoolean ApplyRuleSetTable(SFTextProcessorRef textProcessor,
     return SFFalse;
 }
 
-static SFBoolean ApplyRuleTable(SFTextProcessorRef textProcessor,
+static SFBoolean ApplyRuleTable(TextProcessorRef textProcessor,
     SFData rule, SFBoolean includeFirst, SFGlyphAssessment glyphAsessment, void *helperPtr)
 {
     SFUInt16 glyphCount = SFRule_GlyphCount(rule);
@@ -308,7 +308,7 @@ static SFBoolean ApplyRuleTable(SFTextProcessorRef textProcessor,
     return SFFalse;
 }
 
-SF_PRIVATE SFBoolean ApplyChainContextSubtable(SFTextProcessorRef textProcessor, SFData chainContext)
+SF_PRIVATE SFBoolean ApplyChainContextSubtable(TextProcessorRef textProcessor, SFData chainContext)
 {
     SFAlbumRef album = textProcessor->_album;
     SFLocatorRef locator = &textProcessor->_locator;
@@ -375,7 +375,7 @@ SF_PRIVATE SFBoolean ApplyChainContextSubtable(SFTextProcessorRef textProcessor,
     return SFFalse;
 }
 
-static SFBoolean ApplyChainRuleSetTable(SFTextProcessorRef textProcessor,
+static SFBoolean ApplyChainRuleSetTable(TextProcessorRef textProcessor,
     SFData chainRuleSet, SFGlyphAssessment glyphAsessment, void *helperPtr)
 {
     SFUInt16 ruleCount = SFChainRuleSet_ChainRuleCount(chainRuleSet);
@@ -393,7 +393,7 @@ static SFBoolean ApplyChainRuleSetTable(SFTextProcessorRef textProcessor,
     return SFFalse;
 }
 
-static SFBoolean ApplyChainRuleTable(SFTextProcessorRef textProcessor,
+static SFBoolean ApplyChainRuleTable(TextProcessorRef textProcessor,
     SFData chainRule, SFBoolean includeFirst, SFGlyphAssessment glyphAsessment, void *helperPtr)
 {
     SFData backtrackRecord = SFChainRule_BacktrackRecord(chainRule);
@@ -423,7 +423,7 @@ static SFBoolean ApplyChainRuleTable(SFTextProcessorRef textProcessor,
     return SFFalse;
 }
 
-static SFBoolean ApplyContextLookups(SFTextProcessorRef textProcessor,
+static SFBoolean ApplyContextLookups(TextProcessorRef textProcessor,
     SFData lookupArray, SFUInteger lookupCount, SFUInteger contextStart, SFUInteger contextEnd)
 {
     SFLocatorRef contextLocator = &textProcessor->_locator;
@@ -458,7 +458,7 @@ static SFBoolean ApplyContextLookups(SFTextProcessorRef textProcessor,
     return SFTrue;
 }
 
-SF_PRIVATE SFBoolean ApplyExtensionSubtable(SFTextProcessorRef textProcessor, SFData extension)
+SF_PRIVATE SFBoolean ApplyExtensionSubtable(TextProcessorRef textProcessor, SFData extension)
 {
     SFUInt16 tblFormat = SFExtension_Format(extension);
 
@@ -474,7 +474,7 @@ SF_PRIVATE SFBoolean ApplyExtensionSubtable(SFTextProcessorRef textProcessor, SF
     return SFFalse;
 }
 
-SF_PRIVATE SFBoolean ApplyReverseChainSubst(SFTextProcessorRef textProcessor, SFData reverseChain)
+SF_PRIVATE SFBoolean ApplyReverseChainSubst(TextProcessorRef textProcessor, SFData reverseChain)
 {
     SFAlbumRef album = textProcessor->_album;
     SFLocatorRef locator = &textProcessor->_locator;

@@ -33,7 +33,7 @@ static SFBoolean IsZeroWidthCodepoint(SFCodepoint codepoint)
     return SFCodepointInRange(codepoint, 0x200B, 0x200F);
 }
 
-SF_PRIVATE SFGlyphTraits GetGlyphTraits(SFTextProcessorRef textProcessor, SFGlyphID glyph)
+SF_PRIVATE SFGlyphTraits GetGlyphTraits(TextProcessorRef textProcessor, SFGlyphID glyph)
 {
     SFData glyphClassDef = textProcessor->_glyphClassDef;
 
@@ -59,7 +59,7 @@ SF_PRIVATE SFGlyphTraits GetGlyphTraits(SFTextProcessorRef textProcessor, SFGlyp
     return SFGlyphTraitNone;
 }
 
-SF_PRIVATE void DiscoverGlyphs(SFTextProcessorRef textProcessor)
+SF_PRIVATE void DiscoverGlyphs(TextProcessorRef textProcessor)
 {
     SFPatternRef pattern = textProcessor->_pattern;
     SFFontRef font = pattern->font;

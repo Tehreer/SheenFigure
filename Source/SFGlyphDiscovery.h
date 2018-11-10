@@ -23,7 +23,7 @@
 #include "SFBase.h"
 #include "SFTextProcessor.h"
 
-SF_PRIVATE SFGlyphTraits GetGlyphTraits(SFTextProcessorRef textProcessor, SFGlyphID glyph);
-SF_PRIVATE void DiscoverGlyphs(SFTextProcessorRef textProcessor);
+SF_PRIVATE SFGlyphTraits GetGlyphTraits(TextProcessorRef textProcessor, SFGlyphID glyph);
+SF_PRIVATE void DiscoverGlyphs(TextProcessorRef textProcessor);
 
 #endif

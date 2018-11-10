@@ -56,12 +56,12 @@ static void SimpleEngineProcessAlbum(const void *object, SFAlbumRef album)
 {
     SimpleEngineRef simpleEngine = (SimpleEngineRef)object;
     SFArtistRef artist = simpleEngine->_artist;
-    SFTextProcessor processor;
+    TextProcessor processor;
 
-    SFTextProcessorInitialize(&processor, artist->pattern, album, artist->textDirection,
+    TextProcessorInitialize(&processor, artist->pattern, album, artist->textDirection,
                               artist->ppemWidth, artist->ppemHeight, SFFalse);
-    SFTextProcessorDiscoverGlyphs(&processor);
-    SFTextProcessorSubstituteGlyphs(&processor);
-    SFTextProcessorPositionGlyphs(&processor);
-    SFTextProcessorWrapUp(&processor);
+    TextProcessorDiscoverGlyphs(&processor);
+    TextProcessorSubstituteGlyphs(&processor);
+    TextProcessorPositionGlyphs(&processor);
+    TextProcessorWrapUp(&processor);
 }
