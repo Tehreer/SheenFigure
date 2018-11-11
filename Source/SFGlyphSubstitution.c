@@ -38,12 +38,12 @@ static SFBoolean ApplySingleSubst(TextProcessorRef textProcessor, Data singleSub
     LocatorRef locator = &textProcessor->_locator;
     SFUInt16 substFormat;
 
-    substFormat = SFSingleSubst_Format(singleSubst);
+    substFormat = SingleSubst_Format(singleSubst);
 
     switch (substFormat) {
         case 1: {
-            Data coverage = SFSingleSubstF1_CoverageTable(singleSubst);
-            SFInt16 delta = SFSingleSubstF1_DeltaGlyphID(singleSubst);
+            Data coverage = SingleSubstF1_CoverageTable(singleSubst);
+            SFInt16 delta = SingleSubstF1_DeltaGlyphID(singleSubst);
             SFGlyphID locGlyph;
             SFUInteger covIndex;
 
@@ -64,8 +64,8 @@ static SFBoolean ApplySingleSubst(TextProcessorRef textProcessor, Data singleSub
         }
 
         case 2: {
-            Data coverage = SFSingleSubstF2_CoverageTable(singleSubst);
-            SFUInt16 glyphCount = SFSingleSubstF2_GlyphCount(singleSubst);
+            Data coverage = SingleSubstF2_CoverageTable(singleSubst);
+            SFUInt16 glyphCount = SingleSubstF2_GlyphCount(singleSubst);
             SFGlyphID locGlyph;
             SFUInteger covIndex;
 
@@ -73,7 +73,7 @@ static SFBoolean ApplySingleSubst(TextProcessorRef textProcessor, Data singleSub
             covIndex = SearchCoverageIndex(coverage, locGlyph);
 
             if (covIndex < glyphCount) {
-                SFGlyphID subGlyph = SFSingleSubstF2_Substitute(singleSubst, covIndex);
+                SFGlyphID subGlyph = SingleSubstF2_Substitute(singleSubst, covIndex);
                 GlyphTraits subTraits;
 
                 subTraits = GetGlyphTraits(textProcessor, subGlyph);
@@ -97,12 +97,12 @@ static SFBoolean ApplyMultipleSubst(TextProcessorRef textProcessor, Data multipl
     LocatorRef locator = &textProcessor->_locator;
     SFUInt16 substformat;
 
-    substformat = SFMultipleSubst_Format(multipleSubst);
+    substformat = MultipleSubst_Format(multipleSubst);
 
     switch (substformat) {
         case 1: {
-            Data coverage = SFMultipleSubstF1_CoverageTable(multipleSubst);
-            SFUInt16 seqCount = SFMultipleSubstF1_SequenceCount(multipleSubst);
+            Data coverage = MultipleSubstF1_CoverageTable(multipleSubst);
+            SFUInt16 seqCount = MultipleSubstF1_SequenceCount(multipleSubst);
             SFGlyphID locGlyph;
             SFUInteger covIndex;
 
@@ -110,7 +110,7 @@ static SFBoolean ApplyMultipleSubst(TextProcessorRef textProcessor, Data multipl
             covIndex = SearchCoverageIndex(coverage, locGlyph);
 
             if (covIndex < seqCount) {
-                Data sequence = SFMultipleSubstF1_SequenceTable(multipleSubst, covIndex);
+                Data sequence = MultipleSubstF1_SequenceTable(multipleSubst, covIndex);
                 return ApplySequenceTable(textProcessor, sequence);
             }
             break;
@@ -126,11 +126,11 @@ static SFBoolean ApplySequenceTable(TextProcessorRef textProcessor, Data sequenc
     LocatorRef locator = &textProcessor->_locator;
     SFUInt16 glyphCount;
 
-    glyphCount = SFSequence_GlyphCount(sequence);
+    glyphCount = Sequence_GlyphCount(sequence);
 
     if (glyphCount > 0) {
         /* Get first substitute and its traits. */
-        SFGlyphID subGlyph = SFSequence_Substitute(sequence, 0);
+        SFGlyphID subGlyph = Sequence_Substitute(sequence, 0);
         GlyphTraits subTraits = GetGlyphTraits(textProcessor, subGlyph);
 
         /* Put substitute of first glyph and set its traits. */
@@ -149,7 +149,7 @@ static SFBoolean ApplySequenceTable(TextProcessorRef textProcessor, Data sequenc
                 SFUInteger newIndex = locator->index + subIndex;
 
                 /* Get substitute along with traits at current index. */
-                subGlyph = SFSequence_Substitute(sequence, subIndex);
+                subGlyph = Sequence_Substitute(sequence, subIndex);
                 subTraits = GetGlyphTraits(textProcessor, subGlyph);
 
                 /* Initialize the glyph with substitute. */
@@ -179,12 +179,12 @@ static SFBoolean ApplyAlternateSubst(TextProcessorRef textProcessor, Data altern
     LocatorRef locator = &textProcessor->_locator;
     SFUInt16 substFormat;
 
-    substFormat = SFAlternateSubst_Format(alternateSubst);
+    substFormat = AlternateSubst_Format(alternateSubst);
 
     switch (substFormat) {
         case 1: {
-            Data coverage = SFAlternateSubstF1_CoverageTable(alternateSubst);
-            SFUInt16 altSetCount = SFAlternateSubstF1_AlternateSetCount(alternateSubst);
+            Data coverage = AlternateSubstF1_CoverageTable(alternateSubst);
+            SFUInt16 altSetCount = AlternateSubstF1_AlternateSetCount(alternateSubst);
             SFGlyphID locGlyph;
             SFUInteger covIndex;
 
@@ -192,7 +192,7 @@ static SFBoolean ApplyAlternateSubst(TextProcessorRef textProcessor, Data altern
             covIndex = SearchCoverageIndex(coverage, locGlyph);
 
             if (covIndex < altSetCount) {
-                Data alternateSet = SFAlternateSubstF1_AlternateSetTable(alternateSubst, covIndex);
+                Data alternateSet = AlternateSubstF1_AlternateSetTable(alternateSubst, covIndex);
                 return ApplyAlternateSetTable(textProcessor, alternateSet);
             }
             break;
@@ -209,11 +209,11 @@ static SFBoolean ApplyAlternateSetTable(TextProcessorRef textProcessor, Data alt
     SFUInt16 altIndex = textProcessor->_lookupValue - 1;
     SFUInt16 glyphCount;
 
-    glyphCount = SFAlternateSet_GlyphCount(alternateSet);
+    glyphCount = AlternateSet_GlyphCount(alternateSet);
 
     /* Make sure that alternate index is valid. */
     if (altIndex < glyphCount) {
-        SFGlyphID altGlyph = SFAlternateSet_Alternate(alternateSet, altIndex);
+        SFGlyphID altGlyph = AlternateSet_Alternate(alternateSet, altIndex);
         GlyphTraits altTraits = GetGlyphTraits(textProcessor, altGlyph);
 
         /* Substitute the glyph and set its traits. */
@@ -232,12 +232,12 @@ static SFBoolean ApplyLigatureSubst(TextProcessorRef textProcessor, Data ligatur
     LocatorRef locator = &textProcessor->_locator;
     SFUInt16 substFormat;
 
-    substFormat = SFLigatureSubst_Format(ligatureSubst);
+    substFormat = LigatureSubst_Format(ligatureSubst);
 
     switch (substFormat) {
         case 1: {
-            Data coverage = SFLigatureSubstF1_CoverageTable(ligatureSubst);
-            SFUInt16 ligSetCount = SFLigatureSubstF1_LigSetCount(ligatureSubst);
+            Data coverage = LigatureSubstF1_CoverageTable(ligatureSubst);
+            SFUInt16 ligSetCount = LigatureSubstF1_LigSetCount(ligatureSubst);
             SFGlyphID locGlyph;
             SFUInteger covIndex;
 
@@ -245,7 +245,7 @@ static SFBoolean ApplyLigatureSubst(TextProcessorRef textProcessor, Data ligatur
             covIndex = SearchCoverageIndex(coverage, locGlyph);
 
             if (covIndex < ligSetCount) {
-                Data ligatureSet = SFLigatureSubstF1_LigatureSetTable(ligatureSubst, covIndex);
+                Data ligatureSet = LigatureSubstF1_LigatureSetTable(ligatureSubst, covIndex);
                 return ApplyLigatureSetTable(textProcessor, ligatureSet);
             }
             break;
@@ -262,12 +262,12 @@ static SFBoolean ApplyLigatureSetTable(TextProcessorRef textProcessor, Data liga
     SFUInt16 ligCount;
     SFUInteger ligIndex;
 
-    ligCount = SFLigatureSet_LigatureCount(ligatureSet);
+    ligCount = LigatureSet_LigatureCount(ligatureSet);
 
     /* Match each ligature sequentially as they are ordered by preference. */
     for (ligIndex = 0; ligIndex < ligCount; ligIndex++) {
-        Data ligature = SFLigatureSet_LigatureTable(ligatureSet, ligIndex);
-        SFUInt16 compCount = SFLigature_CompCount(ligature);
+        Data ligature = LigatureSet_LigatureTable(ligatureSet, ligIndex);
+        SFUInt16 compCount = Ligature_CompCount(ligature);
         SFUInteger *partIndexes;
         SFUInteger prevIndex;
         SFUInteger nextIndex;
@@ -287,7 +287,7 @@ static SFBoolean ApplyLigatureSetTable(TextProcessorRef textProcessor, Data liga
             nextIndex = LocatorGetAfter(locator, prevIndex, SFTrue);
 
             if (nextIndex != SFInvalidIndex) {
-                SFGlyphID component = SFLigature_Component(ligature, compIndex - 1);
+                SFGlyphID component = Ligature_Component(ligature, compIndex - 1);
                 SFGlyphID glyph = SFAlbumGetGlyph(album, nextIndex);
 
                 if (component != glyph) {
@@ -303,7 +303,7 @@ static SFBoolean ApplyLigatureSetTable(TextProcessorRef textProcessor, Data liga
 
         /* Do the substitution, if all components are matched. */
         if (compIndex == compCount) {
-            SFGlyphID ligGlyph = SFLigature_LigGlyph(ligature);
+            SFGlyphID ligGlyph = Ligature_LigGlyph(ligature);
             GlyphTraits ligTraits = GetGlyphTraits(textProcessor, ligGlyph);
             SFUInteger ligAssociation;
 

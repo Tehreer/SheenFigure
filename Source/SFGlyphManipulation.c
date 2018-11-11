@@ -480,11 +480,11 @@ SF_PRIVATE SFBoolean ApplyReverseChainSubst(TextProcessorRef textProcessor, Data
     LocatorRef locator = &textProcessor->_locator;
     SFUInt16 substFormat;
 
-    substFormat = SFReverseChainSubst_Format(reverseChain);
+    substFormat = ReverseChainSubst_Format(reverseChain);
 
     switch (substFormat) {
         case 1: {
-            Data coverage = SFReverseChainSubstF1_CoverageTable(reverseChain);
+            Data coverage = ReverseChainSubstF1_CoverageTable(reverseChain);
             SFGlyphID locGlyph;
             SFUInteger covIndex;
 
@@ -492,19 +492,19 @@ SF_PRIVATE SFBoolean ApplyReverseChainSubst(TextProcessorRef textProcessor, Data
             covIndex = SearchCoverageIndex(coverage, locGlyph);
 
             if (covIndex != SFInvalidIndex) {
-                Data backtrackRecord = SFReverseChainSubstF1_RevBacktrackRecord(reverseChain);
-                SFUInt16 backtrackCount = SFRevBacktrackRecord_GlyphCount(backtrackRecord);
-                Data backtrackOffsets = SFRevBacktrackRecord_CoverageOffsets(backtrackRecord);
-                Data lookaheadRecord = SFRevBacktrackRecord_RevLookaheadRecord(backtrackRecord, backtrackCount);
-                SFUInt16 lookaheadCount = SFRevLookaheadRecord_GlyphCount(lookaheadRecord);
-                Data lookaheadOffsets = SFRevLookaheadRecord_CoverageOffsets(lookaheadRecord);
-                Data substRecord = SFRevLookaheadRecord_RevSubstRecord(lookaheadRecord, lookaheadCount);
-                SFUInt16 substCount = SFRevSubstRecord_GlyphCount(substRecord);
+                Data backtrackRecord = ReverseChainSubstF1_RevBacktrackRecord(reverseChain);
+                SFUInt16 backtrackCount = RevBacktrackRecord_GlyphCount(backtrackRecord);
+                Data backtrackOffsets = RevBacktrackRecord_CoverageOffsets(backtrackRecord);
+                Data lookaheadRecord = RevBacktrackRecord_RevLookaheadRecord(backtrackRecord, backtrackCount);
+                SFUInt16 lookaheadCount = RevLookaheadRecord_GlyphCount(lookaheadRecord);
+                Data lookaheadOffsets = RevLookaheadRecord_CoverageOffsets(lookaheadRecord);
+                Data substRecord = RevLookaheadRecord_RevSubstRecord(lookaheadRecord, lookaheadCount);
+                SFUInt16 substCount = RevSubstRecord_GlyphCount(substRecord);
 
                 if (AssessBacktrackGlyphs(textProcessor, backtrackOffsets, backtrackCount, AssessGlyphByCoverage, (void *)reverseChain)
                     && AssessLookaheadGlyphs(textProcessor, lookaheadOffsets, lookaheadCount, AssessGlyphByCoverage, (void *)reverseChain, locator->index)
                     && covIndex < substCount) {
-                    SFGlyphID subGlyph = SFRevSubstRecord_Substitute(substRecord, covIndex);
+                    SFGlyphID subGlyph = RevSubstRecord_Substitute(substRecord, covIndex);
                     GlyphTraits subTraits;
 
                     subTraits = GetGlyphTraits(textProcessor, subGlyph);
