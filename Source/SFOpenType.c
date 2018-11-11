@@ -49,8 +49,8 @@ static int GlyphRangeComparison(const void *item1, const void *item2)
     SFUInt16 *ref1 = (SFUInt16 *)item1;
     SFUInt16 val1 = *ref1;
     Data ref2 = (Data)item2;
-    SFUInt16 rangeStart = SFGlyphRange_Start(ref2);
-    SFUInt16 rangeEnd = SFGlyphRange_End(ref2);
+    SFUInt16 rangeStart = GlyphRange_Start(ref2);
+    SFUInt16 rangeEnd = GlyphRange_End(ref2);
 
     if (val1 < rangeStart) {
         return -1;
@@ -65,7 +65,7 @@ static int GlyphRangeComparison(const void *item1, const void *item2)
 
 static Data BinarySearchGlyphRange(Data rangeArray, SFUInteger length, SFUInt16 value)
 {
-    return bsearch(&value, rangeArray, length, SFGlyphRange_Size(), GlyphRangeComparison);
+    return bsearch(&value, rangeArray, length, GlyphRange_Size(), GlyphRangeComparison);
 }
 
 SF_INTERNAL SFUInteger SearchCoverageIndex(Data coverageTable, SFGlyphID glyphID)
@@ -75,26 +75,26 @@ SF_INTERNAL SFUInteger SearchCoverageIndex(Data coverageTable, SFGlyphID glyphID
     /* The coverage table must NOT be null. */
     SFAssert(coverageTable != NULL);
 
-    format = SFCoverage_Format(coverageTable);
+    format = Coverage_Format(coverageTable);
 
     switch (format) {
         case 1: {
-            SFUInt16 glyphCount = SFCoverageF1_GlyphCount(coverageTable);
-            Data glyphArray = SFCoverageF1_GlyphArray(coverageTable);
+            SFUInt16 glyphCount = CoverageF1_GlyphCount(coverageTable);
+            Data glyphArray = CoverageF1_GlyphArray(coverageTable);
 
             return BinarySearchUInt16(glyphArray, glyphCount, glyphID);
         }
 
         case 2: {
-            SFUInt16 rangeCount = SFCoverageF2_RangeCount(coverageTable);
-            Data rangeArray = SFCoverageF2_GlyphRangeArray(coverageTable);
+            SFUInt16 rangeCount = CoverageF2_RangeCount(coverageTable);
+            Data rangeArray = CoverageF2_GlyphRangeArray(coverageTable);
             Data rangeRecord;
 
             rangeRecord = BinarySearchGlyphRange(rangeArray, rangeCount, glyphID);
 
             if (rangeRecord) {
-                SFUInt16 startGlyphID = SFRangeRecord_StartGlyphID(rangeRecord);
-                SFUInt16 startCoverageIndex = SFRangeRecord_StartCoverageIndex(rangeRecord);
+                SFUInt16 startGlyphID = RangeRecord_StartGlyphID(rangeRecord);
+                SFUInt16 startCoverageIndex = RangeRecord_StartCoverageIndex(rangeRecord);
 
                 return (SFUInteger)(startCoverageIndex) + (glyphID - startGlyphID);
             }
@@ -112,32 +112,32 @@ SF_INTERNAL SFUInt16 SearchGlyphClass(Data classDefTable, SFGlyphID glyphID)
     /* The class definition table must NOT be null. */
     SFAssert(classDefTable != NULL);
 
-    format = SFClassDef_Format(classDefTable);
+    format = ClassDef_Format(classDefTable);
 
     switch (format) {
         case 1: {
-            SFGlyphID startGlyphID = SFClassDefF1_StartGlyphID(classDefTable);
-            SFUInt16 glyphCount = SFClassDefF1_GlyphCount(classDefTable);
+            SFGlyphID startGlyphID = ClassDefF1_StartGlyphID(classDefTable);
+            SFUInt16 glyphCount = ClassDefF1_GlyphCount(classDefTable);
             SFUInteger valueIndex;
 
             valueIndex = glyphID - startGlyphID;
 
             if (valueIndex < glyphCount) {
-                Data classArray = SFClassDefF1_ClassValueArray(classDefTable);
-                return SFUInt16Array_Value(classArray, valueIndex);
+                Data classArray = ClassDefF1_ClassValueArray(classDefTable);
+                return UInt16Array_Value(classArray, valueIndex);
             }
             break;
         }
 
         case 2: {
-            SFUInt16 rangeCount = SFClassDefF2_ClassRangeCount(classDefTable);
-            Data rangeArray = SFClassDefF2_GlyphRangeArray(classDefTable);
+            SFUInt16 rangeCount = ClassDefF2_ClassRangeCount(classDefTable);
+            Data rangeArray = ClassDefF2_GlyphRangeArray(classDefTable);
             Data rangeRecord;
 
             rangeRecord = BinarySearchGlyphRange(rangeArray, rangeCount, glyphID);
 
             if (rangeRecord) {
-                return SFClassRangeRecord_Class(rangeRecord);
+                return ClassRangeRecord_Class(rangeRecord);
             }
             break;
         }
@@ -149,9 +149,9 @@ SF_INTERNAL SFUInt16 SearchGlyphClass(Data classDefTable, SFGlyphID glyphID)
 
 SF_INTERNAL SFInt32 GetDevicePixels(Data deviceTable, SFUInt16 ppemSize)
 {
-    SFUInt16 startSize = SFDevice_StartSize(deviceTable);
-    SFUInt16 endSize = SFDevice_EndSize(deviceTable);
-    SFUInt16 deltaFormat = SFDevice_DeltaFormat(deviceTable);
+    SFUInt16 startSize = Device_StartSize(deviceTable);
+    SFUInt16 endSize = Device_EndSize(deviceTable);
+    SFUInt16 deltaFormat = Device_DeltaFormat(deviceTable);
 
     if (ppemSize >= startSize && ppemSize <= endSize) {
         SFUInt16 sizeIndex = ppemSize - startSize;
@@ -161,7 +161,7 @@ SF_INTERNAL SFInt32 GetDevicePixels(Data deviceTable, SFUInt16 ppemSize)
             case 1: {
                 SFUInt16 valueIndex = sizeIndex >> 3;
                 SFUInt16 leftShift = 16 + (2 * (sizeIndex & 0x0007));
-                SFUInt16 deltaValue = SFDevice_DeltaValue(deviceTable, valueIndex);
+                SFUInt16 deltaValue = Device_DeltaValue(deviceTable, valueIndex);
 
                 return (SFInt32)(deltaValue << leftShift) >> 30;
             }
@@ -170,7 +170,7 @@ SF_INTERNAL SFInt32 GetDevicePixels(Data deviceTable, SFUInt16 ppemSize)
             case 2: {
                 SFUInt16 valueIndex = sizeIndex >> 2;
                 SFUInt16 leftShift = 16 + (4 * (sizeIndex & 0x0003));
-                SFUInt16 deltaValue = SFDevice_DeltaValue(deviceTable, valueIndex);
+                SFUInt16 deltaValue = Device_DeltaValue(deviceTable, valueIndex);
 
                 return (SFInt32)(deltaValue << leftShift) >> 28;
             }
@@ -179,7 +179,7 @@ SF_INTERNAL SFInt32 GetDevicePixels(Data deviceTable, SFUInt16 ppemSize)
             case 3: {
                 SFUInt16 valueIndex = sizeIndex >> 1;
                 SFUInt16 leftShift = 16 + (8 * (sizeIndex & 0x0001));
-                SFUInt16 deltaValue = SFDevice_DeltaValue(deviceTable, valueIndex);
+                SFUInt16 deltaValue = Device_DeltaValue(deviceTable, valueIndex);
 
                 return (SFInt32)(deltaValue << leftShift) >> 24;
             }
@@ -288,9 +288,9 @@ static SFInt32 GetDeltaFromVariationStore(Data varStoreTable,
 SF_INTERNAL SFInt32 GetVariationPixels(Data varIndexTable, Data varStoreTable,
     SFInt32 *coordArray, SFUInteger coordCount)
 {
-    SFUInt16 outerIndex = SFVarIndex_DeltaSetOuterIndex(varIndexTable);
-    SFUInt16 innerIndex = SFVarIndex_DeltaSetInnerIndex(varIndexTable);
-    SFUInt16 deltaFormat = SFVarIndex_DeltaFormat(varIndexTable);
+    SFUInt16 outerIndex = VarIndex_DeltaSetOuterIndex(varIndexTable);
+    SFUInt16 innerIndex = VarIndex_DeltaSetInnerIndex(varIndexTable);
+    SFUInt16 deltaFormat = VarIndex_DeltaFormat(varIndexTable);
 
     if (deltaFormat == 0x8000) {
         return GetDeltaFromVariationStore(varStoreTable, outerIndex, innerIndex, coordArray, coordCount);
@@ -301,13 +301,13 @@ SF_INTERNAL SFInt32 GetVariationPixels(Data varIndexTable, Data varStoreTable,
 
 static SFBoolean MatchCondition(Data condTable, SFInt32 *coordArray, SFUInteger coordCount)
 {
-    SFUInt16 format = SFCondition_Format(condTable);
+    SFUInt16 format = Condition_Format(condTable);
 
     switch (format) {
         case 1: {
-            SFUInt16 axisIndex = SFCondition_AxisIndex(condTable);
-            SFInt16 minValue = SFCondition_FilterRangeMinValue(condTable);
-            SFInt16 maxValue = SFCondition_FilterRangeMaxValue(condTable);
+            SFUInt16 axisIndex = Condition_AxisIndex(condTable);
+            SFInt16 minValue = Condition_FilterRangeMinValue(condTable);
+            SFInt16 maxValue = Condition_FilterRangeMaxValue(condTable);
             SFInt32 coordValue = (axisIndex < coordCount ? coordArray[axisIndex] : 0);
 
             if (coordValue >= minValue && coordValue <= maxValue) {
@@ -321,11 +321,11 @@ static SFBoolean MatchCondition(Data condTable, SFInt32 *coordArray, SFUInteger 
 
 static SFBoolean MatchConditionSet(Data condSetTable, SFInt32 *coordArray, SFUInteger coordCount)
 {
-    SFUInt16 condCount = SFConditionSet_ConditionCount(condSetTable);
+    SFUInt16 condCount = ConditionSet_ConditionCount(condSetTable);
     SFUInt16 condIndex;
 
     for (condIndex = 0; condIndex < condCount; condIndex++) {
-        Data condTable = SFConditionSet_ConditionTable(condSetTable, condIndex);
+        Data condTable = ConditionSet_ConditionTable(condSetTable, condIndex);
 
         if (!MatchCondition(condTable, coordArray, coordCount)) {
             return SFFalse;
@@ -338,16 +338,16 @@ static SFBoolean MatchConditionSet(Data condSetTable, SFInt32 *coordArray, SFUIn
 SF_INTERNAL Data SearchFeatureSubstitutionTable(Data featureVarsTable,
     SFInt32 *coordArray, SFUInteger coordCount)
 {
-    SFUInt32 recordCount = SFFeatureVars_FeatureVarCount(featureVarsTable);
+    SFUInt32 recordCount = FeatureVars_FeatureVarCount(featureVarsTable);
     SFUInt32 recordIndex;
 
     for (recordIndex = 0; recordIndex < recordCount; recordIndex++) {
-        Data varRecord = SFFeatureVars_FeatureVarRecord(featureVarsTable, recordIndex);
-        SFUInt32 condSetOffset = SFFeatureVarRecord_ConditionSetOffset(varRecord);
+        Data varRecord = FeatureVars_FeatureVarRecord(featureVarsTable, recordIndex);
+        SFUInt32 condSetOffset = FeatureVarRecord_ConditionSetOffset(varRecord);
         Data condSetTable = Data_Subdata(featureVarsTable, condSetOffset);
 
         if (MatchConditionSet(condSetTable, coordArray, coordCount)) {
-            SFUInt32 featureSubstOffset = SFFeatureVarRecord_FeatureSubstOffset(varRecord);
+            SFUInt32 featureSubstOffset = FeatureVarRecord_FeatureSubstOffset(varRecord);
             return Data_Subdata(featureVarsTable, featureSubstOffset);
         }
     }
@@ -357,15 +357,15 @@ SF_INTERNAL Data SearchFeatureSubstitutionTable(Data featureVarsTable,
 
 SF_INTERNAL Data SearchAlternateFeatureTable(Data featureSubstTable, SFUInt16 featureIndex)
 {
-    SFUInt16 substCount = SFFeatureSubst_SubstCount(featureSubstTable);
+    SFUInt16 substCount = FeatureSubst_SubstCount(featureSubstTable);
     SFUInt16 substIndex;
 
     for (substIndex = 0; substIndex < substCount; substIndex++) {
-        Data substRec = SFFeatureSubst_FeatureSubstRecord(featureSubstTable, substIndex);
-        SFUInt16 recFeatureIndex = SFFeatureSubstRecord_FeatureIndex(substRec);
+        Data substRec = FeatureSubst_FeatureSubstRecord(featureSubstTable, substIndex);
+        SFUInt16 recFeatureIndex = FeatureSubstRecord_FeatureIndex(substRec);
 
         if (recFeatureIndex == featureIndex) {
-            SFUInt32 altFeatureOffset = SFFeatureSubstRecord_AltFeatureOffset(substRec);
+            SFUInt32 altFeatureOffset = FeatureSubstRecord_AltFeatureOffset(substRec);
             return Data_Subdata(featureSubstTable, altFeatureOffset);
         }
 

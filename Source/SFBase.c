@@ -20,7 +20,7 @@
 
 const SFRange SFRangeEmpty = { 0, 0 };
 
-SFTextDirection SFScriptGetDefaultDirection(SFTag scriptTag)
+SFTextDirection ScriptGetDefaultDirection(SFTag scriptTag)
 {
     ScriptKnowledgeRef knowledge = ShapingKnowledgeSeekScript(&UnifiedKnowledgeInstance, scriptTag);
     if (knowledge != NULL) {

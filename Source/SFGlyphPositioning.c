@@ -489,7 +489,7 @@ static SFBoolean ApplyCursiveAnchors(TextProcessorRef textProcessor,
             SFAlbumSetX(album, secondIndex, -entryPoint.x);
 
             /* Set y of second glyph taking RTL flag into account. */
-            if (locator->lookupFlag & SFLookupFlagRightToLeft) {
+            if (locator->lookupFlag & LookupFlagRightToLeft) {
                 traits |= GlyphTraitRightToLeft;
                 SFAlbumSetY(album, secondIndex, entryPoint.y - exitPoint.y);
             } else {
@@ -523,7 +523,7 @@ static SFBoolean ApplyCursiveAnchors(TextProcessorRef textProcessor,
             SFAlbumSetY(album, firstIndex, entryPoint.y - exitPoint.y);
 
             /* Set y of first glyph taking RTL flag into account. */
-            if (locator->lookupFlag & SFLookupFlagRightToLeft) {
+            if (locator->lookupFlag & LookupFlagRightToLeft) {
                 traits |= GlyphTraitRightToLeft;
                 SFAlbumSetY(album, firstIndex, entryPoint.y - exitPoint.y);
             } else {
@@ -846,34 +846,34 @@ static SFBoolean ApplyMarkToMarkArrays(TextProcessorRef textProcessor, Data mark
     return SFFalse;
 }
 
-SF_PRIVATE SFBoolean ApplyPositioningSubtable(TextProcessorRef textProcessor, SFLookupType lookupType, Data subtable)
+SF_PRIVATE SFBoolean ApplyPositioningSubtable(TextProcessorRef textProcessor, LookupType lookupType, Data subtable)
 {
     switch (lookupType) {
-        case SFLookupTypeSingleAdjustment:
+        case LookupTypeSingleAdjustment:
             return ApplySinglePos(textProcessor, subtable);
 
-        case SFLookupTypePairAdjustment:
+        case LookupTypePairAdjustment:
             return ApplyPairPos(textProcessor, subtable);
 
-        case SFLookupTypeCursiveAttachment:
+        case LookupTypeCursiveAttachment:
             return ApplyCursivePos(textProcessor, subtable);
 
-        case SFLookupTypeMarkToBaseAttachment:
+        case LookupTypeMarkToBaseAttachment:
             return ApplyMarkToBasePos(textProcessor, subtable);
 
-        case SFLookupTypeMarkToLigatureAttachment:
+        case LookupTypeMarkToLigatureAttachment:
             return ApplyMarkToLigPos(textProcessor, subtable);
 
-        case SFLookupTypeMarkToMarkAttachment:
+        case LookupTypeMarkToMarkAttachment:
             return ApplyMarkToMarkPos(textProcessor, subtable);
 
-        case SFLookupTypeContextPositioning:
+        case LookupTypeContextPositioning:
             return ApplyContextSubtable(textProcessor, subtable);
 
-        case SFLookupTypeChainedContextPositioning:
+        case LookupTypeChainedContextPositioning:
             return ApplyChainContextSubtable(textProcessor, subtable);
 
-        case SFLookupTypeExtensionPositioning:
+        case LookupTypeExtensionPositioning:
             return ApplyExtensionSubtable(textProcessor, subtable);
     }
 

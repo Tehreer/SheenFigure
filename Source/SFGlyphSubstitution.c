@@ -336,31 +336,31 @@ static SFBoolean ApplyLigatureSetTable(TextProcessorRef textProcessor, Data liga
     return SFFalse;
 }
 
-SF_PRIVATE SFBoolean ApplySubstitutionSubtable(TextProcessorRef textProcessor, SFLookupType lookupType, Data subtable)
+SF_PRIVATE SFBoolean ApplySubstitutionSubtable(TextProcessorRef textProcessor, LookupType lookupType, Data subtable)
 {
     switch (lookupType) {
-        case SFLookupTypeSingle:
+        case LookupTypeSingle:
             return ApplySingleSubst(textProcessor, subtable);
 
-        case SFLookupTypeMultiple:
+        case LookupTypeMultiple:
             return ApplyMultipleSubst(textProcessor, subtable);
 
-        case SFLookupTypeAlternate:
+        case LookupTypeAlternate:
             return ApplyAlternateSubst(textProcessor, subtable);
 
-        case SFLookupTypeLigature:
+        case LookupTypeLigature:
             return ApplyLigatureSubst(textProcessor, subtable);
 
-        case SFLookupTypeContext:
+        case LookupTypeContext:
             return ApplyContextSubtable(textProcessor, subtable);
 
-        case SFLookupTypeChainingContext:
+        case LookupTypeChainingContext:
             return ApplyChainContextSubtable(textProcessor, subtable);
 
-        case SFLookupTypeExtension:
+        case LookupTypeExtension:
             return ApplyExtensionSubtable(textProcessor, subtable);
 
-        case SFLookupTypeReverseChainingContext:
+        case LookupTypeReverseChainingContext:
             return ApplyReverseChainSubst(textProcessor, subtable);
     }
 

@@ -34,7 +34,7 @@ typedef struct _SFLocator {
     SFUInteger _stateIndex;
     SFUInteger index;
     GlyphMask _ignoreMask;
-    SFLookupFlag lookupFlag;
+    LookupFlag lookupFlag;
 } Locator, *LocatorRef;
 
 SF_INTERNAL void LocatorInitialize(LocatorRef locator, SFAlbumRef album, Data gdef);
@@ -44,7 +44,7 @@ SF_INTERNAL void LocatorSetFeatureMask(LocatorRef locator, SFUInt16 featureMask)
 /**
  * Sets the lookup flag describing the criterion for ignoring glyphs.
  */
-SF_INTERNAL void LocatorSetLookupFlag(LocatorRef locator, SFLookupFlag lookupFlag);
+SF_INTERNAL void LocatorSetLookupFlag(LocatorRef locator, LookupFlag lookupFlag);
 
 /**
  * Sets the mark filtering set to use, if needed.

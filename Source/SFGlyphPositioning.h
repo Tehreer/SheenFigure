@@ -24,7 +24,7 @@
 #include "SFData.h"
 #include "SFTextProcessor.h"
 
-SF_PRIVATE SFBoolean ApplyPositioningSubtable(TextProcessorRef textProcessor, SFLookupType lookupType, Data subtable);
+SF_PRIVATE SFBoolean ApplyPositioningSubtable(TextProcessorRef textProcessor, LookupType lookupType, Data subtable);
 SF_PRIVATE void ResolveAttachments(TextProcessorRef textProcessor);
 
 #endif

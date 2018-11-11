@@ -33,15 +33,15 @@ static Data SearchScriptTable(Data scriptListTable, SFTag scriptTag)
     SFUInt16 scriptCount;
     SFUInt16 index;
 
-    scriptCount = SFScriptList_ScriptCount(scriptListTable);
+    scriptCount = ScriptList_ScriptCount(scriptListTable);
 
     for (index = 0; index < scriptCount; index++) {
-        Data scriptRecord = SFScriptList_ScriptRecord(scriptListTable, index);
-        SFTag scriptRecTag = SFScriptRecord_ScriptTag(scriptRecord);
+        Data scriptRecord = ScriptList_ScriptRecord(scriptListTable, index);
+        SFTag scriptRecTag = ScriptRecord_ScriptTag(scriptRecord);
         SFOffset scriptOffset;
 
         if (scriptRecTag == scriptTag) {
-            scriptOffset = SFScriptRecord_ScriptOffset(scriptRecord);
+            scriptOffset = ScriptRecord_ScriptOffset(scriptRecord);
             scriptTable = Data_Subdata(scriptListTable, scriptOffset);
             break;
         }
@@ -55,22 +55,22 @@ static Data SearchLangSysTable(Data scriptTable, SFTag languageTag)
     Data langSysTable = NULL;
 
     if (languageTag == SFTagMake('d', 'f', 'l', 't')) {
-        SFOffset langSysOffset = SFScript_DefaultLangSysOffset(scriptTable);
+        SFOffset langSysOffset = Script_DefaultLangSysOffset(scriptTable);
 
         if (langSysOffset) {
             langSysTable = Data_Subdata(scriptTable, langSysOffset);
         }
     } else {
-        SFUInt16 langSysCount = SFScript_LangSysCount(scriptTable);
+        SFUInt16 langSysCount = Script_LangSysCount(scriptTable);
         SFUInt16 index;
 
         for (index = 0; index < langSysCount; index++) {
-            Data langSysRecord = SFScript_LangSysRecord(scriptTable, index);
-            SFTag langSysTag = SFLangSysRecord_LangSysTag(langSysRecord);
+            Data langSysRecord = Script_LangSysRecord(scriptTable, index);
+            SFTag langSysTag = LangSysRecord_LangSysTag(langSysRecord);
             SFOffset langSysOffset;
 
             if (langSysTag == languageTag) {
-                langSysOffset = SFLangSysRecord_LangSysOffset(langSysRecord);
+                langSysOffset = LangSysRecord_LangSysOffset(langSysRecord);
                 langSysTable = Data_Subdata(scriptTable, langSysOffset);
                 break;
             }
@@ -86,16 +86,16 @@ static Data SearchFeatureTable(Data langSysTable, Data featureListTable, SFTag f
     SFUInt16 featureCount;
     SFUInt16 index;
 
-    featureCount = SFLangSys_FeatureCount(langSysTable);
+    featureCount = LangSys_FeatureCount(langSysTable);
 
     for (index = 0; index < featureCount; index++) {
-        SFUInt16 featureIndex = SFLangSys_FeatureIndex(langSysTable, index);
-        Data featureRecord = SFFeatureList_FeatureRecord(featureListTable, featureIndex);
-        SFTag featureRecTag = SFFeatureRecord_FeatureTag(featureRecord);
+        SFUInt16 featureIndex = LangSys_FeatureIndex(langSysTable, index);
+        Data featureRecord = FeatureList_FeatureRecord(featureListTable, featureIndex);
+        SFTag featureRecTag = FeatureRecord_FeatureTag(featureRecord);
         SFOffset featureOffset;
 
         if (featureRecTag == featureTag) {
-            featureOffset = SFFeatureRecord_FeatureOffset(featureRecord);
+            featureOffset = FeatureRecord_FeatureOffset(featureRecord);
             featureTable = Data_Subdata(featureListTable, featureOffset);
             break;
         }
@@ -106,11 +106,11 @@ static Data SearchFeatureTable(Data langSysTable, Data featureListTable, SFTag f
 
 static void AddFeatureLookups(SFPatternBuilderRef patternBuilder, Data featureTable)
 {
-    SFUInt16 lookupCount = SFFeature_LookupCount(featureTable);
+    SFUInt16 lookupCount = Feature_LookupCount(featureTable);
     SFUInt16 index;
 
     for (index = 0; index < lookupCount; index++) {
-        SFUInt16 lookupListIndex = SFFeature_LookupListIndex(featureTable, index);
+        SFUInt16 lookupListIndex = Feature_LookupListIndex(featureTable, index);
         SFPatternBuilderAddLookup(patternBuilder, lookupListIndex);
     }
 }
@@ -259,8 +259,8 @@ static void AddCustomFeatures(SFSchemeRef scheme, SFPatternBuilderRef patternBui
 static void AddHeaderTable(SFSchemeRef scheme, SFPatternBuilderRef patternBuilder,
     Data headerTable, FeatureInfo *featureInfos, SFUInteger featureCount)
 {
-    Data scriptListTable = SFHeader_ScriptListTable(headerTable);
-    Data featureListTable = SFHeader_FeatureListTable(headerTable);
+    Data scriptListTable = Header_ScriptListTable(headerTable);
+    Data featureListTable = Header_FeatureListTable(headerTable);
     Data scriptTable;
     Data langSysTable;
 

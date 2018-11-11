@@ -20,15 +20,15 @@
 #include "SFData.h"
 
 enum {
-    SFLookupTypeSingleAdjustment = 1,
-    SFLookupTypePairAdjustment = 2,
-    SFLookupTypeCursiveAttachment = 3,
-    SFLookupTypeMarkToBaseAttachment = 4,
-    SFLookupTypeMarkToLigatureAttachment = 5,
-    SFLookupTypeMarkToMarkAttachment = 6,
-    SFLookupTypeContextPositioning = 7,
-    SFLookupTypeChainedContextPositioning = 8,
-    SFLookupTypeExtensionPositioning = 9
+    LookupTypeSingleAdjustment = 1,
+    LookupTypePairAdjustment = 2,
+    LookupTypeCursiveAttachment = 3,
+    LookupTypeMarkToBaseAttachment = 4,
+    LookupTypeMarkToLigatureAttachment = 5,
+    LookupTypeMarkToMarkAttachment = 6,
+    LookupTypeContextPositioning = 7,
+    LookupTypeChainedContextPositioning = 8,
+    LookupTypeExtensionPositioning = 9
 };
 
 /*******************************************GPOS HEADER********************************************/

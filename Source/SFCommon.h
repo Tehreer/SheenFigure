@@ -20,322 +20,319 @@
 #include "SFBase.h"
 #include "SFData.h"
 
-typedef SFUInt16 SFLookupType;
+typedef SFUInt16 LookupType;
 
 enum {
-    SFLookupFlagRightToLeft = 0x0001,
-    SFLookupFlagIgnoreBaseGlyphs = 0x0002,
-    SFLookupFlagIgnoreLigatures = 0x0004,
-    SFLookupFlagIgnoreMarks = 0x0008,
-    SFLookupFlagUseMarkFilteringSet = 0x0010,
-    SFLookupFlagReserved = 0x00E0,
-    SFLookupFlagMarkAttachmentType = 0xFF00
+    LookupFlagRightToLeft = 0x0001,
+    LookupFlagIgnoreBaseGlyphs = 0x0002,
+    LookupFlagIgnoreLigatures = 0x0004,
+    LookupFlagIgnoreMarks = 0x0008,
+    LookupFlagUseMarkFilteringSet = 0x0010,
+    LookupFlagReserved = 0x00E0,
+    LookupFlagMarkAttachmentType = 0xFF00
 };
-typedef SFUInt16 SFLookupFlag;
+typedef SFUInt16 LookupFlag;
 
-#define SFTagRecord_Size()                              (6)
-#define SFTagRecord_Tag(data)                           Data_UInt32(data, 0)
-#define SFTagRecord_Offset(data)                        Data_UInt16(data, 4)
+#define TagRecord_Size()                                (6)
+#define TagRecord_Tag(data)                             Data_UInt32(data, 0)
+#define TagRecord_Offset(data)                          Data_UInt16(data, 4)
 
-#define SFGlyphRange_Size()                             (6)
-#define SFGlyphRange_Start(data)                        Data_UInt16(data, 0)
-#define SFGlyphRange_End(data)                          Data_UInt16(data, 2)
-#define SFGlyphRange_Value(data)                        Data_UInt16(data, 4)
+#define GlyphRange_Size()                               (6)
+#define GlyphRange_Start(data)                          Data_UInt16(data, 0)
+#define GlyphRange_End(data)                            Data_UInt16(data, 2)
+#define GlyphRange_Value(data)                          Data_UInt16(data, 4)
 
 /**********************************************ARRAYS**********************************************/
 
-#define SFUInt16Array_Value(data, index)                Data_UInt16(data, (index) * 2)
+#define UInt16Array_Value(data, index)                  Data_UInt16(data, (index) * 2)
 
-#define SFGlyphArray_Value(data, index)                 SFUInt16Array_Value(data, index)
+#define GlyphArray_Value(data, index)                   UInt16Array_Value(data, index)
 
-#define SFTagRecordArray_Value(data, index)             Data_Subdata(data, (index) * SFTagRecord_Size())
+#define TagRecordArray_Value(data, index)               Data_Subdata(data, (index) * TagRecord_Size())
 
 /**************************************************************************************************/
 
-#define SFHeader_Version(data)                          Data_UInt32(data, 0)
-#define SFHeader_ScriptListOffset(data)                 Data_UInt16(data, 4)
-#define SFHeader_FeatureListOffset(data)                Data_UInt16(data, 6)
-#define SFHeader_LookupListOffset(data)                 Data_UInt16(data, 8)
-#define SFHeader_ScriptListTable(data) \
-    Data_Subdata(data, SFHeader_ScriptListOffset(data))
-#define SFHeader_FeatureListTable(data) \
-    Data_Subdata(data, SFHeader_FeatureListOffset(data))
-#define SFHeader_LookupListTable(data) \
-    Data_Subdata(data, SFHeader_LookupListOffset(data))
+#define Header_Version(data)                            Data_UInt32(data, 0)
+#define Header_ScriptListOffset(data)                   Data_UInt16(data, 4)
+#define Header_FeatureListOffset(data)                  Data_UInt16(data, 6)
+#define Header_LookupListOffset(data)                   Data_UInt16(data, 8)
+#define Header_ScriptListTable(data) \
+    Data_Subdata(data, Header_ScriptListOffset(data))
+#define Header_FeatureListTable(data) \
+    Data_Subdata(data, Header_FeatureListOffset(data))
+#define Header_LookupListTable(data) \
+    Data_Subdata(data, Header_LookupListOffset(data))
 
 /****************************************SCRIPT LIST TABLE*****************************************/
 
-#define SFScriptList_ScriptCount(data)                  Data_UInt16(data, 0)
-#define SFScriptList_ScriptRecord(data, index)          Data_Subdata(data, 2 + ((index) * SFTagRecord_Size()))
+#define ScriptList_ScriptCount(data)                    Data_UInt16(data, 0)
+#define ScriptList_ScriptRecord(data, index)            Data_Subdata(data, 2 + ((index) * TagRecord_Size()))
 
-#define SFScriptRecord_ScriptTag(data)                  SFTagRecord_Tag(data)
-#define SFScriptRecord_ScriptOffset(data)               SFTagRecord_Offset(data)
+#define ScriptRecord_ScriptTag(data)                    TagRecord_Tag(data)
+#define ScriptRecord_ScriptOffset(data)                 TagRecord_Offset(data)
 
 /**************************************************************************************************/
 
 /*******************************************SCRIPT TABLE*******************************************/
 
-#define SFScript_DefaultLangSysOffset(data)             Data_UInt16(data, 0)
-#define SFScript_LangSysCount(data)                     Data_UInt16(data, 2)
-#define SFScript_LangSysRecord(data, index)             Data_Subdata(data, 4 + ((index) * SFTagRecord_Size()))
+#define Script_DefaultLangSysOffset(data)               Data_UInt16(data, 0)
+#define Script_LangSysCount(data)                       Data_UInt16(data, 2)
+#define Script_LangSysRecord(data, index)               Data_Subdata(data, 4 + ((index) * TagRecord_Size()))
 
-#define SFLangSysRecord_LangSysTag(data)                SFTagRecord_Tag(data)
-#define SFLangSysRecord_LangSysOffset(data)             SFTagRecord_Offset(data)
+#define LangSysRecord_LangSysTag(data)                  TagRecord_Tag(data)
+#define LangSysRecord_LangSysOffset(data)               TagRecord_Offset(data)
 
 /**************************************************************************************************/
 
 /**************************************LANGUAGE SYSTEM TABLE***************************************/
 
-#define SFLangSys_LookupOrderOffset(data)               Data_UInt16(data, 0)
-#define SFLangSys_ReqFeatureIndex(data)                 Data_UInt16(data, 2)
-#define SFLangSys_FeatureCount(data)                    Data_UInt16(data, 4)
-#define SFLangSys_FeatureIndex(data, index)             Data_UInt16(data, 6 + ((index) * 2))
+#define LangSys_LookupOrderOffset(data)                 Data_UInt16(data, 0)
+#define LangSys_ReqFeatureIndex(data)                   Data_UInt16(data, 2)
+#define LangSys_FeatureCount(data)                      Data_UInt16(data, 4)
+#define LangSys_FeatureIndex(data, index)               Data_UInt16(data, 6 + ((index) * 2))
 
 /**************************************************************************************************/
 
 /****************************************FEATURE LIST TABLE****************************************/
 
-#define SFFeatureList_FeatureCount(data)                Data_UInt16(data, 0)
-#define SFFeatureList_FeatureRecord(data, index)        Data_Subdata(data, 2 + ((index) * SFTagRecord_Size()))
+#define FeatureList_FeatureCount(data)                  Data_UInt16(data, 0)
+#define FeatureList_FeatureRecord(data, index)          Data_Subdata(data, 2 + ((index) * TagRecord_Size()))
 
-#define SFFeatureRecord_FeatureTag(data)                SFTagRecord_Tag(data)
-#define SFFeatureRecord_FeatureOffset(data)             SFTagRecord_Offset(data)
+#define FeatureRecord_FeatureTag(data)                  TagRecord_Tag(data)
+#define FeatureRecord_FeatureOffset(data)               TagRecord_Offset(data)
 
 /**************************************************************************************************/
 
 /******************************************FEATURE TABLE*******************************************/
 
-#define SFFeature_FeatureParamsOffset(data)             Data_UInt16(data, 0)
-#define SFFeature_LookupCount(data)                     Data_UInt16(data, 2)
-#define SFFeature_LookupListIndex(data, index)          Data_UInt16(data, 4 + ((index) * 2))
+#define Feature_FeatureParamsOffset(data)               Data_UInt16(data, 0)
+#define Feature_LookupCount(data)                       Data_UInt16(data, 2)
+#define Feature_LookupListIndex(data, index)            Data_UInt16(data, 4 + ((index) * 2))
 
 /**************************************************************************************************/
 
 /****************************************LOOKUP LIST TABLE*****************************************/
 
-#define SFLookupList_LookupCount(data)                  Data_UInt16(data, 0)
-#define SFLookupList_LookupOffset(data, index)          Data_UInt16(data, 2 + ((index) * 2))
-#define SFLookupList_LookupTable(data, index) \
-    Data_Subdata(data, SFLookupList_LookupOffset(data, index))
+#define LookupList_LookupCount(data)                    Data_UInt16(data, 0)
+#define LookupList_LookupOffset(data, index)            Data_UInt16(data, 2 + ((index) * 2))
+#define LookupList_LookupTable(data, index) \
+    Data_Subdata(data, LookupList_LookupOffset(data, index))
 
 /**************************************************************************************************/
 
 /*******************************************LOOKUP TABLE*******************************************/
 
-#define SFLookup_LookupType(data)                       Data_UInt16(data, 0)
-#define SFLookup_LookupFlag(data)                       Data_UInt16(data, 2)
-#define SFLookup_SubtableCount(data)                    Data_UInt16(data, 4)
-#define SFLookup_SubtableOffset(data, index)            Data_UInt16(data, 6 + ((index) * 2))
-#define SFLookup_MarkFilteringSet(data, subtableCount)  Data_UInt16(data, 8 + ((subtableCount) * 2))
-#define SFLookup_SubtableData(data, index) \
-    Data_Subdata(data, SFLookup_SubtableOffset(data, index))
+#define Lookup_LookupType(data)                         Data_UInt16(data, 0)
+#define Lookup_LookupFlag(data)                         Data_UInt16(data, 2)
+#define Lookup_SubtableCount(data)                      Data_UInt16(data, 4)
+#define Lookup_SubtableOffset(data, index)              Data_UInt16(data, 6 + ((index) * 2))
+#define Lookup_MarkFilteringSet(data, subtableCount)    Data_UInt16(data, 8 + ((subtableCount) * 2))
+#define Lookup_SubtableData(data, index) \
+    Data_Subdata(data, Lookup_SubtableOffset(data, index))
 
 /**************************************************************************************************/
 
 /******************************************COVERAGE TABLE******************************************/
 
-#define SFCoverage_Format(data)                         Data_UInt16(data, 0)
+#define Coverage_Format(data)                           Data_UInt16(data, 0)
 
-#define SFCoverageF1_GlyphCount(data)                   Data_UInt16(data, 2)
-#define SFCoverageF1_GlyphArray(data)                   Data_Subdata(data, 4)
+#define CoverageF1_GlyphCount(data)                     Data_UInt16(data, 2)
+#define CoverageF1_GlyphArray(data)                     Data_Subdata(data, 4)
 
-#define SFCoverageF2_RangeCount(data)                   Data_UInt16(data, 2)
-#define SFCoverageF2_RangeRecord(data, index)           Data_Subdata(data, 4 + ((index) * SFGlyphRange_Size()))
-#define SFCoverageF2_GlyphRangeArray(data)              SFCoverageF2_RangeRecord(data, 0)
+#define CoverageF2_RangeCount(data)                     Data_UInt16(data, 2)
+#define CoverageF2_RangeRecord(data, index)             Data_Subdata(data, 4 + ((index) * GlyphRange_Size()))
+#define CoverageF2_GlyphRangeArray(data)                CoverageF2_RangeRecord(data, 0)
 
-#define SFRangeRecord_StartGlyphID(data)                SFGlyphRange_Start(data)
-#define SFRangeRecord_EndGlyphID(data)                  SFGlyphRange_End(data)
-#define SFRangeRecord_StartCoverageIndex(data)          SFGlyphRange_Value(data)
+#define RangeRecord_StartGlyphID(data)                  GlyphRange_Start(data)
+#define RangeRecord_EndGlyphID(data)                    GlyphRange_End(data)
+#define RangeRecord_StartCoverageIndex(data)            GlyphRange_Value(data)
 
 /**************************************************************************************************/
 
 /**************************************CLASS DEFINITION TABLE**************************************/
 
-#define SFClassDef_Format(data)                         Data_UInt16(data, 0)
+#define ClassDef_Format(data)                           Data_UInt16(data, 0)
 
-#define SFClassDefF1_StartGlyphID(data)                 Data_UInt16(data, 2)
-#define SFClassDefF1_GlyphCount(data)                   Data_UInt16(data, 4)
-#define SFClassDefF1_ClassValueArray(data)              Data_Subdata(data, 6)
+#define ClassDefF1_StartGlyphID(data)                   Data_UInt16(data, 2)
+#define ClassDefF1_GlyphCount(data)                     Data_UInt16(data, 4)
+#define ClassDefF1_ClassValueArray(data)                Data_Subdata(data, 6)
 
-#define SFClassDefF2_ClassRangeCount(data)              Data_UInt16(data, 2)
-#define SFClassDefF2_ClassRangeRecord(data, index)      Data_Subdata(data, 4 + ((index) * SFGlyphRange_Size()))
-#define SFClassDefF2_GlyphRangeArray(data)              SFClassDefF2_ClassRangeRecord(data, 0)
+#define ClassDefF2_ClassRangeCount(data)                Data_UInt16(data, 2)
+#define ClassDefF2_ClassRangeRecord(data, index)        Data_Subdata(data, 4 + ((index) * GlyphRange_Size()))
+#define ClassDefF2_GlyphRangeArray(data)                ClassDefF2_ClassRangeRecord(data, 0)
 
-#define SFClassRangeRecord_Start(data)                  SFGlyphRange_Start(data)
-#define SFClassRangeRecord_End(data)                    SFGlyphRange_End(data)
-#define SFClassRangeRecord_Class(data)                  SFGlyphRange_Value(data)
+#define ClassRangeRecord_Start(data)                    GlyphRange_Start(data)
+#define ClassRangeRecord_End(data)                      GlyphRange_End(data)
+#define ClassRangeRecord_Class(data)                    GlyphRange_Value(data)
 
 /**************************************************************************************************/
 
 /*******************************************DEVICE TABLE*******************************************/
 
-#define SFDevice_StartSize(data)                        Data_UInt16(data, 0)
-#define SFDevice_EndSize(data)                          Data_UInt16(data, 2)
-#define SFDevice_DeltaFormat(data)                      Data_UInt16(data, 4)
-#define SFDevice_DeltaValue(data, index)                Data_UInt16(data, 6 + ((index) * 2))
+#define Device_StartSize(data)                          Data_UInt16(data, 0)
+#define Device_EndSize(data)                            Data_UInt16(data, 2)
+#define Device_DeltaFormat(data)                        Data_UInt16(data, 4)
+#define Device_DeltaValue(data, index)                  Data_UInt16(data, 6 + ((index) * 2))
 
 /**************************************************************************************************/
 
 /**************************************VARIATION INDEX TABLE***************************************/
 
-#define SFVarIndex_DeltaSetOuterIndex(data)             Data_UInt16(data, 0)
-#define SFVarIndex_DeltaSetInnerIndex(data)             Data_UInt16(data, 2)
-#define SFVarIndex_DeltaFormat(data)                    Data_UInt16(data, 4)
+#define VarIndex_DeltaSetOuterIndex(data)               Data_UInt16(data, 0)
+#define VarIndex_DeltaSetInnerIndex(data)               Data_UInt16(data, 2)
+#define VarIndex_DeltaFormat(data)                      Data_UInt16(data, 4)
 
 /**************************************************************************************************/
 
 /*************************************FEATURE VARIATIONS TABLE*************************************/
 
-#define SFFeatureVars_MajorVersion(data)                Data_UInt16(data, 0)
-#define SFFeatureVars_MinorVersion(data)                Data_UInt16(data, 2)
-#define SFFeatureVars_FeatureVarCount(data)             Data_UInt32(data, 4)
-#define SFFeatureVars_FeatureVarRecord(data, index)     Data_Subdata(data, 8 + ((index) * 8))
+#define FeatureVars_MajorVersion(data)                  Data_UInt16(data, 0)
+#define FeatureVars_MinorVersion(data)                  Data_UInt16(data, 2)
+#define FeatureVars_FeatureVarCount(data)               Data_UInt32(data, 4)
+#define FeatureVars_FeatureVarRecord(data, index)       Data_Subdata(data, 8 + ((index) * 8))
 
-#define SFFeatureVarRecord_ConditionSetOffset(data)     Data_UInt32(data, 0)
-#define SFFeatureVarRecord_FeatureSubstOffset(data)     Data_UInt32(data, 4)
+#define FeatureVarRecord_ConditionSetOffset(data)       Data_UInt32(data, 0)
+#define FeatureVarRecord_FeatureSubstOffset(data)       Data_UInt32(data, 4)
 
 /**************************************************************************************************/
 
 /***************************************CONDITION SET TABLE****************************************/
 
-#define SFConditionSet_ConditionCount(data)             Data_UInt16(data, 0)
-#define SFConditionSet_ConditionOffset(data, index)     Data_UInt32(data, 2 + ((index) * 4))
-#define SFConditionSet_ConditionTable(data, index) \
-    Data_Subdata(data, SFConditionSet_ConditionOffset(data, index))
+#define ConditionSet_ConditionCount(data)               Data_UInt16(data, 0)
+#define ConditionSet_ConditionOffset(data, index)       Data_UInt32(data, 2 + ((index) * 4))
+#define ConditionSet_ConditionTable(data, index) \
+    Data_Subdata(data, ConditionSet_ConditionOffset(data, index))
 
 /**************************************************************************************************/
 
 /*****************************************CONDITION TABLE******************************************/
 
-#define SFCondition_Format(data)                        Data_UInt16(data, 0)
-#define SFCondition_AxisIndex(data)                     Data_UInt16(data, 2)
-#define SFCondition_FilterRangeMinValue(data)           Data_Int16(data, 4)
-#define SFCondition_FilterRangeMaxValue(data)           Data_Int16(data, 6)
+#define Condition_Format(data)                          Data_UInt16(data, 0)
+#define Condition_AxisIndex(data)                       Data_UInt16(data, 2)
+#define Condition_FilterRangeMinValue(data)             Data_Int16(data, 4)
+#define Condition_FilterRangeMaxValue(data)             Data_Int16(data, 6)
 
 /**************************************************************************************************/
 
 /*********************************FEATURE TABLE SUBSTITUTION TABLE*********************************/
 
-#define SFFeatureSubst_MajorVersion(data)               Data_UInt16(data, 0)
-#define SFFeatureSubst_MinorVersion(data)               Data_UInt16(data, 2)
-#define SFFeatureSubst_SubstCount(data)                 Data_UInt16(data, 4)
-#define SFFeatureSubst_FeatureSubstRecord(data, index)  Data_Subdata(data, 6 + ((index) * 6))
+#define FeatureSubst_MajorVersion(data)                 Data_UInt16(data, 0)
+#define FeatureSubst_MinorVersion(data)                 Data_UInt16(data, 2)
+#define FeatureSubst_SubstCount(data)                   Data_UInt16(data, 4)
+#define FeatureSubst_FeatureSubstRecord(data, index)    Data_Subdata(data, 6 + ((index) * 6))
 
-#define SFFeatureSubstRecord_FeatureIndex(data)         Data_UInt16(data, 0)
-#define SFFeatureSubstRecord_AltFeatureOffset(data)     Data_UInt32(data, 2)
+#define FeatureSubstRecord_FeatureIndex(data)           Data_UInt16(data, 0)
+#define FeatureSubstRecord_AltFeatureOffset(data)       Data_UInt32(data, 2)
 
 /**************************************************************************************************/
 
 /******************************************LOOKUP RECORD*******************************************/
 
-#define SFLookupRecord_SequenceIndex(data)              Data_UInt16(data, 0)
-#define SFLookupRecord_LookupListIndex(data)            Data_UInt16(data, 2)
+#define LookupRecord_SequenceIndex(data)                Data_UInt16(data, 0)
+#define LookupRecord_LookupListIndex(data)              Data_UInt16(data, 2)
 
 /**************************************************************************************************/
 
 /***************************************CONTEXTUAL SUBTABLE****************************************/
 
-#define SFContext_Format(data)                          Data_UInt16(data, 0)
+#define Context_Format(data)                            Data_UInt16(data, 0)
 
-#define SFContextF1_CoverageOffset(data)                Data_UInt16(data, 2)
-#define SFContextF1_RuleSetCount(data)                  Data_UInt16(data, 4)
-#define SFContextF1_RuleSetOffset(data, index)          Data_UInt16(data, 6 + ((index) * 2))
-#define SFContextF1_CoverageTable(data) \
-    Data_Subdata(data, SFContextF1_CoverageOffset(data))
-#define SFContextF1_RuleSetTable(data, index) \
-    Data_Subdata(data, SFContextF1_RuleSetOffset(data, index))
+#define ContextF1_CoverageOffset(data)                  Data_UInt16(data, 2)
+#define ContextF1_RuleSetCount(data)                    Data_UInt16(data, 4)
+#define ContextF1_RuleSetOffset(data, index)            Data_UInt16(data, 6 + ((index) * 2))
+#define ContextF1_CoverageTable(data) \
+    Data_Subdata(data, ContextF1_CoverageOffset(data))
+#define ContextF1_RuleSetTable(data, index) \
+    Data_Subdata(data, ContextF1_RuleSetOffset(data, index))
 
-#define SFContextF2_CoverageOffset(data)                Data_UInt16(data, 2)
-#define SFContextF2_ClassDefOffset(data)                Data_UInt16(data, 4)
-#define SFContextF2_RuleSetCount(data)                  Data_UInt16(data, 6)
-#define SFContextF2_RuleSetOffset(data, index)          Data_UInt16(data, 8 + ((index) * 2))
-#define SFContextF2_CoverageTable(data) \
-    Data_Subdata(data, SFContextF2_CoverageOffset(data))
-#define SFContextF2_ClassDefTable(data) \
-    Data_Subdata(data, SFContextF2_ClassDefOffset(data))
-#define SFContextF2_RuleSetTable(data, index) \
-    Data_Subdata(data, SFContextF2_RuleSetOffset(data, index))
+#define ContextF2_CoverageOffset(data)                  Data_UInt16(data, 2)
+#define ContextF2_ClassDefOffset(data)                  Data_UInt16(data, 4)
+#define ContextF2_RuleSetCount(data)                    Data_UInt16(data, 6)
+#define ContextF2_RuleSetOffset(data, index)            Data_UInt16(data, 8 + ((index) * 2))
+#define ContextF2_CoverageTable(data) \
+    Data_Subdata(data, ContextF2_CoverageOffset(data))
+#define ContextF2_ClassDefTable(data) \
+    Data_Subdata(data, ContextF2_ClassDefOffset(data))
+#define ContextF2_RuleSetTable(data, index) \
+    Data_Subdata(data, ContextF2_RuleSetOffset(data, index))
 
-#define SFContextF3_Rule(data)                          Data_Subdata(data, 2)
+#define ContextF3_Rule(data)                            Data_Subdata(data, 2)
 
-#define SFRuleSet_RuleCount(data)                       Data_UInt16(data, 0)
-#define SFRuleSet_RuleOffset(data, index)               Data_UInt16(data, 2 + ((index) * 2))
+#define RuleSet_RuleCount(data)                         Data_UInt16(data, 0)
+#define RuleSet_RuleOffset(data, index)                 Data_UInt16(data, 2 + ((index) * 2))
 
-#define SFRule_GlyphCount(data)                         Data_UInt16(data, 0)
-#define SFRule_LookupCount(data)                        Data_UInt16(data, 2)
-#define SFRule_ValueArray(data)                         Data_Subdata(data, 4)
-#define SFRule_LookupArray(data, glyphCount)            Data_Subdata(data, 4 + ((glyphCount) * 2))
+#define Rule_GlyphCount(data)                           Data_UInt16(data, 0)
+#define Rule_LookupCount(data)                          Data_UInt16(data, 2)
+#define Rule_ValueArray(data)                           Data_Subdata(data, 4)
+#define Rule_LookupArray(data, glyphCount)              Data_Subdata(data, 4 + ((glyphCount) * 2))
 
-#define SFLookupArray_Value(data, index)                Data_Subdata(data, (index) * 4)
+#define LookupArray_Value(data, index)                  Data_Subdata(data, (index) * 4)
 
 /**************************************************************************************************/
 
 /***********************************CHAINING CONTEXTUAL SUBTABLE***********************************/
 
-#define SFChainContext_Format(data)                     Data_UInt16(data, 0)
+#define ChainContext_Format(data)                       Data_UInt16(data, 0)
 
-#define SFChainContextF1_CoverageOffset(data)           Data_UInt16(data, 2)
-#define SFChainContextF1_ChainRuleSetCount(data)        Data_UInt16(data, 4)
-#define SFChainContextF1_ChainRuleSetOffset(data, index) \
-                                                        Data_UInt16(data, 6 + ((index) * 2))
-#define SFChainContextF1_CoverageTable(data) \
-    Data_Subdata(data, SFChainContextF1_CoverageOffset(data))
-#define SFChainContextF1_ChainRuleSetTable(data, index) \
-    Data_Subdata(data, SFChainContextF1_ChainRuleSetOffset(data, index))
+#define ChainContextF1_CoverageOffset(data)             Data_UInt16(data, 2)
+#define ChainContextF1_ChainRuleSetCount(data)          Data_UInt16(data, 4)
+#define ChainContextF1_ChainRuleSetOffset(data, index)  Data_UInt16(data, 6 + ((index) * 2))
+#define ChainContextF1_CoverageTable(data) \
+    Data_Subdata(data, ChainContextF1_CoverageOffset(data))
+#define ChainContextF1_ChainRuleSetTable(data, index) \
+    Data_Subdata(data, ChainContextF1_ChainRuleSetOffset(data, index))
 
-#define SFChainContextF2_CoverageOffset(data)           Data_UInt16(data, 2)
-#define SFChainContextF2_BacktrackClassDefOffset(data)  Data_UInt16(data, 4)
-#define SFChainContextF2_InputClassDefOffset(data)      Data_UInt16(data, 6)
-#define SFChainContextF2_LookaheadClassDefOffset(data)  Data_UInt16(data, 8)
-#define SFChainContextF2_ChainRuleSetCount(data)        Data_UInt16(data, 10)
-#define SFChainContextF2_ChainRuleSetOffset(data, index) \
-                                                        Data_UInt16(data, 12 + ((index) * 2))
-#define SFChainContextF2_CoverageTable(data) \
-    Data_Subdata(data, SFChainContextF2_CoverageOffset(data))
-#define SFChainContextF2_BacktrackClassDefTable(data) \
-    Data_Subdata(data, SFChainContextF2_BacktrackClassDefOffset(data))
-#define SFChainContextF2_InputClassDefTable(data) \
-    Data_Subdata(data, SFChainContextF2_InputClassDefOffset(data))
-#define SFChainContextF2_LookaheadClassDefTable(data) \
-    Data_Subdata(data, SFChainContextF2_LookaheadClassDefOffset(data))
-#define SFChainContextF2_ChainRuleSetTable(data, index) \
-    Data_Subdata(data, SFChainContextF2_ChainRuleSetOffset(data, index))
+#define ChainContextF2_CoverageOffset(data)             Data_UInt16(data, 2)
+#define ChainContextF2_BacktrackClassDefOffset(data)    Data_UInt16(data, 4)
+#define ChainContextF2_InputClassDefOffset(data)        Data_UInt16(data, 6)
+#define ChainContextF2_LookaheadClassDefOffset(data)    Data_UInt16(data, 8)
+#define ChainContextF2_ChainRuleSetCount(data)          Data_UInt16(data, 10)
+#define ChainContextF2_ChainRuleSetOffset(data, index)  Data_UInt16(data, 12 + ((index) * 2))
+#define ChainContextF2_CoverageTable(data) \
+    Data_Subdata(data, ChainContextF2_CoverageOffset(data))
+#define ChainContextF2_BacktrackClassDefTable(data) \
+    Data_Subdata(data, ChainContextF2_BacktrackClassDefOffset(data))
+#define ChainContextF2_InputClassDefTable(data) \
+    Data_Subdata(data, ChainContextF2_InputClassDefOffset(data))
+#define ChainContextF2_LookaheadClassDefTable(data) \
+    Data_Subdata(data, ChainContextF2_LookaheadClassDefOffset(data))
+#define ChainContextF2_ChainRuleSetTable(data, index) \
+    Data_Subdata(data, ChainContextF2_ChainRuleSetOffset(data, index))
 
-#define SFChainContextF3_ChainRuleTable(data)           Data_Subdata(data, 2)
+#define ChainContextF3_ChainRuleTable(data)             Data_Subdata(data, 2)
 
-#define SFChainRuleSet_ChainRuleCount(data)             Data_UInt16(data, 0)
-#define SFChainRuleSet_ChainRuleOffset(data, index)     Data_UInt16(data, 2 + ((index) * 2))
-#define SFChainRuleSet_ChainRuleTable(data, index) \
-    Data_Subdata(data, SFChainRuleSet_ChainRuleOffset(data, index))
+#define ChainRuleSet_ChainRuleCount(data)               Data_UInt16(data, 0)
+#define ChainRuleSet_ChainRuleOffset(data, index)       Data_UInt16(data, 2 + ((index) * 2))
+#define ChainRuleSet_ChainRuleTable(data, index) \
+    Data_Subdata(data, ChainRuleSet_ChainRuleOffset(data, index))
 
-#define SFChainRule_BacktrackRecord(data)               Data_Subdata(data, 0)
+#define ChainRule_BacktrackRecord(data)                 Data_Subdata(data, 0)
 
-#define SFBacktrackRecord_GlyphCount(data)              Data_UInt16(data, 0)
-#define SFBacktrackRecord_ValueArray(data)              Data_Subdata(data, 2)
-#define SFBacktrackRecord_InputRecord(data, glyphCount) Data_Subdata(data, 2 + ((glyphCount) * 2))
+#define BacktrackRecord_GlyphCount(data)                Data_UInt16(data, 0)
+#define BacktrackRecord_ValueArray(data)                Data_Subdata(data, 2)
+#define BacktrackRecord_InputRecord(data, glyphCount)   Data_Subdata(data, 2 + ((glyphCount) * 2))
 
-#define SFInputRecord_GlyphCount(data)                  Data_UInt16(data, 0)
-#define SFInputRecord_ValueArray(data)                  Data_Subdata(data, 2)
-#define SFInputRecord_LookaheadRecord(data, glyphCount) Data_Subdata(data, 2 + ((glyphCount) * 2))
+#define InputRecord_GlyphCount(data)                    Data_UInt16(data, 0)
+#define InputRecord_ValueArray(data)                    Data_Subdata(data, 2)
+#define InputRecord_LookaheadRecord(data, glyphCount)   Data_Subdata(data, 2 + ((glyphCount) * 2))
 
-#define SFLookaheadRecord_GlyphCount(data)              Data_UInt16(data, 0)
-#define SFLookaheadRecord_ValueArray(data)              Data_Subdata(data, 2)
-#define SFLookaheadRecord_ContextRecord(data, glyphCount) \
-                                                        Data_Subdata(data, 2 + ((glyphCount) * 2))
+#define LookaheadRecord_GlyphCount(data)                Data_UInt16(data, 0)
+#define LookaheadRecord_ValueArray(data)                Data_Subdata(data, 2)
+#define LookaheadRecord_ContextRecord(data, glyphCount) Data_Subdata(data, 2 + ((glyphCount) * 2))
 
-#define SFContextRecord_LookupCount(data)               Data_UInt16(data, 0)
-#define SFContextRecord_LookupArray(data)               Data_Subdata(data, 2)
+#define ContextRecord_LookupCount(data)                 Data_UInt16(data, 0)
+#define ContextRecord_LookupArray(data)                 Data_Subdata(data, 2)
 
 /**************************************************************************************************/
 
 /****************************************EXTENSION SUBTABLE****************************************/
 
-#define SFExtension_Format(data)                        Data_UInt16(data, 0)
+#define Extension_Format(data)                          Data_UInt16(data, 0)
 
-#define SFExtensionF1_LookupType(data)                  Data_UInt16(data, 2)
-#define SFExtensionF1_ExtensionOffset(data)             Data_UInt32(data, 4)
-#define SFExtensionF1_ExtensionData(data) \
-    Data_Subdata(data, SFExtensionF1_ExtensionOffset(data))
+#define ExtensionF1_LookupType(data)                    Data_UInt16(data, 2)
+#define ExtensionF1_ExtensionOffset(data)               Data_UInt32(data, 4)
+#define ExtensionF1_ExtensionData(data) \
+    Data_Subdata(data, ExtensionF1_ExtensionOffset(data))
 
 /**************************************************************************************************/
 

@@ -66,19 +66,19 @@ SF_INTERNAL void LocatorSetFeatureMask(LocatorRef locator, SFUInt16 featureMask)
     locator->_ignoreMask.section.feature = GetAntiFeatureMask(featureMask);
 }
 
-SF_INTERNAL void LocatorSetLookupFlag(LocatorRef locator, SFLookupFlag lookupFlag)
+SF_INTERNAL void LocatorSetLookupFlag(LocatorRef locator, LookupFlag lookupFlag)
 {
     GlyphTraits ignoreTraits = GlyphTraitNone;
 
-    if (lookupFlag & SFLookupFlagIgnoreBaseGlyphs) {
+    if (lookupFlag & LookupFlagIgnoreBaseGlyphs) {
         ignoreTraits |= GlyphTraitBase;
     }
 
-    if (lookupFlag & SFLookupFlagIgnoreLigatures) {
+    if (lookupFlag & LookupFlagIgnoreLigatures) {
         ignoreTraits |= GlyphTraitLigature;
     }
 
-    if (lookupFlag & SFLookupFlagIgnoreMarks) {
+    if (lookupFlag & LookupFlagIgnoreMarks) {
         ignoreTraits |= GlyphTraitMark;
     }
 
@@ -123,7 +123,7 @@ SF_INTERNAL void LocatorReset(LocatorRef locator, SFUInteger index, SFUInteger c
 
 static SFBoolean IsIgnoredGlyph(LocatorRef locator, SFUInteger index) {
     SFAlbumRef album = locator->_album;
-    SFLookupFlag lookupFlag = locator->lookupFlag;
+    LookupFlag lookupFlag = locator->lookupFlag;
     GlyphMask glyphMask = SFAlbumGetGlyphMask(album, index);
 
     if (locator->_ignoreMask.full & glyphMask.full) {
@@ -131,7 +131,7 @@ static SFBoolean IsIgnoredGlyph(LocatorRef locator, SFUInteger index) {
     }
 
     if (glyphMask.section.traits & GlyphTraitMark) {
-        if (lookupFlag & SFLookupFlagUseMarkFilteringSet) {
+        if (lookupFlag & LookupFlagUseMarkFilteringSet) {
             Data markFilteringCoverage = locator->_markFilteringCoverage;
 
             if (markFilteringCoverage) {
@@ -144,7 +144,7 @@ static SFBoolean IsIgnoredGlyph(LocatorRef locator, SFUInteger index) {
             }
         }
 
-        if (lookupFlag & SFLookupFlagMarkAttachmentType) {
+        if (lookupFlag & LookupFlagMarkAttachmentType) {
             Data markAttachClassDef = locator->_markAttachClassDef;
 
             if (markAttachClassDef) {

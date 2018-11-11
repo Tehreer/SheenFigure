@@ -31,7 +31,7 @@ typedef struct _TextProcessor {
     Data _glyphClassDef;
     Data _lookupList;
     SFUInt16 _lookupValue;
-    SFBoolean (*_lookupOperation)(struct _SFTextProcessor *, SFLookupType, Data);
+    SFBoolean (*_lookupOperation)(struct _TextProcessor *, LookupType, Data);
     SFTextDirection _textDirection;
     SFUInt16 _ppemWidth;
     SFUInt16 _ppemHeight;

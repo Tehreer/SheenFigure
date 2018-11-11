@@ -20,22 +20,22 @@
 #include "SFData.h"
 
 enum {
-    SFLookupTypeSingle = 1,
-    SFLookupTypeMultiple = 2,
-    SFLookupTypeAlternate = 3,
-    SFLookupTypeLigature = 4,
-    SFLookupTypeContext = 5,
-    SFLookupTypeChainingContext = 6,
-    SFLookupTypeExtension = 7,
-    SFLookupTypeReverseChainingContext = 8
+    LookupTypeSingle = 1,
+    LookupTypeMultiple = 2,
+    LookupTypeAlternate = 3,
+    LookupTypeLigature = 4,
+    LookupTypeContext = 5,
+    LookupTypeChainingContext = 6,
+    LookupTypeExtension = 7,
+    LookupTypeReverseChainingContext = 8
 };
 
 /*******************************************GSUB HEADER********************************************/
 
-#define SFGSUB_Version(data)                            SFHeader_Version(data)
-#define SFGSUB_ScriptListOffset(data)                   SFHeader_ScriptListOffset(data)
-#define SFGSUB_FeatureListOffset(data)                  SFHeader_FeatureListOffset(data)
-#define SFGSUB_LookupListOffset(data)                   SFHeader_LookupListOffset(data)
+#define SFGSUB_Version(data)                            Header_Version(data)
+#define SFGSUB_ScriptListOffset(data)                   Header_ScriptListOffset(data)
+#define SFGSUB_FeatureListOffset(data)                  Header_FeatureListOffset(data)
+#define SFGSUB_LookupListOffset(data)                   Header_LookupListOffset(data)
 
 /**************************************************************************************************/
 
