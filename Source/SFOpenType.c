@@ -192,19 +192,19 @@ SF_INTERNAL SFInt32 GetDevicePixels(Data deviceTable, SFUInt16 ppemSize)
 static double CalculateScalarForRegion(Data regionListTable, SFUInt16 regionIndex,
     SFInt32 *coordArray, SFUInteger coordCount)
 {
-    SFUInt16 axisCount = SFVarRegionList_AxisCount(regionListTable);
-    SFUInt16 regionCount = SFVarRegionList_RegionCount(regionListTable);
+    SFUInt16 axisCount = VarRegionList_AxisCount(regionListTable);
+    SFUInt16 regionCount = VarRegionList_RegionCount(regionListTable);
     double regionScalar = 1.0;
 
     if (regionIndex < regionCount) {
-        Data regionRecord = SFVarRegionList_VarRegionRecord(regionListTable, regionIndex, axisCount);
+        Data regionRecord = VarRegionList_VarRegionRecord(regionListTable, regionIndex, axisCount);
         SFUInt16 axisIndex;
 
         for (axisIndex = 0; axisIndex < axisCount; axisIndex++) {
-            Data axisCoords = SFVarRegionRecord_RegionAxisCoords(regionRecord, axisIndex);
-            SFInt16 startCoord = SFRegionAxisCoords_StartCoord(axisCoords);
-            SFInt16 peakCoord = SFRegionAxisCoords_PeakCoord(axisCoords);
-            SFInt16 endCoord = SFRegionAxisCoords_EndCoord(axisCoords);
+            Data axisCoords = VarRegionRecord_RegionAxisCoords(regionRecord, axisIndex);
+            SFInt16 startCoord = RegionAxisCoords_StartCoord(axisCoords);
+            SFInt16 peakCoord = RegionAxisCoords_PeakCoord(axisCoords);
+            SFInt16 endCoord = RegionAxisCoords_EndCoord(axisCoords);
             SFInt32 instanceCoord = (axisIndex < coordCount ? coordArray[axisIndex] : 0);
             double axisScalar;
 
@@ -236,25 +236,25 @@ static double CalculateScalarForRegion(Data regionListTable, SFUInt16 regionInde
 static SFInt32 CalculateVariationAdjustment(Data varDataTable, Data regionListTable,
     SFUInt16 rowIndex, SFInt32 *coordArray, SFUInteger coordCount)
 {
-    SFUInt16 itemCount = SFItemVarData_ItemCount(varDataTable);
-    SFUInt16 shortDeltaCount = SFItemVarData_ShortDeltaCount(varDataTable);
-    SFUInt16 regionCount = SFItemVarData_RegionIndexCount(varDataTable);
+    SFUInt16 itemCount = ItemVarData_ItemCount(varDataTable);
+    SFUInt16 shortDeltaCount = ItemVarData_ShortDeltaCount(varDataTable);
+    SFUInt16 regionCount = ItemVarData_RegionIndexCount(varDataTable);
     double adjustment = 0.0;
 
     if (rowIndex < itemCount) {
-        SFUInteger recordSize = SFDeltaSetRecord_Size(shortDeltaCount, regionCount);
-        Data rowsArray = SFItemVarData_DeltaSetRowsArray(varDataTable, regionCount);
-        Data deltaSet = SFDeltaSetRowsArray_DeltaSetRecord(rowsArray, rowIndex, recordSize);
+        SFUInteger recordSize = DeltaSetRecord_Size(shortDeltaCount, regionCount);
+        Data rowsArray = ItemVarData_DeltaSetRowsArray(varDataTable, regionCount);
+        Data deltaSet = DeltaSetRowsArray_DeltaSetRecord(rowsArray, rowIndex, recordSize);
         SFUInt16 valueIndex;
 
         for (valueIndex = 0; valueIndex < regionCount; valueIndex++) {
-            SFUInt16 regionIndex = SFItemVarData_RegionIndexItem(varDataTable, valueIndex);
+            SFUInt16 regionIndex = ItemVarData_RegionIndexItem(varDataTable, valueIndex);
             SFInt16 delta;
 
             if (valueIndex < shortDeltaCount) {
-                delta = SFDeltaSetRecord_I16Delta(deltaSet, valueIndex);
+                delta = DeltaSetRecord_I16Delta(deltaSet, valueIndex);
             } else {
-                delta = SFDeltaSetRecord_I8Delta(deltaSet, shortDeltaCount, valueIndex - shortDeltaCount);
+                delta = DeltaSetRecord_I8Delta(deltaSet, shortDeltaCount, valueIndex - shortDeltaCount);
             }
 
             adjustment += CalculateScalarForRegion(regionListTable, regionIndex, coordArray, coordCount) * delta;
@@ -267,15 +267,15 @@ static SFInt32 CalculateVariationAdjustment(Data varDataTable, Data regionListTa
 static SFInt32 GetDeltaFromVariationStore(Data varStoreTable,
     SFUInt16 dataIndex, SFUInt16 rowIndex, SFInt32 *coordArray, SFUInteger coordCount)
 {
-    SFUInt16 format = SFItemVarStore_Format(varStoreTable);
+    SFUInt16 format = ItemVarStore_Format(varStoreTable);
 
     switch (format) {
         case 1: {
-            Data regionList = SFItemVarStore_VarRegionListTable(varStoreTable);
-            SFUInt16 dataCount = SFItemVarStore_ItemVarDataCount(varStoreTable);
+            Data regionList = ItemVarStore_VarRegionListTable(varStoreTable);
+            SFUInt16 dataCount = ItemVarStore_ItemVarDataCount(varStoreTable);
 
             if (dataIndex < dataCount) {
-                Data varDataTable = SFItemVarStore_ItemVarDataTable(varStoreTable, dataIndex);
+                Data varDataTable = ItemVarStore_ItemVarDataTable(varStoreTable, dataIndex);
                 return CalculateVariationAdjustment(varDataTable, regionList, rowIndex, coordArray, coordCount);
             }
             break;

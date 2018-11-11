@@ -21,46 +21,46 @@
 
 /**************************************VARIATION REGION LIST***************************************/
 
-#define SFVarRegionList_AxisCount(data)                 Data_UInt16(data, 0)
-#define SFVarRegionList_RegionCount(data)               Data_UInt16(data, 2)
-#define SFVarRegionList_VarRegionRecord(data, index, axisCount) \
+#define VarRegionList_AxisCount(data)                   Data_UInt16(data, 0)
+#define VarRegionList_RegionCount(data)                 Data_UInt16(data, 2)
+#define VarRegionList_VarRegionRecord(data, index, axisCount) \
                                                         Data_Subdata(data, 4 + ((index) * ((axisCount) * 6)))
 
-#define SFVarRegionRecord_RegionAxisCoords(data, index) Data_Subdata(data, (index) * 6)
+#define VarRegionRecord_RegionAxisCoords(data, index)   Data_Subdata(data, (index) * 6)
 
-#define SFRegionAxisCoords_StartCoord(data)             Data_Int16(data, 0)
-#define SFRegionAxisCoords_PeakCoord(data)              Data_Int16(data, 2)
-#define SFRegionAxisCoords_EndCoord(data)               Data_Int16(data, 4)
+#define RegionAxisCoords_StartCoord(data)               Data_Int16(data, 0)
+#define RegionAxisCoords_PeakCoord(data)                Data_Int16(data, 2)
+#define RegionAxisCoords_EndCoord(data)                 Data_Int16(data, 4)
 
 /**************************************************************************************************/
 
 /************************************ITEM VARIATION STORE TABLE************************************/
 
-#define SFItemVarStore_Format(data)                     Data_UInt16(data, 0)
-#define SFItemVarStore_VarRegionListOffset(data)        Data_UInt32(data, 2)
-#define SFItemVarStore_ItemVarDataCount(data)           Data_UInt16(data, 6)
-#define SFItemVarStore_ItemVarDataOffset(data, index)   Data_UInt32(data, 8 + ((index) * 4))
-#define SFItemVarStore_VarRegionListTable(data) \
-    Data_Subdata(data, SFItemVarStore_VarRegionListOffset(data))
-#define SFItemVarStore_ItemVarDataTable(data, index) \
-    Data_Subdata(data, SFItemVarStore_ItemVarDataOffset(data, index))
+#define ItemVarStore_Format(data)                       Data_UInt16(data, 0)
+#define ItemVarStore_VarRegionListOffset(data)          Data_UInt32(data, 2)
+#define ItemVarStore_ItemVarDataCount(data)             Data_UInt16(data, 6)
+#define ItemVarStore_ItemVarDataOffset(data, index)     Data_UInt32(data, 8 + ((index) * 4))
+#define ItemVarStore_VarRegionListTable(data) \
+    Data_Subdata(data, ItemVarStore_VarRegionListOffset(data))
+#define ItemVarStore_ItemVarDataTable(data, index) \
+    Data_Subdata(data, ItemVarStore_ItemVarDataOffset(data, index))
 
 /**************************************************************************************************/
 
 /***********************************ITEM VARIATION DATA SUBTABLE***********************************/
 
-#define SFItemVarData_ItemCount(data)                   Data_UInt16(data, 0)
-#define SFItemVarData_ShortDeltaCount(data)             Data_UInt16(data, 2)
-#define SFItemVarData_RegionIndexCount(data)            Data_UInt16(data, 4)
-#define SFItemVarData_RegionIndexItem(data, index)      Data_UInt16(data, 6 + ((index) * 2))
-#define SFItemVarData_DeltaSetRowsArray(data, riCount)  Data_Subdata(data, 6 + ((riCount) * 2))
+#define ItemVarData_ItemCount(data)                     Data_UInt16(data, 0)
+#define ItemVarData_ShortDeltaCount(data)               Data_UInt16(data, 2)
+#define ItemVarData_RegionIndexCount(data)              Data_UInt16(data, 4)
+#define ItemVarData_RegionIndexItem(data, index)        Data_UInt16(data, 6 + ((index) * 2))
+#define ItemVarData_DeltaSetRowsArray(data, riCount)    Data_Subdata(data, 6 + ((riCount) * 2))
 
-#define SFDeltaSetRowsArray_DeltaSetRecord(data, index, dsrSize) \
+#define DeltaSetRowsArray_DeltaSetRecord(data, index, dsrSize) \
                                                         Data_Subdata(data, (index) * (dsrSize))
 
-#define SFDeltaSetRecord_Size(sdCount, riCount)         ((sdCount) + (riCount))
-#define SFDeltaSetRecord_I16Delta(data, index)          Data_Int16(data, (index) * 2)
-#define SFDeltaSetRecord_I8Delta(data, sdCount, index)  Data_Int8(data, ((sdCount) * 2) + (index))
+#define DeltaSetRecord_Size(sdCount, riCount)           ((sdCount) + (riCount))
+#define DeltaSetRecord_I16Delta(data, index)            Data_Int16(data, (index) * 2)
+#define DeltaSetRecord_I8Delta(data, sdCount, index)    Data_Int8(data, ((sdCount) * 2) + (index))
 
 /**************************************************************************************************/
 
