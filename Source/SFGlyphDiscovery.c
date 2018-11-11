@@ -35,7 +35,7 @@ static SFBoolean IsZeroWidthCodepoint(SFCodepoint codepoint)
 
 SF_PRIVATE GlyphTraits GetGlyphTraits(TextProcessorRef textProcessor, SFGlyphID glyph)
 {
-    SFData glyphClassDef = textProcessor->_glyphClassDef;
+    Data glyphClassDef = textProcessor->_glyphClassDef;
 
     if (glyphClassDef) {
         SFUInt16 glyphClass = SearchGlyphClass(glyphClassDef, glyph);

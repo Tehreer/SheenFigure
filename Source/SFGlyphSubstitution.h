@@ -24,6 +24,6 @@
 #include "SFData.h"
 #include "SFTextProcessor.h"
 
-SF_PRIVATE SFBoolean ApplySubstitutionSubtable(TextProcessorRef textProcessor, SFLookupType lookupType, SFData subtable);
+SF_PRIVATE SFBoolean ApplySubstitutionSubtable(TextProcessorRef textProcessor, SFLookupType lookupType, Data subtable);
 
 #endif

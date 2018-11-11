@@ -24,7 +24,7 @@
 #include "SFOpenType.h"
 #include "SFLocator.h"
 
-SF_INTERNAL void LocatorInitialize(LocatorRef locator, SFAlbumRef album, SFData gdef)
+SF_INTERNAL void LocatorInitialize(LocatorRef locator, SFAlbumRef album, Data gdef)
 {
     /* Album must NOT be null. */
     SFAssert(album != NULL);
@@ -90,7 +90,7 @@ SF_INTERNAL void LocatorSetLookupFlag(LocatorRef locator, SFLookupFlag lookupFla
 
 SF_INTERNAL void LocatorSetMarkFilteringSet(LocatorRef locator, SFUInt16 markFilteringSet)
 {
-    SFData markGlyphSetsDef = locator->_markGlyphSetsDef;
+    Data markGlyphSetsDef = locator->_markGlyphSetsDef;
 
     locator->_markFilteringCoverage = NULL;
 
@@ -132,7 +132,7 @@ static SFBoolean IsIgnoredGlyph(LocatorRef locator, SFUInteger index) {
 
     if (glyphMask.section.traits & GlyphTraitMark) {
         if (lookupFlag & SFLookupFlagUseMarkFilteringSet) {
-            SFData markFilteringCoverage = locator->_markFilteringCoverage;
+            Data markFilteringCoverage = locator->_markFilteringCoverage;
 
             if (markFilteringCoverage) {
                 SFGlyphID glyph = SFAlbumGetGlyph(album, index);
@@ -145,7 +145,7 @@ static SFBoolean IsIgnoredGlyph(LocatorRef locator, SFUInteger index) {
         }
 
         if (lookupFlag & SFLookupFlagMarkAttachmentType) {
-            SFData markAttachClassDef = locator->_markAttachClassDef;
+            Data markAttachClassDef = locator->_markAttachClassDef;
 
             if (markAttachClassDef) {
                 SFGlyphID glyph = SFAlbumGetGlyph(album, index);

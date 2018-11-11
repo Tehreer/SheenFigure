@@ -23,9 +23,9 @@
 #include "SFPattern.h"
 #include "SFTextProcessor.h"
 
-SF_PRIVATE SFBoolean ApplyContextSubtable(TextProcessorRef textProcessor, SFData contextSubtable);
-SF_PRIVATE SFBoolean ApplyChainContextSubtable(TextProcessorRef textProcessor, SFData chainContextSubtable);
-SF_PRIVATE SFBoolean ApplyExtensionSubtable(TextProcessorRef textProcessor, SFData extensionSubtable);
-SF_PRIVATE SFBoolean ApplyReverseChainSubst(TextProcessorRef textProcessor, SFData reverseChain);
+SF_PRIVATE SFBoolean ApplyContextSubtable(TextProcessorRef textProcessor, Data contextSubtable);
+SF_PRIVATE SFBoolean ApplyChainContextSubtable(TextProcessorRef textProcessor, Data chainContextSubtable);
+SF_PRIVATE SFBoolean ApplyExtensionSubtable(TextProcessorRef textProcessor, Data extensionSubtable);
+SF_PRIVATE SFBoolean ApplyReverseChainSubst(TextProcessorRef textProcessor, Data reverseChain);
 
 #endif

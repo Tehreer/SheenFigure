@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Muhammad Tayyab Akram
+ * Copyright (C) 2015-2018 Muhammad Tayyab Akram
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,18 +20,18 @@
 #include "SFBase.h"
 
 typedef SFUInt16        SFOffset;
-typedef const SFUInt8 * SFData;
+typedef const SFUInt8 * Data;
 
-#define SFData_UInt8(data, offset)          (data)[offset]
+#define Data_UInt8(data, offset)            (data)[offset]
 
-#define SFData_UInt16(data, offset)         \
+#define Data_UInt16(data, offset)           \
 (SFUInt16)                                  \
 (                                           \
    ((SFUInt16)(data)[(offset) + 0] << 8)    \
  | ((SFUInt16)(data)[(offset) + 1] << 0)    \
 )
 
-#define SFData_UInt32(data, offset)         \
+#define Data_UInt32(data, offset)           \
 (SFUInt32)                                  \
 (                                           \
    ((SFUInt32)(data)[(offset) + 0] << 24)   \
@@ -40,10 +40,10 @@ typedef const SFUInt8 * SFData;
  | ((SFUInt32)(data)[(offset) + 3] <<  0)   \
 )
 
-#define SFData_Int8(data, offset)           (SFInt8)SFData_UInt8(data, offset)
-#define SFData_Int16(data, offset)          (SFInt16)SFData_UInt16(data, offset)
-#define SFData_Int32(data, offset)          (SFInt32)SFData_UInt32(data, offset)
+#define Data_Int8(data, offset)             (SFInt8)Data_UInt8(data, offset)
+#define Data_Int16(data, offset)            (SFInt16)Data_UInt16(data, offset)
+#define Data_Int32(data, offset)            (SFInt32)Data_UInt32(data, offset)
 
-#define SFData_Subdata(data, offset)        (&(data)[offset])
+#define Data_Subdata(data, offset)          (&(data)[offset])
 
 #endif

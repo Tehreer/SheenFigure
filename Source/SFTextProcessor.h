@@ -28,10 +28,10 @@
 typedef struct _TextProcessor {
     SFPatternRef _pattern;
     SFAlbumRef _album;
-    SFData _glyphClassDef;
-    SFData _lookupList;
+    Data _glyphClassDef;
+    Data _lookupList;
     SFUInt16 _lookupValue;
-    SFBoolean (*_lookupOperation)(struct _SFTextProcessor *, SFLookupType, SFData);
+    SFBoolean (*_lookupOperation)(struct _SFTextProcessor *, SFLookupType, Data);
     SFTextDirection _textDirection;
     SFUInt16 _ppemWidth;
     SFUInt16 _ppemHeight;

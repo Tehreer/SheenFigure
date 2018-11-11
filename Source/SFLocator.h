@@ -25,9 +25,9 @@
 
 typedef struct _SFLocator {
     SFAlbumRef _album;
-    SFData _markAttachClassDef;
-    SFData _markGlyphSetsDef;
-    SFData _markFilteringCoverage;
+    Data _markAttachClassDef;
+    Data _markGlyphSetsDef;
+    Data _markFilteringCoverage;
     SFUInteger _version;
     SFUInteger _startIndex;
     SFUInteger _limitIndex;
@@ -37,7 +37,7 @@ typedef struct _SFLocator {
     SFLookupFlag lookupFlag;
 } Locator, *LocatorRef;
 
-SF_INTERNAL void LocatorInitialize(LocatorRef locator, SFAlbumRef album, SFData gdef);
+SF_INTERNAL void LocatorInitialize(LocatorRef locator, SFAlbumRef album, Data gdef);
 
 SF_INTERNAL void LocatorSetFeatureMask(LocatorRef locator, SFUInt16 featureMask);
 

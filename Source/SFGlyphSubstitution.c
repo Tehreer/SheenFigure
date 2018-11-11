@@ -28,11 +28,11 @@
 #include "SFGlyphSubstitution.h"
 #include "SFTextProcessor.h"
 
-static SFBoolean ApplySequenceTable(TextProcessorRef textProcessor, SFData sequence);
-static SFBoolean ApplyAlternateSetTable(TextProcessorRef textProcessor, SFData alternateSet);
-static SFBoolean ApplyLigatureSetTable(TextProcessorRef textProcessor, SFData ligatureSet);
+static SFBoolean ApplySequenceTable(TextProcessorRef textProcessor, Data sequence);
+static SFBoolean ApplyAlternateSetTable(TextProcessorRef textProcessor, Data alternateSet);
+static SFBoolean ApplyLigatureSetTable(TextProcessorRef textProcessor, Data ligatureSet);
 
-static SFBoolean ApplySingleSubst(TextProcessorRef textProcessor, SFData singleSubst)
+static SFBoolean ApplySingleSubst(TextProcessorRef textProcessor, Data singleSubst)
 {
     SFAlbumRef album = textProcessor->_album;
     LocatorRef locator = &textProcessor->_locator;
@@ -42,7 +42,7 @@ static SFBoolean ApplySingleSubst(TextProcessorRef textProcessor, SFData singleS
 
     switch (substFormat) {
         case 1: {
-            SFData coverage = SFSingleSubstF1_CoverageTable(singleSubst);
+            Data coverage = SFSingleSubstF1_CoverageTable(singleSubst);
             SFInt16 delta = SFSingleSubstF1_DeltaGlyphID(singleSubst);
             SFGlyphID locGlyph;
             SFUInteger covIndex;
@@ -64,7 +64,7 @@ static SFBoolean ApplySingleSubst(TextProcessorRef textProcessor, SFData singleS
         }
 
         case 2: {
-            SFData coverage = SFSingleSubstF2_CoverageTable(singleSubst);
+            Data coverage = SFSingleSubstF2_CoverageTable(singleSubst);
             SFUInt16 glyphCount = SFSingleSubstF2_GlyphCount(singleSubst);
             SFGlyphID locGlyph;
             SFUInteger covIndex;
@@ -91,7 +91,7 @@ static SFBoolean ApplySingleSubst(TextProcessorRef textProcessor, SFData singleS
     return SFFalse;
 }
 
-static SFBoolean ApplyMultipleSubst(TextProcessorRef textProcessor, SFData multipleSubst)
+static SFBoolean ApplyMultipleSubst(TextProcessorRef textProcessor, Data multipleSubst)
 {
     SFAlbumRef album = textProcessor->_album;
     LocatorRef locator = &textProcessor->_locator;
@@ -101,7 +101,7 @@ static SFBoolean ApplyMultipleSubst(TextProcessorRef textProcessor, SFData multi
 
     switch (substformat) {
         case 1: {
-            SFData coverage = SFMultipleSubstF1_CoverageTable(multipleSubst);
+            Data coverage = SFMultipleSubstF1_CoverageTable(multipleSubst);
             SFUInt16 seqCount = SFMultipleSubstF1_SequenceCount(multipleSubst);
             SFGlyphID locGlyph;
             SFUInteger covIndex;
@@ -110,7 +110,7 @@ static SFBoolean ApplyMultipleSubst(TextProcessorRef textProcessor, SFData multi
             covIndex = SearchCoverageIndex(coverage, locGlyph);
 
             if (covIndex < seqCount) {
-                SFData sequence = SFMultipleSubstF1_SequenceTable(multipleSubst, covIndex);
+                Data sequence = SFMultipleSubstF1_SequenceTable(multipleSubst, covIndex);
                 return ApplySequenceTable(textProcessor, sequence);
             }
             break;
@@ -120,7 +120,7 @@ static SFBoolean ApplyMultipleSubst(TextProcessorRef textProcessor, SFData multi
     return SFFalse;
 }
 
-static SFBoolean ApplySequenceTable(TextProcessorRef textProcessor, SFData sequence)
+static SFBoolean ApplySequenceTable(TextProcessorRef textProcessor, Data sequence)
 {
     SFAlbumRef album = textProcessor->_album;
     LocatorRef locator = &textProcessor->_locator;
@@ -173,7 +173,7 @@ static SFBoolean ApplySequenceTable(TextProcessorRef textProcessor, SFData seque
     return SFFalse;
 }
 
-static SFBoolean ApplyAlternateSubst(TextProcessorRef textProcessor, SFData alternateSubst)
+static SFBoolean ApplyAlternateSubst(TextProcessorRef textProcessor, Data alternateSubst)
 {
     SFAlbumRef album = textProcessor->_album;
     LocatorRef locator = &textProcessor->_locator;
@@ -183,7 +183,7 @@ static SFBoolean ApplyAlternateSubst(TextProcessorRef textProcessor, SFData alte
 
     switch (substFormat) {
         case 1: {
-            SFData coverage = SFAlternateSubstF1_CoverageTable(alternateSubst);
+            Data coverage = SFAlternateSubstF1_CoverageTable(alternateSubst);
             SFUInt16 altSetCount = SFAlternateSubstF1_AlternateSetCount(alternateSubst);
             SFGlyphID locGlyph;
             SFUInteger covIndex;
@@ -192,7 +192,7 @@ static SFBoolean ApplyAlternateSubst(TextProcessorRef textProcessor, SFData alte
             covIndex = SearchCoverageIndex(coverage, locGlyph);
 
             if (covIndex < altSetCount) {
-                SFData alternateSet = SFAlternateSubstF1_AlternateSetTable(alternateSubst, covIndex);
+                Data alternateSet = SFAlternateSubstF1_AlternateSetTable(alternateSubst, covIndex);
                 return ApplyAlternateSetTable(textProcessor, alternateSet);
             }
             break;
@@ -202,7 +202,7 @@ static SFBoolean ApplyAlternateSubst(TextProcessorRef textProcessor, SFData alte
     return SFFalse;
 }
 
-static SFBoolean ApplyAlternateSetTable(TextProcessorRef textProcessor, SFData alternateSet)
+static SFBoolean ApplyAlternateSetTable(TextProcessorRef textProcessor, Data alternateSet)
 {
     SFAlbumRef album = textProcessor->_album;
     LocatorRef locator = &textProcessor->_locator;
@@ -226,7 +226,7 @@ static SFBoolean ApplyAlternateSetTable(TextProcessorRef textProcessor, SFData a
     return SFFalse;
 }
 
-static SFBoolean ApplyLigatureSubst(TextProcessorRef textProcessor, SFData ligatureSubst)
+static SFBoolean ApplyLigatureSubst(TextProcessorRef textProcessor, Data ligatureSubst)
 {
     SFAlbumRef album = textProcessor->_album;
     LocatorRef locator = &textProcessor->_locator;
@@ -236,7 +236,7 @@ static SFBoolean ApplyLigatureSubst(TextProcessorRef textProcessor, SFData ligat
 
     switch (substFormat) {
         case 1: {
-            SFData coverage = SFLigatureSubstF1_CoverageTable(ligatureSubst);
+            Data coverage = SFLigatureSubstF1_CoverageTable(ligatureSubst);
             SFUInt16 ligSetCount = SFLigatureSubstF1_LigSetCount(ligatureSubst);
             SFGlyphID locGlyph;
             SFUInteger covIndex;
@@ -245,7 +245,7 @@ static SFBoolean ApplyLigatureSubst(TextProcessorRef textProcessor, SFData ligat
             covIndex = SearchCoverageIndex(coverage, locGlyph);
 
             if (covIndex < ligSetCount) {
-                SFData ligatureSet = SFLigatureSubstF1_LigatureSetTable(ligatureSubst, covIndex);
+                Data ligatureSet = SFLigatureSubstF1_LigatureSetTable(ligatureSubst, covIndex);
                 return ApplyLigatureSetTable(textProcessor, ligatureSet);
             }
             break;
@@ -255,7 +255,7 @@ static SFBoolean ApplyLigatureSubst(TextProcessorRef textProcessor, SFData ligat
     return SFFalse;
 }
 
-static SFBoolean ApplyLigatureSetTable(TextProcessorRef textProcessor, SFData ligatureSet)
+static SFBoolean ApplyLigatureSetTable(TextProcessorRef textProcessor, Data ligatureSet)
 {
     SFAlbumRef album = textProcessor->_album;
     LocatorRef locator = &textProcessor->_locator;
@@ -266,7 +266,7 @@ static SFBoolean ApplyLigatureSetTable(TextProcessorRef textProcessor, SFData li
 
     /* Match each ligature sequentially as they are ordered by preference. */
     for (ligIndex = 0; ligIndex < ligCount; ligIndex++) {
-        SFData ligature = SFLigatureSet_LigatureTable(ligatureSet, ligIndex);
+        Data ligature = SFLigatureSet_LigatureTable(ligatureSet, ligIndex);
         SFUInt16 compCount = SFLigature_CompCount(ligature);
         SFUInteger *partIndexes;
         SFUInteger prevIndex;
@@ -336,7 +336,7 @@ static SFBoolean ApplyLigatureSetTable(TextProcessorRef textProcessor, SFData li
     return SFFalse;
 }
 
-SF_PRIVATE SFBoolean ApplySubstitutionSubtable(TextProcessorRef textProcessor, SFLookupType lookupType, SFData subtable)
+SF_PRIVATE SFBoolean ApplySubstitutionSubtable(TextProcessorRef textProcessor, SFLookupType lookupType, Data subtable)
 {
     switch (lookupType) {
         case SFLookupTypeSingle:

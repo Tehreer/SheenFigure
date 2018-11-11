@@ -18,7 +18,6 @@
 #define _SF_INTERNAL_GSUB_H
 
 #include "SFData.h"
-#include "SFCommon.h"
 
 enum {
     SFLookupTypeSingle = 1,
@@ -42,99 +41,98 @@ enum {
 
 /***********************************SINGLE SUBSTITUTION SUBTABLE***********************************/
 
-#define SFSingleSubst_Format(data)                      SFData_UInt16(data, 0)
+#define SFSingleSubst_Format(data)                      Data_UInt16(data, 0)
 
-#define SFSingleSubstF1_CoverageOffset(data)            SFData_UInt16(data, 2)
-#define SFSingleSubstF1_DeltaGlyphID(data)              SFData_Int16 (data, 4)
+#define SFSingleSubstF1_CoverageOffset(data)            Data_UInt16(data, 2)
+#define SFSingleSubstF1_DeltaGlyphID(data)              Data_Int16 (data, 4)
 #define SFSingleSubstF1_CoverageTable(data) \
-    SFData_Subdata(data, SFSingleSubstF1_CoverageOffset(data))
+    Data_Subdata(data, SFSingleSubstF1_CoverageOffset(data))
 
-#define SFSingleSubstF2_CoverageOffset(data)            SFData_UInt16(data, 2)
-#define SFSingleSubstF2_GlyphCount(data)                SFData_UInt16(data, 4)
-#define SFSingleSubstF2_Substitute(data, index)         SFData_UInt16(data, 6 + ((index) * 2))
+#define SFSingleSubstF2_CoverageOffset(data)            Data_UInt16(data, 2)
+#define SFSingleSubstF2_GlyphCount(data)                Data_UInt16(data, 4)
+#define SFSingleSubstF2_Substitute(data, index)         Data_UInt16(data, 6 + ((index) * 2))
 #define SFSingleSubstF2_CoverageTable(data) \
-    SFData_Subdata(data, SFSingleSubstF2_CoverageOffset(data))
+    Data_Subdata(data, SFSingleSubstF2_CoverageOffset(data))
 
 /**************************************************************************************************/
 
 /**********************************MULTIPLE SUBSTITUTION SUBTABLE**********************************/
 
-#define SFMultipleSubst_Format(data)                    SFData_UInt16(data, 0)
-#define SFMultipleSubstF1_CoverageOffset(data)          SFData_UInt16(data, 2)
-#define SFMultipleSubstF1_SequenceCount(data)           SFData_UInt16(data, 4)
-#define SFMultipleSubstF1_SequenceOffset(data, index)   SFData_UInt16(data, 6 + ((index) * 2))
+#define SFMultipleSubst_Format(data)                    Data_UInt16(data, 0)
+#define SFMultipleSubstF1_CoverageOffset(data)          Data_UInt16(data, 2)
+#define SFMultipleSubstF1_SequenceCount(data)           Data_UInt16(data, 4)
+#define SFMultipleSubstF1_SequenceOffset(data, index)   Data_UInt16(data, 6 + ((index) * 2))
 #define SFMultipleSubstF1_CoverageTable(data) \
-    SFData_Subdata(data, SFMultipleSubstF1_CoverageOffset(data))
+    Data_Subdata(data, SFMultipleSubstF1_CoverageOffset(data))
 #define SFMultipleSubstF1_SequenceTable(data, index) \
-    SFData_Subdata(data, SFMultipleSubstF1_SequenceOffset(data, index))
+    Data_Subdata(data, SFMultipleSubstF1_SequenceOffset(data, index))
 
-#define SFSequence_GlyphCount(data)                     SFData_UInt16(data, 0)
-#define SFSequence_Substitute(data, index)              SFData_UInt16(data, 2 + ((index) * 2))
+#define SFSequence_GlyphCount(data)                     Data_UInt16(data, 0)
+#define SFSequence_Substitute(data, index)              Data_UInt16(data, 2 + ((index) * 2))
 
 /**************************************************************************************************/
 
 /*********************************ALTERNATE SUBSTITUTION SUBTABLE**********************************/
 
-#define SFAlternateSubst_Format(data)                   SFData_UInt16(data, 0)
-#define SFAlternateSubstF1_CoverageOffset(data)         SFData_UInt16(data, 2)
-#define SFAlternateSubstF1_AlternateSetCount(data)      SFData_UInt16(data, 4)
+#define SFAlternateSubst_Format(data)                   Data_UInt16(data, 0)
+#define SFAlternateSubstF1_CoverageOffset(data)         Data_UInt16(data, 2)
+#define SFAlternateSubstF1_AlternateSetCount(data)      Data_UInt16(data, 4)
 #define SFAlternateSubstF1_AlternateSetOffset(data, index) \
-                                                        SFData_UInt16(data, 6 + ((index) * 2))
+                                                        Data_UInt16(data, 6 + ((index) * 2))
 #define SFAlternateSubstF1_CoverageTable(data) \
-    SFData_Subdata(data, SFAlternateSubstF1_CoverageOffset(data))
+    Data_Subdata(data, SFAlternateSubstF1_CoverageOffset(data))
 #define SFAlternateSubstF1_AlternateSetTable(data, index) \
-    SFData_Subdata(data, SFAlternateSubstF1_AlternateSetOffset(data, index))
+    Data_Subdata(data, SFAlternateSubstF1_AlternateSetOffset(data, index))
 
-#define SFAlternateSet_GlyphCount(data)                 SFData_UInt16(data, 0)
-#define SFAlternateSet_Alternate(data, index)           SFData_UInt16(data, 2 + ((index) * 2))
+#define SFAlternateSet_GlyphCount(data)                 Data_UInt16(data, 0)
+#define SFAlternateSet_Alternate(data, index)           Data_UInt16(data, 2 + ((index) * 2))
 
 /**************************************************************************************************/
 
 /**********************************LIGATURE SUBSTITUTION SUBTABLE**********************************/
 
-#define SFLigatureSubst_Format(data)                    SFData_UInt16(data, 0)
-#define SFLigatureSubstF1_CoverageOffset(data)          SFData_UInt16(data, 2)
-#define SFLigatureSubstF1_LigSetCount(data)             SFData_UInt16(data, 4)
+#define SFLigatureSubst_Format(data)                    Data_UInt16(data, 0)
+#define SFLigatureSubstF1_CoverageOffset(data)          Data_UInt16(data, 2)
+#define SFLigatureSubstF1_LigSetCount(data)             Data_UInt16(data, 4)
 #define SFLigatureSubstF1_LigatureSetOffset(data, index) \
-                                                        SFData_UInt16(data, 6 + ((index) * 2))
+                                                        Data_UInt16(data, 6 + ((index) * 2))
 #define SFLigatureSubstF1_CoverageTable(data) \
-    SFData_Subdata(data, SFLigatureSubstF1_CoverageOffset(data))
+    Data_Subdata(data, SFLigatureSubstF1_CoverageOffset(data))
 #define SFLigatureSubstF1_LigatureSetTable(data, index) \
-    SFData_Subdata(data, SFLigatureSubstF1_LigatureSetOffset(data, index))
+    Data_Subdata(data, SFLigatureSubstF1_LigatureSetOffset(data, index))
 
-#define SFLigatureSet_LigatureCount(data)               SFData_UInt16(data, 0)
-#define SFLigatureSet_LigatureOffset(data, index)       SFData_UInt16(data, 2 + ((index) * 2))
+#define SFLigatureSet_LigatureCount(data)               Data_UInt16(data, 0)
+#define SFLigatureSet_LigatureOffset(data, index)       Data_UInt16(data, 2 + ((index) * 2))
 #define SFLigatureSet_LigatureTable(data, index) \
-    SFData_Subdata(data, SFLigatureSet_LigatureOffset(data, index))
+    Data_Subdata(data, SFLigatureSet_LigatureOffset(data, index))
 
-#define SFLigature_LigGlyph(data)                       SFData_UInt16(data, 0)
-#define SFLigature_CompCount(data)                      SFData_UInt16(data, 2)
-#define SFLigature_Component(data, index)               SFData_UInt16(data, 4 + ((index) * 2))
+#define SFLigature_LigGlyph(data)                       Data_UInt16(data, 0)
+#define SFLigature_CompCount(data)                      Data_UInt16(data, 2)
+#define SFLigature_Component(data, index)               Data_UInt16(data, 4 + ((index) * 2))
 
 /**************************************************************************************************/
 
 /*********************REVERSE CHAINING CONTEXTUAL SINGLE SUBSTITUTION SUBTABLE*********************/
 
-#define SFReverseChainSubst_Format(data)                SFData_UInt16(data, 0)
+#define SFReverseChainSubst_Format(data)                Data_UInt16(data, 0)
 
-#define SFReverseChainSubstF1_CoverageOffset(data)      SFData_UInt16(data, 2)
-#define SFReverseChainSubstF1_RevBacktrackRecord(data)  SFData_Subdata(data, 4)
-
+#define SFReverseChainSubstF1_CoverageOffset(data)      Data_UInt16(data, 2)
+#define SFReverseChainSubstF1_RevBacktrackRecord(data)  Data_Subdata(data, 4)
 #define SFReverseChainSubstF1_CoverageTable(data) \
-    SFData_Subdata(data, SFReverseChainSubstF1_CoverageOffset(data))
+    Data_Subdata(data, SFReverseChainSubstF1_CoverageOffset(data))
 
-#define SFRevBacktrackRecord_GlyphCount(data)           SFData_UInt16(data, 0)
-#define SFRevBacktrackRecord_CoverageOffsets(data)      SFData_Subdata(data, 2)
+#define SFRevBacktrackRecord_GlyphCount(data)           Data_UInt16(data, 0)
+#define SFRevBacktrackRecord_CoverageOffsets(data)      Data_Subdata(data, 2)
 #define SFRevBacktrackRecord_RevLookaheadRecord(data, glyphCount) \
-                                                        SFData_Subdata(data, 2 + ((glyphCount) * 2))
+                                                        Data_Subdata(data, 2 + ((glyphCount) * 2))
 
-#define SFRevLookaheadRecord_GlyphCount(data)           SFData_UInt16(data, 0)
-#define SFRevLookaheadRecord_CoverageOffsets(data)      SFData_Subdata(data, 2)
+#define SFRevLookaheadRecord_GlyphCount(data)           Data_UInt16(data, 0)
+#define SFRevLookaheadRecord_CoverageOffsets(data)      Data_Subdata(data, 2)
 #define SFRevLookaheadRecord_RevSubstRecord(data, glyphCount) \
-                                                        SFData_Subdata(data, 2 + ((glyphCount) * 2))
+                                                        Data_Subdata(data, 2 + ((glyphCount) * 2))
 
-#define SFRevSubstRecord_GlyphCount(data)               SFData_UInt16(data, 0)
-#define SFRevSubstRecord_Substitute(data, index)        SFData_UInt16(data, 2 + ((index) * 2))
+#define SFRevSubstRecord_GlyphCount(data)               Data_UInt16(data, 0)
+#define SFRevSubstRecord_Substitute(data, index)        Data_UInt16(data, 2 + ((index) * 2))
 
 /**************************************************************************************************/
 
