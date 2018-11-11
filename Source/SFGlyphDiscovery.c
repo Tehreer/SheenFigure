@@ -42,16 +42,16 @@ SF_PRIVATE GlyphTraits GetGlyphTraits(TextProcessorRef textProcessor, SFGlyphID 
 
         /* Convert glyph class to traits options. */
         switch (glyphClass) {
-            case SFGlyphClassValueBase:
+            case GlyphClassValueBase:
                 return GlyphTraitBase;
 
-            case SFGlyphClassValueLigature:
+            case GlyphClassValueLigature:
                 return GlyphTraitLigature;
 
-            case SFGlyphClassValueMark:
+            case GlyphClassValueMark:
                 return GlyphTraitMark;
 
-            case SFGlyphClassValueComponent:
+            case GlyphClassValueComponent:
                 return GlyphTraitComponent;
         }
     }

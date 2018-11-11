@@ -61,7 +61,7 @@ SF_INTERNAL void TextProcessorInitialize(TextProcessorRef textProcessor,
 
     gdef = pattern->font->tables.gdef;
     if (gdef) {
-        textProcessor->_glyphClassDef = SFGDEF_GlyphClassDefTable(gdef);
+        textProcessor->_glyphClassDef = GDEF_GlyphClassDefTable(gdef);
     }
 
     LocatorInitialize(&textProcessor->_locator, album, gdef);
