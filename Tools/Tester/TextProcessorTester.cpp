@@ -26,7 +26,7 @@ extern "C" {
 #include <Source/SFBase.h>
 #include <Source/SFPattern.h>
 #include <Source/SFPatternBuilder.h>
-#include <Source/SFTextProcessor.h>
+#include <Source/TextProcessor.h>
 }
 
 #include "OpenType/Base.h"
@@ -67,7 +67,7 @@ static SFGlyphID getGlyphID(void *, SFCodepoint codepoint)
 }
 
 static void writeTable(Writer &writer,
-    LookupSubtable &subtable, LookupSubtable **referrals, SFUInteger count, LookupFlag lookupFlag)
+    LookupSubtable &subtable, LookupSubtable **referrals, SFUInteger count, OpenType::LookupFlag lookupFlag)
 {
     Builder builder;
 
@@ -96,7 +96,7 @@ static void processSubtable(SFAlbumRef album,
 {
     /* Write the table for the given lookup. */
     Writer writer;
-    writeTable(writer, subtable, referrals, count, isRTL ? LookupFlag::RightToLeft : (LookupFlag)0);
+    writeTable(writer, subtable, referrals, count, isRTL ? OpenType::LookupFlag::RightToLeft : (OpenType::LookupFlag)0);
 
     /* Create a font object containing writer and tag. */
     FontObject object = {
@@ -142,12 +142,12 @@ static void processSubtable(SFAlbumRef album,
     SFAlbumReset(album, &codepoints);
 
     /* Process the album. */
-    SFTextProcessor processor;
-    SFTextProcessorInitialize(&processor, pattern, album, direction, 8, 10, SFFalse);
-    SFTextProcessorDiscoverGlyphs(&processor);
-    SFTextProcessorSubstituteGlyphs(&processor);
-    SFTextProcessorPositionGlyphs(&processor);
-    SFTextProcessorWrapUp(&processor);
+    TextProcessor processor;
+    TextProcessorInitialize(&processor, pattern, album, direction, 8, 10, SFFalse);
+    TextProcessorDiscoverGlyphs(&processor);
+    TextProcessorSubstituteGlyphs(&processor);
+    TextProcessorPositionGlyphs(&processor);
+    TextProcessorWrapUp(&processor);
 
     /* Release the allocated objects. */
     SFPatternRelease(pattern);

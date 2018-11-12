@@ -22,7 +22,7 @@
 extern "C" {
 #include <Source/SFPattern.h>
 #include <Source/SFScheme.h>
-#include <Source/SFShapingKnowledge.h>
+#include <Source/ShapingKnowledge.h>
 }
 
 #include "OpenType/Builder.h"
@@ -39,21 +39,21 @@ using namespace SheenFigure::Tester::Utilities;
 
 class TestKnowledge {
 public:
-    static SFShapingKnowledgeRef instance() { return &object->knowledge.shape; }
+    static ShapingKnowledgeRef instance() { return &object->knowledge.shape; }
 
 private:
     static TestKnowledge *object;
 
     struct {
-        vector<SFFeatureInfo> subst;
-        vector<SFFeatureInfo> pos;
+        vector<FeatureInfo> subst;
+        vector<FeatureInfo> pos;
     } features;
     struct {
-        SFScriptKnowledge script;
-        SFShapingKnowledge shape;
+        ScriptKnowledge script;
+        ShapingKnowledge shape;
     } knowledge;
 
-    static SFScriptKnowledgeRef seekScript(const void *, SFTag scriptTag)
+    static ScriptKnowledgeRef seekScript(const void *, SFTag scriptTag)
     {
         if (scriptTag == tag("test")) {
             return &object->knowledge.script;

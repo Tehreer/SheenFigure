@@ -63,7 +63,7 @@ static void SFAlbumReserveGlyphsInitialized(SFAlbumRef album, SFUInteger index, 
     for (i = index; i < maxIndex; i++) {
         SFAlbumSetGlyph(album, i, 0);
         SFAlbumSetFeatureMask(album, i, 0);
-        SFAlbumSetAllTraits(album, i, SFGlyphTraitNone);
+        SFAlbumSetAllTraits(album, i, GlyphTraitNone);
         SFAlbumSetAssociation(album, i, 0);
     }
 }
@@ -127,11 +127,11 @@ void AlbumTester::testAddGlyph()
         SFAlbumReset(&album, codepoints.ptr());
 
         SFAlbumBeginFilling(&album);
-        SFAlbumAddGlyph(&album, 100, SFGlyphTraitNone, 0);
-        SFAlbumAddGlyph(&album, 200, SFGlyphTraitNone, 1);
-        SFAlbumAddGlyph(&album, 300, SFGlyphTraitNone, 2);
-        SFAlbumAddGlyph(&album, 400, SFGlyphTraitNone, 3);
-        SFAlbumAddGlyph(&album, 500, SFGlyphTraitNone, 4);
+        SFAlbumAddGlyph(&album, 100, GlyphTraitNone, 0);
+        SFAlbumAddGlyph(&album, 200, GlyphTraitNone, 1);
+        SFAlbumAddGlyph(&album, 300, GlyphTraitNone, 2);
+        SFAlbumAddGlyph(&album, 400, GlyphTraitNone, 3);
+        SFAlbumAddGlyph(&album, 500, GlyphTraitNone, 4);
         SFAlbumEndFilling(&album);
 
         SFAlbumBeginArranging(&album);
@@ -159,11 +159,11 @@ void AlbumTester::testAddGlyph()
         SFAlbumReset(&album, codepoints.ptr());
 
         SFAlbumBeginFilling(&album);
-        SFAlbumAddGlyph(&album, 100, SFGlyphTraitNone, 4);
-        SFAlbumAddGlyph(&album, 200, SFGlyphTraitNone, 3);
-        SFAlbumAddGlyph(&album, 300, SFGlyphTraitNone, 2);
-        SFAlbumAddGlyph(&album, 400, SFGlyphTraitNone, 1);
-        SFAlbumAddGlyph(&album, 500, SFGlyphTraitNone, 0);
+        SFAlbumAddGlyph(&album, 100, GlyphTraitNone, 4);
+        SFAlbumAddGlyph(&album, 200, GlyphTraitNone, 3);
+        SFAlbumAddGlyph(&album, 300, GlyphTraitNone, 2);
+        SFAlbumAddGlyph(&album, 400, GlyphTraitNone, 1);
+        SFAlbumAddGlyph(&album, 500, GlyphTraitNone, 0);
         SFAlbumEndFilling(&album);
 
         SFAlbumBeginArranging(&album);
@@ -191,11 +191,11 @@ void AlbumTester::testAddGlyph()
         SFAlbumReset(&album, codepoints.ptr());
 
         SFAlbumBeginFilling(&album);
-        SFAlbumAddGlyph(&album, 100, SFGlyphTraitNone, 0);
-        SFAlbumAddGlyph(&album, 200, SFGlyphTraitNone, 1);
-        SFAlbumAddGlyph(&album, 300, SFGlyphTraitNone, 3);
-        SFAlbumAddGlyph(&album, 400, SFGlyphTraitNone, 6);
-        SFAlbumAddGlyph(&album, 500, SFGlyphTraitNone, 10);
+        SFAlbumAddGlyph(&album, 100, GlyphTraitNone, 0);
+        SFAlbumAddGlyph(&album, 200, GlyphTraitNone, 1);
+        SFAlbumAddGlyph(&album, 300, GlyphTraitNone, 3);
+        SFAlbumAddGlyph(&album, 400, GlyphTraitNone, 6);
+        SFAlbumAddGlyph(&album, 500, GlyphTraitNone, 10);
         SFAlbumEndFilling(&album);
 
         SFAlbumBeginArranging(&album);
@@ -248,7 +248,7 @@ void AlbumTester::testReserveGlyphs()
 
     /* Wrap up the album. */
     for (SFUInteger i = 0; i < 25; i++) {
-        SFAlbumReplaceBasicTraits(&album, i, SFGlyphTraitNone);
+        SFAlbumReplaceBasicTraits(&album, i, GlyphTraitNone);
         SFAlbumSetAssociation(&album, i, 0);
     }
     SFAlbumEndFilling(&album);
@@ -311,8 +311,8 @@ void AlbumTester::testGetGlyph()
 
     /* Test by adding some glyphs. */
     {
-        SFAlbumAddGlyph(&album, 100, SFGlyphTraitNone, 0);
-        SFAlbumAddGlyph(&album, 200, SFGlyphTraitNone, 0);
+        SFAlbumAddGlyph(&album, 100, GlyphTraitNone, 0);
+        SFAlbumAddGlyph(&album, 200, GlyphTraitNone, 0);
 
         assert(SFAlbumGetGlyph(&album, 0) == 100);
         assert(SFAlbumGetGlyph(&album, 1) == 200);
@@ -429,8 +429,8 @@ void AlbumTester::testGetAssociation()
 
     /* Test by adding some glyphs. */
     {
-        SFAlbumAddGlyph(&album, 0, SFGlyphTraitNone, 0);
-        SFAlbumAddGlyph(&album, 0, SFGlyphTraitNone, 1);
+        SFAlbumAddGlyph(&album, 0, GlyphTraitNone, 0);
+        SFAlbumAddGlyph(&album, 0, GlyphTraitNone, 1);
 
         /* Test with get single association. */
         assert(SFAlbumGetAssociation(&album, 0) == 0);
@@ -502,17 +502,17 @@ void AlbumTester::testTraits()
 
     /* Test by setting traits. */
     {
-        SFAlbumReplaceBasicTraits(&album, 0, SFGlyphTraitNone);
-        SFAlbumReplaceBasicTraits(&album, 1, SFGlyphTraitBase);
-        SFAlbumReplaceBasicTraits(&album, 2, SFGlyphTraitLigature);
-        SFAlbumReplaceBasicTraits(&album, 3, SFGlyphTraitMark);
-        SFAlbumReplaceBasicTraits(&album, 4, SFGlyphTraitComponent);
+        SFAlbumReplaceBasicTraits(&album, 0, GlyphTraitNone);
+        SFAlbumReplaceBasicTraits(&album, 1, GlyphTraitBase);
+        SFAlbumReplaceBasicTraits(&album, 2, GlyphTraitLigature);
+        SFAlbumReplaceBasicTraits(&album, 3, GlyphTraitMark);
+        SFAlbumReplaceBasicTraits(&album, 4, GlyphTraitComponent);
 
-        assert(SFAlbumGetAllTraits(&album, 0) == SFGlyphTraitNone);
-        assert(SFAlbumGetAllTraits(&album, 1) == SFGlyphTraitBase);
-        assert(SFAlbumGetAllTraits(&album, 2) == SFGlyphTraitLigature);
-        assert(SFAlbumGetAllTraits(&album, 3) == SFGlyphTraitMark);
-        assert(SFAlbumGetAllTraits(&album, 4) == SFGlyphTraitComponent);
+        assert(SFAlbumGetAllTraits(&album, 0) == GlyphTraitNone);
+        assert(SFAlbumGetAllTraits(&album, 1) == GlyphTraitBase);
+        assert(SFAlbumGetAllTraits(&album, 2) == GlyphTraitLigature);
+        assert(SFAlbumGetAllTraits(&album, 3) == GlyphTraitMark);
+        assert(SFAlbumGetAllTraits(&album, 4) == GlyphTraitComponent);
     }
 
     SFAlbumEndFilling(&album);
@@ -520,32 +520,32 @@ void AlbumTester::testTraits()
 
     /* Test by inserting traits. */
     {
-        SFAlbumInsertHelperTraits(&album, 0, SFGlyphTraitRightToLeft);
-        SFAlbumInsertHelperTraits(&album, 1, SFGlyphTraitAttached | SFGlyphTraitResolved);
-        SFAlbumInsertHelperTraits(&album, 2, SFGlyphTraitCursive);
-        SFAlbumInsertHelperTraits(&album, 3, SFGlyphTraitCursive | SFGlyphTraitRightToLeft);
-        SFAlbumInsertHelperTraits(&album, 4, SFGlyphTraitResolved);
+        SFAlbumInsertHelperTraits(&album, 0, GlyphTraitRightToLeft);
+        SFAlbumInsertHelperTraits(&album, 1, GlyphTraitAttached | GlyphTraitResolved);
+        SFAlbumInsertHelperTraits(&album, 2, GlyphTraitCursive);
+        SFAlbumInsertHelperTraits(&album, 3, GlyphTraitCursive | GlyphTraitRightToLeft);
+        SFAlbumInsertHelperTraits(&album, 4, GlyphTraitResolved);
 
-        assert(SFAlbumGetAllTraits(&album, 0) == (SFGlyphTraitRightToLeft));
-        assert(SFAlbumGetAllTraits(&album, 1) == (SFGlyphTraitBase | SFGlyphTraitAttached | SFGlyphTraitResolved));
-        assert(SFAlbumGetAllTraits(&album, 2) == (SFGlyphTraitLigature | SFGlyphTraitCursive));
-        assert(SFAlbumGetAllTraits(&album, 3) == (SFGlyphTraitMark | SFGlyphTraitCursive | SFGlyphTraitRightToLeft));
-        assert(SFAlbumGetAllTraits(&album, 4) == (SFGlyphTraitComponent | SFGlyphTraitResolved));
+        assert(SFAlbumGetAllTraits(&album, 0) == (GlyphTraitRightToLeft));
+        assert(SFAlbumGetAllTraits(&album, 1) == (GlyphTraitBase | GlyphTraitAttached | GlyphTraitResolved));
+        assert(SFAlbumGetAllTraits(&album, 2) == (GlyphTraitLigature | GlyphTraitCursive));
+        assert(SFAlbumGetAllTraits(&album, 3) == (GlyphTraitMark | GlyphTraitCursive | GlyphTraitRightToLeft));
+        assert(SFAlbumGetAllTraits(&album, 4) == (GlyphTraitComponent | GlyphTraitResolved));
     }
 
     /* Test by removing traits. */
     {
-        SFAlbumRemoveHelperTraits(&album, 0, SFGlyphTraitRightToLeft);
-        SFAlbumRemoveHelperTraits(&album, 1, SFGlyphTraitCursive | SFGlyphTraitResolved);
-        SFAlbumRemoveHelperTraits(&album, 2, SFGlyphTraitAttached | SFGlyphTraitCursive);
-        SFAlbumRemoveHelperTraits(&album, 3, SFGlyphTraitRightToLeft);
-        SFAlbumRemoveHelperTraits(&album, 4, SFGlyphTraitAttached | SFGlyphTraitRightToLeft);
+        SFAlbumRemoveHelperTraits(&album, 0, GlyphTraitRightToLeft);
+        SFAlbumRemoveHelperTraits(&album, 1, GlyphTraitCursive | GlyphTraitResolved);
+        SFAlbumRemoveHelperTraits(&album, 2, GlyphTraitAttached | GlyphTraitCursive);
+        SFAlbumRemoveHelperTraits(&album, 3, GlyphTraitRightToLeft);
+        SFAlbumRemoveHelperTraits(&album, 4, GlyphTraitAttached | GlyphTraitRightToLeft);
 
-        assert(SFAlbumGetAllTraits(&album, 0) == (SFGlyphTraitNone));
-        assert(SFAlbumGetAllTraits(&album, 1) == (SFGlyphTraitBase | SFGlyphTraitAttached));
-        assert(SFAlbumGetAllTraits(&album, 2) == (SFGlyphTraitLigature));
-        assert(SFAlbumGetAllTraits(&album, 3) == (SFGlyphTraitMark | SFGlyphTraitCursive));
-        assert(SFAlbumGetAllTraits(&album, 4) == (SFGlyphTraitComponent | SFGlyphTraitResolved));
+        assert(SFAlbumGetAllTraits(&album, 0) == (GlyphTraitNone));
+        assert(SFAlbumGetAllTraits(&album, 1) == (GlyphTraitBase | GlyphTraitAttached));
+        assert(SFAlbumGetAllTraits(&album, 2) == (GlyphTraitLigature));
+        assert(SFAlbumGetAllTraits(&album, 3) == (GlyphTraitMark | GlyphTraitCursive));
+        assert(SFAlbumGetAllTraits(&album, 4) == (GlyphTraitComponent | GlyphTraitResolved));
     }
 
     SFAlbumEndArranging(&album);

@@ -20,7 +20,7 @@
 
 extern "C" {
 #include <Source/SFAlbum.h>
-#include <Source/SFLocator.h>
+#include <Source/Locator.h>
 }
 
 #include "OpenType/GDEF.h"
@@ -48,142 +48,142 @@ static SFCodepoints SFCodepointsMake(const SBCodepointSequence *referral, SFBool
 
 static SFCodepoints CODEPOINT_HANDLER = SFCodepointsMake(&CODEPOINT_SEQUENCE, SFFalse);
 
-static const SFGlyphTraits TRAIT_LIST_1[] = {
-    SFGlyphTraitNone,
+static const GlyphTraits TRAIT_LIST_1[] = {
+    GlyphTraitNone,
 };
 
-static const SFGlyphTraits TRAIT_LIST_2[] = {
-    SFGlyphTraitBase,
+static const GlyphTraits TRAIT_LIST_2[] = {
+    GlyphTraitBase,
 };
 
-static const SFGlyphTraits TRAIT_LIST_3[] = {
-    SFGlyphTraitLigature,
+static const GlyphTraits TRAIT_LIST_3[] = {
+    GlyphTraitLigature,
 };
 
-static const SFGlyphTraits TRAIT_LIST_4[] = {
-    SFGlyphTraitMark,
+static const GlyphTraits TRAIT_LIST_4[] = {
+    GlyphTraitMark,
 };
 
-static const SFGlyphTraits TRAIT_LIST_5[] = {
-    SFGlyphTraitComponent,
+static const GlyphTraits TRAIT_LIST_5[] = {
+    GlyphTraitComponent,
 };
 
-static const SFGlyphTraits TRAIT_LIST_6[] = {
-    SFGlyphTraitPlaceholder,
+static const GlyphTraits TRAIT_LIST_6[] = {
+    GlyphTraitPlaceholder,
 };
 
-static const SFGlyphTraits TRAIT_LIST_7[] = {
-    SFGlyphTraitNone,
-    SFGlyphTraitNone,
-    SFGlyphTraitNone,
-    SFGlyphTraitNone,
-    SFGlyphTraitNone,
-    SFGlyphTraitNone,
+static const GlyphTraits TRAIT_LIST_7[] = {
+    GlyphTraitNone,
+    GlyphTraitNone,
+    GlyphTraitNone,
+    GlyphTraitNone,
+    GlyphTraitNone,
+    GlyphTraitNone,
 };
 
-static const SFGlyphTraits TRAIT_LIST_8[] = {
-    SFGlyphTraitBase,
-    SFGlyphTraitBase,
-    SFGlyphTraitBase,
-    SFGlyphTraitBase,
-    SFGlyphTraitBase,
-    SFGlyphTraitBase,
+static const GlyphTraits TRAIT_LIST_8[] = {
+    GlyphTraitBase,
+    GlyphTraitBase,
+    GlyphTraitBase,
+    GlyphTraitBase,
+    GlyphTraitBase,
+    GlyphTraitBase,
 };
 
-static const SFGlyphTraits TRAIT_LIST_9[] = {
-    SFGlyphTraitLigature,
-    SFGlyphTraitLigature,
-    SFGlyphTraitLigature,
-    SFGlyphTraitLigature,
-    SFGlyphTraitLigature,
-    SFGlyphTraitLigature,
+static const GlyphTraits TRAIT_LIST_9[] = {
+    GlyphTraitLigature,
+    GlyphTraitLigature,
+    GlyphTraitLigature,
+    GlyphTraitLigature,
+    GlyphTraitLigature,
+    GlyphTraitLigature,
 };
 
-static const SFGlyphTraits TRAIT_LIST_10[] = {
-    SFGlyphTraitMark,
-    SFGlyphTraitMark,
-    SFGlyphTraitMark,
-    SFGlyphTraitMark,
-    SFGlyphTraitMark,
-    SFGlyphTraitMark,
+static const GlyphTraits TRAIT_LIST_10[] = {
+    GlyphTraitMark,
+    GlyphTraitMark,
+    GlyphTraitMark,
+    GlyphTraitMark,
+    GlyphTraitMark,
+    GlyphTraitMark,
 };
 
-static const SFGlyphTraits TRAIT_LIST_11[] = {
-    SFGlyphTraitComponent,
-    SFGlyphTraitComponent,
-    SFGlyphTraitComponent,
-    SFGlyphTraitComponent,
-    SFGlyphTraitComponent,
-    SFGlyphTraitComponent,
+static const GlyphTraits TRAIT_LIST_11[] = {
+    GlyphTraitComponent,
+    GlyphTraitComponent,
+    GlyphTraitComponent,
+    GlyphTraitComponent,
+    GlyphTraitComponent,
+    GlyphTraitComponent,
 };
 
-static const SFGlyphTraits TRAIT_LIST_12[] = {
-    SFGlyphTraitPlaceholder,
-    SFGlyphTraitPlaceholder,
-    SFGlyphTraitPlaceholder,
-    SFGlyphTraitPlaceholder,
-    SFGlyphTraitPlaceholder,
-    SFGlyphTraitPlaceholder,
+static const GlyphTraits TRAIT_LIST_12[] = {
+    GlyphTraitPlaceholder,
+    GlyphTraitPlaceholder,
+    GlyphTraitPlaceholder,
+    GlyphTraitPlaceholder,
+    GlyphTraitPlaceholder,
+    GlyphTraitPlaceholder,
 };
 
-static const SFGlyphTraits TRAIT_LIST_13[] = {
-    SFGlyphTraitNone,
-    SFGlyphTraitBase,
-    SFGlyphTraitLigature,
-    SFGlyphTraitMark,
-    SFGlyphTraitComponent,
-    SFGlyphTraitPlaceholder,
+static const GlyphTraits TRAIT_LIST_13[] = {
+    GlyphTraitNone,
+    GlyphTraitBase,
+    GlyphTraitLigature,
+    GlyphTraitMark,
+    GlyphTraitComponent,
+    GlyphTraitPlaceholder,
 };
 
-static const SFGlyphTraits TRAIT_LIST_14[] = {
-    SFGlyphTraitNone,
-    SFGlyphTraitPlaceholder,
-    SFGlyphTraitBase,
-    SFGlyphTraitPlaceholder,
-    SFGlyphTraitLigature,
-    SFGlyphTraitPlaceholder,
-    SFGlyphTraitMark,
-    SFGlyphTraitPlaceholder,
-    SFGlyphTraitComponent,
-    SFGlyphTraitPlaceholder,
+static const GlyphTraits TRAIT_LIST_14[] = {
+    GlyphTraitNone,
+    GlyphTraitPlaceholder,
+    GlyphTraitBase,
+    GlyphTraitPlaceholder,
+    GlyphTraitLigature,
+    GlyphTraitPlaceholder,
+    GlyphTraitMark,
+    GlyphTraitPlaceholder,
+    GlyphTraitComponent,
+    GlyphTraitPlaceholder,
 };
 
-static const SFGlyphTraits TRAIT_LIST_15[] = {
-    SFGlyphTraitNone,
-    SFGlyphTraitBase,
-    SFGlyphTraitBase,
-    SFGlyphTraitLigature,
-    SFGlyphTraitLigature,
-    SFGlyphTraitLigature,
-    SFGlyphTraitMark,
-    SFGlyphTraitMark,
-    SFGlyphTraitMark,
-    SFGlyphTraitMark,
-    SFGlyphTraitComponent,
-    SFGlyphTraitComponent,
-    SFGlyphTraitComponent,
-    SFGlyphTraitComponent,
-    SFGlyphTraitComponent,
-    SFGlyphTraitPlaceholder,
-    SFGlyphTraitPlaceholder,
-    SFGlyphTraitPlaceholder,
-    SFGlyphTraitPlaceholder,
-    SFGlyphTraitPlaceholder,
-    SFGlyphTraitPlaceholder,
+static const GlyphTraits TRAIT_LIST_15[] = {
+    GlyphTraitNone,
+    GlyphTraitBase,
+    GlyphTraitBase,
+    GlyphTraitLigature,
+    GlyphTraitLigature,
+    GlyphTraitLigature,
+    GlyphTraitMark,
+    GlyphTraitMark,
+    GlyphTraitMark,
+    GlyphTraitMark,
+    GlyphTraitComponent,
+    GlyphTraitComponent,
+    GlyphTraitComponent,
+    GlyphTraitComponent,
+    GlyphTraitComponent,
+    GlyphTraitPlaceholder,
+    GlyphTraitPlaceholder,
+    GlyphTraitPlaceholder,
+    GlyphTraitPlaceholder,
+    GlyphTraitPlaceholder,
+    GlyphTraitPlaceholder,
 };
 
-static const SFLookupFlag LOOKUP_FLAG_LIST[] = {
+static const SFUInt16 LOOKUP_FLAG_LIST[] = {
     0,
-    SFLookupFlagIgnoreBaseGlyphs,
-    SFLookupFlagIgnoreLigatures,
-    SFLookupFlagIgnoreMarks,
-    SFLookupFlagIgnoreBaseGlyphs | SFLookupFlagIgnoreLigatures,
-    SFLookupFlagIgnoreBaseGlyphs | SFLookupFlagIgnoreMarks,
-    SFLookupFlagIgnoreLigatures | SFLookupFlagIgnoreMarks,
-    SFLookupFlagIgnoreBaseGlyphs | SFLookupFlagIgnoreLigatures | SFLookupFlagIgnoreMarks,
+    LookupFlagIgnoreBaseGlyphs,
+    LookupFlagIgnoreLigatures,
+    LookupFlagIgnoreMarks,
+    LookupFlagIgnoreBaseGlyphs | LookupFlagIgnoreLigatures,
+    LookupFlagIgnoreBaseGlyphs | LookupFlagIgnoreMarks,
+    LookupFlagIgnoreLigatures | LookupFlagIgnoreMarks,
+    LookupFlagIgnoreBaseGlyphs | LookupFlagIgnoreLigatures | LookupFlagIgnoreMarks,
 };
 
-static SFAlbumRef SFAlbumCreateWithTraits(const SFGlyphTraits *traits, SFUInteger count)
+static SFAlbumRef SFAlbumCreateWithTraits(const GlyphTraits *traits, SFUInteger count)
 {
     SFAlbumRef album = SFAlbumCreate();
     SFAlbumReset(album, &CODEPOINT_HANDLER);
@@ -203,31 +203,31 @@ static SFAlbumRef SFAlbumCreateWithTraits(const SFGlyphTraits *traits, SFUIntege
     return album;
 }
 
-static SFBoolean isIgnored(SFGlyphTraits traits, SFLookupFlag lookupFlag)
+static SFBoolean isIgnored(GlyphTraits traits, SFUInt16 lookupFlag)
 {
-    if (traits & SFGlyphTraitPlaceholder) {
+    if (traits & GlyphTraitPlaceholder) {
         return SFTrue;
     }
 
-    if (lookupFlag & SFLookupFlagIgnoreBaseGlyphs && traits & SFGlyphTraitBase) {
+    if (lookupFlag & LookupFlagIgnoreBaseGlyphs && traits & GlyphTraitBase) {
         return SFTrue;
     }
 
-    if (lookupFlag & SFLookupFlagIgnoreLigatures && traits & SFGlyphTraitLigature) {
+    if (lookupFlag & LookupFlagIgnoreLigatures && traits & GlyphTraitLigature) {
         return SFTrue;
     }
 
-    if (lookupFlag & SFLookupFlagIgnoreMarks && traits & SFGlyphTraitMark) {
+    if (lookupFlag & LookupFlagIgnoreMarks && traits & GlyphTraitMark) {
         return SFTrue;
     }
 
     return SFFalse;
 }
 
-static SFInteger getNext(const SFGlyphTraits *traits, SFInteger count, SFInteger start, SFLookupFlag lookupFlag)
+static SFInteger getNext(const GlyphTraits *traits, SFInteger count, SFInteger start, SFUInt16 lookupFlag)
 {
     for (SFInteger i = start + 1; i < count; i++) {
-        SFGlyphTraits current = traits[i];
+        GlyphTraits current = traits[i];
         if (!isIgnored(current, lookupFlag)) {
             return i;
         }
@@ -236,10 +236,10 @@ static SFInteger getNext(const SFGlyphTraits *traits, SFInteger count, SFInteger
     return -1;
 }
 
-static SFInteger getPrevious(const SFGlyphTraits *traits, SFInteger count, SFInteger start, SFLookupFlag lookupFlag)
+static SFInteger getPrevious(const GlyphTraits *traits, SFInteger count, SFInteger start, SFUInt16 lookupFlag)
 {
     for (SFInteger i = start - 1; i >= 0; i--) {
-        SFGlyphTraits current = traits[i];
+        GlyphTraits current = traits[i];
         if (!isIgnored(current, lookupFlag)) {
             return i;
         }
@@ -248,27 +248,27 @@ static SFInteger getPrevious(const SFGlyphTraits *traits, SFInteger count, SFInt
     return -1;
 }
 
-static void testMoveNext(const SFGlyphTraits *traits, SFInteger count)
+static void testMoveNext(const GlyphTraits *traits, SFInteger count)
 {
     SFAlbumRef album = SFAlbumCreateWithTraits(traits, (SFUInteger)count);
 
-    SFLocator locator;
-    SFLocatorInitialize(&locator, album, NULL);
+    Locator locator;
+    LocatorInitialize(&locator, album, NULL);
 
-    const SFLookupFlag *lookupFlagArray = LOOKUP_FLAG_LIST;
-    SFInteger lookupFlagCount = sizeof(LOOKUP_FLAG_LIST) / sizeof(SFLookupFlag);
+    const SFUInt16 *lookupFlagArray = LOOKUP_FLAG_LIST;
+    SFInteger lookupFlagCount = sizeof(LOOKUP_FLAG_LIST) / sizeof(SFUInt16);
 
     for (SFInteger i = 0; i < lookupFlagCount; i++) {
-        SFLookupFlag lookupFlag = lookupFlagArray[i];
+        SFUInt16 lookupFlag = lookupFlagArray[i];
         SFBoolean hasNext = SFFalse;
         SFInteger start = -1;
 
-        SFLocatorReset(&locator, 0, (SFUInteger)count);
-        SFLocatorSetLookupFlag(&locator, lookupFlag);
+        LocatorReset(&locator, 0, (SFUInteger)count);
+        LocatorSetLookupFlag(&locator, lookupFlag);
 
         while (true) {
             start = getNext(traits, count, start, lookupFlag);
-            hasNext = SFLocatorMoveNext(&locator);
+            hasNext = LocatorMoveNext(&locator);
 
             if (start > -1) {
                 assert(hasNext == SFTrue);
@@ -284,24 +284,24 @@ static void testMoveNext(const SFGlyphTraits *traits, SFInteger count)
     SFAlbumRelease(album);
 }
 
-static void testSkip(const SFGlyphTraits *traits, SFInteger count)
+static void testSkip(const GlyphTraits *traits, SFInteger count)
 {
     SFAlbumRef album = SFAlbumCreateWithTraits(traits, (SFUInteger)count);
 
-    SFLocator locator;
-    SFLocatorInitialize(&locator, album, NULL);
+    Locator locator;
+    LocatorInitialize(&locator, album, NULL);
 
-    const SFLookupFlag *lookupFlagArray = LOOKUP_FLAG_LIST;
-    SFInteger lookupFlagCount = sizeof(LOOKUP_FLAG_LIST) / sizeof(SFLookupFlag);
+    const SFUInt16 *lookupFlagArray = LOOKUP_FLAG_LIST;
+    SFInteger lookupFlagCount = sizeof(LOOKUP_FLAG_LIST) / sizeof(SFUInt16);
 
     for (SFInteger i = 0; i < lookupFlagCount; i++) {
-        SFLookupFlag lookupFlag = lookupFlagArray[i];
+        SFUInt16 lookupFlag = lookupFlagArray[i];
         SFUInteger skipCount = 1;
         SFBoolean hasNext = SFFalse;
         SFInteger start = -1;
 
-        SFLocatorReset(&locator, 0, (SFUInteger)count);
-        SFLocatorSetLookupFlag(&locator, lookupFlag);
+        LocatorReset(&locator, 0, (SFUInteger)count);
+        LocatorSetLookupFlag(&locator, lookupFlag);
 
         while (true) {
             for (SFUInteger j = 0; j < skipCount; j++) {
@@ -310,7 +310,7 @@ static void testSkip(const SFGlyphTraits *traits, SFInteger count)
                     break;
                 }
             }
-            hasNext = SFLocatorSkip(&locator, skipCount);
+            hasNext = LocatorSkip(&locator, skipCount);
 
             if (start > -1) {
                 assert(hasNext == SFTrue);
@@ -328,29 +328,29 @@ static void testSkip(const SFGlyphTraits *traits, SFInteger count)
     SFAlbumRelease(album);
 }
 
-static void testJumpTo(const SFGlyphTraits *traits, SFInteger count)
+static void testJumpTo(const GlyphTraits *traits, SFInteger count)
 {
     SFAlbumRef album = SFAlbumCreateWithTraits(traits, (SFUInteger)count);
 
-    SFLocator locator;
-    SFLocatorInitialize(&locator, album, NULL);
+    Locator locator;
+    LocatorInitialize(&locator, album, NULL);
 
-    const SFLookupFlag *lookupFlagArray = LOOKUP_FLAG_LIST;
-    SFInteger lookupFlagCount = sizeof(LOOKUP_FLAG_LIST) / sizeof(SFLookupFlag);
+    const SFUInt16 *lookupFlagArray = LOOKUP_FLAG_LIST;
+    SFInteger lookupFlagCount = sizeof(LOOKUP_FLAG_LIST) / sizeof(SFUInt16);
 
     for (SFInteger i = 0; i < lookupFlagCount; i++) {
-        SFLookupFlag lookupFlag = lookupFlagArray[i];
+        SFUInt16 lookupFlag = lookupFlagArray[i];
         SFBoolean hasNext = SFFalse;
         SFInteger start = -1;
 
-        SFLocatorReset(&locator, 0, (SFUInteger)count);
-        SFLocatorSetLookupFlag(&locator, lookupFlag);
+        LocatorReset(&locator, 0, (SFUInteger)count);
+        LocatorSetLookupFlag(&locator, lookupFlag);
 
         while (true) {
-            SFLocatorJumpTo(&locator, (SFUInteger)(start + 1));
+            LocatorJumpTo(&locator, (SFUInteger)(start + 1));
 
             start = getNext(traits, count, start, lookupFlag);
-            hasNext = SFLocatorMoveNext(&locator);
+            hasNext = LocatorMoveNext(&locator);
 
             if (start > -1) {
                 assert(hasNext == SFTrue);
@@ -366,26 +366,26 @@ static void testJumpTo(const SFGlyphTraits *traits, SFInteger count)
     SFAlbumRelease(album);
 }
 
-static void testGetAfter(const SFGlyphTraits *traits, SFInteger count)
+static void testGetAfter(const GlyphTraits *traits, SFInteger count)
 {
     SFAlbumRef album = SFAlbumCreateWithTraits(traits, (SFUInteger)count);
 
-    SFLocator locator;
-    SFLocatorInitialize(&locator, album, NULL);
+    Locator locator;
+    LocatorInitialize(&locator, album, NULL);
 
-    const SFLookupFlag *lookupFlagArray = LOOKUP_FLAG_LIST;
-    SFInteger lookupFlagCount = sizeof(LOOKUP_FLAG_LIST) / sizeof(SFLookupFlag);
+    const SFUInt16 *lookupFlagArray = LOOKUP_FLAG_LIST;
+    SFInteger lookupFlagCount = sizeof(LOOKUP_FLAG_LIST) / sizeof(SFUInt16);
 
     for (SFInteger i = 0; i < lookupFlagCount; i++) {
-        SFLookupFlag lookupFlag = lookupFlagArray[i];
+        SFUInt16 lookupFlag = lookupFlagArray[i];
         SFUInteger afterIndex = SFInvalidIndex;
         SFInteger start = 0;
 
-        SFLocatorReset(&locator, 0, (SFUInteger)count);
-        SFLocatorSetLookupFlag(&locator, lookupFlag);
+        LocatorReset(&locator, 0, (SFUInteger)count);
+        LocatorSetLookupFlag(&locator, lookupFlag);
 
         while (true) {
-            afterIndex = SFLocatorGetAfter(&locator, (SFUInteger)start, SFTrue);
+            afterIndex = LocatorGetAfter(&locator, (SFUInteger)start, SFTrue);
             start = getNext(traits, count, start, lookupFlag);
 
             if (start > -1) {
@@ -400,26 +400,26 @@ static void testGetAfter(const SFGlyphTraits *traits, SFInteger count)
     SFAlbumRelease(album);
 }
 
-static void testGetBefore(const SFGlyphTraits *traits, SFInteger count)
+static void testGetBefore(const GlyphTraits *traits, SFInteger count)
 {
     SFAlbumRef album = SFAlbumCreateWithTraits(traits, (SFUInteger)count);
 
-    SFLocator locator;
-    SFLocatorInitialize(&locator, album, NULL);
+    Locator locator;
+    LocatorInitialize(&locator, album, NULL);
 
-    const SFLookupFlag *lookupFlagArray = LOOKUP_FLAG_LIST;
-    SFInteger lookupFlagCount = sizeof(LOOKUP_FLAG_LIST) / sizeof(SFLookupFlag);
+    const SFUInt16 *lookupFlagArray = LOOKUP_FLAG_LIST;
+    SFInteger lookupFlagCount = sizeof(LOOKUP_FLAG_LIST) / sizeof(SFUInt16);
 
     for (SFInteger i = 0; i < lookupFlagCount; i++) {
-        SFLookupFlag lookupFlag = lookupFlagArray[i];
+        SFUInt16 lookupFlag = lookupFlagArray[i];
         SFUInteger beforeIndex = SFInvalidIndex;
         SFInteger start = count - 1;
 
-        SFLocatorReset(&locator, 0, (SFUInteger)count);
-        SFLocatorSetLookupFlag(&locator, lookupFlag);
+        LocatorReset(&locator, 0, (SFUInteger)count);
+        LocatorSetLookupFlag(&locator, lookupFlag);
 
         while (true) {
-            beforeIndex = SFLocatorGetBefore(&locator, (SFUInteger)start, SFTrue);
+            beforeIndex = LocatorGetBefore(&locator, (SFUInteger)start, SFTrue);
             start = getPrevious(traits, count, start, lookupFlag);
 
             if (start > -1) {
@@ -484,117 +484,117 @@ LocatorTester::~LocatorTester()
 
 void LocatorTester::testMoveNext()
 {
-    ::testMoveNext(TRAIT_LIST_1, sizeof(TRAIT_LIST_1) / sizeof(SFGlyphTraits));
-    ::testMoveNext(TRAIT_LIST_2, sizeof(TRAIT_LIST_2) / sizeof(SFGlyphTraits));
-    ::testMoveNext(TRAIT_LIST_3, sizeof(TRAIT_LIST_3) / sizeof(SFGlyphTraits));
-    ::testMoveNext(TRAIT_LIST_4, sizeof(TRAIT_LIST_4) / sizeof(SFGlyphTraits));
-    ::testMoveNext(TRAIT_LIST_5, sizeof(TRAIT_LIST_5) / sizeof(SFGlyphTraits));
-    ::testMoveNext(TRAIT_LIST_6, sizeof(TRAIT_LIST_6) / sizeof(SFGlyphTraits));
-    ::testMoveNext(TRAIT_LIST_7, sizeof(TRAIT_LIST_7) / sizeof(SFGlyphTraits));
-    ::testMoveNext(TRAIT_LIST_8, sizeof(TRAIT_LIST_8) / sizeof(SFGlyphTraits));
-    ::testMoveNext(TRAIT_LIST_9, sizeof(TRAIT_LIST_9) / sizeof(SFGlyphTraits));
-    ::testMoveNext(TRAIT_LIST_10, sizeof(TRAIT_LIST_10) / sizeof(SFGlyphTraits));
-    ::testMoveNext(TRAIT_LIST_11, sizeof(TRAIT_LIST_11) / sizeof(SFGlyphTraits));
-    ::testMoveNext(TRAIT_LIST_12, sizeof(TRAIT_LIST_12) / sizeof(SFGlyphTraits));
-    ::testMoveNext(TRAIT_LIST_13, sizeof(TRAIT_LIST_13) / sizeof(SFGlyphTraits));
-    ::testMoveNext(TRAIT_LIST_14, sizeof(TRAIT_LIST_14) / sizeof(SFGlyphTraits));
-    ::testMoveNext(TRAIT_LIST_15, sizeof(TRAIT_LIST_15) / sizeof(SFGlyphTraits));
+    ::testMoveNext(TRAIT_LIST_1, sizeof(TRAIT_LIST_1) / sizeof(GlyphTraits));
+    ::testMoveNext(TRAIT_LIST_2, sizeof(TRAIT_LIST_2) / sizeof(GlyphTraits));
+    ::testMoveNext(TRAIT_LIST_3, sizeof(TRAIT_LIST_3) / sizeof(GlyphTraits));
+    ::testMoveNext(TRAIT_LIST_4, sizeof(TRAIT_LIST_4) / sizeof(GlyphTraits));
+    ::testMoveNext(TRAIT_LIST_5, sizeof(TRAIT_LIST_5) / sizeof(GlyphTraits));
+    ::testMoveNext(TRAIT_LIST_6, sizeof(TRAIT_LIST_6) / sizeof(GlyphTraits));
+    ::testMoveNext(TRAIT_LIST_7, sizeof(TRAIT_LIST_7) / sizeof(GlyphTraits));
+    ::testMoveNext(TRAIT_LIST_8, sizeof(TRAIT_LIST_8) / sizeof(GlyphTraits));
+    ::testMoveNext(TRAIT_LIST_9, sizeof(TRAIT_LIST_9) / sizeof(GlyphTraits));
+    ::testMoveNext(TRAIT_LIST_10, sizeof(TRAIT_LIST_10) / sizeof(GlyphTraits));
+    ::testMoveNext(TRAIT_LIST_11, sizeof(TRAIT_LIST_11) / sizeof(GlyphTraits));
+    ::testMoveNext(TRAIT_LIST_12, sizeof(TRAIT_LIST_12) / sizeof(GlyphTraits));
+    ::testMoveNext(TRAIT_LIST_13, sizeof(TRAIT_LIST_13) / sizeof(GlyphTraits));
+    ::testMoveNext(TRAIT_LIST_14, sizeof(TRAIT_LIST_14) / sizeof(GlyphTraits));
+    ::testMoveNext(TRAIT_LIST_15, sizeof(TRAIT_LIST_15) / sizeof(GlyphTraits));
 }
 
 void LocatorTester::testSkip()
 {
-    ::testSkip(TRAIT_LIST_1, sizeof(TRAIT_LIST_1) / sizeof(SFGlyphTraits));
-    ::testSkip(TRAIT_LIST_2, sizeof(TRAIT_LIST_2) / sizeof(SFGlyphTraits));
-    ::testSkip(TRAIT_LIST_3, sizeof(TRAIT_LIST_3) / sizeof(SFGlyphTraits));
-    ::testSkip(TRAIT_LIST_4, sizeof(TRAIT_LIST_4) / sizeof(SFGlyphTraits));
-    ::testSkip(TRAIT_LIST_5, sizeof(TRAIT_LIST_5) / sizeof(SFGlyphTraits));
-    ::testSkip(TRAIT_LIST_6, sizeof(TRAIT_LIST_6) / sizeof(SFGlyphTraits));
-    ::testSkip(TRAIT_LIST_7, sizeof(TRAIT_LIST_7) / sizeof(SFGlyphTraits));
-    ::testSkip(TRAIT_LIST_8, sizeof(TRAIT_LIST_8) / sizeof(SFGlyphTraits));
-    ::testSkip(TRAIT_LIST_9, sizeof(TRAIT_LIST_9) / sizeof(SFGlyphTraits));
-    ::testSkip(TRAIT_LIST_10, sizeof(TRAIT_LIST_10) / sizeof(SFGlyphTraits));
-    ::testSkip(TRAIT_LIST_11, sizeof(TRAIT_LIST_11) / sizeof(SFGlyphTraits));
-    ::testSkip(TRAIT_LIST_12, sizeof(TRAIT_LIST_12) / sizeof(SFGlyphTraits));
-    ::testSkip(TRAIT_LIST_13, sizeof(TRAIT_LIST_13) / sizeof(SFGlyphTraits));
-    ::testSkip(TRAIT_LIST_14, sizeof(TRAIT_LIST_14) / sizeof(SFGlyphTraits));
-    ::testSkip(TRAIT_LIST_15, sizeof(TRAIT_LIST_15) / sizeof(SFGlyphTraits));
+    ::testSkip(TRAIT_LIST_1, sizeof(TRAIT_LIST_1) / sizeof(GlyphTraits));
+    ::testSkip(TRAIT_LIST_2, sizeof(TRAIT_LIST_2) / sizeof(GlyphTraits));
+    ::testSkip(TRAIT_LIST_3, sizeof(TRAIT_LIST_3) / sizeof(GlyphTraits));
+    ::testSkip(TRAIT_LIST_4, sizeof(TRAIT_LIST_4) / sizeof(GlyphTraits));
+    ::testSkip(TRAIT_LIST_5, sizeof(TRAIT_LIST_5) / sizeof(GlyphTraits));
+    ::testSkip(TRAIT_LIST_6, sizeof(TRAIT_LIST_6) / sizeof(GlyphTraits));
+    ::testSkip(TRAIT_LIST_7, sizeof(TRAIT_LIST_7) / sizeof(GlyphTraits));
+    ::testSkip(TRAIT_LIST_8, sizeof(TRAIT_LIST_8) / sizeof(GlyphTraits));
+    ::testSkip(TRAIT_LIST_9, sizeof(TRAIT_LIST_9) / sizeof(GlyphTraits));
+    ::testSkip(TRAIT_LIST_10, sizeof(TRAIT_LIST_10) / sizeof(GlyphTraits));
+    ::testSkip(TRAIT_LIST_11, sizeof(TRAIT_LIST_11) / sizeof(GlyphTraits));
+    ::testSkip(TRAIT_LIST_12, sizeof(TRAIT_LIST_12) / sizeof(GlyphTraits));
+    ::testSkip(TRAIT_LIST_13, sizeof(TRAIT_LIST_13) / sizeof(GlyphTraits));
+    ::testSkip(TRAIT_LIST_14, sizeof(TRAIT_LIST_14) / sizeof(GlyphTraits));
+    ::testSkip(TRAIT_LIST_15, sizeof(TRAIT_LIST_15) / sizeof(GlyphTraits));
 }
 
 void LocatorTester::testJumpTo()
 {
-    ::testJumpTo(TRAIT_LIST_1, sizeof(TRAIT_LIST_1) / sizeof(SFGlyphTraits));
-    ::testJumpTo(TRAIT_LIST_2, sizeof(TRAIT_LIST_2) / sizeof(SFGlyphTraits));
-    ::testJumpTo(TRAIT_LIST_3, sizeof(TRAIT_LIST_3) / sizeof(SFGlyphTraits));
-    ::testJumpTo(TRAIT_LIST_4, sizeof(TRAIT_LIST_4) / sizeof(SFGlyphTraits));
-    ::testJumpTo(TRAIT_LIST_5, sizeof(TRAIT_LIST_5) / sizeof(SFGlyphTraits));
-    ::testJumpTo(TRAIT_LIST_6, sizeof(TRAIT_LIST_6) / sizeof(SFGlyphTraits));
-    ::testJumpTo(TRAIT_LIST_7, sizeof(TRAIT_LIST_7) / sizeof(SFGlyphTraits));
-    ::testJumpTo(TRAIT_LIST_8, sizeof(TRAIT_LIST_8) / sizeof(SFGlyphTraits));
-    ::testJumpTo(TRAIT_LIST_9, sizeof(TRAIT_LIST_9) / sizeof(SFGlyphTraits));
-    ::testJumpTo(TRAIT_LIST_10, sizeof(TRAIT_LIST_10) / sizeof(SFGlyphTraits));
-    ::testJumpTo(TRAIT_LIST_11, sizeof(TRAIT_LIST_11) / sizeof(SFGlyphTraits));
-    ::testJumpTo(TRAIT_LIST_12, sizeof(TRAIT_LIST_12) / sizeof(SFGlyphTraits));
-    ::testJumpTo(TRAIT_LIST_13, sizeof(TRAIT_LIST_13) / sizeof(SFGlyphTraits));
-    ::testJumpTo(TRAIT_LIST_14, sizeof(TRAIT_LIST_14) / sizeof(SFGlyphTraits));
-    ::testJumpTo(TRAIT_LIST_15, sizeof(TRAIT_LIST_15) / sizeof(SFGlyphTraits));
+    ::testJumpTo(TRAIT_LIST_1, sizeof(TRAIT_LIST_1) / sizeof(GlyphTraits));
+    ::testJumpTo(TRAIT_LIST_2, sizeof(TRAIT_LIST_2) / sizeof(GlyphTraits));
+    ::testJumpTo(TRAIT_LIST_3, sizeof(TRAIT_LIST_3) / sizeof(GlyphTraits));
+    ::testJumpTo(TRAIT_LIST_4, sizeof(TRAIT_LIST_4) / sizeof(GlyphTraits));
+    ::testJumpTo(TRAIT_LIST_5, sizeof(TRAIT_LIST_5) / sizeof(GlyphTraits));
+    ::testJumpTo(TRAIT_LIST_6, sizeof(TRAIT_LIST_6) / sizeof(GlyphTraits));
+    ::testJumpTo(TRAIT_LIST_7, sizeof(TRAIT_LIST_7) / sizeof(GlyphTraits));
+    ::testJumpTo(TRAIT_LIST_8, sizeof(TRAIT_LIST_8) / sizeof(GlyphTraits));
+    ::testJumpTo(TRAIT_LIST_9, sizeof(TRAIT_LIST_9) / sizeof(GlyphTraits));
+    ::testJumpTo(TRAIT_LIST_10, sizeof(TRAIT_LIST_10) / sizeof(GlyphTraits));
+    ::testJumpTo(TRAIT_LIST_11, sizeof(TRAIT_LIST_11) / sizeof(GlyphTraits));
+    ::testJumpTo(TRAIT_LIST_12, sizeof(TRAIT_LIST_12) / sizeof(GlyphTraits));
+    ::testJumpTo(TRAIT_LIST_13, sizeof(TRAIT_LIST_13) / sizeof(GlyphTraits));
+    ::testJumpTo(TRAIT_LIST_14, sizeof(TRAIT_LIST_14) / sizeof(GlyphTraits));
+    ::testJumpTo(TRAIT_LIST_15, sizeof(TRAIT_LIST_15) / sizeof(GlyphTraits));
 }
 
 void LocatorTester::testGetAfter()
 {
-    ::testGetAfter(TRAIT_LIST_1, sizeof(TRAIT_LIST_1) / sizeof(SFGlyphTraits));
-    ::testGetAfter(TRAIT_LIST_2, sizeof(TRAIT_LIST_2) / sizeof(SFGlyphTraits));
-    ::testGetAfter(TRAIT_LIST_3, sizeof(TRAIT_LIST_3) / sizeof(SFGlyphTraits));
-    ::testGetAfter(TRAIT_LIST_4, sizeof(TRAIT_LIST_4) / sizeof(SFGlyphTraits));
-    ::testGetAfter(TRAIT_LIST_5, sizeof(TRAIT_LIST_5) / sizeof(SFGlyphTraits));
-    ::testGetAfter(TRAIT_LIST_6, sizeof(TRAIT_LIST_6) / sizeof(SFGlyphTraits));
-    ::testGetAfter(TRAIT_LIST_7, sizeof(TRAIT_LIST_7) / sizeof(SFGlyphTraits));
-    ::testGetAfter(TRAIT_LIST_8, sizeof(TRAIT_LIST_8) / sizeof(SFGlyphTraits));
-    ::testGetAfter(TRAIT_LIST_9, sizeof(TRAIT_LIST_9) / sizeof(SFGlyphTraits));
-    ::testGetAfter(TRAIT_LIST_10, sizeof(TRAIT_LIST_10) / sizeof(SFGlyphTraits));
-    ::testGetAfter(TRAIT_LIST_11, sizeof(TRAIT_LIST_11) / sizeof(SFGlyphTraits));
-    ::testGetAfter(TRAIT_LIST_12, sizeof(TRAIT_LIST_12) / sizeof(SFGlyphTraits));
-    ::testGetAfter(TRAIT_LIST_13, sizeof(TRAIT_LIST_13) / sizeof(SFGlyphTraits));
-    ::testGetAfter(TRAIT_LIST_14, sizeof(TRAIT_LIST_14) / sizeof(SFGlyphTraits));
-    ::testGetAfter(TRAIT_LIST_15, sizeof(TRAIT_LIST_15) / sizeof(SFGlyphTraits));
+    ::testGetAfter(TRAIT_LIST_1, sizeof(TRAIT_LIST_1) / sizeof(GlyphTraits));
+    ::testGetAfter(TRAIT_LIST_2, sizeof(TRAIT_LIST_2) / sizeof(GlyphTraits));
+    ::testGetAfter(TRAIT_LIST_3, sizeof(TRAIT_LIST_3) / sizeof(GlyphTraits));
+    ::testGetAfter(TRAIT_LIST_4, sizeof(TRAIT_LIST_4) / sizeof(GlyphTraits));
+    ::testGetAfter(TRAIT_LIST_5, sizeof(TRAIT_LIST_5) / sizeof(GlyphTraits));
+    ::testGetAfter(TRAIT_LIST_6, sizeof(TRAIT_LIST_6) / sizeof(GlyphTraits));
+    ::testGetAfter(TRAIT_LIST_7, sizeof(TRAIT_LIST_7) / sizeof(GlyphTraits));
+    ::testGetAfter(TRAIT_LIST_8, sizeof(TRAIT_LIST_8) / sizeof(GlyphTraits));
+    ::testGetAfter(TRAIT_LIST_9, sizeof(TRAIT_LIST_9) / sizeof(GlyphTraits));
+    ::testGetAfter(TRAIT_LIST_10, sizeof(TRAIT_LIST_10) / sizeof(GlyphTraits));
+    ::testGetAfter(TRAIT_LIST_11, sizeof(TRAIT_LIST_11) / sizeof(GlyphTraits));
+    ::testGetAfter(TRAIT_LIST_12, sizeof(TRAIT_LIST_12) / sizeof(GlyphTraits));
+    ::testGetAfter(TRAIT_LIST_13, sizeof(TRAIT_LIST_13) / sizeof(GlyphTraits));
+    ::testGetAfter(TRAIT_LIST_14, sizeof(TRAIT_LIST_14) / sizeof(GlyphTraits));
+    ::testGetAfter(TRAIT_LIST_15, sizeof(TRAIT_LIST_15) / sizeof(GlyphTraits));
 }
 
 void LocatorTester::testGetBefore()
 {
-    ::testGetBefore(TRAIT_LIST_1, sizeof(TRAIT_LIST_1) / sizeof(SFGlyphTraits));
-    ::testGetBefore(TRAIT_LIST_2, sizeof(TRAIT_LIST_2) / sizeof(SFGlyphTraits));
-    ::testGetBefore(TRAIT_LIST_3, sizeof(TRAIT_LIST_3) / sizeof(SFGlyphTraits));
-    ::testGetBefore(TRAIT_LIST_4, sizeof(TRAIT_LIST_4) / sizeof(SFGlyphTraits));
-    ::testGetBefore(TRAIT_LIST_5, sizeof(TRAIT_LIST_5) / sizeof(SFGlyphTraits));
-    ::testGetBefore(TRAIT_LIST_6, sizeof(TRAIT_LIST_6) / sizeof(SFGlyphTraits));
-    ::testGetBefore(TRAIT_LIST_7, sizeof(TRAIT_LIST_7) / sizeof(SFGlyphTraits));
-    ::testGetBefore(TRAIT_LIST_8, sizeof(TRAIT_LIST_8) / sizeof(SFGlyphTraits));
-    ::testGetBefore(TRAIT_LIST_9, sizeof(TRAIT_LIST_9) / sizeof(SFGlyphTraits));
-    ::testGetBefore(TRAIT_LIST_10, sizeof(TRAIT_LIST_10) / sizeof(SFGlyphTraits));
-    ::testGetBefore(TRAIT_LIST_11, sizeof(TRAIT_LIST_11) / sizeof(SFGlyphTraits));
-    ::testGetBefore(TRAIT_LIST_12, sizeof(TRAIT_LIST_12) / sizeof(SFGlyphTraits));
-    ::testGetBefore(TRAIT_LIST_13, sizeof(TRAIT_LIST_13) / sizeof(SFGlyphTraits));
-    ::testGetBefore(TRAIT_LIST_14, sizeof(TRAIT_LIST_14) / sizeof(SFGlyphTraits));
-    ::testGetBefore(TRAIT_LIST_15, sizeof(TRAIT_LIST_15) / sizeof(SFGlyphTraits));
+    ::testGetBefore(TRAIT_LIST_1, sizeof(TRAIT_LIST_1) / sizeof(GlyphTraits));
+    ::testGetBefore(TRAIT_LIST_2, sizeof(TRAIT_LIST_2) / sizeof(GlyphTraits));
+    ::testGetBefore(TRAIT_LIST_3, sizeof(TRAIT_LIST_3) / sizeof(GlyphTraits));
+    ::testGetBefore(TRAIT_LIST_4, sizeof(TRAIT_LIST_4) / sizeof(GlyphTraits));
+    ::testGetBefore(TRAIT_LIST_5, sizeof(TRAIT_LIST_5) / sizeof(GlyphTraits));
+    ::testGetBefore(TRAIT_LIST_6, sizeof(TRAIT_LIST_6) / sizeof(GlyphTraits));
+    ::testGetBefore(TRAIT_LIST_7, sizeof(TRAIT_LIST_7) / sizeof(GlyphTraits));
+    ::testGetBefore(TRAIT_LIST_8, sizeof(TRAIT_LIST_8) / sizeof(GlyphTraits));
+    ::testGetBefore(TRAIT_LIST_9, sizeof(TRAIT_LIST_9) / sizeof(GlyphTraits));
+    ::testGetBefore(TRAIT_LIST_10, sizeof(TRAIT_LIST_10) / sizeof(GlyphTraits));
+    ::testGetBefore(TRAIT_LIST_11, sizeof(TRAIT_LIST_11) / sizeof(GlyphTraits));
+    ::testGetBefore(TRAIT_LIST_12, sizeof(TRAIT_LIST_12) / sizeof(GlyphTraits));
+    ::testGetBefore(TRAIT_LIST_13, sizeof(TRAIT_LIST_13) / sizeof(GlyphTraits));
+    ::testGetBefore(TRAIT_LIST_14, sizeof(TRAIT_LIST_14) / sizeof(GlyphTraits));
+    ::testGetBefore(TRAIT_LIST_15, sizeof(TRAIT_LIST_15) / sizeof(GlyphTraits));
 }
 
 void LocatorTester::testMarkFilteringSet()
 {
     const int count = 10;
-    SFGlyphTraits traits[count];
+    GlyphTraits traits[count];
     for (int i = 0; i < count; i++) {
-        traits[i] = SFGlyphTraitMark;
+        traits[i] = GlyphTraitMark;
     }
 
     SFAlbumRef album = SFAlbumCreateWithTraits(traits, (SFUInteger)count);
 
-    SFLocator locator;
-    SFLocatorInitialize(&locator, album, m_gdef);
-    SFLocatorReset(&locator, 0, (SFUInteger)count);
-    SFLocatorSetLookupFlag(&locator, SFLookupFlagUseMarkFilteringSet);
-    SFLocatorSetMarkFilteringSet(&locator, 0);
+    Locator locator;
+    LocatorInitialize(&locator, album, m_gdef);
+    LocatorReset(&locator, 0, (SFUInteger)count);
+    LocatorSetLookupFlag(&locator, LookupFlagUseMarkFilteringSet);
+    LocatorSetMarkFilteringSet(&locator, 0);
 
     /* Zero mark filtering set contains even glyphs, so we should get only those. */
-    while (SFLocatorMoveNext(&locator)) {
+    while (LocatorMoveNext(&locator)) {
         SFGlyphID glyph = SFAlbumGetGlyph(album, locator.index);
         assert((glyph % 2) == 0);
     }
@@ -605,20 +605,20 @@ void LocatorTester::testMarkFilteringSet()
 void LocatorTester::testMarkAttachmentType()
 {
     const int count = 10;
-    SFGlyphTraits traits[count];
+    GlyphTraits traits[count];
     for (int i = 0; i < count; i++) {
-        traits[i] = SFGlyphTraitMark;
+        traits[i] = GlyphTraitMark;
     }
 
     SFAlbumRef album = SFAlbumCreateWithTraits(traits, (SFUInteger)count);
 
-    SFLocator locator;
-    SFLocatorInitialize(&locator, album, m_gdef);
-    SFLocatorReset(&locator, 0, (SFUInteger)count);
-    SFLocatorSetLookupFlag(&locator, 0x0100);
+    Locator locator;
+    LocatorInitialize(&locator, album, m_gdef);
+    LocatorReset(&locator, 0, (SFUInteger)count);
+    LocatorSetLookupFlag(&locator, 0x0100);
 
     /* Class 1 contains odd glyphs, so we should get only those. */
-    while (SFLocatorMoveNext(&locator)) {
+    while (LocatorMoveNext(&locator)) {
         SFGlyphID glyph = SFAlbumGetGlyph(album, locator.index);
         assert((glyph % 2) == 1);
     }

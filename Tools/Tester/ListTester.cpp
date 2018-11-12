@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Muhammad Tayyab Akram
+ * Copyright (C) 2016-2018 Muhammad Tayyab Akram
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +19,7 @@
 #include <cstring>
 
 extern "C" {
-#include <Source/SFList.h>
+#include <Source/List.h>
 }
 
 #include "ListTester.h"
@@ -32,8 +32,8 @@ ListTester::ListTester()
 
 void ListTester::testInitialize()
 {
-    SF_LIST(SFInteger) list;
-    SFListInitialize(&list, sizeof(SFInteger));
+    LIST(SFInteger) list;
+    ListInitialize(&list, sizeof(SFInteger));
 
     assert(list.items == NULL);
     assert(list.count == 0);
@@ -42,41 +42,41 @@ void ListTester::testInitialize()
 
 void ListTester::testSetCapacity()
 {
-    SF_LIST(SFInteger) list;
-    SFListInitialize(&list, sizeof(SFInteger));
+    LIST(SFInteger) list;
+    ListInitialize(&list, sizeof(SFInteger));
 
     /* Test by setting a finite capacity. */
-    SFListSetCapacity(&list, 1024);
+    ListSetCapacity(&list, 1024);
     assert(list.capacity == 1024);
 
     /* Test by setting zero capacity. */
-    SFListSetCapacity(&list, 0);
+    ListSetCapacity(&list, 0);
     assert(list.capacity == 0);
 
-    SFListFinalize(&list);
+    ListFinalize(&list);
 }
 
 void ListTester::testReserveRange()
 {
-    SF_LIST(SFInteger) list;
-    SFListInitialize(&list, sizeof(SFInteger));
+    LIST(SFInteger) list;
+    ListInitialize(&list, sizeof(SFInteger));
 
     /* Test by reserving some items. */
-    SFListReserveRange(&list, 0, 10);
+    ListReserveRange(&list, 0, 10);
     assert(list.count == 10);
 
     /* Test by reserving items at the end of the list. */
-    SFListSetVal(&list, 0, 100);
-    SFListSetVal(&list, 9, 200);
-    SFListReserveRange(&list, 10, 5);
+    ListSetVal(&list, 0, 100);
+    ListSetVal(&list, 9, 200);
+    ListReserveRange(&list, 10, 5);
     assert(list.count == 15);
     assert(list.items[0] == 100);
     assert(list.items[9] == 200);
 
     /* Test by reserving items at the center of the list. */
-    SFListSetVal(&list, 4, 300);
-    SFListSetVal(&list, 5, 400);
-    SFListReserveRange(&list, 5, 5);
+    ListSetVal(&list, 4, 300);
+    ListSetVal(&list, 5, 400);
+    ListReserveRange(&list, 5, 5);
     assert(list.count == 20);
     assert(list.items[0] == 100);
     assert(list.items[4] == 300);
@@ -84,8 +84,8 @@ void ListTester::testReserveRange()
     assert(list.items[14] == 200);
 
     /* Test by reserving items at the start of the list. */
-    SFListSetVal(&list, 19, 500);
-    SFListReserveRange(&list, 0, 5);
+    ListSetVal(&list, 19, 500);
+    ListReserveRange(&list, 0, 5);
     assert(list.count == 25);
     assert(list.items[5] == 100);
     assert(list.items[9] == 300);
@@ -93,57 +93,57 @@ void ListTester::testReserveRange()
     assert(list.items[19] == 200);
     assert(list.items[24] == 500);
 
-    SFListFinalize(&list);
+    ListFinalize(&list);
 }
 
 void ListTester::testAdd()
 {
-    SF_LIST(SFInteger) list;
-    SFListInitialize(&list, sizeof(SFInteger));
+    LIST(SFInteger) list;
+    ListInitialize(&list, sizeof(SFInteger));
 
-    SFListAdd(&list, 100);
-    SFListAdd(&list, 200);
-    SFListAdd(&list, 300);
-    SFListAdd(&list, 400);
-    SFListAdd(&list, 500);
+    ListAdd(&list, 100);
+    ListAdd(&list, 200);
+    ListAdd(&list, 300);
+    ListAdd(&list, 400);
+    ListAdd(&list, 500);
 
     SFInteger expected[] = { 100, 200, 300, 400, 500 };
     assert(memcmp(list.items, expected, sizeof(expected)) == 0);
 
-    SFListFinalize(&list);
+    ListFinalize(&list);
 }
 
 void ListTester::testInsert()
 {
-    SF_LIST(SFInteger) list;
-    SFListInitialize(&list, sizeof(SFInteger));
+    LIST(SFInteger) list;
+    ListInitialize(&list, sizeof(SFInteger));
 
-    SFListInsert(&list, 0, 100);
-    SFListInsert(&list, 0, 200);
-    SFListInsert(&list, 0, 300);
-    SFListInsert(&list, 0, 400);
-    SFListInsert(&list, 0, 500);
+    ListInsert(&list, 0, 100);
+    ListInsert(&list, 0, 200);
+    ListInsert(&list, 0, 300);
+    ListInsert(&list, 0, 400);
+    ListInsert(&list, 0, 500);
 
     SFInteger expected[] = { 500, 400, 300, 200, 100 };
     assert(memcmp(list.items, expected, sizeof(expected)) == 0);
 
-    SFListFinalize(&list);
+    ListFinalize(&list);
 }
 
 void ListTester::testRemoveAt()
 {
-    SF_LIST(SFInteger) list;
-    SFListInitialize(&list, sizeof(SFInteger));
+    LIST(SFInteger) list;
+    ListInitialize(&list, sizeof(SFInteger));
 
-    SFListReserveRange(&list, 0, 5);
-    SFListSetVal(&list, 0, 100);
-    SFListSetVal(&list, 1, 200);
-    SFListSetVal(&list, 2, 300);
-    SFListSetVal(&list, 3, 400);
-    SFListSetVal(&list, 4, 500);
+    ListReserveRange(&list, 0, 5);
+    ListSetVal(&list, 0, 100);
+    ListSetVal(&list, 1, 200);
+    ListSetVal(&list, 2, 300);
+    ListSetVal(&list, 3, 400);
+    ListSetVal(&list, 4, 500);
 
     /* Test by removing last item. */
-    SFListRemoveAt(&list, 4);
+    ListRemoveAt(&list, 4);
     assert(list.count == 4);
     assert(list.items[0] == 100);
     assert(list.items[1] == 200);
@@ -151,39 +151,39 @@ void ListTester::testRemoveAt()
     assert(list.items[3] == 400);
 
     /* Test by removing middle item. */
-    SFListRemoveAt(&list, 2);
+    ListRemoveAt(&list, 2);
     assert(list.count == 3);
     assert(list.items[0] == 100);
     assert(list.items[1] == 200);
     assert(list.items[2] == 400);
 
     /* Test by removing first item. */
-    SFListRemoveAt(&list, 0);
+    ListRemoveAt(&list, 0);
     assert(list.count == 2);
     assert(list.items[0] == 200);
     assert(list.items[1] == 400);
 
-    SFListFinalize(&list);
+    ListFinalize(&list);
 }
 
 void ListTester::testRemoveRange()
 {
-    SF_LIST(SFInteger) list;
-    SFListInitialize(&list, sizeof(SFInteger));
-    SFListReserveRange(&list, 0, 25);
+    LIST(SFInteger) list;
+    ListInitialize(&list, sizeof(SFInteger));
+    ListReserveRange(&list, 0, 25);
 
     /* Test by removing items at the end of the list. */
-    SFListSetVal(&list, 0, 100);
-    SFListSetVal(&list, 19, 200);
-    SFListRemoveRange(&list, 20, 5);
+    ListSetVal(&list, 0, 100);
+    ListSetVal(&list, 19, 200);
+    ListRemoveRange(&list, 20, 5);
     assert(list.count == 20);
     assert(list.items[0] == 100);
     assert(list.items[19] == 200);
 
     /* Test by removing items at the center of the list. */
-    SFListSetVal(&list, 9, 300);
-    SFListSetVal(&list, 15, 400);
-    SFListRemoveRange(&list, 10, 5);
+    ListSetVal(&list, 9, 300);
+    ListSetVal(&list, 15, 400);
+    ListRemoveRange(&list, 10, 5);
     assert(list.count == 15);
     assert(list.items[0] == 100);
     assert(list.items[9] == 300);
@@ -191,8 +191,8 @@ void ListTester::testRemoveRange()
     assert(list.items[14] == 200);
 
     /* Test by removing items at the start of the list. */
-    SFListSetVal(&list, 5, 500);
-    SFListRemoveRange(&list, 0, 5);
+    ListSetVal(&list, 5, 500);
+    ListRemoveRange(&list, 0, 5);
     assert(list.count == 10);
     assert(list.items[0] == 500);
     assert(list.items[4] == 300);
@@ -200,102 +200,102 @@ void ListTester::testRemoveRange()
     assert(list.items[9] == 200);
 
     /* Test by removing all items. */
-    SFListRemoveRange(&list, 0, 10);
+    ListRemoveRange(&list, 0, 10);
     assert(list.count == 0);
 
-    SFListFinalize(&list);
+    ListFinalize(&list);
 }
 
 void ListTester::testClear()
 {
-    SF_LIST(SFInteger) list;
-    SFListInitialize(&list, sizeof(SFInteger));
+    LIST(SFInteger) list;
+    ListInitialize(&list, sizeof(SFInteger));
 
-    SFListReserveRange(&list, 0, 5);
-    SFListSetVal(&list, 0, 100);
-    SFListSetVal(&list, 1, 200);
-    SFListSetVal(&list, 2, 300);
-    SFListSetVal(&list, 3, 400);
-    SFListSetVal(&list, 4, 500);
+    ListReserveRange(&list, 0, 5);
+    ListSetVal(&list, 0, 100);
+    ListSetVal(&list, 1, 200);
+    ListSetVal(&list, 2, 300);
+    ListSetVal(&list, 3, 400);
+    ListSetVal(&list, 4, 500);
 
-    SFListClear(&list);
+    ListClear(&list);
     assert(list.count == 0);
 
-    SFListFinalize(&list);
+    ListFinalize(&list);
 }
 
 void ListTester::testTrimExcess()
 {
-    SF_LIST(SFInteger) list;
-    SFListInitialize(&list, sizeof(SFInteger));
-    SFListSetCapacity(&list, 1024);
+    LIST(SFInteger) list;
+    ListInitialize(&list, sizeof(SFInteger));
+    ListSetCapacity(&list, 1024);
 
-    SFListReserveRange(&list, 0, 5);
-    SFListSetVal(&list, 0, 100);
-    SFListSetVal(&list, 1, 200);
-    SFListSetVal(&list, 2, 300);
-    SFListSetVal(&list, 3, 400);
-    SFListSetVal(&list, 4, 500);
+    ListReserveRange(&list, 0, 5);
+    ListSetVal(&list, 0, 100);
+    ListSetVal(&list, 1, 200);
+    ListSetVal(&list, 2, 300);
+    ListSetVal(&list, 3, 400);
+    ListSetVal(&list, 4, 500);
 
-    SFListTrimExcess(&list);
+    ListTrimExcess(&list);
     assert(list.capacity == 5);
 
-    SFListFinalize(&list);
+    ListFinalize(&list);
 }
 
 void ListTester::testIndexOfItem()
 {
-    SF_LIST(SFInteger) list;
+    LIST(SFInteger) list;
     SFInteger item;
     SFUInteger index;
 
-    SFListInitialize(&list, sizeof(SFInteger));
+    ListInitialize(&list, sizeof(SFInteger));
 
-    SFListAdd(&list, -500);
-    SFListAdd(&list, -400);
-    SFListAdd(&list, -300);
-    SFListAdd(&list, -200);
-    SFListAdd(&list, -100);
-    SFListAdd(&list, 0);
-    SFListAdd(&list, 100);
-    SFListAdd(&list, 200);
-    SFListAdd(&list, 300);
-    SFListAdd(&list, 400);
-    SFListAdd(&list, 500);
+    ListAdd(&list, -500);
+    ListAdd(&list, -400);
+    ListAdd(&list, -300);
+    ListAdd(&list, -200);
+    ListAdd(&list, -100);
+    ListAdd(&list, 0);
+    ListAdd(&list, 100);
+    ListAdd(&list, 200);
+    ListAdd(&list, 300);
+    ListAdd(&list, 400);
+    ListAdd(&list, 500);
 
     /* Test extreme entries in whole list. */
     item = -500;
-    index = SFListIndexOfItem(&list, &item, 0, list.count);
+    index = ListIndexOfItem(&list, &item, 0, list.count);
     assert(index == 0);
 
     item = 500;
-    index = SFListIndexOfItem(&list, &item, 0, list.count);
+    index = ListIndexOfItem(&list, &item, 0, list.count);
     assert(index == 10);
 
     /* Test a valid entry in a range. */
     item = 0;
-    index = SFListIndexOfItem(&list, &item, 5, 1);
+    index = ListIndexOfItem(&list, &item, 5, 1);
     assert(index == 5);
 
     /* Test invalid entries in whole list. */
     item = -700;
-    index = SFListIndexOfItem(&list, &item, 0, list.count);
+    index = ListIndexOfItem(&list, &item, 0, list.count);
     assert(index == SFInvalidIndex);
 
     item = 700;
-    index = SFListIndexOfItem(&list, &item, 0, list.count);
+    index = ListIndexOfItem(&list, &item, 0, list.count);
     assert(index == SFInvalidIndex);
 
     /* Test valid entries not in provided range. */
     item = -300;
-    index = SFListIndexOfItem(&list, &item, 0, 2);
+    index = ListIndexOfItem(&list, &item, 0, 2);
     assert(index == SFInvalidIndex);
 
     item = 300;
-    index = SFListIndexOfItem(&list, &item, 9, 2);
+    index = ListIndexOfItem(&list, &item, 9, 2);
     assert(index == SFInvalidIndex);
 
-    SFListFinalize(&list);
+    ListFinalize(&list);
 }
 
 static int SFIntegerComparison(const void *item1, const void *item2)
@@ -308,22 +308,22 @@ static int SFIntegerComparison(const void *item1, const void *item2)
 
 void ListTester::testSort()
 {
-    SF_LIST(SFInteger) list;
-    SFListInitialize(&list, sizeof(SFInteger));
+    LIST(SFInteger) list;
+    ListInitialize(&list, sizeof(SFInteger));
 
-    SFListAdd(&list, 300);
-    SFListAdd(&list, -100);
-    SFListAdd(&list, -500);
-    SFListAdd(&list, 400);
-    SFListAdd(&list, -300);
-    SFListAdd(&list, 0);
-    SFListAdd(&list, 500);
-    SFListAdd(&list, 200);
-    SFListAdd(&list, -200);
-    SFListAdd(&list, 100);
-    SFListAdd(&list, -400);
+    ListAdd(&list, 300);
+    ListAdd(&list, -100);
+    ListAdd(&list, -500);
+    ListAdd(&list, 400);
+    ListAdd(&list, -300);
+    ListAdd(&list, 0);
+    ListAdd(&list, 500);
+    ListAdd(&list, 200);
+    ListAdd(&list, -200);
+    ListAdd(&list, 100);
+    ListAdd(&list, -400);
 
-    SFListSort(&list, 0, list.count, SFIntegerComparison);
+    ListSort(&list, 0, list.count, SFIntegerComparison);
 
     assert(list.items[0] == -500);
     assert(list.items[1] == -400);

@@ -18,7 +18,7 @@
 #include <vector>
 
 extern "C" {
-#include <Source/SFOpenType.h>
+#include <Source/OpenType.h>
 }
 
 #include "OpenType/Builder.h"
@@ -44,24 +44,24 @@ void MiscTester::testDevicePixels()
         Writer writer;
         writer.write(device);
 
-        SFData data = writer.data();
+        Data data = writer.data();
 
         /* Test with out of range values. */
-        assert(SFOpenTypeGetDevicePixels(data, 10) == 0);
-        assert(SFOpenTypeGetDevicePixels(data, 23) == 0);
+        assert(GetDevicePixels(data, 10) == 0);
+        assert(GetDevicePixels(data, 23) == 0);
         /* Test with inside the range values. */
-        assert(SFOpenTypeGetDevicePixels(data, 11) == -2);
-        assert(SFOpenTypeGetDevicePixels(data, 12) == 1);
-        assert(SFOpenTypeGetDevicePixels(data, 13) == -1);
-        assert(SFOpenTypeGetDevicePixels(data, 14) == 0);
-        assert(SFOpenTypeGetDevicePixels(data, 15) == 1);
-        assert(SFOpenTypeGetDevicePixels(data, 16) == 0);
-        assert(SFOpenTypeGetDevicePixels(data, 17) == -2);
-        assert(SFOpenTypeGetDevicePixels(data, 18) == -1);
-        assert(SFOpenTypeGetDevicePixels(data, 19) == 0);
-        assert(SFOpenTypeGetDevicePixels(data, 20) == 1);
-        assert(SFOpenTypeGetDevicePixels(data, 21) == -1);
-        assert(SFOpenTypeGetDevicePixels(data, 22) == -2);
+        assert(GetDevicePixels(data, 11) == -2);
+        assert(GetDevicePixels(data, 12) == 1);
+        assert(GetDevicePixels(data, 13) == -1);
+        assert(GetDevicePixels(data, 14) == 0);
+        assert(GetDevicePixels(data, 15) == 1);
+        assert(GetDevicePixels(data, 16) == 0);
+        assert(GetDevicePixels(data, 17) == -2);
+        assert(GetDevicePixels(data, 18) == -1);
+        assert(GetDevicePixels(data, 19) == 0);
+        assert(GetDevicePixels(data, 20) == 1);
+        assert(GetDevicePixels(data, 21) == -1);
+        assert(GetDevicePixels(data, 22) == -2);
     }
 
     /* Test the second format. */
@@ -71,18 +71,18 @@ void MiscTester::testDevicePixels()
         Writer writer;
         writer.write(device);
 
-        SFData data = writer.data();
+        Data data = writer.data();
 
         /* Test with out of range values. */
-        assert(SFOpenTypeGetDevicePixels(data, 10) == 0);
-        assert(SFOpenTypeGetDevicePixels(data, 17) == 0);
+        assert(GetDevicePixels(data, 10) == 0);
+        assert(GetDevicePixels(data, 17) == 0);
         /* Test with inside the range values. */
-        assert(SFOpenTypeGetDevicePixels(data, 11) == -8);
-        assert(SFOpenTypeGetDevicePixels(data, 12) == 0);
-        assert(SFOpenTypeGetDevicePixels(data, 13) == 7);
-        assert(SFOpenTypeGetDevicePixels(data, 14) == 1);
-        assert(SFOpenTypeGetDevicePixels(data, 15) == -1);
-        assert(SFOpenTypeGetDevicePixels(data, 16) == -7);
+        assert(GetDevicePixels(data, 11) == -8);
+        assert(GetDevicePixels(data, 12) == 0);
+        assert(GetDevicePixels(data, 13) == 7);
+        assert(GetDevicePixels(data, 14) == 1);
+        assert(GetDevicePixels(data, 15) == -1);
+        assert(GetDevicePixels(data, 16) == -7);
     }
 
     /* Test the third format. */
@@ -92,15 +92,15 @@ void MiscTester::testDevicePixels()
         Writer writer;
         writer.write(device);
 
-        SFData data = writer.data();
+        Data data = writer.data();
 
         /* Test with out of range values. */
-        assert(SFOpenTypeGetDevicePixels(data, 10) == 0);
-        assert(SFOpenTypeGetDevicePixels(data, 14) == 0);
+        assert(GetDevicePixels(data, 10) == 0);
+        assert(GetDevicePixels(data, 14) == 0);
         /* Test with inside the range values. */
-        assert(SFOpenTypeGetDevicePixels(data, 11) == -128);
-        assert(SFOpenTypeGetDevicePixels(data, 12) == 0);
-        assert(SFOpenTypeGetDevicePixels(data, 13) == 127);
+        assert(GetDevicePixels(data, 11) == -128);
+        assert(GetDevicePixels(data, 12) == 0);
+        assert(GetDevicePixels(data, 13) == 127);
     }
 }
 
