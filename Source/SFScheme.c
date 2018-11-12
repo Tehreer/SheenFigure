@@ -19,90 +19,14 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "SFBase.h"
 #include "Common.h"
+#include "OpenType.h"
+#include "UnifiedEngine.h"
+#include "SFBase.h"
 #include "SFFont.h"
 #include "SFPatternBuilder.h"
 #include "SFPattern.h"
-#include "UnifiedEngine.h"
 #include "SFScheme.h"
-
-static Data SearchScriptTable(Data scriptListTable, SFTag scriptTag)
-{
-    Data scriptTable = NULL;
-    SFUInt16 scriptCount;
-    SFUInt16 index;
-
-    scriptCount = ScriptList_ScriptCount(scriptListTable);
-
-    for (index = 0; index < scriptCount; index++) {
-        Data scriptRecord = ScriptList_ScriptRecord(scriptListTable, index);
-        SFTag scriptRecTag = ScriptRecord_ScriptTag(scriptRecord);
-        SFOffset scriptOffset;
-
-        if (scriptRecTag == scriptTag) {
-            scriptOffset = ScriptRecord_ScriptOffset(scriptRecord);
-            scriptTable = Data_Subdata(scriptListTable, scriptOffset);
-            break;
-        }
-    }
-
-    return scriptTable;
-}
-
-static Data SearchLangSysTable(Data scriptTable, SFTag languageTag)
-{
-    Data langSysTable = NULL;
-
-    if (languageTag == SFTagMake('d', 'f', 'l', 't')) {
-        SFOffset langSysOffset = Script_DefaultLangSysOffset(scriptTable);
-
-        if (langSysOffset) {
-            langSysTable = Data_Subdata(scriptTable, langSysOffset);
-        }
-    } else {
-        SFUInt16 langSysCount = Script_LangSysCount(scriptTable);
-        SFUInt16 index;
-
-        for (index = 0; index < langSysCount; index++) {
-            Data langSysRecord = Script_LangSysRecord(scriptTable, index);
-            SFTag langSysTag = LangSysRecord_LangSysTag(langSysRecord);
-            SFOffset langSysOffset;
-
-            if (langSysTag == languageTag) {
-                langSysOffset = LangSysRecord_LangSysOffset(langSysRecord);
-                langSysTable = Data_Subdata(scriptTable, langSysOffset);
-                break;
-            }
-        }
-    }
-
-    return langSysTable;
-}
-
-static Data SearchFeatureTable(Data langSysTable, Data featureListTable, SFTag featureTag)
-{
-    Data featureTable = NULL;
-    SFUInt16 featureCount;
-    SFUInt16 index;
-
-    featureCount = LangSys_FeatureCount(langSysTable);
-
-    for (index = 0; index < featureCount; index++) {
-        SFUInt16 featureIndex = LangSys_FeatureIndex(langSysTable, index);
-        Data featureRecord = FeatureList_FeatureRecord(featureListTable, featureIndex);
-        SFTag featureRecTag = FeatureRecord_FeatureTag(featureRecord);
-        SFOffset featureOffset;
-
-        if (featureRecTag == featureTag) {
-            featureOffset = FeatureRecord_FeatureOffset(featureRecord);
-            featureTable = Data_Subdata(featureListTable, featureOffset);
-            break;
-        }
-    }
-
-    return featureTable;
-}
 
 static void AddFeatureLookups(SFPatternBuilderRef patternBuilder, Data featureTable)
 {
