@@ -16,12 +16,12 @@
 
 #include <SFConfig.h>
 
-#include "SFArabicEngine.h"
+#include "ArabicEngine.h"
 #include "SFArtist.h"
-#include "SFShapingKnowledge.h"
-#include "SFSimpleEngine.h"
-#include "SFStandardEngine.h"
-#include "SFUnifiedEngine.h"
+#include "ShapingKnowledge.h"
+#include "SimpleEngine.h"
+#include "StandardEngine.h"
+#include "UnifiedEngine.h"
 
 static ScriptKnowledgeRef UnifiedKnowledgeSeekScript(const void *object, SFTag scriptTag);
 

@@ -22,7 +22,7 @@
 
 #include "SFBase.h"
 #include "SFCodepoints.h"
-#include "SFList.h"
+#include "List.h"
 
 typedef enum {
     AlbumStateEmpty,

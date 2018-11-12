@@ -20,15 +20,15 @@
 
 #include "SFAssert.h"
 #include "SFBase.h"
-#include "SFCommon.h"
-#include "SFData.h"
-#include "SFGPOS.h"
-#include "SFLocator.h"
-#include "SFOpenType.h"
+#include "Common.h"
+#include "Data.h"
+#include "GPOS.h"
+#include "Locator.h"
+#include "OpenType.h"
 
-#include "SFGlyphManipulation.h"
-#include "SFGlyphPositioning.h"
-#include "SFTextProcessor.h"
+#include "GlyphManipulation.h"
+#include "GlyphPositioning.h"
+#include "TextProcessor.h"
 
 static SFBoolean ApplyPairPosF1(TextProcessorRef textProcessor, Data pairPos,
     SFUInteger firstIndex, SFUInteger secondIndex, SFBoolean *outShouldSkip);

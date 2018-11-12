@@ -21,7 +21,7 @@
 
 #include "SFArtist.h"
 #include "SFBase.h"
-#include "SFList.h"
+#include "List.h"
 #include "SFPattern.h"
 
 /**

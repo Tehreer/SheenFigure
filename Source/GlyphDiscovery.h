@@ -14,23 +14,16 @@
  * limitations under the License.
  */
 
-#ifndef _SF_INTERNAL_OPEN_TYPE_H
-#define _SF_INTERNAL_OPEN_TYPE_H
+#ifndef _SF_INTERNAL_GLYPH_DISCOVERY_H
+#define _SF_INTERNAL_GLYPH_DISCOVERY_H
 
 #include <SFConfig.h>
 
+#include "SFAlbum.h"
 #include "SFBase.h"
-#include "SFData.h"
+#include "TextProcessor.h"
 
-SF_INTERNAL SFUInteger SearchCoverageIndex(Data coverageTable, SFGlyphID glyphID);
-SF_INTERNAL SFUInt16 SearchGlyphClass(Data classDefTable, SFGlyphID glyphID);
-
-SF_INTERNAL SFInt32 GetDevicePixels(Data deviceTable, SFUInt16 ppemSize);
-SF_INTERNAL SFInt32 GetVariationPixels(Data varIndexTable, Data varStoreTable,
-    SFInt32 *coordArray, SFUInteger coordCount);
-
-SF_INTERNAL Data SearchFeatureSubstitutionTable(Data featureVarsTable,
-    SFInt32 *coordArray, SFUInteger coordCount);
-SF_INTERNAL Data SearchAlternateFeatureTable(Data featureSubstTable, SFUInt16 featureIndex);
+SF_PRIVATE GlyphTraits GetGlyphTraits(TextProcessorRef textProcessor, SFGlyphID glyph);
+SF_PRIVATE void DiscoverGlyphs(TextProcessorRef textProcessor);
 
 #endif

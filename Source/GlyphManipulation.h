@@ -14,18 +14,18 @@
  * limitations under the License.
  */
 
+#ifndef _SF_INTERNAL_GLYPH_MANIPULATION_H
+#define _SF_INTERNAL_GLYPH_MANIPULATION_H
+
 #include <SFConfig.h>
 
-#include <stddef.h>
+#include "Data.h"
+#include "SFPattern.h"
+#include "TextProcessor.h"
 
-#include "SFAlbum.h"
-#include "SFAssert.h"
-#include "SFShapingEngine.h"
+SF_PRIVATE SFBoolean ApplyContextSubtable(TextProcessorRef textProcessor, Data contextSubtable);
+SF_PRIVATE SFBoolean ApplyChainContextSubtable(TextProcessorRef textProcessor, Data chainContextSubtable);
+SF_PRIVATE SFBoolean ApplyExtensionSubtable(TextProcessorRef textProcessor, Data extensionSubtable);
+SF_PRIVATE SFBoolean ApplyReverseChainSubst(TextProcessorRef textProcessor, Data reverseChain);
 
-SF_INTERNAL void ShapingEngineProcessAlbum(ShapingEngineRef shapingEngine, SFAlbumRef album)
-{
-    /* The function must be implemented by the concrete instance. */
-    SFAssert(shapingEngine->_processAlbum != NULL);
-
-    (*shapingEngine->_processAlbum)(shapingEngine, album);
-}
+#endif

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2018 Muhammad Tayyab Akram
+ * Copyright (C) 2016-2018 Muhammad Tayyab Akram
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,22 +14,16 @@
  * limitations under the License.
  */
 
-#ifndef _SF_INTERNAL_STANDARD_ENGINE_H
-#define _SF_INTERNAL_STANDARD_ENGINE_H
-
 #include <SFConfig.h>
+#include <stddef.h>
 
-#include "SFArtist.h"
-#include "SFShapingEngine.h"
-#include "SFShapingKnowledge.h"
+#include "SFAssert.h"
+#include "ShapingKnowledge.h"
 
-typedef struct _StandardEngine {
-    ShapingEngine _base;
-    SFArtistRef _artist;
-} StandardEngine, *StandardEngineRef;
+SF_INTERNAL ScriptKnowledgeRef ShapingKnowledgeSeekScript(ShapingKnowledgeRef shapingKnowledge, SFTag scriptTag)
+{
+    /* The function must be implemented by the concrete instance. */
+    SFAssert(shapingKnowledge->_seekScript != NULL);
 
-extern ShapingKnowledge StandardKnowledgeInstance;
-
-SF_INTERNAL void StandardEngineInitialize(StandardEngineRef standardEngine, SFArtistRef artist);
-
-#endif
+    return (*shapingKnowledge->_seekScript)(shapingKnowledge, scriptTag);
+}

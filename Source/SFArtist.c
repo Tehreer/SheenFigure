@@ -19,7 +19,7 @@
 #include <stdlib.h>
 
 #include "SFBase.h"
-#include "SFUnifiedEngine.h"
+#include "UnifiedEngine.h"
 #include "SFArtist.h"
 
 static void LoadCodepointSequence(SBCodepointSequence *codepointSequence,

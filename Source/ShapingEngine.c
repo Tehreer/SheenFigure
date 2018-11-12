@@ -14,16 +14,17 @@
  * limitations under the License.
  */
 
-#ifndef _SF_INTERNAL_GLYPH_DISCOVERY_H
-#define _SF_INTERNAL_GLYPH_DISCOVERY_H
-
 #include <SFConfig.h>
+#include <stddef.h>
 
 #include "SFAlbum.h"
-#include "SFBase.h"
-#include "SFTextProcessor.h"
+#include "SFAssert.h"
+#include "ShapingEngine.h"
 
-SF_PRIVATE GlyphTraits GetGlyphTraits(TextProcessorRef textProcessor, SFGlyphID glyph);
-SF_PRIVATE void DiscoverGlyphs(TextProcessorRef textProcessor);
+SF_INTERNAL void ShapingEngineProcessAlbum(ShapingEngineRef shapingEngine, SFAlbumRef album)
+{
+    /* The function must be implemented by the concrete instance. */
+    SFAssert(shapingEngine->_processAlbum != NULL);
 
-#endif
+    (*shapingEngine->_processAlbum)(shapingEngine, album);
+}

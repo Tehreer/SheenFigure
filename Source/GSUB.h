@@ -17,7 +17,7 @@
 #ifndef _SF_INTERNAL_GSUB_H
 #define _SF_INTERNAL_GSUB_H
 
-#include "SFData.h"
+#include "Data.h"
 
 enum {
     LookupTypeSingle = 1,

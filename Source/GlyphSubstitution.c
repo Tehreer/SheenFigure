@@ -17,16 +17,16 @@
 #include <SFConfig.h>
 
 #include "SFBase.h"
-#include "SFCommon.h"
-#include "SFData.h"
-#include "SFGSUB.h"
-#include "SFLocator.h"
-#include "SFOpenType.h"
+#include "Common.h"
+#include "Data.h"
+#include "GSUB.h"
+#include "Locator.h"
+#include "OpenType.h"
 
-#include "SFGlyphDiscovery.h"
-#include "SFGlyphManipulation.h"
-#include "SFGlyphSubstitution.h"
-#include "SFTextProcessor.h"
+#include "GlyphDiscovery.h"
+#include "GlyphManipulation.h"
+#include "GlyphSubstitution.h"
+#include "TextProcessor.h"
 
 static SFBoolean ApplySequenceTable(TextProcessorRef textProcessor, Data sequence);
 static SFBoolean ApplyAlternateSetTable(TextProcessorRef textProcessor, Data alternateSet);

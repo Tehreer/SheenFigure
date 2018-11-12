@@ -17,7 +17,7 @@
 #ifndef _SF_INTERNAL_GPOS_H
 #define _SF_INTERNAL_GPOS_H
 
-#include "SFData.h"
+#include "Data.h"
 
 enum {
     LookupTypeSingleAdjustment = 1,

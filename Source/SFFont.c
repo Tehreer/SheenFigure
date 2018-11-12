@@ -19,7 +19,7 @@
 #include <stdlib.h>
 
 #include "SFBase.h"
-#include "SFData.h"
+#include "Data.h"
 #include "SFFont.h"
 
 static SFUInt8 *CopySFNTTable(SFFontRef font, SFTag tag) {

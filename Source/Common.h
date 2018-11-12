@@ -18,7 +18,7 @@
 #define _SF_INTERNAL_COMMON_H
 
 #include "SFBase.h"
-#include "SFData.h"
+#include "Data.h"
 
 typedef SFUInt16 LookupType;
 

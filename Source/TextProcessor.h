@@ -22,7 +22,7 @@
 #include "SFAlbum.h"
 #include "SFBase.h"
 #include "SFFont.h"
-#include "SFLocator.h"
+#include "Locator.h"
 #include "SFPattern.h"
 
 typedef struct _TextProcessor {

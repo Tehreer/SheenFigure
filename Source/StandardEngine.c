@@ -21,10 +21,10 @@
 #include "SFArtist.h"
 #include "SFAssert.h"
 #include "SFBase.h"
-#include "SFShapingEngine.h"
-#include "SFShapingKnowledge.h"
-#include "SFTextProcessor.h"
-#include "SFStandardEngine.h"
+#include "ShapingEngine.h"
+#include "ShapingKnowledge.h"
+#include "TextProcessor.h"
+#include "StandardEngine.h"
 
 static ScriptKnowledgeRef StandardKnowledgeSeekScript(const void *object, SFTag scriptTag);
 static void StandardEngineProcessAlbum(const void *object, SFAlbumRef album);

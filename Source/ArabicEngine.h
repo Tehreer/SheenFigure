@@ -14,17 +14,22 @@
  * limitations under the License.
  */
 
-#ifndef _SF_INTERNAL_GLYPH_POSITIONING_H
-#define _SF_INTERNAL_GLYPH_POSITIONING_H
+#ifndef _SF_INTERNAL_ARABIC_ENGINE_H
+#define _SF_INTERNAL_ARABIC_ENGINE_H
 
 #include <SFConfig.h>
 
-#include "SFBase.h"
-#include "SFCommon.h"
-#include "SFData.h"
-#include "SFTextProcessor.h"
+#include "SFArtist.h"
+#include "ShapingEngine.h"
+#include "ShapingKnowledge.h"
 
-SF_PRIVATE SFBoolean ApplyPositioningSubtable(TextProcessorRef textProcessor, LookupType lookupType, Data subtable);
-SF_PRIVATE void ResolveAttachments(TextProcessorRef textProcessor);
+typedef struct _ArabicEngine {
+    ShapingEngine _base;
+    SFArtistRef _artist;
+} ArabicEngine, *ArabicEngineRef;
+
+extern ShapingKnowledge ArabicKnowledgeInstance;
+
+SF_INTERNAL void ArabicEngineInitialize(ArabicEngineRef arabicEngine, SFArtistRef artist);
 
 #endif

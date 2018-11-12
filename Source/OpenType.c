@@ -19,10 +19,10 @@
 
 #include "SFAssert.h"
 #include "SFBase.h"
-#include "SFCommon.h"
-#include "SFData.h"
-#include "SFVariations.h"
-#include "SFOpenType.h"
+#include "Common.h"
+#include "Data.h"
+#include "Variations.h"
+#include "OpenType.h"
 
 static int UInt16ItemsComparison(const void *item1, const void *item2)
 {

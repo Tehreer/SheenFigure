@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-#include "SFShapingKnowledge.h"
-#include "SFUnifiedEngine.h"
+#include "ShapingKnowledge.h"
+#include "UnifiedEngine.h"
 #include "SFBase.h"
 
 const SFRange SFRangeEmpty = { 0, 0 };

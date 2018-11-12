@@ -20,10 +20,10 @@
 #include <SFConfig.h>
 
 #include "SFAlbum.h"
-#include "SFCommon.h"
-#include "SFData.h"
+#include "Common.h"
+#include "Data.h"
 
-typedef struct _SFLocator {
+typedef struct _Locator {
     SFAlbumRef _album;
     Data _markAttachClassDef;
     Data _markGlyphSetsDef;

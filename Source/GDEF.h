@@ -18,7 +18,7 @@
 #define _SF_INTERNAL_GDEF_H
 
 #include "SFBase.h"
-#include "SFData.h"
+#include "Data.h"
 
 enum {
     GlyphClassValueNone = 0,

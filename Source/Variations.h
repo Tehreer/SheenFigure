@@ -17,7 +17,7 @@
 #ifndef _SF_INTERNAL_VARIATIONS_H
 #define _SF_INTERNAL_VARIATIONS_H
 
-#include "SFData.h"
+#include "Data.h"
 
 /**************************************VARIATION REGION LIST***************************************/
 

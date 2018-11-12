@@ -14,27 +14,22 @@
  * limitations under the License.
  */
 
-#ifndef _SF_INTERNAL_UNIFIED_ENGINE_H
-#define _SF_INTERNAL_UNIFIED_ENGINE_H
+#ifndef _SF_INTERNAL_STANDARD_ENGINE_H
+#define _SF_INTERNAL_STANDARD_ENGINE_H
 
 #include <SFConfig.h>
 
-#include "SFArabicEngine.h"
 #include "SFArtist.h"
-#include "SFShapingEngine.h"
-#include "SFShapingKnowledge.h"
-#include "SFSimpleEngine.h"
-#include "SFStandardEngine.h"
+#include "ShapingEngine.h"
+#include "ShapingKnowledge.h"
 
-typedef union _UnifiedEngine {
+typedef struct _StandardEngine {
     ShapingEngine _base;
-    ArabicEngine _arabicEngine;
-    StandardEngine _standardEngine;
-    SimpleEngine _simpleEngine;
-} UnifiedEngine, *UnifiedEngineRef;
+    SFArtistRef _artist;
+} StandardEngine, *StandardEngineRef;
 
-extern ShapingKnowledge UnifiedKnowledgeInstance;
+extern ShapingKnowledge StandardKnowledgeInstance;
 
-SF_INTERNAL void UnifiedEngineInitialize(UnifiedEngineRef unifiedEngine, SFArtistRef artist);
+SF_INTERNAL void StandardEngineInitialize(StandardEngineRef standardEngine, SFArtistRef artist);
 
 #endif

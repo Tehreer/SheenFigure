@@ -20,9 +20,9 @@
 #include "SFAlbum.h"
 #include "SFArtist.h"
 #include "SFBase.h"
-#include "SFShapingEngine.h"
-#include "SFTextProcessor.h"
-#include "SFSimpleEngine.h"
+#include "ShapingEngine.h"
+#include "TextProcessor.h"
+#include "SimpleEngine.h"
 
 static ScriptKnowledgeRef SimpleKnowledgeSeekScript(const void *object, SFTag scriptTag);
 static void SimpleEngineProcessAlbum(const void *object, SFAlbumRef album);

@@ -20,9 +20,9 @@
 #include "SFAssert.h"
 #include "SFAlbum.h"
 #include "SFBase.h"
-#include "SFGDEF.h"
-#include "SFOpenType.h"
-#include "SFLocator.h"
+#include "GDEF.h"
+#include "OpenType.h"
+#include "Locator.h"
 
 SF_INTERNAL void LocatorInitialize(LocatorRef locator, SFAlbumRef album, Data gdef)
 {

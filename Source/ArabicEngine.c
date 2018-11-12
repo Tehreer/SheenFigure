@@ -25,10 +25,10 @@
 #include "SFCodepoints.h"
 #include "SFJoiningType.h"
 #include "SFJoiningTypeLookup.h"
-#include "SFShapingEngine.h"
-#include "SFShapingKnowledge.h"
-#include "SFTextProcessor.h"
-#include "SFArabicEngine.h"
+#include "ShapingEngine.h"
+#include "ShapingKnowledge.h"
+#include "TextProcessor.h"
+#include "ArabicEngine.h"
 
 static ScriptKnowledgeRef ArabicKnowledgeSeekScript(const void *object, SFTag scriptTag);
 static void ArabicEngineProcessAlbum(const void *object, SFAlbumRef album);

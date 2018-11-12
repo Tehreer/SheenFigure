@@ -20,11 +20,11 @@
 #include <string.h>
 
 #include "SFBase.h"
-#include "SFCommon.h"
+#include "Common.h"
 #include "SFFont.h"
 #include "SFPatternBuilder.h"
 #include "SFPattern.h"
-#include "SFUnifiedEngine.h"
+#include "UnifiedEngine.h"
 #include "SFScheme.h"
 
 static Data SearchScriptTable(Data scriptListTable, SFTag scriptTag)

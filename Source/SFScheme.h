@@ -21,7 +21,7 @@
 
 #include "SFBase.h"
 #include "SFFont.h"
-#include "SFShapingKnowledge.h"
+#include "ShapingKnowledge.h"
 
 typedef struct _SFScheme {
     ShapingKnowledgeRef _knowledge;   /**< Shaping knowledge to use for known features. */

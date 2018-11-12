@@ -20,12 +20,12 @@
 #include "SFBase.h"
 #include "SFCodepoints.h"
 #include "SFFont.h"
-#include "SFGDEF.h"
-#include "SFOpenType.h"
+#include "GDEF.h"
+#include "OpenType.h"
 #include "SFPattern.h"
 
-#include "SFGlyphDiscovery.h"
-#include "SFTextProcessor.h"
+#include "GlyphDiscovery.h"
+#include "TextProcessor.h"
 
 static SFBoolean IsZeroWidthCodepoint(SFCodepoint codepoint)
 {

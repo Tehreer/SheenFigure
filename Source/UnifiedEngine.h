@@ -14,18 +14,27 @@
  * limitations under the License.
  */
 
-#ifndef _SF_INTERNAL_GLYPH_MANIPULATION_H
-#define _SF_INTERNAL_GLYPH_MANIPULATION_H
+#ifndef _SF_INTERNAL_UNIFIED_ENGINE_H
+#define _SF_INTERNAL_UNIFIED_ENGINE_H
 
 #include <SFConfig.h>
 
-#include "SFData.h"
-#include "SFPattern.h"
-#include "SFTextProcessor.h"
+#include "ArabicEngine.h"
+#include "SFArtist.h"
+#include "ShapingEngine.h"
+#include "ShapingKnowledge.h"
+#include "SimpleEngine.h"
+#include "StandardEngine.h"
 
-SF_PRIVATE SFBoolean ApplyContextSubtable(TextProcessorRef textProcessor, Data contextSubtable);
-SF_PRIVATE SFBoolean ApplyChainContextSubtable(TextProcessorRef textProcessor, Data chainContextSubtable);
-SF_PRIVATE SFBoolean ApplyExtensionSubtable(TextProcessorRef textProcessor, Data extensionSubtable);
-SF_PRIVATE SFBoolean ApplyReverseChainSubst(TextProcessorRef textProcessor, Data reverseChain);
+typedef union _UnifiedEngine {
+    ShapingEngine _base;
+    ArabicEngine _arabicEngine;
+    StandardEngine _standardEngine;
+    SimpleEngine _simpleEngine;
+} UnifiedEngine, *UnifiedEngineRef;
+
+extern ShapingKnowledge UnifiedKnowledgeInstance;
+
+SF_INTERNAL void UnifiedEngineInitialize(UnifiedEngineRef unifiedEngine, SFArtistRef artist);
 
 #endif
