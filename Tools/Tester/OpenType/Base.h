@@ -33,7 +33,11 @@ typedef uint16_t UInt16;
 typedef uint32_t UInt32;
 typedef UInt16 Glyph;
 typedef UInt16 Offset;
-typedef UInt16 F2DOT14;
+typedef Int16 F2DOT14;
+
+inline F2DOT14 toF2DOT14(float value) {
+    return (F2DOT14)((value * 0x4000) + 0.5);
+}
 
 struct Table {
     virtual void write(Writer &writer) = 0;
