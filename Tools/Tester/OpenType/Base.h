@@ -33,6 +33,7 @@ typedef uint16_t UInt16;
 typedef uint32_t UInt32;
 typedef UInt16 Glyph;
 typedef UInt16 Offset;
+typedef UInt16 F2DOT14;
 
 struct Table {
     virtual void write(Writer &writer) = 0;

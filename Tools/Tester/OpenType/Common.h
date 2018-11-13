@@ -370,6 +370,124 @@ struct DeviceTable : public Table {
     }
 };
 
+struct VariationIndexTable : public Table {
+    UInt16 deltaSetOuterIndex;              // A delta-set outer index — used to select an item variation data subtable within the item variation store.
+    UInt16 deltaSetInnerIndex;              // A delta-set inner index — used to select a delta-set row within an item variation data subtable.
+    UInt16 deltaFormat;                     // Format, = 0x8000
+
+    void write(Writer &writer) override {
+        writer.enter();
+
+        writer.write(deltaSetOuterIndex);
+        writer.write(deltaSetInnerIndex);
+        writer.write(deltaFormat);
+
+        writer.exit();
+    }
+};
+
+struct ConditionTable : public Table {
+    UInt16 format;                          // Format, = 1
+    union {
+        struct {
+            UInt16 axisIndex;               // Index (zero-based) for the variation axis within the 'fvar' table.
+            F2DOT14 filterRangeMinValue;    // Minimum value of the font variation instances that satisfy this condition.
+            F2DOT14 filterRangeMaxValue;    // Maximum value of the font variation instances that satisfy this condition.
+        } format1;
+    };
+
+    void write(Writer &writer) override {
+        switch (format) {
+            case 1:
+                writer.enter();
+
+                writer.write(format);
+                writer.write(format1.axisIndex);
+                writer.write(format1.filterRangeMinValue);
+                writer.write(format1.filterRangeMaxValue);
+
+                writer.exit();
+                break;
+        }
+    }
+};
+
+struct ConditionSetTable : public Table {
+    UInt16 conditionCount;          // Number of conditions for this condition set.
+    ConditionTable *conditions;     // Array of offsets to condition tables, from beginning of the ConditionSet table.
+
+    void write(Writer &writer) override {
+        writer.enter();
+
+        writer.write(conditionCount);
+        for (int i = 0; i < conditionCount; i++) {
+            writer.defer(&conditions[i], true);
+        }
+
+        writer.exit();
+    }
+};
+
+struct FeatureTableSubstitutionRecord : public Table {
+    UInt16 featureIndex;            // The feature table index to match.
+    FeatureTable *alternateFeature; // Offset to an alternate feature table, from start of the FeatureTableSubstitution table.
+
+    void write(Writer &writer) override {
+        writer.write(featureIndex);
+        writer.defer(alternateFeature, true);
+    }
+};
+
+struct FeatureTableSubstitutionTable : public Table {
+    UInt16 majorVersion;                            // Major version of the feature table substitution table — set to 1
+    UInt16 minorVersion;                            // Minor version of the feature table substitution table — set to 0.
+    UInt16 substitutionCount;                       // Number of feature table substitution records.
+    FeatureTableSubstitutionRecord *substitutions;  // Array of feature table substitution records.
+
+    void write(Writer &writer) override {
+        writer.enter();
+
+        writer.write(majorVersion);
+        writer.write(minorVersion);
+        writer.write(substitutionCount);
+        for (int i = 0; i < substitutionCount; i++) {
+            writer.write(&substitutions[i]);
+        }
+
+        writer.exit();
+    }
+};
+
+struct FeatureVariationRecord : public Table {
+    ConditionSetTable *conditionSet;                         // Offset to a condition set table, from beginning of FeatureVariations table.
+    FeatureTableSubstitutionTable *featureTableSubstitution; // Offset to a feature table substitution table, from beginning of the FeatureVariations table.
+
+    void write(Writer &writer) override {
+        writer.defer(conditionSet, true);
+        writer.defer(featureTableSubstitution, true);
+    }
+};
+
+struct FeatureVariationsTable : public Table {
+    UInt16 majorVersion;                             // Major version of the FeatureVariations table — set to 1.
+    UInt16 minorVersion;                             // Minor version of the FeatureVariations table — set to 0.
+    UInt32 featureVariationRecordCount;              // Number of feature variation records.
+    FeatureVariationRecord *featureVariationRecords; // Array of feature variation records.
+
+    void write(Writer &writer) override {
+        writer.enter();
+
+        writer.write(majorVersion);
+        writer.write(minorVersion);
+        writer.write(featureVariationRecordCount);
+        for (long i = 0; i < featureVariationRecordCount; i++) {
+            writer.write(&featureVariationRecords[i]);
+        }
+
+        writer.exit();
+    }
+};
+
 struct LookupRecord : public Table {
     UInt16 sequenceIndex;           // Index into current glyph sequence-first glyph = 0
     UInt16 lookupListIndex;         // Lookup to apply to that position-zero-based
