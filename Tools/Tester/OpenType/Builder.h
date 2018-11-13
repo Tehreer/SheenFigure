@@ -32,6 +32,7 @@
 #include "Common.h"
 #include "GSUB.h"
 #include "GPOS.h"
+#include "Variations.h"
 
 namespace SheenFigure {
 namespace Tester {
@@ -77,6 +78,11 @@ public:
     ClassDefTable &createClassDef(const std::vector<class_range> classRanges);
 
     DeviceTable &createDevice(const std::pair<UInt16, UInt16> sizeRange, const std::vector<Int8> values);
+
+    ConditionTable &createCondition(UInt16 axisIndex, const std::pair<float, float> filterRange);
+    ConditionSetTable &createConditionSet(const std::pair<ConditionTable *, UInt16> conditions);
+    FeatureTableSubstitutionTable &createFeatureSubst(const std::map<UInt16, std::reference_wrapper<FeatureTable>> records);
+    FeatureVariationsTable &createFeatureVariations(const std::vector<std::pair<std::reference_wrapper<ConditionSetTable>, std::reference_wrapper<FeatureTableSubstitutionTable>>> records);
 
     SingleSubstSubtable &createSingleSubst(const std::set<Glyph> glyphs, Int16 delta);
     SingleSubstSubtable &createSingleSubst(const std::map<Glyph, Glyph> glyphs);

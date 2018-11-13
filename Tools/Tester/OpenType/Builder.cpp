@@ -312,6 +312,66 @@ DeviceTable &Builder::createDevice(const pair<UInt16, UInt16> sizeRange, const v
     return device;
 }
 
+ConditionTable &Builder::createCondition(UInt16 axisIndex, const pair<float, float> filterRange)
+{
+    ConditionTable &condition = createObject<ConditionTable>();
+    condition.format = 1;
+    condition.format1.axisIndex = axisIndex;
+    condition.format1.filterRangeMinValue = toF2DOT14(filterRange.first);
+    condition.format1.filterRangeMaxValue = toF2DOT14(filterRange.second);
+
+    return condition;
+}
+
+ConditionSetTable &Builder::createConditionSet(const pair<ConditionTable *, UInt16> conditions)
+{
+    ConditionSetTable &conditionSet = createConditionSet(conditions);
+    conditionSet.conditionCount = conditions.second;
+    conditionSet.conditions = conditions.first;
+
+    return conditionSet;
+}
+
+FeatureTableSubstitutionTable &Builder::createFeatureSubst(const map<UInt16, reference_wrapper<FeatureTable>> records)
+{
+    FeatureTableSubstitutionTable &featureSubst = createObject<FeatureTableSubstitutionTable>();
+    featureSubst.majorVersion = 1;
+    featureSubst.minorVersion = 0;
+    featureSubst.substitutionCount = (UInt16)records.size();
+    featureSubst.substitutions = createArray<FeatureTableSubstitutionRecord>(records.size());
+
+    size_t index = 0;
+
+    for (const auto &pair : records) {
+        FeatureTableSubstitutionRecord &subst = featureSubst.substitutions[index];
+        subst.featureIndex = pair.first;
+        subst.alternateFeature = &pair.second.get();
+
+        index++;
+    }
+
+    return featureSubst;
+}
+
+FeatureVariationsTable &Builder::createFeatureVariations(
+    const vector<pair<reference_wrapper<ConditionSetTable>,
+                      reference_wrapper<FeatureTableSubstitutionTable>>> records)
+{
+    FeatureVariationsTable &featureVariations = createObject<FeatureVariationsTable>();
+    featureVariations.majorVersion = 1;
+    featureVariations.minorVersion = 0;
+    featureVariations.featureVariationRecordCount = (UInt16)records.size();
+    featureVariations.featureVariationRecords = createArray<FeatureVariationRecord>(records.size());
+
+    for (size_t i = 0; i < records.size(); i++) {
+        FeatureVariationRecord &variation = featureVariations.featureVariationRecords[i];
+        variation.conditionSet = &records[i].first.get();
+        variation.featureTableSubstitution = &records[i].second.get();
+    }
+
+    return featureVariations;
+}
+
 UInt16 Builder::findMaxClass(ClassDefTable &classDef)
 {
     UInt16 maxClass = 0;
