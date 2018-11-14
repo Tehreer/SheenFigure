@@ -30,9 +30,9 @@ struct RegionAxisCoordinatesRecord : public Table {
     F2DOT14 endCoord;       // The region end coordinate value for the current axis.
 
     void write(Writer &writer) override {
-        writer.write(startCoord);
-        writer.write(peakCoord);
-        writer.write(endCoord);
+        writer.write((UInt16)startCoord);
+        writer.write((UInt16)peakCoord);
+        writer.write((UInt16)endCoord);
     }
 };
 

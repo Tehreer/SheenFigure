@@ -403,8 +403,8 @@ struct ConditionTable : public Table {
 
                 writer.write(format);
                 writer.write(format1.axisIndex);
-                writer.write(format1.filterRangeMinValue);
-                writer.write(format1.filterRangeMaxValue);
+                writer.write((UInt16)format1.filterRangeMinValue);
+                writer.write((UInt16)format1.filterRangeMaxValue);
 
                 writer.exit();
                 break;

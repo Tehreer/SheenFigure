@@ -325,7 +325,7 @@ ConditionTable &Builder::createCondition(UInt16 axisIndex, const pair<float, flo
 
 ConditionSetTable &Builder::createConditionSet(const pair<ConditionTable *, UInt16> conditions)
 {
-    ConditionSetTable &conditionSet = createConditionSet(conditions);
+    ConditionSetTable &conditionSet = createObject<ConditionSetTable>();
     conditionSet.conditionCount = conditions.second;
     conditionSet.conditions = conditions.first;
 
