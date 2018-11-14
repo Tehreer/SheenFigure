@@ -18,6 +18,8 @@
 #include <vector>
 
 extern "C" {
+#include <Source/Common.h>
+#include <Source/Data.h>
 #include <Source/OpenType.h>
 }
 
@@ -104,7 +106,109 @@ void MiscTester::testDevicePixels()
     }
 }
 
+static bool checkLookupIndex(Data featureTable, UInt16 lookupIndex)
+{
+    if (Feature_LookupCount(featureTable) != 0) {
+        return Feature_LookupListIndex(featureTable, 0) == lookupIndex;
+    }
+
+    return false;
+}
+
+void MiscTester::testFeatureSubst()
+{
+    Builder builder;
+
+    vector<ConditionTable> conditions = {
+        builder.createCondition(0, { 1.05f, 1.95f}),
+        builder.createCondition(1, {-1.15f, 0.85f}),
+        builder.createCondition(2, {-1.75f, 1.25f}),
+    };
+
+    /* Test with empty condition set. */
+    {
+        FeatureVariationsTable &featureVariations = builder.createFeatureVariations({
+            {builder.createConditionSet({nullptr, 0}), builder.createFeatureSubst({
+                {1, builder.createFeature({ 11 })},
+            })}
+        });
+
+        Writer writer;
+        writer.write(&featureVariations);
+
+        Data data = writer.data();
+        Data featureSubst = SearchFeatureSubstitutionTable(data, NULL, 0);
+        Data altFeature = SearchAlternateFeatureTable(featureSubst, 1);
+
+        assert(checkLookupIndex(altFeature, 11));
+    }
+
+    /* Test the order of condition set execution. */
+    {
+        FeatureVariationsTable &featureVariations = builder.createFeatureVariations({
+            {builder.createConditionSet({&conditions[0], 1}), builder.createFeatureSubst({
+                {1, builder.createFeature({ 11 })},
+            })},
+            {builder.createConditionSet({&conditions[1], 1}), builder.createFeatureSubst({
+                {2, builder.createFeature({ 12 })},
+            })},
+            {builder.createConditionSet({&conditions[2], 1}), builder.createFeatureSubst({
+                {3, builder.createFeature({ 13 })},
+            })},
+        });
+
+        Writer writer;
+        writer.write(&featureVariations);
+
+        Data data = writer.data();
+
+        /* Test with first matching condition set. */
+        {
+            vector<Int32> coords = { toF2DOT14(1.50f), toF2DOT14(0.0f), toF2DOT14(0.0f) };
+            Data featureSubst = SearchFeatureSubstitutionTable(data, coords.data(), 3);
+            Data altFeature = SearchAlternateFeatureTable(featureSubst, 1);
+            assert(checkLookupIndex(altFeature, 11));
+        }
+
+        /* Test with middle matching condition set. */
+        {
+            vector<Int32> coords = { toF2DOT14(0.0f), toF2DOT14(-0.50f), toF2DOT14(0.0f) };
+            Data featureSubst = SearchFeatureSubstitutionTable(data, coords.data(), 3);
+            Data altFeature = SearchAlternateFeatureTable(featureSubst, 2);
+            assert(checkLookupIndex(altFeature, 12));
+        }
+
+        /* Test with last matching condition set. */
+        {
+            vector<Int32> coords = { toF2DOT14(0.0f), toF2DOT14(1.0f), toF2DOT14(-0.25f) };
+            Data featureSubst = SearchFeatureSubstitutionTable(data, coords.data(), 3);
+            Data altFeature = SearchAlternateFeatureTable(featureSubst, 3);
+            assert(checkLookupIndex(altFeature, 13));
+        }
+    }
+
+    /* Test with multiple conditions in a single condition set. */
+    {
+        FeatureVariationsTable &featureVariations = builder.createFeatureVariations({
+            {builder.createConditionSet({&conditions[0], 3}), builder.createFeatureSubst({
+                {1, builder.createFeature({ 11 })},
+            })}
+        });
+
+        Writer writer;
+        writer.write(&featureVariations);
+
+        Data data = writer.data();
+
+        vector<Int32> coords = { toF2DOT14(1.50f), toF2DOT14(-0.50f), toF2DOT14(-0.25f) };
+        Data featureSubst = SearchFeatureSubstitutionTable(data, coords.data(), 3);
+        Data altFeature = SearchAlternateFeatureTable(featureSubst, 1);
+        assert(checkLookupIndex(altFeature, 11));
+    }
+}
+
 void MiscTester::test()
 {
     testDevicePixels();
+    testFeatureSubst();
 }
