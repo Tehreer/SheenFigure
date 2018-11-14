@@ -29,43 +29,43 @@ SF_INTERNAL Data SearchScriptTable(Data scriptListTable, SFTag scriptTag)
     Data scriptTable = NULL;
     SFUInt16 scriptCount;
     SFUInt16 index;
-    
+
     scriptCount = ScriptList_ScriptCount(scriptListTable);
-    
+
     for (index = 0; index < scriptCount; index++) {
         Data scriptRecord = ScriptList_ScriptRecord(scriptListTable, index);
         SFTag scriptRecTag = ScriptRecord_ScriptTag(scriptRecord);
         SFOffset scriptOffset;
-        
+
         if (scriptRecTag == scriptTag) {
             scriptOffset = ScriptRecord_ScriptOffset(scriptRecord);
             scriptTable = Data_Subdata(scriptListTable, scriptOffset);
             break;
         }
     }
-    
+
     return scriptTable;
 }
 
 SF_INTERNAL Data SearchLangSysTable(Data scriptTable, SFTag languageTag)
 {
     Data langSysTable = NULL;
-    
+
     if (languageTag == SFTagMake('d', 'f', 'l', 't')) {
         SFOffset langSysOffset = Script_DefaultLangSysOffset(scriptTable);
-        
+
         if (langSysOffset) {
             langSysTable = Data_Subdata(scriptTable, langSysOffset);
         }
     } else {
         SFUInt16 langSysCount = Script_LangSysCount(scriptTable);
         SFUInt16 index;
-        
+
         for (index = 0; index < langSysCount; index++) {
             Data langSysRecord = Script_LangSysRecord(scriptTable, index);
             SFTag langSysTag = LangSysRecord_LangSysTag(langSysRecord);
             SFOffset langSysOffset;
-            
+
             if (langSysTag == languageTag) {
                 langSysOffset = LangSysRecord_LangSysOffset(langSysRecord);
                 langSysTable = Data_Subdata(scriptTable, langSysOffset);
@@ -73,7 +73,7 @@ SF_INTERNAL Data SearchLangSysTable(Data scriptTable, SFTag languageTag)
             }
         }
     }
-    
+
     return langSysTable;
 }
 
@@ -82,22 +82,22 @@ SF_INTERNAL Data SearchFeatureTable(Data langSysTable, Data featureListTable, SF
     Data featureTable = NULL;
     SFUInt16 featureCount;
     SFUInt16 index;
-    
+
     featureCount = LangSys_FeatureCount(langSysTable);
-    
+
     for (index = 0; index < featureCount; index++) {
         SFUInt16 featureIndex = LangSys_FeatureIndex(langSysTable, index);
         Data featureRecord = FeatureList_FeatureRecord(featureListTable, featureIndex);
         SFTag featureRecTag = FeatureRecord_FeatureTag(featureRecord);
         SFOffset featureOffset;
-        
+
         if (featureRecTag == featureTag) {
             featureOffset = FeatureRecord_FeatureOffset(featureRecord);
             featureTable = Data_Subdata(featureListTable, featureOffset);
             break;
         }
     }
-    
+
     return featureTable;
 }
 
@@ -266,7 +266,7 @@ SF_INTERNAL SFInt32 GetDevicePixels(Data deviceTable, SFUInt16 ppemSize)
     return 0;
 }
 
-static double CalculateScalarForRegion(Data regionListTable, SFUInt16 regionIndex,
+SF_INTERNAL double CalculateScalarForRegion(Data regionListTable, SFUInt16 regionIndex,
     SFInt32 *coordArray, SFUInteger coordCount)
 {
     SFUInt16 axisCount = VarRegionList_AxisCount(regionListTable);
@@ -277,6 +277,7 @@ static double CalculateScalarForRegion(Data regionListTable, SFUInt16 regionInde
         Data regionRecord = VarRegionList_VarRegionRecord(regionListTable, regionIndex, axisCount);
         SFUInt16 axisIndex;
 
+        /* Reference: https://docs.microsoft.com/en-us/typography/opentype/spec/otvaroverview#algorithm-for-interpolation-of-instance-values */
         for (axisIndex = 0; axisIndex < axisCount; axisIndex++) {
             Data axisCoords = VarRegionRecord_RegionAxisCoords(regionRecord, axisIndex);
             SFInt16 startCoord = RegionAxisCoords_StartCoord(axisCoords);
