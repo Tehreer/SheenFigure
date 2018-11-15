@@ -54,6 +54,8 @@ using pair_rule = std::tuple<
                     UInt16, UInt16,
                     std::reference_wrapper<ValueRecord>, std::reference_wrapper<ValueRecord>>;
 
+using axis_coords = std::tuple<float, float, float>;
+
 class Builder {
 public:
     Builder();
@@ -83,6 +85,8 @@ public:
     ConditionSetTable &createConditionSet(const std::pair<ConditionTable *, UInt16> conditions);
     FeatureTableSubstitutionTable &createFeatureSubst(const std::map<UInt16, std::reference_wrapper<FeatureTable>> records);
     FeatureVariationsTable &createFeatureVariations(const std::vector<std::pair<std::reference_wrapper<ConditionSetTable>, std::reference_wrapper<FeatureTableSubstitutionTable>>> records);
+
+    VariationRegionList &createRegionList(const std::vector<std::vector<axis_coords>> regions);
 
     SingleSubstSubtable &createSingleSubst(const std::set<Glyph> glyphs, Int16 delta);
     SingleSubstSubtable &createSingleSubst(const std::map<Glyph, Glyph> glyphs);

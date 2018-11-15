@@ -372,6 +372,43 @@ FeatureVariationsTable &Builder::createFeatureVariations(
     return featureVariations;
 }
 
+VariationRegionList &Builder::createRegionList(const std::vector<std::vector<axis_coords>> regions)
+{
+    size_t axisCount = 0;
+
+    for (const auto &r : regions) {
+        axisCount = max(axisCount, r.size());
+    }
+
+    VariationRegionList &regionList = createObject<VariationRegionList>();
+    regionList.regionCount = (UInt16)regions.size();
+    regionList.axisCount = (UInt16)axisCount;
+    regionList.variationRegions = createArray<VariationRegionRecord>(regions.size());
+
+    size_t i = 0;
+    size_t j = 0;
+
+    for (const auto &r : regions) {
+        VariationRegionRecord &record = regionList.variationRegions[i];
+        record.regionAxes = createArray<RegionAxisCoordinatesRecord>(axisCount);
+
+        for (j = 0; j < r.size(); j++) {
+            record.regionAxes[j].startCoord = toF2DOT14(get<0>(r[j]));
+            record.regionAxes[j].peakCoord = toF2DOT14(get<1>(r[j]));
+            record.regionAxes[j].endCoord = toF2DOT14(get<2>(r[j]));
+        }
+        for (; j < axisCount; j++) {
+            record.regionAxes[j].startCoord = 0;
+            record.regionAxes[j].peakCoord = 0;
+            record.regionAxes[j].endCoord = 0;
+        }
+
+        i++;
+    }
+
+    return regionList;
+}
+
 UInt16 Builder::findMaxClass(ClassDefTable &classDef)
 {
     UInt16 maxClass = 0;
