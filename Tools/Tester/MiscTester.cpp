@@ -15,6 +15,7 @@
  */
 
 #include <cassert>
+#include <cmath>
 #include <vector>
 
 extern "C" {
@@ -104,6 +105,44 @@ void MiscTester::testDevicePixels()
         assert(GetDevicePixels(data, 12) == 0);
         assert(GetDevicePixels(data, 13) == 127);
     }
+}
+
+void MiscTester::testRegionListScalar()
+{
+    Builder builder;
+
+    VariationRegionList &regionList = builder.createRegionList({
+        { axis_coords {  0.1f,  0.0f, 0.2f } }, { axis_coords {  0.1f, 0.2f, 0.0f } },
+        { axis_coords { -0.1f, -0.2f, 0.1f } }, { axis_coords { -0.1f, 0.0f, 0.1f } },
+        { axis_coords { 0.5f, 1.0f, 1.5f } },
+        { axis_coords { 0.0f, 0.5f, 1.0f }, axis_coords { 1.25f, 1.50f, 1.75f } },
+    });
+    vector<SFInt32> coords = {
+        toF2DOT14(1.0f),
+        toF2DOT14(0.4f), toF2DOT14(1.6f),
+        toF2DOT14(0.75f), toF2DOT14(1.25f),
+        toF2DOT14(0.25f), toF2DOT14(1.625f),
+    };
+
+    Writer writer;
+    writer.write(&regionList);
+
+    Data table = writer.data();
+
+    /* Test with coordinates resolving to one. */
+    assert(CalculateScalarForRegion(table, 0, NULL, 0) == 1.0);
+    assert(CalculateScalarForRegion(table, 1, NULL, 0) == 1.0);
+    assert(CalculateScalarForRegion(table, 2, NULL, 0) == 1.0);
+    assert(CalculateScalarForRegion(table, 3, NULL, 0) == 1.0);
+    assert(CalculateScalarForRegion(table, 4, &coords[0], 1) == 1.0);
+    /* Test with coordinates resolving to zero. */
+    assert(CalculateScalarForRegion(table, 4, &coords[1], 1) == 0.0);
+    assert(CalculateScalarForRegion(table, 4, &coords[2], 1) == 0.0);
+    /* Test with dividable coordinates. */
+    assert(abs(CalculateScalarForRegion(table, 4, &coords[3], 1) - 0.5) < F2DOT14_EPSILON);
+    assert(abs(CalculateScalarForRegion(table, 4, &coords[4], 1) - 0.5) < F2DOT14_EPSILON);
+    /* Test with multiple axes. */
+    assert(abs(CalculateScalarForRegion(table, 5, &coords[5], 2) - 0.25) < F2DOT14_EPSILON);
 }
 
 static bool checkLookupIndex(Data featureTable, UInt16 lookupIndex)
@@ -210,5 +249,6 @@ void MiscTester::testFeatureSubst()
 void MiscTester::test()
 {
     testDevicePixels();
+    testRegionListScalar();
     testFeatureSubst();
 }

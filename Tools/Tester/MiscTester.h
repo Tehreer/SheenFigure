@@ -25,6 +25,7 @@ public:
     MiscTester();
 
     void testDevicePixels();
+    void testRegionListScalar();
     void testFeatureSubst();
     void test();
 };
