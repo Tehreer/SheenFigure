@@ -35,6 +35,8 @@ typedef UInt16 Glyph;
 typedef UInt16 Offset;
 typedef Int16 F2DOT14;
 
+#define F2DOT14_EPSILON (1.0 - ((double)0x3FFF / 0x4000))
+
 inline F2DOT14 toF2DOT14(float value) {
     return (F2DOT14)((value * 0x4000) + 0.5);
 }
