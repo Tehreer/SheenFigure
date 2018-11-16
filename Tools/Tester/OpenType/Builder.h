@@ -80,6 +80,7 @@ public:
     ClassDefTable &createClassDef(const std::vector<class_range> classRanges);
 
     DeviceTable &createDevice(const std::pair<UInt16, UInt16> sizeRange, const std::vector<Int8> values);
+    VariationIndexTable &createVariationIndex(UInt16 outerIndex, UInt16 innerIndex);
 
     ConditionTable &createCondition(UInt16 axisIndex, const std::pair<float, float> filterRange);
     ConditionSetTable &createConditionSet(const std::pair<ConditionTable *, UInt16> conditions);

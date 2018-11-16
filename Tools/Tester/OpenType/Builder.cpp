@@ -312,6 +312,16 @@ DeviceTable &Builder::createDevice(const pair<UInt16, UInt16> sizeRange, const v
     return device;
 }
 
+VariationIndexTable &Builder::createVariationIndex(UInt16 outerIndex, UInt16 innerIndex)
+{
+    VariationIndexTable &variationIndex = createObject<VariationIndexTable>();
+    variationIndex.deltaFormat = 0x8000;
+    variationIndex.deltaSetOuterIndex = outerIndex;
+    variationIndex.deltaSetInnerIndex = innerIndex;
+
+    return variationIndex;
+}
+
 ConditionTable &Builder::createCondition(UInt16 axisIndex, const pair<float, float> filterRange)
 {
     ConditionTable &condition = createObject<ConditionTable>();
