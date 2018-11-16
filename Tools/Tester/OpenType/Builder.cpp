@@ -16,6 +16,7 @@
 
 #include <algorithm>
 #include <array>
+#include <cassert>
 #include <cstddef>
 #include <functional>
 #include <list>
@@ -417,6 +418,66 @@ VariationRegionList &Builder::createRegionList(const std::vector<std::vector<axi
     }
 
     return regionList;
+}
+
+ItemVariationDataSubtable &Builder::createVariationData(const vector<UInt16> regionIndexes,
+    const vector<pair<vector<Int16>, vector<Int8>>> deltaSets)
+{
+    size_t shortDeltaCount = 0;
+    size_t remainingCount = 0;
+
+    for (size_t i = 0; i < deltaSets.size(); i++) {
+        const auto &current = deltaSets[i];
+
+        if (i == 0) {
+            shortDeltaCount = current.first.size();
+            remainingCount = current.second.size();
+            assert((shortDeltaCount + remainingCount) == regionIndexes.size());
+        } else {
+            assert(current.first.size() == shortDeltaCount);
+            assert(current.second.size() == remainingCount);
+        }
+    }
+
+    ItemVariationDataSubtable &variationData = createObject<ItemVariationDataSubtable>();
+    variationData.itemCount = (UInt16)deltaSets.size();
+    variationData.shortDeltaCount = (UInt16)shortDeltaCount;
+    variationData.regionIndexCount = (UInt16)regionIndexes.size();
+    variationData.regionIndexes = createArray<UInt16>(regionIndexes.size());
+    variationData.deltaSets = createArray<DeltaSetRecord>(deltaSets.size());
+
+    for (size_t i = 0; i < regionIndexes.size(); i++) {
+        variationData.regionIndexes[i] = regionIndexes[i];
+    }
+    for (size_t i = 0; i < deltaSets.size(); i++) {
+        const auto &current = deltaSets[i];
+
+        DeltaSetRecord &ds = variationData.deltaSets[i];
+        ds.i16Delta = createArray<Int16>(current.first.size());
+        ds.i8Delta = createArray<Int8>(current.second.size());
+
+        for (size_t j = 0; j < current.first.size(); j++) {
+            ds.i16Delta[j] = current.first[j];
+        }
+        for (size_t j = 0; j < current.second.size(); j++) {
+            ds.i8Delta[j] = current.second[j];
+        }
+    }
+
+    return variationData;
+}
+
+ItemVariationStoreTable &Builder::createVariationStore(
+    const reference_wrapper<VariationRegionList> regionList,
+    const pair<ItemVariationDataSubtable *, UInt16> variationData)
+{
+    ItemVariationStoreTable &variationStore = createObject<ItemVariationStoreTable>();
+    variationStore.format = 1;
+    variationStore.variationRegionList = &regionList.get();
+    variationStore.itemVariationDataCount = variationData.second;
+    variationStore.itemVariationData = variationData.first;
+
+    return variationStore;
 }
 
 UInt16 Builder::findMaxClass(ClassDefTable &classDef)

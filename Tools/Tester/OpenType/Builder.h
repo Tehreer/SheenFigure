@@ -88,6 +88,9 @@ public:
     FeatureVariationsTable &createFeatureVariations(const std::vector<std::pair<std::reference_wrapper<ConditionSetTable>, std::reference_wrapper<FeatureTableSubstitutionTable>>> records);
 
     VariationRegionList &createRegionList(const std::vector<std::vector<axis_coords>> regions);
+    ItemVariationDataSubtable &createVariationData(const std::vector<UInt16> regionIndexes, const std::vector<std::pair<std::vector<Int16>, std::vector<Int8>>> deltaSets);
+    ItemVariationStoreTable &createVariationStore(const std::reference_wrapper<VariationRegionList> regionList,
+                                                  const std::pair<ItemVariationDataSubtable *, UInt16> variationData);
 
     SingleSubstSubtable &createSingleSubst(const std::set<Glyph> glyphs, Int16 delta);
     SingleSubstSubtable &createSingleSubst(const std::map<Glyph, Glyph> glyphs);
