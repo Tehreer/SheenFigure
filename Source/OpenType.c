@@ -311,7 +311,7 @@ SF_INTERNAL double CalculateScalarForRegion(Data regionListTable, SFUInt16 regio
     return regionScalar;
 }
 
-static SFInt32 CalculateVariationAdjustment(Data varDataTable, Data regionListTable,
+static double CalculateVariationAdjustment(Data varDataTable, Data regionListTable,
     SFUInt16 rowIndex, SFInt32 *coordArray, SFUInteger coordCount)
 {
     SFUInt16 itemCount = ItemVarData_ItemCount(varDataTable);
@@ -339,10 +339,10 @@ static SFInt32 CalculateVariationAdjustment(Data varDataTable, Data regionListTa
         }
     }
 
-    return (SFInt32)((adjustment * 0x4000) + 0.5);
+    return adjustment;
 }
 
-static SFInt32 GetDeltaFromVariationStore(Data varStoreTable,
+static double GetDeltaFromVariationStore(Data varStoreTable,
     SFUInt16 dataIndex, SFUInt16 rowIndex, SFInt32 *coordArray, SFUInteger coordCount)
 {
     SFUInt16 format = ItemVarStore_Format(varStoreTable);
@@ -371,7 +371,8 @@ SF_INTERNAL SFInt32 GetVariationPixels(Data varIndexTable, Data varStoreTable,
     SFUInt16 deltaFormat = VarIndex_DeltaFormat(varIndexTable);
 
     if (deltaFormat == 0x8000) {
-        return GetDeltaFromVariationStore(varStoreTable, outerIndex, innerIndex, coordArray, coordCount);
+        double delta = GetDeltaFromVariationStore(varStoreTable, outerIndex, innerIndex, coordArray, coordCount);
+        return (delta >= 0.0 ? (SFInt32)(delta + 0.5) : (SFInt32)(delta - 0.5));
     }
 
     return 0;
