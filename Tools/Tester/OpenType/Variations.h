@@ -138,7 +138,9 @@ struct ItemVariationStoreTable : public Table {
         writer.write(format);
         writer.defer(variationRegionList, true);
         writer.write(itemVariationDataCount);
-        writer.defer(itemVariationData, true);
+        for (int i = 0; i < itemVariationDataCount; i++) {
+            writer.defer(&itemVariationData[i], true);
+        }
 
         writer.exit();
     }
