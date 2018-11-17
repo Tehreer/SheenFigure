@@ -26,6 +26,7 @@ public:
 
     void testDevicePixels();
     void testRegionListScalar();
+    void testVariationPixels();
     void testFeatureSubst();
     void test();
 };

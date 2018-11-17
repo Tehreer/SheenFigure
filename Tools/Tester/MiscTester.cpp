@@ -145,6 +145,54 @@ void MiscTester::testRegionListScalar()
     assert(abs(CalculateScalarForRegion(table, 5, &coords[5], 2) - 0.25) < F2DOT14_EPSILON);
 }
 
+void MiscTester::testVariationPixels()
+{
+    Builder builder;
+    Writer sw;
+
+    VariationRegionList &regionList = builder.createRegionList({
+        { axis_coords { 0.5f, 1.0f, 1.5f } }, { axis_coords { 0.5f, 0.0f, 1.0f } }
+    });
+    vector<ItemVariationDataSubtable> varData = {
+        builder.createVariationData({ 0 }, { {{ -260 }, { }} }),
+        builder.createVariationData({ 0 }, { {{ }, { 20 }} }),
+        builder.createVariationData({ 0, 1 }, { {{ 640 }, { -80 }} }),
+    };
+    ItemVariationStoreTable &varStore = builder.createVariationStore(regionList,
+        { varData.data(), varData.size() });
+    sw.write(&varStore);
+
+    Data storeTable = sw.data();
+    SFInt32 coord = toF2DOT14(0.75f);
+
+    /* Test with i16 delta only. */
+    {
+        VariationIndexTable &varIndex = builder.createVariationIndex(0, 0);
+        Writer writer;
+        writer.write(&varIndex);
+
+        assert(GetVariationPixels(writer.data(), storeTable, &coord, 1) == -130);
+    }
+
+    /* Test with i8 delta only. */
+    {
+        VariationIndexTable &varIndex = builder.createVariationIndex(1, 0);
+        Writer writer;
+        writer.write(&varIndex);
+
+        assert(GetVariationPixels(writer.data(), storeTable, &coord, 1) == 10);
+    }
+
+    /* Test with both i16 and i8 delta. */
+    {
+        VariationIndexTable &varIndex = builder.createVariationIndex(2, 0);
+        Writer writer;
+        writer.write(&varIndex);
+
+        assert(GetVariationPixels(writer.data(), storeTable, &coord, 1) == 240);
+    }
+}
+
 static bool checkLookupIndex(Data featureTable, UInt16 lookupIndex)
 {
     if (Feature_LookupCount(featureTable) != 0) {
@@ -250,5 +298,6 @@ void MiscTester::test()
 {
     testDevicePixels();
     testRegionListScalar();
+    testVariationPixels();
     testFeatureSubst();
 }
