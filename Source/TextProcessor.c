@@ -59,7 +59,7 @@ SF_INTERNAL void TextProcessorInitialize(TextProcessorRef textProcessor,
     textProcessor->_zeroWidthMarks = zeroWidthMarks;
     textProcessor->_containsZeroWidthCodepoints = SFFalse;
 
-    gdef = pattern->font->tables.gdef;
+    gdef = pattern->font->resource->gdef;
     if (gdef) {
         textProcessor->_glyphClassDef = GDEF_GlyphClassDefTable(gdef);
     }
@@ -77,7 +77,7 @@ SF_INTERNAL void TextProcessorSubstituteGlyphs(TextProcessorRef textProcessor)
 {
     SFAlbumRef album = textProcessor->_album;
     SFPatternRef pattern = textProcessor->_pattern;
-    Data gsubTable = pattern->font->tables.gsub;
+    Data gsubTable = pattern->font->resource->gsub;
 
     if (gsubTable) {
         Data lookupListTable = Header_LookupListTable(gsubTable);
@@ -133,7 +133,7 @@ SF_INTERNAL void TextProcessorPositionGlyphs(TextProcessorRef textProcessor)
     SFAlbumRef album = textProcessor->_album;
     SFPatternRef pattern = textProcessor->_pattern;
     SFFontRef font = pattern->font;
-    Data gposTable = font->tables.gpos;
+    Data gposTable = font->resource->gpos;
     SFUInteger glyphCount = album->glyphCount;
     SFUInteger index;
 

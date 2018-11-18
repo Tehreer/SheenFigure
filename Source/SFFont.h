@@ -23,20 +23,22 @@
 #include "SFBase.h"
 #include "Data.h"
 
-typedef struct _SFFontTables {
+typedef struct _FontResource {
     Data gdef;
     Data gsub;
     Data gpos;
-} SFFontTables;
+    SFUInteger retainCount;
+} FontResource, *FontResourceRef;
 
 typedef struct _SFFont {
-    SFFontProtocol _protocol;
-    void *_object;
-    SFFontTables tables;
-    SFUInteger _retainCount;
+    SFFontProtocol protocol;
+    void *object;
+    FontResourceRef resource;
+    SFInt16 *coordArray;
+    SFUInteger coordCount;
+    SFUInteger retainCount;
 } SFFont;
 
-SF_INTERNAL void SFFontLoadTable(SFFontRef font, SFTag tableTag, SFUInt8 *buffer, SFUInteger *length);
 SF_INTERNAL SFGlyphID SFFontGetGlyphIDForCodepoint(SFFontRef font, SFCodepoint codepoint);
 SF_INTERNAL SFAdvance SFFontGetAdvanceForGlyph(SFFontRef font, SFFontLayout fontLayout, SFGlyphID glyphID);
 

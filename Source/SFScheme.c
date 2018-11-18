@@ -290,15 +290,15 @@ SFPatternRef SFSchemeBuildPattern(SFSchemeRef scheme)
         SFPatternBuilderSetScript(&builder, scheme->_scriptTag, knowledge->defaultDirection);
         SFPatternBuilderSetLanguage(&builder, scheme->_languageTag);
 
-        if (font->tables.gsub) {
+        if (font->resource->gsub) {
             SFPatternBuilderBeginFeatures(&builder, SFFeatureKindSubstitution);
-            AddHeaderTable(scheme, &builder, font->tables.gsub, knowledge->substFeatures.items, knowledge->substFeatures.count);
+            AddHeaderTable(scheme, &builder, font->resource->gsub, knowledge->substFeatures.items, knowledge->substFeatures.count);
             SFPatternBuilderEndFeatures(&builder);
         }
 
-        if (font->tables.gpos) {
+        if (font->resource->gpos) {
             SFPatternBuilderBeginFeatures(&builder, SFFeatureKindPositioning);
-            AddHeaderTable(scheme, &builder, font->tables.gpos, knowledge->posFeatures.items, knowledge->posFeatures.count);
+            AddHeaderTable(scheme, &builder, font->resource->gpos, knowledge->posFeatures.items, knowledge->posFeatures.count);
             SFPatternBuilderEndFeatures(&builder);
         }
 

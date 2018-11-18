@@ -17,38 +17,78 @@
 #include <SFConfig.h>
 #include <stddef.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "SFBase.h"
 #include "Data.h"
 #include "SFFont.h"
 
-static SFUInt8 *CopySFNTTable(SFFontRef font, SFTag tag) {
+static SFUInt8 *CopySFNTTable(const SFFontProtocol *protocol, void *object, SFTag tableTag) {
     SFUInt8 *data = NULL;
     SFUInteger length = 0;
 
-    SFFontLoadTable(font, tag, NULL, &length);
+    protocol->loadTable(object, tableTag, NULL, &length);
 
-    if (length) {
+    if (length != 0) {
         data = malloc(length);
-        SFFontLoadTable(font, tag, data, NULL);
+        protocol->loadTable(object, tableTag, data, NULL);
     }
 
     return data;
 }
 
+static FontResourceRef CreateFontResource(const SFFontProtocol *protocol, void *object)
+{
+    FontResourceRef fontResource = malloc(sizeof(FontResource));
+    fontResource->retainCount = 1;
+
+    /* Load the open type tables. */
+    fontResource->gdef = CopySFNTTable(protocol, object, TAG('G', 'D', 'E', 'F'));
+    fontResource->gsub = CopySFNTTable(protocol, object, TAG('G', 'S', 'U', 'B'));
+    fontResource->gpos = CopySFNTTable(protocol, object, TAG('G', 'P', 'O', 'S'));
+
+    return fontResource;
+}
+
+static FontResourceRef RetainFontResource(FontResourceRef fontResource)
+{
+    if (fontResource) {
+        fontResource->retainCount++;
+    }
+
+    return fontResource;
+}
+
+static void ReleaseFontResource(FontResourceRef fontResource)
+{
+    if (fontResource && --fontResource->retainCount == 0) {
+        free((void *)fontResource->gdef);
+        free((void *)fontResource->gsub);
+        free((void *)fontResource->gpos);
+        free(fontResource);
+    }
+}
+
+static SFInt32 ZeroGlyphAdvance(void *object, SFFontLayout fontLayout, SFGlyphID glyphID)
+{
+    return 0;
+}
+
 SFFontRef SFFontCreateWithProtocol(const SFFontProtocol *protocol, void *object)
 {
-    /* Verify that required functions exist in protocol. */
+    /* Verify that required functions exist in the protocol. */
     if (protocol && protocol->loadTable && protocol->getGlyphIDForCodepoint) {
         SFFontRef font = malloc(sizeof(SFFont));
-        font->_protocol = *protocol;
-        font->_object = object;
-        font->_retainCount = 1;
+        font->protocol = *protocol;
+        font->object = object;
+        font->resource = CreateFontResource(protocol, object);
+        font->coordArray = NULL;
+        font->coordCount = 0;
+        font->retainCount = 1;
 
-        /* Load open type tables. */
-        font->tables.gdef = CopySFNTTable(font, SFTagMake('G', 'D', 'E', 'F'));
-        font->tables.gsub = CopySFNTTable(font, SFTagMake('G', 'S', 'U', 'B'));
-        font->tables.gpos = CopySFNTTable(font, SFTagMake('G', 'P', 'O', 'S'));
+        if (!font->protocol.getAdvanceForGlyph) {
+            font->protocol.getAdvanceForGlyph = ZeroGlyphAdvance;
+        }
 
         return font;
     }
@@ -56,29 +96,20 @@ SFFontRef SFFontCreateWithProtocol(const SFFontProtocol *protocol, void *object)
     return NULL;
 }
 
-SF_INTERNAL void SFFontLoadTable(SFFontRef font, SFTag tableTag, SFUInt8 *buffer, SFUInteger *length)
-{
-    font->_protocol.loadTable(font->_object, tableTag, buffer, length);
-}
-
 SF_INTERNAL SFGlyphID SFFontGetGlyphIDForCodepoint(SFFontRef font, SFCodepoint codepoint)
 {
-    return font->_protocol.getGlyphIDForCodepoint(font->_object, codepoint);
+    return font->protocol.getGlyphIDForCodepoint(font->object, codepoint);
 }
 
 SF_INTERNAL SFAdvance SFFontGetAdvanceForGlyph(SFFontRef font, SFFontLayout fontLayout, SFGlyphID glyphID)
 {
-    if (font->_protocol.getAdvanceForGlyph) {
-        return font->_protocol.getAdvanceForGlyph(font->_object, fontLayout, glyphID);
-    }
-
-    return 0;
+    return font->protocol.getAdvanceForGlyph(font->object, fontLayout, glyphID);
 }
 
 SFFontRef SFFontRetain(SFFontRef font)
 {
     if (font) {
-        font->_retainCount++;
+        font->retainCount++;
     }
 
     return font;
@@ -86,13 +117,12 @@ SFFontRef SFFontRetain(SFFontRef font)
 
 void SFFontRelease(SFFontRef font)
 {
-    if (font && --font->_retainCount == 0) {
-        if (font->_protocol.finalize) {
-            font->_protocol.finalize(font->_object);
+    if (font && --font->retainCount == 0) {
+        if (font->protocol.finalize) {
+            font->protocol.finalize(font->object);
         }
-        free((void *)font->tables.gdef);
-        free((void *)font->tables.gsub);
-        free((void *)font->tables.gpos);
+
+        ReleaseFontResource(font->resource);
         free(font);
     }
 }
