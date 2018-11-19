@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Muhammad Tayyab Akram
+ * Copyright (C) 2015-2018 Muhammad Tayyab Akram
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -108,11 +108,28 @@ typedef struct _SFFontProtocol {
  * @param protocol
  *      A structure holding pointers to the implemented functions for this font.
  * @param object
- *      An object associated with the font to identify it.
+ *      An object associated with the created font to identify it.
  * @return
  *      A reference to a font object if the call was successful, NULL otherwise.
  */
 SFFontRef SFFontCreateWithProtocol(const SFFontProtocol *protocol, void *object);
+
+/**
+ * Creates a variable font from the specified font instance. The derived font will share the
+ * protocol and resources of the parent font.
+ *
+ * @param font
+ *      A font whose protocol and resources will be shared in the created font.
+ * @param object
+ *      An object associated with the created font to identify it.
+ * @param coordArray
+ *      An array of normalized variation coordinates in F2DOT14 format.
+ * @param coordCount
+ *      The number of normalized variation coordinates in the passed-in array.
+ * @return
+ *      A reference to a variable font object if the call was successful, NULL otherwise.
+ */
+SFFontRef SFFontCreateWithVariationCoordinates(SFFontRef font, void *object, const SFInt16 *coordArray, SFUInteger coordCount);
 
 SFFontRef SFFontRetain(SFFontRef font);
 void SFFontRelease(SFFontRef font);

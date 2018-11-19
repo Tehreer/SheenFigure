@@ -96,6 +96,24 @@ SFFontRef SFFontCreateWithProtocol(const SFFontProtocol *protocol, void *object)
     return NULL;
 }
 
+SFFontRef SFFontCreateWithVariationCoordinates(SFFontRef font, void *object,
+    const SFInt16 *coordArray, SFUInteger coordCount)
+{
+    if (coordArray && coordCount) {
+        SFFontRef derivedFont = malloc(sizeof(SFFont));
+        derivedFont->protocol = font->protocol;
+        derivedFont->object = object;
+        derivedFont->resource = RetainFontResource(font->resource);
+        derivedFont->coordArray = malloc(sizeof(SFInt16) * coordCount);
+        derivedFont->coordCount = coordCount;
+        derivedFont->retainCount = 1;
+
+        memcpy(derivedFont->coordArray, coordArray, sizeof(SFInt16) * coordCount);
+    }
+
+    return NULL;
+}
+
 SF_INTERNAL SFGlyphID SFFontGetGlyphIDForCodepoint(SFFontRef font, SFCodepoint codepoint)
 {
     return font->protocol.getGlyphIDForCodepoint(font->object, codepoint);
