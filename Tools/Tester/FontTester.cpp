@@ -167,9 +167,9 @@ void FontTester::testLoadedTables()
 {
     SFFontRef font = SFFontCreateWithCompleteFunctionality();
 
-    assert(memcmp(font->tables.gdef, TABLE_GDEF, 4) == 0);
-    assert(memcmp(font->tables.gsub, TABLE_GSUB, 4) == 0);
-    assert(memcmp(font->tables.gpos, TABLE_GPOS, 4) == 0);
+    assert(memcmp(font->resource->gdef, TABLE_GDEF, 4) == 0);
+    assert(memcmp(font->resource->gsub, TABLE_GSUB, 4) == 0);
+    assert(memcmp(font->resource->gpos, TABLE_GPOS, 4) == 0);
 
     SFFontRelease(font);
 }
