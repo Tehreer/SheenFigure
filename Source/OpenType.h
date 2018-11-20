@@ -32,12 +32,12 @@ SF_INTERNAL SFUInt16 SearchGlyphClass(Data classDefTable, SFGlyphID glyphID);
 SF_INTERNAL SFInt32 GetDevicePixels(Data deviceTable, SFUInt16 ppemSize);
 
 SF_INTERNAL double CalculateScalarForRegion(Data regionListTable, SFUInt16 regionIndex,
-    SFInt32 *coordArray, SFUInteger coordCount);
+    const SFInt16 *coordArray, SFUInteger coordCount);
 SF_INTERNAL SFInt32 GetVariationPixels(Data varIndexTable, Data varStoreTable,
-    SFInt32 *coordArray, SFUInteger coordCount);
+    const SFInt16 *coordArray, SFUInteger coordCount);
 
 SF_INTERNAL Data SearchFeatureSubstitutionTable(Data featureVarsTable,
-    SFInt32 *coordArray, SFUInteger coordCount);
+    const SFInt16 *coordArray, SFUInteger coordCount);
 SF_INTERNAL Data SearchAlternateFeatureTable(Data featureSubstTable, SFUInt16 featureIndex);
 
 #endif

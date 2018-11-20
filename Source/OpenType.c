@@ -267,7 +267,7 @@ SF_INTERNAL SFInt32 GetDevicePixels(Data deviceTable, SFUInt16 ppemSize)
 }
 
 SF_INTERNAL double CalculateScalarForRegion(Data regionListTable, SFUInt16 regionIndex,
-    SFInt32 *coordArray, SFUInteger coordCount)
+    const SFInt16 *coordArray, SFUInteger coordCount)
 {
     SFUInt16 axisCount = VarRegionList_AxisCount(regionListTable);
     SFUInt16 regionCount = VarRegionList_RegionCount(regionListTable);
@@ -283,7 +283,7 @@ SF_INTERNAL double CalculateScalarForRegion(Data regionListTable, SFUInt16 regio
             SFInt16 startCoord = RegionAxisCoords_StartCoord(axisCoords);
             SFInt16 peakCoord = RegionAxisCoords_PeakCoord(axisCoords);
             SFInt16 endCoord = RegionAxisCoords_EndCoord(axisCoords);
-            SFInt32 instanceCoord = (axisIndex < coordCount ? coordArray[axisIndex] : 0);
+            SFInt16 instanceCoord = (axisIndex < coordCount ? coordArray[axisIndex] : 0);
             double axisScalar;
 
             if (startCoord > peakCoord || peakCoord > endCoord) {
@@ -312,7 +312,7 @@ SF_INTERNAL double CalculateScalarForRegion(Data regionListTable, SFUInt16 regio
 }
 
 static double CalculateVariationAdjustment(Data varDataTable, Data regionListTable,
-    SFUInt16 rowIndex, SFInt32 *coordArray, SFUInteger coordCount)
+    SFUInt16 rowIndex, const SFInt16 *coordArray, SFUInteger coordCount)
 {
     SFUInt16 itemCount = ItemVarData_ItemCount(varDataTable);
     SFUInt16 shortDeltaCount = ItemVarData_ShortDeltaCount(varDataTable);
@@ -343,7 +343,7 @@ static double CalculateVariationAdjustment(Data varDataTable, Data regionListTab
 }
 
 static double GetDeltaFromVariationStore(Data varStoreTable,
-    SFUInt16 dataIndex, SFUInt16 rowIndex, SFInt32 *coordArray, SFUInteger coordCount)
+    SFUInt16 dataIndex, SFUInt16 rowIndex, const SFInt16 *coordArray, SFUInteger coordCount)
 {
     SFUInt16 format = ItemVarStore_Format(varStoreTable);
 
@@ -364,7 +364,7 @@ static double GetDeltaFromVariationStore(Data varStoreTable,
 }
 
 SF_INTERNAL SFInt32 GetVariationPixels(Data varIndexTable, Data varStoreTable,
-    SFInt32 *coordArray, SFUInteger coordCount)
+    const SFInt16 *coordArray, SFUInteger coordCount)
 {
     SFUInt16 outerIndex = VarIndex_DeltaSetOuterIndex(varIndexTable);
     SFUInt16 innerIndex = VarIndex_DeltaSetInnerIndex(varIndexTable);
@@ -378,7 +378,7 @@ SF_INTERNAL SFInt32 GetVariationPixels(Data varIndexTable, Data varStoreTable,
     return 0;
 }
 
-static SFBoolean MatchCondition(Data condTable, SFInt32 *coordArray, SFUInteger coordCount)
+static SFBoolean MatchCondition(Data condTable, const SFInt16 *coordArray, SFUInteger coordCount)
 {
     SFUInt16 format = Condition_Format(condTable);
 
@@ -387,7 +387,7 @@ static SFBoolean MatchCondition(Data condTable, SFInt32 *coordArray, SFUInteger 
             SFUInt16 axisIndex = Condition_AxisIndex(condTable);
             SFInt16 minValue = Condition_FilterRangeMinValue(condTable);
             SFInt16 maxValue = Condition_FilterRangeMaxValue(condTable);
-            SFInt32 coordValue = (axisIndex < coordCount ? coordArray[axisIndex] : 0);
+            SFInt16 coordValue = (axisIndex < coordCount ? coordArray[axisIndex] : 0);
 
             if (coordValue >= minValue && coordValue <= maxValue) {
                 return SFTrue;
@@ -398,7 +398,7 @@ static SFBoolean MatchCondition(Data condTable, SFInt32 *coordArray, SFUInteger 
     return SFFalse;
 }
 
-static SFBoolean MatchConditionSet(Data condSetTable, SFInt32 *coordArray, SFUInteger coordCount)
+static SFBoolean MatchConditionSet(Data condSetTable, const SFInt16 *coordArray, SFUInteger coordCount)
 {
     SFUInt16 condCount = ConditionSet_ConditionCount(condSetTable);
     SFUInt16 condIndex;
@@ -415,7 +415,7 @@ static SFBoolean MatchConditionSet(Data condSetTable, SFInt32 *coordArray, SFUIn
 }
 
 SF_INTERNAL Data SearchFeatureSubstitutionTable(Data featureVarsTable,
-    SFInt32 *coordArray, SFUInteger coordCount)
+    const SFInt16 *coordArray, SFUInteger coordCount)
 {
     SFUInt32 recordCount = FeatureVars_FeatureVarCount(featureVarsTable);
     SFUInt32 recordIndex;
