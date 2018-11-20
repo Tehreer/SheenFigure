@@ -117,7 +117,7 @@ void MiscTester::testRegionListScalar()
         { axis_coords { 0.5f, 1.0f, 1.5f } },
         { axis_coords { 0.0f, 0.5f, 1.0f }, axis_coords { 1.25f, 1.50f, 1.75f } },
     });
-    vector<SFInt32> coords = {
+    vector<Int16> coords = {
         toF2DOT14(1.0f),
         toF2DOT14(0.4f), toF2DOT14(1.6f),
         toF2DOT14(0.75f), toF2DOT14(1.25f),
@@ -163,7 +163,7 @@ void MiscTester::testVariationPixels()
     sw.write(&varStore);
 
     Data storeTable = sw.data();
-    SFInt32 coord = toF2DOT14(0.75f);
+    Int16 coord = toF2DOT14(0.75f);
 
     /* Test with i16 delta only. */
     {
@@ -251,7 +251,7 @@ void MiscTester::testFeatureSubst()
 
         /* Test with first matching condition set. */
         {
-            vector<Int32> coords = { toF2DOT14(1.50f), toF2DOT14(0.0f), toF2DOT14(0.0f) };
+            vector<Int16> coords = { toF2DOT14(1.50f), toF2DOT14(0.0f), toF2DOT14(0.0f) };
             Data featureSubst = SearchFeatureSubstitutionTable(data, coords.data(), 3);
             Data altFeature = SearchAlternateFeatureTable(featureSubst, 1);
             assert(checkLookupIndex(altFeature, 11));
@@ -259,7 +259,7 @@ void MiscTester::testFeatureSubst()
 
         /* Test with middle matching condition set. */
         {
-            vector<Int32> coords = { toF2DOT14(0.0f), toF2DOT14(-0.50f), toF2DOT14(0.0f) };
+            vector<Int16> coords = { toF2DOT14(0.0f), toF2DOT14(-0.50f), toF2DOT14(0.0f) };
             Data featureSubst = SearchFeatureSubstitutionTable(data, coords.data(), 3);
             Data altFeature = SearchAlternateFeatureTable(featureSubst, 2);
             assert(checkLookupIndex(altFeature, 12));
@@ -267,7 +267,7 @@ void MiscTester::testFeatureSubst()
 
         /* Test with last matching condition set. */
         {
-            vector<Int32> coords = { toF2DOT14(0.0f), toF2DOT14(1.0f), toF2DOT14(-0.25f) };
+            vector<Int16> coords = { toF2DOT14(0.0f), toF2DOT14(1.0f), toF2DOT14(-0.25f) };
             Data featureSubst = SearchFeatureSubstitutionTable(data, coords.data(), 3);
             Data altFeature = SearchAlternateFeatureTable(featureSubst, 3);
             assert(checkLookupIndex(altFeature, 13));
@@ -287,7 +287,7 @@ void MiscTester::testFeatureSubst()
 
         Data data = writer.data();
 
-        vector<Int32> coords = { toF2DOT14(1.50f), toF2DOT14(-0.50f), toF2DOT14(-0.25f) };
+        vector<Int16> coords = { toF2DOT14(1.50f), toF2DOT14(-0.50f), toF2DOT14(-0.25f) };
         Data featureSubst = SearchFeatureSubstitutionTable(data, coords.data(), 3);
         Data altFeature = SearchAlternateFeatureTable(featureSubst, 1);
         assert(checkLookupIndex(altFeature, 11));
