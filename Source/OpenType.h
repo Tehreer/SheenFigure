@@ -41,4 +41,7 @@ SF_INTERNAL Data SearchFeatureSubstitutionTable(Data featureVarsTable,
     const SFInt16 *coordArray, SFUInteger coordCount);
 SF_INTERNAL Data SearchAlternateFeatureTable(Data featureSubstTable, SFUInt16 featureIndex);
 
+SF_INTERNAL Data SearchRelevantFeatureTable(Data langSysTable,
+    Data featureListTable, Data featureSubstTable, SFTag featureTag);
+
 #endif

@@ -458,3 +458,19 @@ SF_INTERNAL Data SearchAlternateFeatureTable(Data featureSubstTable, SFUInt16 fe
 
     return NULL;
 }
+
+SF_INTERNAL Data SearchRelevantFeatureTable(Data langSysTable,
+    Data featureListTable, Data featureSubstTable, SFTag featureTag)
+{
+    SFUInt16 featureIndex;
+    Data defFeatureTable = SearchDefaultFeatureTable(langSysTable, featureListTable, featureTag, &featureIndex);
+
+    if (defFeatureTable && featureSubstTable) {
+        Data altFeatureTable = SearchAlternateFeatureTable(featureSubstTable, featureIndex);
+        if (altFeatureTable) {
+            return altFeatureTable;
+        }
+    }
+
+    return defFeatureTable;
+}
