@@ -20,6 +20,7 @@
 #include <string.h>
 
 #include "Common.h"
+#include "Data.h"
 #include "OpenType.h"
 #include "UnifiedEngine.h"
 #include "SFBase.h"
@@ -57,7 +58,7 @@ static SFBoolean GetCustomValue(SFSchemeRef scheme, SFTag featureTag, SFUInt16 *
 }
 
 static void AddFeatureUnit(SFSchemeRef scheme, SFPatternBuilderRef patternBuilder,
-    Data langSysTable, Data featureListTable,
+    Data langSysTable, Data featureListTable, Data featureSubstTable,
     FeatureInfo *featureInfos, SFUInteger featureCount)
 {
     SFBoolean exists = SFFalse;
@@ -81,7 +82,7 @@ static void AddFeatureUnit(SFSchemeRef scheme, SFPatternBuilderRef patternBuilde
 
         /* Process the feature if it is enabled. */
         if (featureValue != 0) {
-            Data featureTable = SearchFeatureTable(langSysTable, featureListTable, featureTag);
+            Data featureTable = SearchRelevantFeatureTable(langSysTable, featureListTable, featureSubstTable, featureTag);
 
             /* Add the feature if it exists in the language. */
             if (featureTable) {
@@ -99,7 +100,7 @@ static void AddFeatureUnit(SFSchemeRef scheme, SFPatternBuilderRef patternBuilde
 }
 
 static void AddKnownFeatures(SFSchemeRef scheme, SFPatternBuilderRef patternBuilder,
-    Data langSysTable, Data featureListTable,
+    Data langSysTable, Data featureListTable, Data featureSubstTable,
     FeatureInfo *featureInfos, SFUInteger featureCount)
 {
     SFUInteger index = 0;
@@ -124,7 +125,7 @@ static void AddKnownFeatures(SFSchemeRef scheme, SFPatternBuilderRef patternBuil
             unitLength = next - index;
         }
 
-        AddFeatureUnit(scheme, patternBuilder, langSysTable, featureListTable, featureInfo, unitLength);
+        AddFeatureUnit(scheme, patternBuilder, langSysTable, featureListTable, featureSubstTable, featureInfo, unitLength);
         index += unitLength;
     }
 }
@@ -143,7 +144,7 @@ static SFBoolean IsKnownFeature(SFTag featureTag, FeatureInfo *featureInfos, SFU
 }
 
 static void AddCustomFeatures(SFSchemeRef scheme, SFPatternBuilderRef patternBuilder,
-    Data langSysTable, Data featureListTable,
+    Data langSysTable, Data featureListTable, Data featureSubstTable,
     FeatureInfo *featureInfos, SFUInteger featureCount)
 {
     SFBoolean exists = SFFalse;
@@ -162,7 +163,7 @@ static void AddCustomFeatures(SFSchemeRef scheme, SFPatternBuilderRef patternBui
 
             /* Process the feature if it is enabled. */
             if (featureValue != 0) {
-                Data featureTable = SearchFeatureTable(langSysTable, featureListTable, featureTag);
+                Data featureTable = SearchRelevantFeatureTable(langSysTable, featureListTable, featureSubstTable, featureTag);
 
                 /* Add the feature if it exists in the language. */
                 if (featureTable) {
@@ -183,8 +184,10 @@ static void AddCustomFeatures(SFSchemeRef scheme, SFPatternBuilderRef patternBui
 static void AddHeaderTable(SFSchemeRef scheme, SFPatternBuilderRef patternBuilder,
     Data headerTable, FeatureInfo *featureInfos, SFUInteger featureCount)
 {
+    SFUInt32 headerVersion = Header_Version(headerTable);
     Data scriptListTable = Header_ScriptListTable(headerTable);
     Data featureListTable = Header_FeatureListTable(headerTable);
+    Data featureSubstTable = NULL;
     Data scriptTable;
     Data langSysTable;
 
@@ -196,8 +199,13 @@ static void AddHeaderTable(SFSchemeRef scheme, SFPatternBuilderRef patternBuilde
         langSysTable = SearchLangSysTable(scriptTable, scheme->_languageTag);
 
         if (langSysTable) {
-            AddKnownFeatures(scheme, patternBuilder, langSysTable, featureListTable, featureInfos, featureCount);
-            AddCustomFeatures(scheme, patternBuilder, langSysTable, featureListTable, featureInfos, featureCount);
+            if (headerVersion == 0x00010001) {
+                Data featureVarsTable = HeaderV11_FeatureVariationsTable(headerTable);
+                featureSubstTable = SearchFeatureSubstitutionTable(featureVarsTable, scheme->_font->coordArray, scheme->_font->coordCount);
+            }
+
+            AddKnownFeatures(scheme, patternBuilder, langSysTable, featureListTable, featureSubstTable, featureInfos, featureCount);
+            AddCustomFeatures(scheme, patternBuilder, langSysTable, featureListTable, featureSubstTable, featureInfos, featureCount);
         }
     }
 }
