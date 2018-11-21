@@ -24,7 +24,8 @@
 
 SF_INTERNAL Data SearchScriptTable(Data scriptListTable, SFTag scriptTag);
 SF_INTERNAL Data SearchLangSysTable(Data scriptTable, SFTag languageTag);
-SF_INTERNAL Data SearchFeatureTable(Data langSysTable, Data featureListTable, SFTag featureTag);
+SF_INTERNAL Data SearchDefaultFeatureTable(Data langSysTable,
+    Data featureListTable, SFTag featureTag, SFUInt16 *featureIndex);
 
 SF_INTERNAL SFUInteger SearchCoverageIndex(Data coverageTable, SFGlyphID glyphID);
 SF_INTERNAL SFUInt16 SearchGlyphClass(Data classDefTable, SFGlyphID glyphID);

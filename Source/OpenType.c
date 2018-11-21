@@ -77,28 +77,30 @@ SF_INTERNAL Data SearchLangSysTable(Data scriptTable, SFTag languageTag)
     return langSysTable;
 }
 
-SF_INTERNAL Data SearchFeatureTable(Data langSysTable, Data featureListTable, SFTag featureTag)
+SF_INTERNAL Data SearchDefaultFeatureTable(Data langSysTable,
+    Data featureListTable, SFTag featureTag, SFUInt16 *featureIndex)
 {
-    Data featureTable = NULL;
-    SFUInt16 featureCount;
-    SFUInt16 index;
+    SFUInt16 featureCount = LangSys_FeatureCount(langSysTable);
+    SFUInt16 arrayIndex;
 
-    featureCount = LangSys_FeatureCount(langSysTable);
+    for (arrayIndex = 0; arrayIndex < featureCount; arrayIndex++) {
+        SFUInt16 recordIndex = LangSys_FeatureIndex(langSysTable, arrayIndex);
+        Data featureRecord = FeatureList_FeatureRecord(featureListTable, recordIndex);
+        SFTag recordTag = FeatureRecord_FeatureTag(featureRecord);
 
-    for (index = 0; index < featureCount; index++) {
-        SFUInt16 featureIndex = LangSys_FeatureIndex(langSysTable, index);
-        Data featureRecord = FeatureList_FeatureRecord(featureListTable, featureIndex);
-        SFTag featureRecTag = FeatureRecord_FeatureTag(featureRecord);
-        SFOffset featureOffset;
+        if (recordTag == featureTag) {
+            SFOffset featureOffset = FeatureRecord_FeatureOffset(featureRecord);
+            Data featureTable = Data_Subdata(featureListTable, featureOffset);
 
-        if (featureRecTag == featureTag) {
-            featureOffset = FeatureRecord_FeatureOffset(featureRecord);
-            featureTable = Data_Subdata(featureListTable, featureOffset);
-            break;
+            if (featureIndex) {
+                *featureIndex = recordIndex;
+            }
+
+            return featureTable;
         }
     }
 
-    return featureTable;
+    return NULL;
 }
 
 static int UInt16ItemsComparison(const void *item1, const void *item2)
