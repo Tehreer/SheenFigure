@@ -63,6 +63,10 @@ typedef SFUInt16 LookupFlag;
 #define Header_LookupListTable(data) \
     Data_Subdata(data, Header_LookupListOffset(data))
 
+#define HeaderV11_FeatureVariationsOffset(data)         Data_UInt32(data, 10)
+#define HeaderV11_FeatureVariationsTable(data) \
+    Data_Subdata(data, HeaderV11_FeatureVariationsOffset(data))
+
 /****************************************SCRIPT LIST TABLE*****************************************/
 
 #define ScriptList_ScriptCount(data)                    Data_UInt16(data, 0)
