@@ -43,10 +43,7 @@ SF_INTERNAL void LocatorInitialize(LocatorRef locator, SFAlbumRef album, Data gd
 
     if (gdef) {
         locator->_markAttachClassDef = GDEF_MarkAttachClassDefTable(gdef);
-
-        if (GDEF_Version(gdef) == 0x00010002) {
-            locator->_markGlyphSetsDef = GDEF_MarkGlyphSetsDefTable(gdef);
-        }
+        locator->_markGlyphSetsDef = GDEF_MarkGlyphSetsDefTable(gdef);
     }
 }
 
