@@ -17,8 +17,10 @@
 #ifndef _SF_INTERNAL_GDEF_H
 #define _SF_INTERNAL_GDEF_H
 
-#include "SFBase.h"
+#include <stddef.h>
+
 #include "Data.h"
+#include "SFBase.h"
 
 enum {
     GlyphClassValueNone = 0,
@@ -36,8 +38,8 @@ typedef SFUInt16 GlyphClassValue;
 #define GDEF_AttachListOffset(data)                     Data_UInt16(data, 6)
 #define GDEF_LigCaretListOffset(data)                   Data_UInt16(data, 8)
 #define GDEF_MarkAttachClassDefOffset(data)             Data_UInt16(data, 10)
-#define GDEF_MarkGlyphSetsDefOffset(data)               Data_UInt16(data, 12)
-#define GDEF_ItemVarStoreOffset(data)                   Data_UInt32(data, 14)
+#define GDEFv12_MarkGlyphSetsDefOffset(data)            Data_UInt16(data, 12)
+#define GDEFv13_ItemVarStoreOffset(data)                Data_UInt32(data, 14)
 #define GDEF_GlyphClassDefTable(data) \
     Data_Subdata(data, GDEF_GlyphClassDefOffset(data))
 #define GDEF_AttachListTable(data) \
@@ -46,10 +48,15 @@ typedef SFUInt16 GlyphClassValue;
     Data_Subdata(data, GDEF_LigCaretListOffset(data))
 #define GDEF_MarkAttachClassDefTable(data) \
     Data_Subdata(data, GDEF_MarkAttachClassDefOffset(data))
+#define GDEFv12_MarkGlyphSetsDefTable(data) \
+    Data_Subdata(data, GDEFv12_MarkGlyphSetsDefOffset(data))
+#define GDEFv13_ItemVarStoreTable(data) \
+    Data_Subdata(data, GDEFv13_ItemVarStoreOffset(data))
+
 #define GDEF_MarkGlyphSetsDefTable(data) \
-    Data_Subdata(data, GDEF_MarkGlyphSetsDefOffset(data))
+    (GDEF_Version(data) >= 0x00010002 ? GDEFv12_MarkGlyphSetsDefTable(data) : NULL)
 #define GDEF_ItemVarStoreTable(data) \
-    Data_Subdata(data, GDEF_ItemVarStoreOffset(data))
+    (GDEF_Version(data) >= 0x00010003 ? GDEFv13_ItemVarStoreTable(data) : NULL)
 
 /**************************************************************************************************/
 
