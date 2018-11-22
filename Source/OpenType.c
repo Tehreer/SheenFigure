@@ -380,6 +380,18 @@ SF_INTERNAL SFInt32 GetVariationPixels(Data varIndexTable, Data varStoreTable,
     return 0;
 }
 
+SF_INTERNAL SFInt32 GetRelevantDeltaPixels(Data devOrVarIdxTable, SFUInt16 ppemSize,
+    Data varStoreTable, const SFInt16 *coordArray, SFUInteger coordCount)
+{
+    SFInt32 format = Device_DeltaFormat(devOrVarIdxTable);
+
+    if (format == 0x8000) {
+        return GetVariationPixels(devOrVarIdxTable, varStoreTable, coordArray, coordCount);
+    }
+
+    return GetDevicePixels(devOrVarIdxTable, ppemSize);
+}
+
 static SFBoolean MatchCondition(Data condTable, const SFInt16 *coordArray, SFUInteger coordCount)
 {
     SFUInt16 format = Condition_Format(condTable);

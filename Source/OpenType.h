@@ -37,6 +37,9 @@ SF_INTERNAL double CalculateScalarForRegion(Data regionListTable, SFUInt16 regio
 SF_INTERNAL SFInt32 GetVariationPixels(Data varIndexTable, Data varStoreTable,
     const SFInt16 *coordArray, SFUInteger coordCount);
 
+SF_INTERNAL SFInt32 GetRelevantDeltaPixels(Data devOrVarIdxTable, SFUInt16 ppemSize,
+    Data varStoreTable, const SFInt16 *coordArray, SFUInteger coordCount);
+
 SF_INTERNAL Data SearchFeatureSubstitutionTable(Data featureVarsTable,
     const SFInt16 *coordArray, SFUInteger coordCount);
 SF_INTERNAL Data SearchAlternateFeatureTable(Data featureSubstTable, SFUInt16 featureIndex);
