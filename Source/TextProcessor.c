@@ -16,16 +16,16 @@
 
 #include <SFConfig.h>
 
+#include "Common.h"
+#include "Data.h"
+#include "GDEF.h"
+#include "GSUB.h"
+#include "Locator.h"
 #include "SFAlbum.h"
 #include "SFArtist.h"
 #include "SFAssert.h"
 #include "SFBase.h"
-#include "Common.h"
-#include "Data.h"
 #include "SFFont.h"
-#include "GDEF.h"
-#include "GSUB.h"
-#include "Locator.h"
 #include "SFPattern.h"
 
 #include "GlyphDiscovery.h"
@@ -43,25 +43,24 @@ SF_INTERNAL void TextProcessorInitialize(TextProcessorRef textProcessor,
     SFPatternRef pattern, SFAlbumRef album, SFTextDirection textDirection,
     SFUInt16 ppemWidth, SFUInt16 ppemHeight, SFBoolean zeroWidthMarks)
 {
-    Data gdef;
-
-    /* Pattern must NOT be null. */
-    SFAssert(pattern != NULL);
-    /* Album must NOT be null. */
-    SFAssert(album != NULL);
+    SFFontRef font = pattern->font;
+    Data gdef = font->resource->gdef;
 
     textProcessor->_pattern = pattern;
     textProcessor->_album = album;
+    textProcessor->_coordArray = font->coordArray;
+    textProcessor->_coordCount = font->coordCount;
     textProcessor->_glyphClassDef = NULL;
+    textProcessor->_itemVarStore = NULL;
     textProcessor->_textDirection = textDirection;
     textProcessor->_ppemWidth = ppemWidth;
     textProcessor->_ppemHeight = ppemHeight;
     textProcessor->_zeroWidthMarks = zeroWidthMarks;
     textProcessor->_containsZeroWidthCodepoints = SFFalse;
 
-    gdef = pattern->font->resource->gdef;
     if (gdef) {
         textProcessor->_glyphClassDef = GDEF_GlyphClassDefTable(gdef);
+        textProcessor->_itemVarStore = GDEF_ItemVarStoreTable(gdef);
     }
 
     LocatorInitialize(&textProcessor->_locator, album, gdef);
