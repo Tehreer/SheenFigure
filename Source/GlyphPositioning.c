@@ -45,6 +45,20 @@ static SFBoolean ApplyMarkToLigArrays(TextProcessorRef textProcessor, Data markL
 static SFBoolean ApplyMarkToMarkArrays(TextProcessorRef textProcessor, Data markMarkPos,
     SFUInteger mark1Index, SFUInteger mark2Index, SFUInteger attachmentIndex);
 
+static SFInt32 GetXDeltaPixels(TextProcessorRef textProcessor, Data devOrVarIdxTable)
+{
+    return GetRelevantDeltaPixels(devOrVarIdxTable, textProcessor->_ppemWidth,
+                                  textProcessor->_itemVarStore,
+                                  textProcessor->_coordArray, textProcessor->_coordCount);
+}
+
+static SFInt32 GetYDeltaPixels(TextProcessorRef textProcessor, Data devOrVarIdxTable)
+{
+    return GetRelevantDeltaPixels(devOrVarIdxTable, textProcessor->_ppemHeight,
+                                  textProcessor->_itemVarStore,
+                                  textProcessor->_coordArray, textProcessor->_coordCount);
+}
+
 static void ApplyValueRecord(TextProcessorRef textProcessor, Data parentTable,
     Data valueRecord, SFUInt16 valueFormat, SFUInteger inputIndex)
 {
@@ -88,7 +102,7 @@ static void ApplyValueRecord(TextProcessorRef textProcessor, Data parentTable,
             Data deviceTable = Data_Subdata(parentTable, deviceOffset);
             SFInt32 adjustment;
 
-            adjustment = GetDevicePixels(deviceTable, textProcessor->_ppemWidth);
+            adjustment = GetXDeltaPixels(textProcessor, deviceTable);
             SFAlbumAddX(album, inputIndex, adjustment);
         }
 
@@ -102,7 +116,7 @@ static void ApplyValueRecord(TextProcessorRef textProcessor, Data parentTable,
             Data deviceTable = Data_Subdata(parentTable, deviceOffset);
             SFInt32 adjustment;
 
-            adjustment = GetDevicePixels(deviceTable, textProcessor->_ppemHeight);
+            adjustment = GetYDeltaPixels(textProcessor, deviceTable);
             SFAlbumAddY(album, inputIndex, adjustment);
         }
 
@@ -119,7 +133,7 @@ static void ApplyValueRecord(TextProcessorRef textProcessor, Data parentTable,
                     Data deviceTable = Data_Subdata(parentTable, deviceOffset);
                     SFInt32 adjustment;
 
-                    adjustment = GetDevicePixels(deviceTable, textProcessor->_ppemWidth);
+                    adjustment = GetXDeltaPixels(textProcessor, deviceTable);
                     SFAlbumAddAdvance(album, inputIndex, adjustment);
                 }
                 break;
@@ -371,12 +385,12 @@ static SFPoint ConvertAnchorToPoint(TextProcessorRef textProcessor, Data anchor)
 
             if (xDeviceOffset) {
                 Data deviceTable = Data_Subdata(anchor, xDeviceOffset);
-                point.x += GetDevicePixels(deviceTable, textProcessor->_ppemWidth);
+                point.x += GetXDeltaPixels(textProcessor, deviceTable);
             }
 
             if (yDeviceOffset) {
                 Data deviceTable = Data_Subdata(anchor, yDeviceOffset);
-                point.y += GetDevicePixels(deviceTable, textProcessor->_ppemHeight);
+                point.y += GetYDeltaPixels(textProcessor, deviceTable);
             }
             break;
         }
