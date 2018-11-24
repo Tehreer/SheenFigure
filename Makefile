@@ -31,29 +31,29 @@ RELEASE_FLAGS = -DNDEBUG -DSF_CONFIG_UNITY -Os
 DEBUG = Debug
 RELEASE = Release
 
-DEBUG_SOURCES = $(SOURCE_DIR)/SFAlbum.c \
-                $(SOURCE_DIR)/SFArabicEngine.c \
+DEBUG_SOURCES = $(SOURCE_DIR)/ArabicEngine.c \
+                $(SOURCE_DIR)/GlyphDiscovery.c \
+                $(SOURCE_DIR)/GlyphManipulation.c \
+                $(SOURCE_DIR)/GlyphPositioning.c \
+                $(SOURCE_DIR)/GlyphSubstitution.c \
+                $(SOURCE_DIR)/List.c \
+                $(SOURCE_DIR)/Locator.c \
+                $(SOURCE_DIR)/OpenType.c \
+                $(SOURCE_DIR)/SFAlbum.c \
                 $(SOURCE_DIR)/SFArtist.c \
                 $(SOURCE_DIR)/SFBase.c \
                 $(SOURCE_DIR)/SFCodepoints.c \
                 $(SOURCE_DIR)/SFFont.c \
-                $(SOURCE_DIR)/SFGlyphDiscovery.c \
-                $(SOURCE_DIR)/SFGlyphManipulation.c \
-                $(SOURCE_DIR)/SFGlyphPositioning.c \
-                $(SOURCE_DIR)/SFGlyphSubstitution.c \
                 $(SOURCE_DIR)/SFJoiningTypeLookup.c \
-                $(SOURCE_DIR)/SFList.c \
-                $(SOURCE_DIR)/SFLocator.c \
-                $(SOURCE_DIR)/SFOpenType.c \
                 $(SOURCE_DIR)/SFPattern.c \
                 $(SOURCE_DIR)/SFPatternBuilder.c \
                 $(SOURCE_DIR)/SFScheme.c \
-                $(SOURCE_DIR)/SFShapingEngine.c \
-                $(SOURCE_DIR)/SFShapingKnowledge.c \
-                $(SOURCE_DIR)/SFSimpleEngine.c \
-                $(SOURCE_DIR)/SFStandardEngine.c \
-                $(SOURCE_DIR)/SFTextProcessor.c \
-                $(SOURCE_DIR)/SFUnifiedEngine.c
+                $(SOURCE_DIR)/ShapingEngine.c \
+                $(SOURCE_DIR)/ShapingKnowledge.c \
+                $(SOURCE_DIR)/SimpleEngine.c \
+                $(SOURCE_DIR)/StandardEngine.c \
+                $(SOURCE_DIR)/TextProcessor.c \
+                $(SOURCE_DIR)/UnifiedEngine.c
 RELEASE_SOURCES = $(SOURCE_DIR)/SheenFigure.c
 
 DEBUG_OBJECTS   = $(DEBUG_SOURCES:$(SOURCE_DIR)/%.c=$(DEBUG)/%.o)
