@@ -74,7 +74,8 @@ static ScriptKnowledgeRef StandardKnowledgeSeekScript(const void *object, SFTag 
             return &StandardScriptKnowledge;
     }
 
-    return NULL;
+    /* Use same features for unknown scripts as they are not script specific. */
+    return &StandardScriptKnowledge;
 }
 
 static ShapingEngine StandardEngineBase = {

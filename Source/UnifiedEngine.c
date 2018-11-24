@@ -19,7 +19,6 @@
 #include "ArabicEngine.h"
 #include "SFArtist.h"
 #include "ShapingKnowledge.h"
-#include "SimpleEngine.h"
 #include "StandardEngine.h"
 #include "UnifiedEngine.h"
 
@@ -39,10 +38,6 @@ static ScriptKnowledgeRef UnifiedKnowledgeSeekScript(const void *object, SFTag s
         knowledge = ShapingKnowledgeSeekScript(&StandardKnowledgeInstance, scriptTag);
     }
 
-    if (!knowledge) {
-        knowledge = ShapingKnowledgeSeekScript(&SimpleKnowledgeInstance, scriptTag);
-    }
-
     return knowledge;
 }
 
@@ -56,11 +51,5 @@ SF_INTERNAL void UnifiedEngineInitialize(UnifiedEngineRef unifiedEngine, SFArtis
         return;
     }
 
-    knowledge = ShapingKnowledgeSeekScript(&StandardKnowledgeInstance, artist->pattern->scriptTag);
-    if (knowledge) {
-        StandardEngineInitialize(&unifiedEngine->_standardEngine, artist);
-        return;
-    }
-
-    SimpleEngineInitialize(&unifiedEngine->_simpleEngine, artist);
+    StandardEngineInitialize(&unifiedEngine->_standardEngine, artist);
 }
