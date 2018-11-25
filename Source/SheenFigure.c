@@ -38,7 +38,6 @@
 #include "SFScheme.c"
 #include "ShapingEngine.c"
 #include "ShapingKnowledge.c"
-#include "SimpleEngine.c"
 #include "StandardEngine.c"
 #include "TextProcessor.c"
 #include "UnifiedEngine.c"
