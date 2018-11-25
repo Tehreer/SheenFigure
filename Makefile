@@ -50,7 +50,6 @@ DEBUG_SOURCES = $(SOURCE_DIR)/ArabicEngine.c \
                 $(SOURCE_DIR)/SFScheme.c \
                 $(SOURCE_DIR)/ShapingEngine.c \
                 $(SOURCE_DIR)/ShapingKnowledge.c \
-                $(SOURCE_DIR)/SimpleEngine.c \
                 $(SOURCE_DIR)/StandardEngine.c \
                 $(SOURCE_DIR)/TextProcessor.c \
                 $(SOURCE_DIR)/UnifiedEngine.c
