@@ -194,6 +194,11 @@ static void AddHeaderTable(SFSchemeRef scheme, SFPatternBuilderRef patternBuilde
     /* Get script table belonging to the desired tag. */
     scriptTable = SearchScriptTable(scriptListTable, scheme->_scriptTag);
 
+    /* Use the default script table if the desired script tag is not available. */
+    if (!scriptTable) {
+        scriptTable = SearchScriptTable(scriptListTable, TAG('D', 'F', 'L', 'T'));
+    }
+
     if (scriptTable) {
         /* Get lang sys table belonging to the desired tag. */
         langSysTable = SearchLangSysTable(scriptTable, scheme->_languageTag);
