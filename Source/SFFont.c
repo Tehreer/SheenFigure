@@ -109,6 +109,8 @@ SFFontRef SFFontCreateWithVariationCoordinates(SFFontRef font, void *object,
         derivedFont->retainCount = 1;
 
         memcpy(derivedFont->coordArray, coordArray, sizeof(SFInt16) * coordCount);
+
+        return derivedFont;
     }
 
     return NULL;
