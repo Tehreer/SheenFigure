@@ -220,6 +220,8 @@ SF_INTERNAL void SFAlbumSetFeatureMask(SFAlbumRef album, SFUInteger index, SFUIn
 {
     /* The album must be in filling state. */
     SFAssert(album->_state == AlbumStateFilling);
+    /* Feature mask should NEVER be anti-empty. */
+    SFAssert(featureMask != ~EmptyGlyphMask.section.feature);
 
     ListGetRef(&album->_details, index)->mask.section.feature = featureMask;
 }

@@ -205,8 +205,10 @@ static void PutArabicFeatureMask(SFAlbumRef album)
         }
 
         /* Save the mask of current character. */
-        SFAlbumSetFeatureMask(album, currentIndex, featureMask);
-
+        if (featureMask) {
+            SFAlbumSetFeatureMask(album, currentIndex, featureMask);
+        }
+        
         /* Move to the next character. */
         priorJoiningType = joiningType;
         currentIndex = nextIndex;
