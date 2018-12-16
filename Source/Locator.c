@@ -367,9 +367,11 @@ SF_INTERNAL SFUInteger LocatorGetPrecedingMarkIndex(LocatorRef locator)
 SF_INTERNAL void LocatorTakeState(LocatorRef locator, LocatorRef sibling) {
     /* Both of the locators MUST belong to the same album. */
     SFAssert(locator->_album == sibling->_album);
-    /* The state of sibling must be valid. */
-    SFAssert(sibling->_stateIndex <= locator->_limitIndex);
 
+    /* Limit index might increase in case of multiple substitution. */
+    if (sibling->_limitIndex > locator->_limitIndex) {
+        locator->_limitIndex = sibling->_limitIndex;
+    }
     locator->_stateIndex = sibling->_stateIndex;
     locator->_version = sibling->_version;
 }
