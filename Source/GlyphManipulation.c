@@ -425,12 +425,14 @@ static SFBoolean ApplyChainRuleTable(TextProcessorRef textProcessor,
 static SFBoolean ApplyContextLookups(TextProcessorRef textProcessor,
     Data lookupArray, SFUInteger lookupCount, SFUInteger contextStart, SFUInteger contextEnd)
 {
-    LocatorRef contextLocator = &textProcessor->_locator;
-    Locator originalLocator = *contextLocator;
+    LocatorRef locator = &textProcessor->_locator;
+    LocatorFilter orgFilter = locator->filter;
+    SFRange orgRange = locator->range;
+    SFUInteger contextLength = (contextEnd - contextStart) + 1;
     SFUInteger lookupIndex;
 
-    /* Make the context locator cover only context range. */
-    LocatorReset(contextLocator, contextStart, (contextEnd - contextStart) + 1);
+    /* Make the locator cover only context range. */
+    LocatorReset(locator, contextStart, contextLength);
 
     /* Apply the lookup records sequentially as they are ordered by preference. */
     for (lookupIndex = 0; lookupIndex < lookupCount; lookupIndex++) {
@@ -439,20 +441,19 @@ static SFBoolean ApplyContextLookups(TextProcessorRef textProcessor,
         SFUInt16 lookupListIndex = LookupRecord_LookupListIndex(lookupRecord);
 
         /* Jump the locator to context index. */
-        LocatorJumpTo(contextLocator, contextStart);
+        LocatorJumpTo(locator, contextStart);
 
-        if (LocatorMoveNext(contextLocator)) {
-            /* Skip the glyphs till sequence index and apply the lookup. */
-            if (LocatorSkip(contextLocator, sequenceIndex)) {
-                ApplyLookup(textProcessor, lookupListIndex);
-            }
+        /* Skip the glyphs till sequence index. */
+        if (LocatorSkip(locator, sequenceIndex + 1)) {
+            /* Apply the specified lookup. */
+            ApplyLookup(textProcessor, lookupListIndex);
+            /* Restore the original filter. */
+            LocatorUpdateFilter(locator, &orgFilter);
         }
     }
 
-    /* Take the state of context locator so that input glyphs are skipped properly. */
-    LocatorTakeState(&originalLocator, contextLocator);
-    /* Switch back to the original locator. */
-    textProcessor->_locator = originalLocator;
+    /* Adjust the locator range. */
+    LocatorAdjustRange(locator, orgRange.start, orgRange.count + locator->range.count - contextLength);
 
     return SFTrue;
 }
