@@ -1,8 +1,8 @@
 SheenFigure
 =========
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
-[![Build Status](https://api.travis-ci.org/mta452/SheenFigure.svg?branch=master)](https://travis-ci.org/mta452/SheenFigure)
-[![Coverage Status](https://coveralls.io/repos/github/mta452/SheenFigure/badge.svg?branch=master)](https://coveralls.io/github/mta452/SheenFigure?branch=master)
+[![Build Status](https://api.travis-ci.org/Tehreer/SheenFigure.svg?branch=master)](https://travis-ci.org/Tehreer/SheenFigure)
+[![Coverage Status](https://coveralls.io/repos/github/Tehreer/SheenFigure/badge.svg?branch=master)](https://coveralls.io/github/Tehreer/SheenFigure?branch=master)
 
 SheenFigure aims to implement the advanced typographic tables of OpenType specification available at https://www.microsoft.com/en-us/Typography/OpenTypeSpecification.aspx along with script specific shaping engines available at https://www.microsoft.com/en-us/Typography/SpecificationsOverview.aspx. Currently, it only supports Arabic script and a subset of [GDEF](https://www.microsoft.com/typography/otspec/GDEF.htm), [GSUB](https://www.microsoft.com/typography/otspec/GSUB.htm) and [GPOS](https://www.microsoft.com/typography/otspec/GPOS.htm) tables. The support is intended to increase in each newer versions of the library.
 
