@@ -23,18 +23,21 @@
 #include "Common.h"
 #include "Data.h"
 
+typedef struct _LocatorFilter {
+    Data markFilteringCoverage;
+    GlyphMask ignoreMask;
+    LookupFlag lookupFlag;
+} LocatorFilter, *LocatorFilterRef;
+
 typedef struct _Locator {
     SFAlbumRef _album;
     Data _markAttachClassDef;
     Data _markGlyphSetsDef;
-    Data _markFilteringCoverage;
-    SFUInteger _version;
-    SFUInteger _startIndex;
-    SFUInteger _limitIndex;
-    SFUInteger _stateIndex;
+    LocatorFilter filter;
+    SFUInteger version;
+    SFRange range;
+    SFUInteger comingIndex;
     SFUInteger index;
-    GlyphMask _ignoreMask;
-    LookupFlag lookupFlag;
 } Locator, *LocatorRef;
 
 SF_INTERNAL void LocatorInitialize(LocatorRef locator, SFAlbumRef album, Data gdef);
@@ -51,7 +54,11 @@ SF_INTERNAL void LocatorSetLookupFlag(LocatorRef locator, LookupFlag lookupFlag)
  */
 SF_INTERNAL void LocatorSetMarkFilteringSet(LocatorRef locator, SFUInt16 markFilteringSet);
 
-SF_INTERNAL void LocatorReset(LocatorRef locator, SFUInteger index, SFUInteger count);
+SF_INTERNAL void LocatorUpdateFilter(LocatorRef locator, LocatorFilterRef filter);
+
+SF_INTERNAL void LocatorAdjustRange(LocatorRef locator, SFUInteger start, SFUInteger count);
+
+SF_INTERNAL void LocatorReset(LocatorRef locator, SFUInteger start, SFUInteger count);
 
 SF_INTERNAL void LocatorReserveGlyphs(LocatorRef locator, SFUInteger glyphCount);
 
@@ -130,11 +137,5 @@ SF_INTERNAL SFUInteger LocatorGetPrecedingLigatureIndex(LocatorRef locator, SFUI
  *      appropriate mark glyph.
  */
 SF_INTERNAL SFUInteger LocatorGetPrecedingMarkIndex(LocatorRef locator);
-
-/**
- * Takes the state of other locator provided that it also belong to the same album and is subset of
- * the input locator.
- */
-SF_INTERNAL void LocatorTakeState(LocatorRef locator, LocatorRef sibling);
 
 #endif

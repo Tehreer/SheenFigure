@@ -32,14 +32,14 @@ SF_INTERNAL void LocatorInitialize(LocatorRef locator, SFAlbumRef album, Data gd
     locator->_album = album;
     locator->_markAttachClassDef = NULL;
     locator->_markGlyphSetsDef = NULL;
-    locator->_markFilteringCoverage = NULL;
-    locator->_version = SFInvalidIndex;
-    locator->_startIndex = 0;
-    locator->_limitIndex = 0;
-    locator->_stateIndex = 0;
+    locator->filter.markFilteringCoverage = NULL;
+    locator->filter.ignoreMask.full = 0;
+    locator->filter.lookupFlag = 0;
+    locator->version = SFInvalidIndex;
+    locator->range.start = 0;
+    locator->range.count = 0;
+    locator->comingIndex = 0;
     locator->index = SFInvalidIndex;
-    locator->_ignoreMask.full = 0;
-    locator->lookupFlag = 0;
 
     if (gdef) {
         locator->_markAttachClassDef = GDEF_MarkAttachClassDefTable(gdef);
@@ -50,17 +50,17 @@ SF_INTERNAL void LocatorInitialize(LocatorRef locator, SFAlbumRef album, Data gd
 SF_INTERNAL void LocatorReserveGlyphs(LocatorRef locator, SFUInteger glyphCount)
 {
     /* The album version MUST be same. */
-    SFAssert(locator->_version == locator->_album->_version);
+    SFAssert(locator->version == locator->_album->_version);
 
-    SFAlbumReserveGlyphs(locator->_album, locator->_stateIndex, glyphCount);
+    SFAlbumReserveGlyphs(locator->_album, locator->comingIndex, glyphCount);
 
-    locator->_version = locator->_album->_version;
-    locator->_limitIndex += glyphCount;
+    locator->version = locator->_album->_version;
+    locator->range.count += glyphCount;
 }
 
 SF_INTERNAL void LocatorSetFeatureMask(LocatorRef locator, SFUInt16 featureMask)
 {
-    locator->_ignoreMask.section.feature = GetAntiFeatureMask(featureMask);
+    locator->filter.ignoreMask.section.feature = GetAntiFeatureMask(featureMask);
 }
 
 SF_INTERNAL void LocatorSetLookupFlag(LocatorRef locator, LookupFlag lookupFlag)
@@ -81,15 +81,15 @@ SF_INTERNAL void LocatorSetLookupFlag(LocatorRef locator, LookupFlag lookupFlag)
 
     ignoreTraits |= GlyphTraitPlaceholder;
 
-    locator->lookupFlag = lookupFlag;
-    locator->_ignoreMask.section.traits = ignoreTraits;
+    locator->filter.lookupFlag = lookupFlag;
+    locator->filter.ignoreMask.section.traits = ignoreTraits;
 }
 
 SF_INTERNAL void LocatorSetMarkFilteringSet(LocatorRef locator, SFUInt16 markFilteringSet)
 {
     Data markGlyphSetsDef = locator->_markGlyphSetsDef;
 
-    locator->_markFilteringCoverage = NULL;
+    locator->filter.markFilteringCoverage = NULL;
 
     if (markGlyphSetsDef) {
         SFUInt16 format = MarkGlyphSets_Format(markGlyphSetsDef);
@@ -98,7 +98,7 @@ SF_INTERNAL void LocatorSetMarkFilteringSet(LocatorRef locator, SFUInt16 markFil
                 SFUInt16 markSetCount = MarkGlyphSets_MarkSetCount(markGlyphSetsDef);
 
                 if (markFilteringSet < markSetCount) {
-                    locator->_markFilteringCoverage = MarkGlyphSets_CoverageTable(markGlyphSetsDef, markFilteringSet);
+                    locator->filter.markFilteringCoverage = MarkGlyphSets_CoverageTable(markGlyphSetsDef, markFilteringSet);
                 }
                 break;
             }
@@ -106,30 +106,44 @@ SF_INTERNAL void LocatorSetMarkFilteringSet(LocatorRef locator, SFUInt16 markFil
     }
 }
 
-SF_INTERNAL void LocatorReset(LocatorRef locator, SFUInteger index, SFUInteger count)
+SF_INTERNAL void LocatorUpdateFilter(LocatorRef locator, LocatorFilterRef filter)
+{
+    locator->filter = *filter;
+}
+
+SF_INTERNAL void LocatorAdjustRange(LocatorRef locator, SFUInteger start, SFUInteger count)
 {
     /* The index must be valid and there should be no integer overflow. */
-    SFAssert(index <= locator->_album->glyphCount && index <= (index + count));
+    SFAssert(start <= locator->_album->glyphCount && start <= (start + count));
 
-    locator->_version = locator->_album->_version;
-    locator->_startIndex = index;
-    locator->_limitIndex = index + count;
-    locator->_stateIndex = index;
+    locator->range.start = start;
+    locator->range.count = count;
+}
+
+SF_INTERNAL void LocatorReset(LocatorRef locator, SFUInteger start, SFUInteger count)
+{
+    /* The index must be valid and there should be no integer overflow. */
+    SFAssert(start <= locator->_album->glyphCount && start <= (start + count));
+
+    locator->version = locator->_album->_version;
+    locator->range.start = start;
+    locator->range.count = count;
+    locator->comingIndex = start;
     locator->index = SFInvalidIndex;
 }
 
 static SFBoolean IsIgnoredGlyph(LocatorRef locator, SFUInteger index) {
     SFAlbumRef album = locator->_album;
-    LookupFlag lookupFlag = locator->lookupFlag;
+    LookupFlag lookupFlag = locator->filter.lookupFlag;
     GlyphMask glyphMask = SFAlbumGetGlyphMask(album, index);
 
-    if (locator->_ignoreMask.full & glyphMask.full) {
+    if (locator->filter.ignoreMask.full & glyphMask.full) {
         return SFTrue;
     }
 
     if (glyphMask.section.traits & GlyphTraitMark) {
         if (lookupFlag & LookupFlagUseMarkFilteringSet) {
-            Data markFilteringCoverage = locator->_markFilteringCoverage;
+            Data markFilteringCoverage = locator->filter.markFilteringCoverage;
 
             if (markFilteringCoverage) {
                 SFGlyphID glyph = SFAlbumGetGlyph(album, index);
@@ -160,13 +174,15 @@ static SFBoolean IsIgnoredGlyph(LocatorRef locator, SFUInteger index) {
 
 SF_INTERNAL SFBoolean LocatorMoveNext(LocatorRef locator)
 {
-    /* The state of locator must be valid. */
-    SFAssert(locator->_stateIndex >= locator->_startIndex && locator->_stateIndex <= locator->_limitIndex);
-    /* The album version MUST be same. */
-    SFAssert(locator->_version == locator->_album->_version);
+    SFUInteger limit = SFRangeMax(locator->range);
 
-    while (locator->_stateIndex < locator->_limitIndex) {
-        SFUInteger index = locator->_stateIndex++;
+    /* The state of locator must be valid. */
+    SFAssert(locator->comingIndex >= locator->range.start && locator->comingIndex <= limit);
+    /* The album version MUST be same. */
+    SFAssert(locator->version == locator->_album->_version);
+
+    while (locator->comingIndex < limit) {
+        SFUInteger index = locator->comingIndex++;
 
         if (!IsIgnoredGlyph(locator, index)) {
             locator->index = index;
@@ -181,12 +197,12 @@ SF_INTERNAL SFBoolean LocatorMoveNext(LocatorRef locator)
 SF_INTERNAL SFBoolean LocatorMovePrevious(LocatorRef locator)
 {
     /* The state of locator must be valid. */
-    SFAssert(locator->_stateIndex >= locator->_startIndex && locator->_stateIndex <= locator->_limitIndex);
+    SFAssert(locator->comingIndex >= locator->range.start && locator->comingIndex <= SFRangeMax(locator->range));
     /* The album version MUST be same. */
-    SFAssert(locator->_version == locator->_album->_version);
+    SFAssert(locator->version == locator->_album->_version);
 
-    while (locator->_stateIndex > locator->_startIndex) {
-        SFUInteger index = --locator->_stateIndex;
+    while (locator->comingIndex > locator->range.start) {
+        SFUInteger index = --locator->comingIndex;
 
         if (!IsIgnoredGlyph(locator, index)) {
             locator->index = index;
@@ -223,21 +239,22 @@ SF_INTERNAL void LocatorJumpTo(LocatorRef locator, SFUInteger index)
      *      - Similarly, it is legal to jump to start index so that MovePrevious method returns
      *        SFFalse thereafter.
      */
-    SFAssert(index >= locator->_startIndex && index <= locator->_limitIndex);
+    SFAssert(index >= locator->range.start && index <= SFRangeMax(locator->range));
     /* The album version MUST be same. */
-    SFAssert(locator->_version == locator->_album->_version);
+    SFAssert(locator->version == locator->_album->_version);
 
-    locator->_stateIndex = index;
+    locator->comingIndex = index;
+    locator->index = index;
 }
 
 SF_INTERNAL SFUInteger LocatorGetAfter(LocatorRef locator, SFUInteger index, SFBoolean bounded)
 {
-    SFUInteger limit = (bounded ? locator->_limitIndex : locator->_album->glyphCount);
+    SFUInteger limit = (bounded ? SFRangeMax(locator->range) : locator->_album->glyphCount);
 
     /* The index must be valid. */
-    SFAssert(index >= (bounded ? locator->_startIndex : 0) && index <= limit);
+    SFAssert(index >= (bounded ? locator->range.start : 0) && index <= limit);
     /* The album version MUST be same. */
-    SFAssert(locator->_version == locator->_album->_version);
+    SFAssert(locator->version == locator->_album->_version);
 
     while (++index < limit) {
         if (!IsIgnoredGlyph(locator, index)) {
@@ -250,12 +267,12 @@ SF_INTERNAL SFUInteger LocatorGetAfter(LocatorRef locator, SFUInteger index, SFB
 
 SF_INTERNAL SFUInteger LocatorGetBefore(LocatorRef locator, SFUInteger index, SFBoolean bounded)
 {
-    SFUInteger start = (bounded ? locator->_startIndex : 0);
+    SFUInteger start = (bounded ? locator->range.start : 0);
 
     /* The index must be valid. */
-    SFAssert(index >= start && index <= (bounded ? locator->_limitIndex : locator->_album->glyphCount));
+    SFAssert(index >= start && index <= (bounded ? SFRangeMax(locator->range) : locator->_album->glyphCount));
     /* The album version MUST be same. */
-    SFAssert(locator->_version == locator->_album->_version);
+    SFAssert(locator->version == locator->_album->_version);
 
     while (index-- > start) {
         if (!IsIgnoredGlyph(locator, index)) {
@@ -268,7 +285,7 @@ SF_INTERNAL SFUInteger LocatorGetBefore(LocatorRef locator, SFUInteger index, SF
 
 SFUInteger LocatorGetPrecedingBaseIndex(LocatorRef locator)
 {
-    GlyphTraits ignoreTraits = locator->_ignoreMask.section.traits;
+    GlyphTraits ignoreTraits = locator->filter.ignoreMask.section.traits;
     SFUInteger baseIndex;
 
     /*
@@ -278,13 +295,13 @@ SFUInteger LocatorGetPrecedingBaseIndex(LocatorRef locator)
      *      Multiple substitution sequence is also ignored to make sure that mark aligns with first
      *      corresponding glyph of a base.
      */
-    locator->_ignoreMask.section.traits = GlyphTraitPlaceholder | GlyphTraitMark | GlyphTraitSequence;
+    locator->filter.ignoreMask.section.traits = GlyphTraitPlaceholder | GlyphTraitMark | GlyphTraitSequence;
 
     /* Get preeding glyph. */
     baseIndex = LocatorGetBefore(locator, locator->index, SFFalse);
 
     /* Restore ignore traits. */
-    locator->_ignoreMask.section.traits = ignoreTraits;
+    locator->filter.ignoreMask.section.traits = ignoreTraits;
 
     return baseIndex;
 }
@@ -292,14 +309,14 @@ SFUInteger LocatorGetPrecedingBaseIndex(LocatorRef locator)
 SF_INTERNAL SFUInteger LocatorGetPrecedingLigatureIndex(LocatorRef locator, SFUInteger *outComponent)
 {
     SFAlbumRef album = locator->_album;
-    GlyphTraits ignoreTraits = locator->_ignoreMask.section.traits;
+    GlyphTraits ignoreTraits = locator->filter.ignoreMask.section.traits;
     SFUInteger ligIndex;
 
     /* Initialize component counter. */
     *outComponent = 0;
 
     /* Ignore marks only. */
-    locator->_ignoreMask.section.traits = GlyphTraitPlaceholder | GlyphTraitMark;
+    locator->filter.ignoreMask.section.traits = GlyphTraitPlaceholder | GlyphTraitMark;
 
     /* Get preeding glyph. */
     ligIndex = LocatorGetBefore(locator, locator->index, SFFalse);
@@ -325,14 +342,14 @@ SF_INTERNAL SFUInteger LocatorGetPrecedingLigatureIndex(LocatorRef locator, SFUI
     }
 
     /* Restore ignore traits. */
-    locator->_ignoreMask.section.traits = ignoreTraits;
+    locator->filter.ignoreMask.section.traits = ignoreTraits;
 
     return ligIndex;
 }
 
 SF_INTERNAL SFUInteger LocatorGetPrecedingMarkIndex(LocatorRef locator)
 {
-    GlyphTraits ignoreTraits = locator->_ignoreMask.section.traits;
+    GlyphTraits ignoreTraits = locator->filter.ignoreMask.section.traits;
     SFUInteger markIndex;
 
     /*
@@ -342,7 +359,7 @@ SF_INTERNAL SFUInteger LocatorGetPrecedingMarkIndex(LocatorRef locator)
      *      Placeholders are also considered to make sure that marks belong to the same component of
      *      a ligature.
      */
-    locator->_ignoreMask.section.traits = GlyphTraitNone;
+    locator->filter.ignoreMask.section.traits = GlyphTraitNone;
 
     /* Get preeding glyph. */
     markIndex = LocatorGetBefore(locator, locator->index, SFFalse);
@@ -359,19 +376,7 @@ SF_INTERNAL SFUInteger LocatorGetPrecedingMarkIndex(LocatorRef locator)
     }
 
     /* Restore ignore traits. */
-    locator->_ignoreMask.section.traits = ignoreTraits;
+    locator->filter.ignoreMask.section.traits = ignoreTraits;
 
     return markIndex;
-}
-
-SF_INTERNAL void LocatorTakeState(LocatorRef locator, LocatorRef sibling) {
-    /* Both of the locators MUST belong to the same album. */
-    SFAssert(locator->_album == sibling->_album);
-
-    /* Limit index might increase in case of multiple substitution. */
-    if (sibling->_limitIndex > locator->_limitIndex) {
-        locator->_limitIndex = sibling->_limitIndex;
-    }
-    locator->_stateIndex = sibling->_stateIndex;
-    locator->_version = sibling->_version;
 }
