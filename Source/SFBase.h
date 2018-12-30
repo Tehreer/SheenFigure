@@ -60,4 +60,10 @@ typedef struct _SFRange {
 
 extern const SFRange SFRangeEmpty;
 
+#define SFRangeMax(range)           \
+(                                   \
+   range.start                      \
+ + range.count                      \
+)
+
 #endif
