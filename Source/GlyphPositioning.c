@@ -502,7 +502,7 @@ static SFBoolean ApplyCursiveAnchors(TextProcessorRef textProcessor,
             SFAlbumSetX(album, secondIndex, -entryPoint.x);
 
             /* Set y of second glyph taking RTL flag into account. */
-            if (locator->lookupFlag & LookupFlagRightToLeft) {
+            if (locator->filter.lookupFlag & LookupFlagRightToLeft) {
                 traits |= GlyphTraitRightToLeft;
                 SFAlbumSetY(album, secondIndex, entryPoint.y - exitPoint.y);
             } else {
@@ -536,7 +536,7 @@ static SFBoolean ApplyCursiveAnchors(TextProcessorRef textProcessor,
             SFAlbumSetY(album, firstIndex, entryPoint.y - exitPoint.y);
 
             /* Set y of first glyph taking RTL flag into account. */
-            if (locator->lookupFlag & LookupFlagRightToLeft) {
+            if (locator->filter.lookupFlag & LookupFlagRightToLeft) {
                 traits |= GlyphTraitRightToLeft;
                 SFAlbumSetY(album, firstIndex, entryPoint.y - exitPoint.y);
             } else {
