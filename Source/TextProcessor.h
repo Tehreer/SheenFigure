@@ -34,6 +34,7 @@ typedef struct _TextProcessor {
     Data _itemVarStore;
     Data _lookupList;
     SFUInt16 _lookupValue;
+    SFUInt16 _lookupNesting;
     SFBoolean (*_lookupOperation)(struct _TextProcessor *, LookupType, Data);
     SFTextDirection _textDirection;
     SFUInt16 _ppemWidth;

@@ -33,6 +33,8 @@
 #include "GlyphSubstitution.h"
 #include "TextProcessor.h"
 
+#define MAX_LOOKUP_NESTING      16
+
 enum {
     GlyphZoneInput = 0,
     GlyphZoneBacktrack = 1,
@@ -425,35 +427,44 @@ static SFBoolean ApplyChainRuleTable(TextProcessorRef textProcessor,
 static SFBoolean ApplyContextLookups(TextProcessorRef textProcessor,
     Data lookupArray, SFUInteger lookupCount, SFUInteger contextStart, SFUInteger contextEnd)
 {
-    LocatorRef locator = &textProcessor->_locator;
-    LocatorFilter orgFilter = locator->filter;
-    SFRange orgRange = locator->range;
-    SFUInteger contextLength = (contextEnd - contextStart) + 1;
-    SFUInteger lookupIndex;
+    /* Increse the nesting level. */
+    textProcessor->_lookupNesting += 1;
 
-    /* Make the locator cover only context range. */
-    LocatorReset(locator, contextStart, contextLength);
+    /* Make sure that nesting does not cause infinite recursion. */
+    if (textProcessor->_lookupNesting < MAX_LOOKUP_NESTING) {
+        LocatorRef locator = &textProcessor->_locator;
+        LocatorFilter orgFilter = locator->filter;
+        SFRange orgRange = locator->range;
+        SFUInteger contextLength = (contextEnd - contextStart) + 1;
+        SFUInteger lookupIndex;
 
-    /* Apply the lookup records sequentially as they are ordered by preference. */
-    for (lookupIndex = 0; lookupIndex < lookupCount; lookupIndex++) {
-        Data lookupRecord = LookupArray_Value(lookupArray, lookupIndex);
-        SFUInt16 sequenceIndex = LookupRecord_SequenceIndex(lookupRecord);
-        SFUInt16 lookupListIndex = LookupRecord_LookupListIndex(lookupRecord);
+        /* Make the locator cover only context range. */
+        LocatorReset(locator, contextStart, contextLength);
 
-        /* Jump the locator to context index. */
-        LocatorJumpTo(locator, contextStart);
+        /* Apply the lookup records sequentially as they are ordered by preference. */
+        for (lookupIndex = 0; lookupIndex < lookupCount; lookupIndex++) {
+            Data lookupRecord = LookupArray_Value(lookupArray, lookupIndex);
+            SFUInt16 sequenceIndex = LookupRecord_SequenceIndex(lookupRecord);
+            SFUInt16 lookupListIndex = LookupRecord_LookupListIndex(lookupRecord);
 
-        /* Skip the glyphs till sequence index. */
-        if (LocatorSkip(locator, sequenceIndex + 1)) {
-            /* Apply the specified lookup. */
-            ApplyLookup(textProcessor, lookupListIndex);
-            /* Restore the original filter. */
-            LocatorUpdateFilter(locator, &orgFilter);
+            /* Jump the locator to context index. */
+            LocatorJumpTo(locator, contextStart);
+
+            /* Skip the glyphs till sequence index. */
+            if (LocatorSkip(locator, sequenceIndex + 1)) {
+                /* Apply the specified lookup. */
+                ApplyLookup(textProcessor, lookupListIndex);
+                /* Restore the original filter. */
+                LocatorUpdateFilter(locator, &orgFilter);
+            }
         }
+
+        /* Adjust the locator range. */
+        LocatorAdjustRange(locator, orgRange.start, orgRange.count + locator->range.count - contextLength);
     }
 
-    /* Adjust the locator range. */
-    LocatorAdjustRange(locator, orgRange.start, orgRange.count + locator->range.count - contextLength);
+    /* Decrese the nesting level. */
+    textProcessor->_lookupNesting -= 1;
 
     return SFTrue;
 }

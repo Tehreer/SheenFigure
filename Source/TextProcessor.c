@@ -203,6 +203,7 @@ static void ApplyFeatureRange(TextProcessorRef textProcessor, SFFeatureKind feat
 
             lookupType = PrepareLookup(textProcessor, lookupInfo->index, &lookupTable);
             textProcessor->_lookupValue = lookupInfo->value;
+            textProcessor->_lookupNesting = 0;
 
             /* Apply current lookup on all glyphs. */
             if (!reversible || lookupType != LookupTypeReverseChainingContext) {
