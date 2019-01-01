@@ -40,8 +40,8 @@ Following are the tables implemented by SheenFigure.
 | Lookup List      	|     ✔️     	|
 | Coverage         	|     ✔️     	|
 | Class Definition 	|     ✔️     	|
-| Device           	|     ❌     	|
-| Variation Index  	|     ❌     	|
+| Device           	|     ✔️     	|
+| Variation Index  	|     ✔️     	|
 
 ### GDEF (Glyph Definition Table)
 | Subtable                         	| Supported 	|
@@ -51,7 +51,7 @@ Following are the tables implemented by SheenFigure.
 | Ligature Caret List              	|     ❌     	|
 | Mark Attachment Class Definition 	|     ✔️     	|
 | Mark Glyph Sets                  	|     ✔️     	|
-| Item Variation Store             	|     ❌     	|
+| Item Variation Store             	|     ✔️     	|
 
 ### GPOS (Glyph Positioning Table)
 | Subtable                    	| Format 1 	| Format 2 	| Format 3 	|
