@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2018 Muhammad Tayyab Akram
+ * Copyright (C) 2015-2019 Muhammad Tayyab Akram
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -105,7 +105,7 @@ SF_INTERNAL void SFAlbumInitialize(SFAlbumRef album)
     album->_retainCount = 1;
 }
 
-SF_INTERNAL void SFAlbumReset(SFAlbumRef album, SFCodepointsRef codepoints)
+SF_INTERNAL void SFAlbumReset(SFAlbumRef album, SFCodepointsRef codepoints, SFTextDirection renderingDirection)
 {
     SFUInteger codeunitCount;
 
@@ -117,6 +117,8 @@ SF_INTERNAL void SFAlbumReset(SFAlbumRef album, SFCodepointsRef codepoints)
     album->codepoints = codepoints;
     album->codeunitCount = codeunitCount;
     album->glyphCount = 0;
+    album->isBackward = codepoints->backward;
+    album->renderingDirection = renderingDirection;
 
     ListClear(&album->_indexMap);
     ListReserveRange(&album->_indexMap, 0, codeunitCount);

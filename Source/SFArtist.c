@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2018 Muhammad Tayyab Akram
+ * Copyright (C) 2015-2019 Muhammad Tayyab Akram
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -112,12 +112,12 @@ void SFArtistFillAlbum(SFArtistRef artist, SFAlbumRef album)
         UnifiedEngineInitialize(&unifiedEngine, artist);
         shapingEngine = (ShapingEngineRef)&unifiedEngine;
 
-        SFAlbumReset(album, &codepoints);
+        SFAlbumReset(album, &codepoints, artist->textDirection);
         ShapingEngineProcessAlbum(shapingEngine, album);
     } else {
         LoadCodepointSequence(&artist->codepointSequence, 0, NULL, 0);
         SFCodepointsInitialize(&codepoints, &artist->codepointSequence, 0);
-        SFAlbumReset(album, &codepoints);
+        SFAlbumReset(album, &codepoints, artist->textDirection);
     }
 }
 

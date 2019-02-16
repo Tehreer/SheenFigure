@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2018 Muhammad Tayyab Akram
+ * Copyright (C) 2015-2019 Muhammad Tayyab Akram
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -70,6 +70,9 @@ typedef struct _SFAlbum {
     SFUInteger codeunitCount;           /**< Number of code units to process. */
     SFUInteger glyphCount;              /**< Total number of glyphs in the album. */
 
+    SFBoolean isBackward;               /**< True for backward order of codepoints. */
+    SFTextDirection renderingDirection; /**< The rendering direction of glyphs in the album. */
+
     LIST(SFUInteger) _indexMap;         /**< Code unit index to glyph index mapping list. */
     LIST(SFGlyphID) _glyphs;            /**< List of ids of all glyphs in the album. */
     LIST(GlyphDetail) _details;         /**< List of details of all glyphs in the album. */
@@ -89,7 +92,7 @@ SF_INTERNAL void SFAlbumInitialize(SFAlbumRef album);
 /**
  * Initializes the album for given code points.
  */
-SF_INTERNAL void SFAlbumReset(SFAlbumRef album, SFCodepointsRef codepoints);
+SF_INTERNAL void SFAlbumReset(SFAlbumRef album, SFCodepointsRef codepoints, SFTextDirection renderingDirection);
 
 /**
  * Starts filling the album with provided glyphs.
