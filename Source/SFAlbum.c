@@ -504,7 +504,7 @@ static SFFloat LoadForwardCaretEdges(SFAlbumRef album, SFBoolean isRTL, SFBoolea
 {
     SFUInteger *clusterMap = album->_indexMap.items;
     SFUInteger codeunitCount = album->codeunitCount;
-    SFUInteger clusterStart = 1;
+    SFUInteger clusterStart = 0;
     SFUInteger codeunitIndex;
     SFUInteger glyphStart;
     SFFloat distance;
@@ -531,17 +531,17 @@ static SFFloat LoadForwardCaretEdges(SFAlbumRef album, SFBoolean isRTL, SFBoolea
 
             for (; clusterStart < codeunitIndex; clusterStart++) {
                 distance += (isRTL ? -charAdvance : charAdvance);
-                caretEdges[clusterStart] = distance;
+                caretEdges[clusterStart + 1] = distance;
             }
         }
     }
 
     if (isRTL) {
-        SFUInteger edgeIndex;
+        distance *= -1.0;
 
         /* Normalize the edges. */
-        for (edgeIndex = 0; edgeIndex <= codeunitCount; edgeIndex++) {
-            caretEdges[edgeIndex] += distance;
+        for (codeunitIndex = 0; codeunitIndex <= codeunitCount; codeunitIndex++) {
+            caretEdges[codeunitIndex] += distance;
         }
     }
 
@@ -585,11 +585,11 @@ static SFFloat LoadBackwardCaretEdges(SFAlbumRef album, SFBoolean isRTL, SFBoole
     }
 
     if (!isRTL) {
-        SFUInteger edgeIndex;
+        distance *= -1.0;
 
         /* Normalize the edges. */
-        for (edgeIndex = 0; edgeIndex <= codeunitCount; edgeIndex++) {
-            caretEdges[edgeIndex] += distance;
+        for (codeunitIndex = 0; codeunitIndex <= codeunitCount; codeunitIndex++) {
+            caretEdges[codeunitIndex] += distance;
         }
     }
 
