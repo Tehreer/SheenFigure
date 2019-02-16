@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Muhammad Tayyab Akram
+ * Copyright (C) 2015-2019 Muhammad Tayyab Akram
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -72,6 +72,11 @@ enum {
     SFTrue  = 1  /**< A value representing the true state. */
 };
 typedef SFUInt8         SFBoolean;
+
+/**
+ * A type to represent a floating point value.
+ */
+typedef float           SFFloat;
 
 /**
  * A type to represent a code point of unicode code space.
