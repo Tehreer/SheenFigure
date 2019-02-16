@@ -42,6 +42,26 @@ SFAlbumRef SFAlbumCreate(void)
     return album;
 }
 
+SFTextDirection SFAlbumGetRenderingDirection(SFAlbumRef album)
+{
+    return album->renderingDirection;
+}
+
+SFTextDirection SFAlbumGetCaretDirection(SFAlbumRef album)
+{
+    if (album->isBackward) {
+        switch (album->renderingDirection) {
+            case SFTextDirectionRightToLeft:
+                return SFTextDirectionLeftToRight;
+
+            case SFTextDirectionLeftToRight:
+                return SFTextDirectionRightToLeft;
+        }
+    }
+
+    return album->renderingDirection;
+}
+
 SFUInteger SFAlbumGetCodeunitCount(SFAlbumRef album)
 {
     return album->codeunitCount;

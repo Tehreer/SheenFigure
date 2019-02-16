@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Muhammad Tayyab Akram
+ * Copyright (C) 2015-2019 Muhammad Tayyab Akram
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,6 +31,26 @@ typedef struct _SFAlbum *SFAlbumRef;
  *      A reference to an album object. 
  */
 SFAlbumRef SFAlbumCreate(void);
+
+/**
+ * Returns the direction in which the glyphs must be rendered.
+ *
+ * @param album
+ *      The album whose rendering direction is returned.
+ * @return
+ *      The direction in which the glyphs must be rendered.
+ */
+SFTextDirection SFAlbumGetRenderingDirection(SFAlbumRef album);
+
+/**
+ * Returns the text flow direction in which the caret navigates.
+ *
+ * @param album
+ *      The album whose caret direction is returned.
+ * @return
+ *      The text flow direction in which the caret navigates.
+ */
+SFTextDirection SFAlbumGetCaretDirection(SFAlbumRef album);
 
 /**
  * Returns the number of code units processed by the shaping engine.
