@@ -122,6 +122,24 @@ const SFAdvance *SFAlbumGetGlyphAdvancesPtr(SFAlbumRef album);
  */
 const SFUInteger *SFAlbumGetCodeunitToGlyphMapPtr(SFAlbumRef album);
 
+/**
+ * Loads all caret edges into a user-provided buffer.
+ *
+ * @param album
+ *      The album from which to load the caret edges.
+ * @param caretStops
+ *      A buffer of SFBoolean values that identifies the caret stops of code units represented by
+ *      the passed-in album. The NULL value indicates that there is caret stop on every code unit.
+ * @param advanceScale
+ *      A scale value that would be applied on glyph advances and subsequently on caret edges.
+ * @param caretEdges
+ *      A SFFloat buffer into which caret edges are loaded. The length of buffer must be one greater
+ *      than the total number of code units represented by the passed-in album.
+ * @return
+ *      The total sum of the advances of all glyphs.
+ */
+SFFloat SFAlbumLoadCaretEdges(SFAlbumRef album, SFBoolean *caretStops, SFFloat advanceScale, SFFloat *caretEdges);
+
 SFAlbumRef SFAlbumRetain(SFAlbumRef album);
 void SFAlbumRelease(SFAlbumRef album);
 

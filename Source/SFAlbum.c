@@ -26,6 +26,12 @@
 
 static const GlyphMask EmptyGlyphMask = { { SFUInt16Max, 0 } };
 
+static SFBoolean IsRTLAlbum(SFAlbumRef album);
+static SFFloat LoadForwardCaretEdges(SFAlbumRef album, SFBoolean isRTL, SFBoolean *caretStops,
+    SFFloat advanceScale, SFFloat *caretEdges);
+static SFFloat LoadBackwardCaretEdges(SFAlbumRef album, SFBoolean isRTL, SFBoolean *caretStops,
+    SFFloat advanceScale, SFFloat *caretEdges);
+
 SF_PRIVATE SFUInt16 GetAntiFeatureMask(SFUInt16 featureMask)
 {
     /* The assumtion must NOT break that the feature mask will never be equal to default mask. */
@@ -90,6 +96,17 @@ const SFAdvance *SFAlbumGetGlyphAdvancesPtr(SFAlbumRef album)
 const SFUInteger *SFAlbumGetCodeunitToGlyphMapPtr(SFAlbumRef album)
 {
     return album->_indexMap.items;
+}
+
+SFFloat SFAlbumLoadCaretEdges(SFAlbumRef album, SFBoolean *caretStops, SFFloat advanceScale, SFFloat *caretEdges)
+{
+    SFBoolean isRTL = IsRTLAlbum(album);
+
+    if (album->isBackward) {
+        return LoadBackwardCaretEdges(album, isRTL, caretStops, advanceScale, caretEdges);
+    }
+
+    return LoadForwardCaretEdges(album, isRTL, caretStops, advanceScale, caretEdges);
 }
 
 SFAlbumRef SFAlbumRetain(SFAlbumRef album)
@@ -471,4 +488,110 @@ SF_INTERNAL void SFAlbumFinalize(SFAlbumRef album) {
     ListFinalize(&album->_details);
     ListFinalize(&album->_offsets);
     ListFinalize(&album->_advances);
+}
+
+static SFBoolean IsRTLAlbum(SFAlbumRef album)
+{
+    if (album->isBackward) {
+        return album->renderingDirection != SFTextDirectionRightToLeft;
+    }
+
+    return album->renderingDirection == SFTextDirectionRightToLeft;
+}
+
+static SFFloat LoadForwardCaretEdges(SFAlbumRef album, SFBoolean isRTL, SFBoolean *caretStops,
+    SFFloat advanceScale, SFFloat *caretEdges)
+{
+    SFUInteger *clusterMap = album->_indexMap.items;
+    SFUInteger codeunitCount = album->codeunitCount;
+    SFUInteger clusterStart = 1;
+    SFUInteger codeunitIndex;
+    SFUInteger glyphStart;
+    SFFloat distance;
+
+    glyphStart = clusterMap[0];
+    distance = 0.0f;
+
+    caretEdges[0] = 0.0f;
+
+    for (codeunitIndex = 0; codeunitIndex <= codeunitCount; codeunitIndex++) {
+        SFUInteger glyphIndex = (codeunitIndex < codeunitCount ? clusterMap[codeunitIndex] : album->glyphCount);
+
+        if (glyphIndex != glyphStart) {
+            SFFloat clusterAdvance = 0.0f;
+            SFFloat charAdvance;
+
+            /* Find the advance of current cluster. */
+            for (; glyphStart < glyphIndex; glyphStart++) {
+                clusterAdvance += album->_advances.items[glyphStart] * advanceScale;
+            }
+
+            /* Divide the advance evenly between cluster length. */
+            charAdvance = clusterAdvance / (codeunitIndex - clusterStart);
+
+            for (; clusterStart < codeunitIndex; clusterStart++) {
+                distance += (isRTL ? -charAdvance : charAdvance);
+                caretEdges[clusterStart] = distance;
+            }
+        }
+    }
+
+    if (isRTL) {
+        SFUInteger edgeIndex;
+
+        /* Normalize the edges. */
+        for (edgeIndex = 0; edgeIndex <= codeunitCount; edgeIndex++) {
+            caretEdges[edgeIndex] += distance;
+        }
+    }
+
+    return distance;
+}
+
+static SFFloat LoadBackwardCaretEdges(SFAlbumRef album, SFBoolean isRTL, SFBoolean *caretStops,
+    SFFloat advanceScale, SFFloat *caretEdges)
+{
+    SFUInteger *clusterMap = album->_indexMap.items;
+    SFUInteger codeunitCount = album->codeunitCount;
+    SFUInteger clusterEnd = codeunitCount;
+    SFUInteger codeunitIndex;
+    SFUInteger glyphStart;
+    SFFloat distance;
+
+    glyphStart = clusterMap[clusterEnd - 1];
+    distance = 0.0f;
+
+    caretEdges[clusterEnd] = 0.0f;
+
+    for (codeunitIndex = clusterEnd; codeunitIndex != SFInvalidIndex; codeunitIndex--) {
+        SFUInteger glyphIndex = (codeunitIndex > 0 ? clusterMap[codeunitIndex - 1] : album->glyphCount);
+        if (glyphIndex != glyphStart) {
+            SFFloat clusterAdvance = 0.0f;
+            SFFloat charAdvance;
+
+            /* Find the advance of current cluster. */
+            for (; glyphStart < glyphIndex; glyphStart++) {
+                clusterAdvance += album->_advances.items[glyphStart] * advanceScale;
+            }
+
+            /* Divide the advance evenly between cluster length. */
+            charAdvance = clusterAdvance / (clusterEnd - codeunitIndex);
+
+            for (; clusterEnd > codeunitIndex; clusterEnd--) {
+                distance += (isRTL ? charAdvance : -charAdvance);
+                caretEdges[clusterEnd - 1] = distance;
+            }
+        }
+    }
+
+    if (!isRTL) {
+        SFUInteger edgeIndex;
+
+        /* Normalize the edges. */
+        for (edgeIndex = 0; edgeIndex <= codeunitCount; edgeIndex++) {
+            caretEdges[edgeIndex] += distance;
+        }
+    }
+
+    return distance;
 }
