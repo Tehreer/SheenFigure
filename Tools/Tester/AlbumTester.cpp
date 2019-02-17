@@ -826,6 +826,36 @@ void AlbumTester::testCaretEdges()
                        1.0, caretStops.data(), caretEdges);
         assert(memcmp(caretEdges, expected, sizeof(expected)) == 0);
     }
+
+    /* Test with public method. */
+    {
+        Codepoints codepoints(5);
+
+        SFAlbum album;
+        SFAlbumInitialize(&album);
+        SFAlbumReset(&album, codepoints.ptr());
+
+        SFAlbumBeginFilling(&album);
+        SFAlbumReserveGlyphsInitialized(&album, 0, 5);
+        SFAlbumEndFilling(&album);
+
+        SFAlbumBeginArranging(&album);
+        SFAlbumSetAdvance(&album, 0, 10);
+        SFAlbumSetAdvance(&album, 1, 20);
+        SFAlbumSetAdvance(&album, 2, 30);
+        SFAlbumSetAdvance(&album, 3, 40);
+        SFAlbumSetAdvance(&album, 4, 50);
+        SFAlbumEndArranging(&album);
+        SFAlbumWrapUp(&album);
+
+        SFFloat caretEdges[album.codeunitCount + 1];
+        SFAlbumLoadCaretEdges(&album, NULL, 1.0, caretEdges);
+
+        const SFFloat expected[] = { 0, 30, 60, 90, 120, 150 };
+        assert(memcmp(caretEdges, expected, sizeof(expected)) == 0);
+
+        SFAlbumFinalize(&album);
+    }
 }
 
 void AlbumTester::test()
