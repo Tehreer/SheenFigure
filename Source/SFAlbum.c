@@ -103,9 +103,11 @@ SFFloat SFAlbumLoadCaretEdges(SFAlbumRef album, SFBoolean *caretStops, SFFloat a
     SFUInteger clusterStart = 0;
     SFUInteger codeunitIndex;
     SFUInteger glyphIndex;
+    SFUInteger totalStops;
     SFFloat distance;
 
     glyphIndex = clusterMap[0] + 1;
+    totalStops = 0;
     distance = 0.0f;
 
     caretEdges[0] = 0.0f;
@@ -113,13 +115,15 @@ SFFloat SFAlbumLoadCaretEdges(SFAlbumRef album, SFBoolean *caretStops, SFFloat a
     for (codeunitIndex = 0; codeunitIndex <= codeunitCount; codeunitIndex++) {
         SFUInteger refIndex;
 
-        if (codeunitIndex < codeunitCount) {
+        if (codeunitIndex != codeunitCount) {
             if (caretStops && !caretStops[codeunitIndex]) {
                 continue;
             }
 
+            totalStops += 1;
             refIndex = clusterMap[codeunitIndex] + 1;
         } else {
+            totalStops += 1;
             refIndex = (isBackward ? 0 : album->glyphCount + 1);
         }
 
@@ -139,12 +143,16 @@ SFFloat SFAlbumLoadCaretEdges(SFAlbumRef album, SFBoolean *caretStops, SFFloat a
             }
 
             /* Divide the advance evenly between cluster length. */
-            charAdvance = clusterAdvance / (codeunitIndex - clusterStart);
+            charAdvance = clusterAdvance / (totalStops - 1);
 
             for (; clusterStart < codeunitIndex; clusterStart++) {
-                distance += (isRTL ? -charAdvance : charAdvance);
+                if (!caretStops || (caretStops && caretStops[clusterStart])) {
+                    distance += (isRTL ? -charAdvance : charAdvance);
+                }
                 caretEdges[clusterStart + 1] = distance;
             }
+
+            totalStops = 1;
         }
     }
 
