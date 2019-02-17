@@ -104,19 +104,20 @@ SFFloat SFAlbumLoadCaretEdges(SFAlbumRef album, SFBoolean *caretStops, SFFloat a
     SFUInteger codeunitIndex;
     SFUInteger glyphIndex;
     SFUInteger oldIndex;
+    SFUInteger refIndex;
     SFUInteger totalStops;
     SFFloat distance;
 
-    glyphIndex = clusterMap[0] + 1;
-    oldIndex = glyphIndex;
+    refIndex = clusterMap[0] + 1;
+    oldIndex = refIndex;
+    glyphIndex = refIndex;
+
     totalStops = 0;
     distance = 0.0f;
 
     caretEdges[0] = 0.0f;
 
     for (codeunitIndex = 1; codeunitIndex <= codeunitCount; codeunitIndex++) {
-        SFUInteger refIndex;
-
         if (codeunitIndex != codeunitCount) {
             oldIndex = refIndex;
             refIndex = clusterMap[codeunitIndex] + 1;
