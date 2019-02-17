@@ -781,6 +781,51 @@ void AlbumTester::testCaretEdges()
                        1.0, caretStops.data(), caretEdges);
         assert(memcmp(caretEdges, expected, sizeof(expected)) == 0);
     }
+
+    /* Test with each glyph break but fewer code unit breaks. */
+    {
+        vector<SFUInteger> clusterMap = { 0, 1, 2, 3, 4 };
+        vector<SFInt32> glyphAdvances = { 10, 20, 30, 40, 50 };
+        vector<SFBoolean> caretStops = { SFTrue, SFFalse, SFTrue, SFFalse, SFTrue };
+        SFFloat caretEdges[clusterMap.size() + 1];
+
+        const SFFloat expected[] = { 0, 10, 10, 60, 60, 150 };
+
+        LoadCaretEdges(clusterMap.data(), clusterMap.size(), SFFalse, SFFalse,
+                       glyphAdvances.data(), glyphAdvances.size(),
+                       1.0, caretStops.data(), caretEdges);
+        assert(memcmp(caretEdges, expected, sizeof(expected)) == 0);
+    }
+
+    /* Test with each code unit break but having fewer glyphs. */
+    {
+        vector<SFUInteger> clusterMap = { 0, 0, 1, 1, 2 };
+        vector<SFInt32> glyphAdvances = { 10, 20, 30 };
+        vector<SFBoolean> caretStops = { SFTrue, SFTrue, SFTrue, SFTrue, SFTrue };
+        SFFloat caretEdges[clusterMap.size() + 1];
+
+        const SFFloat expected[] = { 0, 5, 10, 20, 30, 60 };
+
+        LoadCaretEdges(clusterMap.data(), clusterMap.size(), SFFalse, SFFalse,
+                       glyphAdvances.data(), glyphAdvances.size(),
+                       1.0, caretStops.data(), caretEdges);
+        assert(memcmp(caretEdges, expected, sizeof(expected)) == 0);
+    }
+
+    /* Test with unadjusted code unit and glyph breaks. */
+    {
+        vector<SFUInteger> clusterMap = { 0, 0, 1, 1, 2 };
+        vector<SFInt32> glyphAdvances = { 10, 20, 30 };
+        vector<SFBoolean> caretStops = { SFTrue, SFFalse, SFTrue, SFFalse, SFTrue };
+        SFFloat caretEdges[clusterMap.size() + 1];
+
+        const SFFloat expected[] = { 0, 20, 20, 40, 40, 60 };
+
+        LoadCaretEdges(clusterMap.data(), clusterMap.size(), SFFalse, SFFalse,
+                       glyphAdvances.data(), glyphAdvances.size(),
+                       1.0, caretStops.data(), caretEdges);
+        assert(memcmp(caretEdges, expected, sizeof(expected)) == 0);
+    }
 }
 
 void AlbumTester::test()
