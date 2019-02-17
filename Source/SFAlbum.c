@@ -135,7 +135,7 @@ SF_INTERNAL void SFAlbumInitialize(SFAlbumRef album)
     album->_retainCount = 1;
 }
 
-SF_INTERNAL void SFAlbumReset(SFAlbumRef album, SFCodepointsRef codepoints, SFTextDirection renderingDirection)
+SF_INTERNAL void SFAlbumReset(SFAlbumRef album, SFCodepointsRef codepoints)
 {
     SFUInteger codeunitCount;
 
@@ -148,7 +148,7 @@ SF_INTERNAL void SFAlbumReset(SFAlbumRef album, SFCodepointsRef codepoints, SFTe
     album->codeunitCount = codeunitCount;
     album->glyphCount = 0;
     album->isBackward = codepoints->backward;
-    album->renderingDirection = renderingDirection;
+    album->renderingDirection = SFTextDirectionLeftToRight;
 
     ListClear(&album->_indexMap);
     ListReserveRange(&album->_indexMap, 0, codeunitCount);
@@ -160,6 +160,11 @@ SF_INTERNAL void SFAlbumReset(SFAlbumRef album, SFCodepointsRef codepoints, SFTe
 
     album->_version = 0;
     album->_state = AlbumStateEmpty;
+}
+
+SF_INTERNAL void SFAlbumSetRenderingDirection(SFAlbumRef album, SFTextDirection renderingDirection)
+{
+    album->renderingDirection = renderingDirection;
 }
 
 SF_INTERNAL void SFAlbumBeginFilling(SFAlbumRef album)

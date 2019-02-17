@@ -112,12 +112,16 @@ void SFArtistFillAlbum(SFArtistRef artist, SFAlbumRef album)
         UnifiedEngineInitialize(&unifiedEngine, artist);
         shapingEngine = (ShapingEngineRef)&unifiedEngine;
 
-        SFAlbumReset(album, &codepoints, artist->textDirection);
+        SFAlbumReset(album, &codepoints);
+        SFAlbumSetRenderingDirection(album, artist->textDirection);
+
         ShapingEngineProcessAlbum(shapingEngine, album);
     } else {
         LoadCodepointSequence(&artist->codepointSequence, 0, NULL, 0);
         SFCodepointsInitialize(&codepoints, &artist->codepointSequence, 0);
-        SFAlbumReset(album, &codepoints, artist->textDirection);
+
+        SFAlbumReset(album, &codepoints);
+        SFAlbumSetRenderingDirection(album, artist->textDirection);
     }
 }
 

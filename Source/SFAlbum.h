@@ -92,7 +92,9 @@ SF_INTERNAL void SFAlbumInitialize(SFAlbumRef album);
 /**
  * Initializes the album for given code points.
  */
-SF_INTERNAL void SFAlbumReset(SFAlbumRef album, SFCodepointsRef codepoints, SFTextDirection renderingDirection);
+SF_INTERNAL void SFAlbumReset(SFAlbumRef album, SFCodepointsRef codepoints);
+
+SF_INTERNAL void SFAlbumSetRenderingDirection(SFAlbumRef album, SFTextDirection renderingDirection);
 
 /**
  * Starts filling the album with provided glyphs.
