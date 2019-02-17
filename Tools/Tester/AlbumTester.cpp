@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2018 Muhammad Tayyab Akram
+ * Copyright (C) 2016-2019 Muhammad Tayyab Akram
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -690,6 +690,99 @@ void AlbumTester::testAttachmentOffset()
     SFAlbumFinalize(&album);
 }
 
+/*
+SF_INTERNAL SFFloat LoadCaretEdges(SFUInteger *clusterMap, SFUInteger codeunitCount,
+    SFBoolean isBackward, SFBoolean isRTL, SFInt32 *glyphAdvances, SFUInteger glyphCount,
+    SFFloat advanceScale, SFBoolean *caretStops, SFFloat *caretEdges)
+*/
+
+void AlbumTester::testCaretEdges()
+{
+    /* Test with single breakable code units and glyph mapping in forward LTR mode. */
+    {
+        vector<SFUInteger> clusterMap = { 0, 1, 2, 3, 4 };
+        vector<SFInt32> glyphAdvances = { 10, 20, 30, 40, 50 };
+        vector<SFBoolean> caretStops = { SFTrue, SFTrue, SFTrue, SFTrue, SFTrue };
+        SFFloat caretEdges[clusterMap.size() + 1];
+
+        const SFFloat expected[] = { 0, 10, 30, 60, 100, 150 };
+
+        /* Test without caret stops. */
+        LoadCaretEdges(clusterMap.data(), clusterMap.size(), SFFalse, SFFalse,
+                       glyphAdvances.data(), glyphAdvances.size(), 1.0, NULL, caretEdges);
+        assert(memcmp(caretEdges, expected, sizeof(expected)) == 0);
+
+        /* Test with caret stops. */
+        LoadCaretEdges(clusterMap.data(), clusterMap.size(), SFFalse, SFFalse,
+                       glyphAdvances.data(), glyphAdvances.size(),
+                       1.0, caretStops.data(), caretEdges);
+        assert(memcmp(caretEdges, expected, sizeof(expected)) == 0);
+    }
+
+    /* Test with single breakable code units and glyph mapping in forward RTL mode. */
+    {
+        vector<SFUInteger> clusterMap = { 0, 1, 2, 3, 4 };
+        vector<SFInt32> glyphAdvances = { 10, 20, 30, 40, 50 };
+        vector<SFBoolean> caretStops = { SFTrue, SFTrue, SFTrue, SFTrue, SFTrue };
+        SFFloat caretEdges[clusterMap.size() + 1];
+
+        const SFFloat expected[] = { 150, 140, 120, 90, 50, 0 };
+
+        /* Test without caret stops. */
+        LoadCaretEdges(clusterMap.data(), clusterMap.size(), SFFalse, SFTrue,
+                       glyphAdvances.data(), glyphAdvances.size(), 1.0, NULL, caretEdges);
+        assert(memcmp(caretEdges, expected, sizeof(expected)) == 0);
+
+        /* Test with caret stops. */
+        LoadCaretEdges(clusterMap.data(), clusterMap.size(), SFFalse, SFTrue,
+                       glyphAdvances.data(), glyphAdvances.size(),
+                       1.0, caretStops.data(), caretEdges);
+        assert(memcmp(caretEdges, expected, sizeof(expected)) == 0);
+    }
+
+    /* Test with single breakable code units and glyph mapping in backward LTR mode. */
+    {
+        vector<SFUInteger> clusterMap = { 4, 3, 2, 1, 0 };
+        vector<SFInt32> glyphAdvances = { 50, 40, 30, 20, 10 };
+        vector<SFBoolean> caretStops = { SFTrue, SFTrue, SFTrue, SFTrue, SFTrue };
+        SFFloat caretEdges[clusterMap.size() + 1];
+
+        const SFFloat expected[] = { 0, 10, 30, 60, 100, 150 };
+
+        /* Test without caret stops. */
+        LoadCaretEdges(clusterMap.data(), clusterMap.size(), SFTrue, SFFalse,
+                       glyphAdvances.data(), glyphAdvances.size(), 1.0, NULL, caretEdges);
+        assert(memcmp(caretEdges, expected, sizeof(expected)) == 0);
+
+        /* Test with caret stops. */
+        LoadCaretEdges(clusterMap.data(), clusterMap.size(), SFTrue, SFFalse,
+                       glyphAdvances.data(), glyphAdvances.size(),
+                       1.0, caretStops.data(), caretEdges);
+        assert(memcmp(caretEdges, expected, sizeof(expected)) == 0);
+    }
+
+    /* Test with single breakable code units and glyph mapping in backward RTL mode. */
+    {
+        vector<SFUInteger> clusterMap = { 4, 3, 2, 1, 0 };
+        vector<SFInt32> glyphAdvances = { 50, 40, 30, 20, 10 };
+        vector<SFBoolean> caretStops = { SFTrue, SFTrue, SFTrue, SFTrue, SFTrue };
+        SFFloat caretEdges[clusterMap.size() + 1];
+
+        const SFFloat expected[] = { 150, 140, 120, 90, 50, 0 };
+
+        /* Test without caret stops. */
+        LoadCaretEdges(clusterMap.data(), clusterMap.size(), SFTrue, SFTrue,
+                       glyphAdvances.data(), glyphAdvances.size(), 1.0, NULL, caretEdges);
+        assert(memcmp(caretEdges, expected, sizeof(expected)) == 0);
+
+        /* Test with caret stops. */
+        LoadCaretEdges(clusterMap.data(), clusterMap.size(), SFTrue, SFTrue,
+                       glyphAdvances.data(), glyphAdvances.size(),
+                       1.0, caretStops.data(), caretEdges);
+        assert(memcmp(caretEdges, expected, sizeof(expected)) == 0);
+    }
+}
+
 void AlbumTester::test()
 {
     testInitialize();
@@ -706,4 +799,5 @@ void AlbumTester::test()
     testAdvance();
     testCursiveOffset();
     testAttachmentOffset();
+    testCaretEdges();
 }
