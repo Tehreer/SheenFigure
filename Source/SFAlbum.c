@@ -96,81 +96,10 @@ const SFUInteger *SFAlbumGetCodeunitToGlyphMapPtr(SFAlbumRef album)
 
 SFFloat SFAlbumLoadCaretEdges(SFAlbumRef album, SFBoolean *caretStops, SFFloat advanceScale, SFFloat *caretEdges)
 {
-    SFBoolean isRTL = IsRTLAlbum(album);
-    SFBoolean isBackward = album->isBackward;
-    SFUInteger *clusterMap = album->_indexMap.items;
-    SFUInteger codeunitCount = album->codeunitCount;
-    SFUInteger clusterStart = 0;
-    SFUInteger codeunitIndex;
-    SFUInteger glyphIndex;
-    SFUInteger oldIndex;
-    SFUInteger refIndex;
-    SFUInteger totalStops;
-    SFFloat distance;
-
-    refIndex = clusterMap[0] + 1;
-    oldIndex = refIndex;
-    glyphIndex = refIndex;
-
-    totalStops = 0;
-    distance = 0.0f;
-
-    caretEdges[0] = 0.0f;
-
-    for (codeunitIndex = 1; codeunitIndex <= codeunitCount; codeunitIndex++) {
-        if (codeunitIndex != codeunitCount) {
-            oldIndex = refIndex;
-            refIndex = clusterMap[codeunitIndex] + 1;
-
-            if (caretStops && !caretStops[codeunitIndex - 1]) {
-                continue;
-            }
-
-            totalStops += 1;
-        } else {
-            totalStops += 1;
-            refIndex = (isBackward ? 0 : album->glyphCount + 1);
-        }
-
-        if (refIndex != glyphIndex && refIndex != oldIndex) {
-            SFFloat clusterAdvance = 0.0f;
-            SFFloat charAdvance;
-
-            /* Find the advance of current cluster. */
-            if (isBackward) {
-                for (; glyphIndex > refIndex; glyphIndex--) {
-                    clusterAdvance += album->_advances.items[glyphIndex - 1] * advanceScale;
-                }
-            } else {
-                for (; glyphIndex < refIndex; glyphIndex++) {
-                    clusterAdvance += album->_advances.items[glyphIndex - 1] * advanceScale;
-                }
-            }
-
-            /* Divide the advance evenly between cluster length. */
-            charAdvance = clusterAdvance / totalStops;
-
-            for (; clusterStart < codeunitIndex; clusterStart++) {
-                if (!caretStops || (caretStops && caretStops[clusterStart])) {
-                    distance += (isRTL ? -charAdvance : charAdvance);
-                }
-                caretEdges[clusterStart + 1] = distance;
-            }
-
-            totalStops = 0;
-        }
-    }
-
-    if (isRTL) {
-        distance *= -1.0;
-
-        /* Normalize the edges. */
-        for (codeunitIndex = 0; codeunitIndex <= codeunitCount; codeunitIndex++) {
-            caretEdges[codeunitIndex] += distance;
-        }
-    }
-
-    return distance;
+    return LoadCaretEdges(album->_indexMap.items, album->codeunitCount,
+                          album->isBackward, IsRTLAlbum(album),
+                          album->_advances.items, album->glyphCount,
+                          advanceScale, caretStops, caretEdges);
 }
 
 SFAlbumRef SFAlbumRetain(SFAlbumRef album)
@@ -561,4 +490,75 @@ static SFBoolean IsRTLAlbum(SFAlbumRef album)
     }
 
     return album->renderingDirection == SFTextDirectionRightToLeft;
+}
+
+SF_INTERNAL SFFloat LoadCaretEdges(SFUInteger *clusterMap, SFUInteger codeunitCount,
+    SFBoolean isBackward, SFBoolean isRTL, SFInt32 *glyphAdvances, SFUInteger glyphCount,
+    SFFloat advanceScale, SFBoolean *caretStops, SFFloat *caretEdges)
+{
+    SFUInteger refIndex = clusterMap[0] + 1;
+    SFUInteger oldIndex = refIndex;
+    SFUInteger glyphIndex = refIndex;
+    SFUInteger totalStops = 0;
+    SFUInteger clusterStart = 0;
+    SFUInteger codeunitIndex;
+    SFFloat distance;
+
+    distance = 0.0f;
+    caretEdges[0] = 0.0f;
+
+    for (codeunitIndex = 1; codeunitIndex <= codeunitCount; codeunitIndex++) {
+        if (codeunitIndex != codeunitCount) {
+            oldIndex = refIndex;
+            refIndex = clusterMap[codeunitIndex] + 1;
+
+            if (caretStops && !caretStops[codeunitIndex - 1]) {
+                continue;
+            }
+
+            totalStops += 1;
+        } else {
+            totalStops += 1;
+            refIndex = (isBackward ? 0 : glyphCount + 1);
+        }
+
+        if (refIndex != glyphIndex && refIndex != oldIndex) {
+            SFFloat clusterAdvance = 0.0f;
+            SFFloat charAdvance;
+
+            /* Find the advance of current cluster. */
+            if (isBackward) {
+                for (; glyphIndex > refIndex; glyphIndex--) {
+                    clusterAdvance += glyphAdvances[glyphIndex - 1] * advanceScale;
+                }
+            } else {
+                for (; glyphIndex < refIndex; glyphIndex++) {
+                    clusterAdvance += glyphAdvances[glyphIndex - 1] * advanceScale;
+                }
+            }
+
+            /* Divide the advance evenly between cluster length. */
+            charAdvance = clusterAdvance / totalStops;
+
+            for (; clusterStart < codeunitIndex; clusterStart++) {
+                if (!caretStops || (caretStops && caretStops[clusterStart])) {
+                    distance += (isRTL ? -charAdvance : charAdvance);
+                }
+                caretEdges[clusterStart + 1] = distance;
+            }
+
+            totalStops = 0;
+        }
+    }
+
+    if (isRTL) {
+        distance *= -1.0;
+
+        /* Normalize the edges. */
+        for (codeunitIndex = 0; codeunitIndex <= codeunitCount; codeunitIndex++) {
+            caretEdges[codeunitIndex] += distance;
+        }
+    }
+
+    return distance;
 }
