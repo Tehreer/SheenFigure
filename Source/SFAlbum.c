@@ -44,11 +44,6 @@ SFAlbumRef SFAlbumCreate(void)
     return album;
 }
 
-SFTextDirection SFAlbumGetRenderingDirection(SFAlbumRef album)
-{
-    return album->renderingDirection;
-}
-
 SFTextDirection SFAlbumGetCaretDirection(SFAlbumRef album)
 {
     if (album->isBackward) {

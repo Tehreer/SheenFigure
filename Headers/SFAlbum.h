@@ -33,26 +33,6 @@ typedef struct _SFAlbum *SFAlbumRef;
 SFAlbumRef SFAlbumCreate(void);
 
 /**
- * Returns the direction in which the glyphs must be rendered.
- *
- * @param album
- *      The album whose rendering direction is returned.
- * @return
- *      The direction in which the glyphs must be rendered.
- */
-SFTextDirection SFAlbumGetRenderingDirection(SFAlbumRef album);
-
-/**
- * Returns the text flow direction in which the caret navigates.
- *
- * @param album
- *      The album whose caret direction is returned.
- * @return
- *      The text flow direction in which the caret navigates.
- */
-SFTextDirection SFAlbumGetCaretDirection(SFAlbumRef album);
-
-/**
  * Returns the number of code units processed by the shaping engine.
  *
  * @param album
@@ -121,6 +101,16 @@ const SFAdvance *SFAlbumGetGlyphAdvancesPtr(SFAlbumRef album);
  *      A valid pointer to an array of glyph map.
  */
 const SFUInteger *SFAlbumGetCodeunitToGlyphMapPtr(SFAlbumRef album);
+
+/**
+ * Returns the text flow direction in which the caret navigates.
+ *
+ * @param album
+ *      The album whose caret direction is returned.
+ * @return
+ *      The text flow direction in which the caret navigates.
+ */
+SFTextDirection SFAlbumGetCaretDirection(SFAlbumRef album);
 
 /**
  * Loads all caret edges into a user-provided buffer.
