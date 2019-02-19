@@ -849,7 +849,7 @@ void AlbumTester::testCaretEdges()
         SFAlbumWrapUp(&album);
 
         SFFloat caretEdges[album.codeunitCount + 1];
-        SFAlbumLoadCaretEdges(&album, NULL, 1.0, caretEdges);
+        SFAlbumGetCaretEdges(&album, NULL, 1.0, caretEdges);
 
         const SFFloat expected[] = { 0, 30, 60, 90, 120, 150 };
         assert(memcmp(caretEdges, expected, sizeof(expected)) == 0);
