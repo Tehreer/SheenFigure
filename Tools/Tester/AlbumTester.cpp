@@ -827,6 +827,21 @@ void AlbumTester::testCaretEdges()
         assert(memcmp(caretEdges, expected, sizeof(expected)) == 0);
     }
 
+    /* Test force break at last code unit. */
+    {
+        vector<SFUInteger> clusterMap = { 0, 1, 2, 3, 4 };
+        vector<SFInt32> glyphAdvances = { 10, 20, 30, 40, 50 };
+        vector<SFBoolean> caretStops = { SFFalse, SFFalse, SFFalse, SFFalse, SFFalse };
+        SFFloat caretEdges[clusterMap.size() + 1];
+
+        const SFFloat expected[] = { 0, 0, 0, 0, 0, 150 };
+
+        LoadCaretEdges(clusterMap.data(), clusterMap.size(), SFFalse, SFFalse,
+                       glyphAdvances.data(), glyphAdvances.size(),
+                       1.0, caretStops.data(), caretEdges);
+        assert(memcmp(caretEdges, expected, sizeof(expected)) == 0);
+    }
+
     /* Test with public method. */
     {
         Codepoints codepoints(5);
