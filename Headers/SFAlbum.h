@@ -128,7 +128,7 @@ SFTextDirection SFAlbumGetCaretDirection(SFAlbumRef album);
  * @return
  *      The total sum of the advances of all glyphs.
  */
-SFFloat SFAlbumLoadCaretEdges(SFAlbumRef album, SFBoolean *caretStops, SFFloat advanceScale, SFFloat *caretEdges);
+SFFloat SFAlbumGetCaretEdges(SFAlbumRef album, SFBoolean *caretStops, SFFloat advanceScale, SFFloat *caretEdges);
 
 SFAlbumRef SFAlbumRetain(SFAlbumRef album);
 void SFAlbumRelease(SFAlbumRef album);

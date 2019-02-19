@@ -89,7 +89,7 @@ const SFUInteger *SFAlbumGetCodeunitToGlyphMapPtr(SFAlbumRef album)
     return album->_indexMap.items;
 }
 
-SFFloat SFAlbumLoadCaretEdges(SFAlbumRef album, SFBoolean *caretStops, SFFloat advanceScale, SFFloat *caretEdges)
+SFFloat SFAlbumGetCaretEdges(SFAlbumRef album, SFBoolean *caretStops, SFFloat advanceScale, SFFloat *caretEdges)
 {
     return LoadCaretEdges(album->_indexMap.items, album->codeunitCount,
                           album->isBackward, IsRTLAlbum(album),
