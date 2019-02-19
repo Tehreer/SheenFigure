@@ -541,7 +541,7 @@ SF_INTERNAL SFFloat LoadCaretEdges(SFUInteger *clusterMap, SFUInteger codeunitCo
             charAdvance = clusterAdvance / totalStops;
 
             for (; clusterStart < codeunitIndex; clusterStart++) {
-                if (!caretStops || (caretStops && caretStops[clusterStart])) {
+                if (!caretStops || (caretStops && caretStops[clusterStart]) || clusterStart == codeunitCount - 1) {
                     distance += (isRTL ? -charAdvance : charAdvance);
                 }
                 caretEdges[clusterStart + 1] = distance;
