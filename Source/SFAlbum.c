@@ -496,9 +496,8 @@ SF_INTERNAL SFFloat LoadCaretEdges(SFUInteger *clusterMap, SFUInteger codeunitCo
     SFBoolean isBackward, SFBoolean isRTL, SFInt32 *glyphAdvances, SFUInteger glyphCount,
     SFFloat advanceScale, SFBoolean *caretStops, SFFloat *caretEdges)
 {
-    SFUInteger refIndex = clusterMap[0] + 1;
-    SFUInteger oldIndex = refIndex;
-    SFUInteger glyphIndex = refIndex;
+    SFUInteger glyphIndex = clusterMap[0] + 1;
+    SFUInteger refIndex = glyphIndex;
     SFUInteger totalStops = 0;
     SFUInteger clusterStart = 0;
     SFUInteger codeunitIndex;
@@ -508,9 +507,10 @@ SF_INTERNAL SFFloat LoadCaretEdges(SFUInteger *clusterMap, SFUInteger codeunitCo
     caretEdges[0] = 0.0f;
 
     for (codeunitIndex = 1; codeunitIndex <= codeunitCount; codeunitIndex++) {
+        SFUInteger oldIndex = glyphIndex;
+
         if (codeunitIndex != codeunitCount) {
-            oldIndex = refIndex;
-            refIndex = clusterMap[codeunitIndex] + 1;
+            glyphIndex = clusterMap[codeunitIndex] + 1;
 
             if (caretStops && !caretStops[codeunitIndex - 1]) {
                 continue;
@@ -519,21 +519,21 @@ SF_INTERNAL SFFloat LoadCaretEdges(SFUInteger *clusterMap, SFUInteger codeunitCo
             totalStops += 1;
         } else {
             totalStops += 1;
-            refIndex = (isBackward ? 0 : glyphCount + 1);
+            glyphIndex = (isBackward ? 0 : glyphCount + 1);
         }
 
-        if (refIndex != glyphIndex && refIndex != oldIndex) {
+        if (glyphIndex != oldIndex) {
             SFFloat clusterAdvance = 0.0f;
             SFFloat charAdvance;
 
             /* Find the advance of current cluster. */
             if (isBackward) {
-                for (; glyphIndex > refIndex; glyphIndex--) {
-                    clusterAdvance += glyphAdvances[glyphIndex - 1] * advanceScale;
+                for (; refIndex > glyphIndex; refIndex--) {
+                    clusterAdvance += glyphAdvances[refIndex - 1] * advanceScale;
                 }
             } else {
-                for (; glyphIndex < refIndex; glyphIndex++) {
-                    clusterAdvance += glyphAdvances[glyphIndex - 1] * advanceScale;
+                for (; refIndex < glyphIndex; refIndex++) {
+                    clusterAdvance += glyphAdvances[refIndex - 1] * advanceScale;
                 }
             }
 
