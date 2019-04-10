@@ -35,19 +35,23 @@ enum {
 
 static FeatureInfo StandardSubstFeatureArray[] = {
     /* Language based forms. */
-    { 0, TAG('c', 'c', 'm', 'p'), ON_BY_DEFAULT, INDIVIDUAL, StandardFeatureMaskNone },
+    { 0, TAG('l', 'o', 'c', 'l'), ON_BY_DEFAULT, SIMULTANEOUS, StandardFeatureMaskNone },
+    { 0, TAG('c', 'c', 'm', 'p'), ON_BY_DEFAULT, SIMULTANEOUS, StandardFeatureMaskNone },
+    { 0, TAG('r', 'l', 'i', 'g'), ON_BY_DEFAULT, SIMULTANEOUS, StandardFeatureMaskNone },
+    { 0, TAG('r', 'c', 'l', 't'), ON_BY_DEFAULT, SIMULTANEOUS, StandardFeatureMaskNone },
+    { 0, TAG('c', 'a', 'l', 't'), ON_BY_DEFAULT, SIMULTANEOUS, StandardFeatureMaskNone },
     /* Typographical forms */
-    { 1, TAG('l', 'i', 'g', 'a'), ON_BY_DEFAULT, INDIVIDUAL, StandardFeatureMaskNone },
-    { 1, TAG('c', 'l', 'i', 'g'), ON_BY_DEFAULT, INDIVIDUAL, StandardFeatureMaskNone },
+    { 0, TAG('l', 'i', 'g', 'a'), ON_BY_DEFAULT, SIMULTANEOUS, StandardFeatureMaskNone },
+    { 0, TAG('c', 'l', 'i', 'g'), ON_BY_DEFAULT, SIMULTANEOUS, StandardFeatureMaskNone },
 };
 #define StandardSubstFeatureCount (sizeof(StandardSubstFeatureArray) / sizeof(FeatureInfo))
 
 static FeatureInfo StandardPosFeatureArray[] = {
     /* Positioning features. */
-    { 2, TAG('d', 'i', 's', 't'), REQUIRED,      INDIVIDUAL, StandardFeatureMaskNone },
-    { 2, TAG('k', 'e', 'r', 'n'), ON_BY_DEFAULT, INDIVIDUAL, StandardFeatureMaskNone },
-    { 2, TAG('m', 'a', 'r', 'k'), REQUIRED,      INDIVIDUAL, StandardFeatureMaskNone },
-    { 2, TAG('m', 'k', 'm', 'k'), REQUIRED,      INDIVIDUAL, StandardFeatureMaskNone }
+    { 1, TAG('d', 'i', 's', 't'), REQUIRED,      SIMULTANEOUS, StandardFeatureMaskNone },
+    { 1, TAG('k', 'e', 'r', 'n'), ON_BY_DEFAULT, SIMULTANEOUS, StandardFeatureMaskNone },
+    { 1, TAG('m', 'a', 'r', 'k'), REQUIRED,      SIMULTANEOUS, StandardFeatureMaskNone },
+    { 1, TAG('m', 'k', 'm', 'k'), REQUIRED,      SIMULTANEOUS, StandardFeatureMaskNone }
 };
 #define StandardPosFeatureCount (sizeof(StandardPosFeatureArray) / sizeof(FeatureInfo))
 

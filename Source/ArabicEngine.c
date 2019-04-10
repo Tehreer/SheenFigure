@@ -48,7 +48,8 @@ enum {
  */
 static FeatureInfo ArabicSubstFeatureArray[] = {
     /* Language based forms */
-    { 0, TAG('c', 'c', 'm', 'p'), REQUIRED, INDIVIDUAL,   ArabicFeatureMaskNone },
+    { 0, TAG('l', 'o', 'c', 'l'), REQUIRED, SIMULTANEOUS, ArabicFeatureMaskNone },
+    { 0, TAG('c', 'c', 'm', 'p'), REQUIRED, SIMULTANEOUS, ArabicFeatureMaskNone },
     { 0, TAG('i', 's', 'o', 'l'), REQUIRED, INDIVIDUAL,   ArabicFeatureMaskIsolated },
     { 0, TAG('f', 'i', 'n', 'a'), REQUIRED, INDIVIDUAL,   ArabicFeatureMaskFinal },
     { 0, TAG('m', 'e', 'd', 'i'), REQUIRED, INDIVIDUAL,   ArabicFeatureMaskMedial },
@@ -57,19 +58,20 @@ static FeatureInfo ArabicSubstFeatureArray[] = {
     { 0, TAG('r', 'c', 'l', 't'), REQUIRED, SIMULTANEOUS, ArabicFeatureMaskNone },
     { 0, TAG('c', 'a', 'l', 't'), REQUIRED, SIMULTANEOUS, ArabicFeatureMaskNone },
     /* Typographical forms */
-    { 1, TAG('l', 'i', 'g', 'a'), ON_BY_DEFAULT,  INDIVIDUAL, ArabicFeatureMaskNone },
-    { 1, TAG('d', 'l', 'i', 'g'), OFF_BY_DEFAULT, INDIVIDUAL, ArabicFeatureMaskNone },
-    { 1, TAG('c', 's', 'w', 'h'), OFF_BY_DEFAULT, INDIVIDUAL, ArabicFeatureMaskNone },
-    { 1, TAG('m', 's', 'e', 't'), REQUIRED,       INDIVIDUAL, ArabicFeatureMaskNone },
+    { 1, TAG('l', 'i', 'g', 'a'), ON_BY_DEFAULT,  SIMULTANEOUS, ArabicFeatureMaskNone },
+    { 1, TAG('c', 'l', 'i', 'g'), ON_BY_DEFAULT,  SIMULTANEOUS, ArabicFeatureMaskNone },
+    { 1, TAG('d', 'l', 'i', 'g'), OFF_BY_DEFAULT, SIMULTANEOUS, ArabicFeatureMaskNone },
+    { 1, TAG('c', 's', 'w', 'h'), OFF_BY_DEFAULT, SIMULTANEOUS, ArabicFeatureMaskNone },
+    { 1, TAG('m', 's', 'e', 't'), REQUIRED,       SIMULTANEOUS, ArabicFeatureMaskNone },
 };
 #define ArabicSubstFeatureCount (sizeof(ArabicSubstFeatureArray) / sizeof(FeatureInfo))
 
 static FeatureInfo ArabicPosFeatureArray[] = {
     /* Positioning features */
-    { 2, TAG('c', 'u', 'r', 's'), REQUIRED, INDIVIDUAL, ArabicFeatureMaskNone },
-    { 2, TAG('k', 'e', 'r', 'n'), REQUIRED, INDIVIDUAL, ArabicFeatureMaskNone },
-    { 2, TAG('m', 'a', 'r', 'k'), REQUIRED, INDIVIDUAL, ArabicFeatureMaskNone },
-    { 2, TAG('m', 'k', 'm', 'k'), REQUIRED, INDIVIDUAL, ArabicFeatureMaskNone },
+    { 2, TAG('c', 'u', 'r', 's'), REQUIRED, SIMULTANEOUS, ArabicFeatureMaskNone },
+    { 2, TAG('k', 'e', 'r', 'n'), REQUIRED, SIMULTANEOUS, ArabicFeatureMaskNone },
+    { 2, TAG('m', 'a', 'r', 'k'), REQUIRED, SIMULTANEOUS, ArabicFeatureMaskNone },
+    { 2, TAG('m', 'k', 'm', 'k'), REQUIRED, SIMULTANEOUS, ArabicFeatureMaskNone },
 };
 #define ArabicPosFeatureCount (sizeof(ArabicPosFeatureArray) / sizeof(FeatureInfo))
 
