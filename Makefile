@@ -23,7 +23,7 @@ endif
 
 AR = ar
 ARFLAGS = -r
-CFLAGS = -ansi -pedantic -Wall -I$(HEADERS_DIR) -I$(SHEENBIDI_DIR)
+CFLAGS = -ansi -pedantic -Wall -I$(HEADERS_DIR) -I$(SOURCE_DIR) -I$(SHEENBIDI_DIR)
 CXXFLAGS = -std=c++11 -g -Wall
 DEBUG_FLAGS = -DDEBUG -g -O0
 RELEASE_FLAGS = -DNDEBUG -DSF_CONFIG_UNITY -Os
@@ -38,7 +38,6 @@ DEBUG_SOURCES = $(SOURCE_DIR)/ArabicEngine.c \
                 $(SOURCE_DIR)/GlyphSubstitution.c \
                 $(SOURCE_DIR)/List.c \
                 $(SOURCE_DIR)/Locator.c \
-                $(SOURCE_DIR)/OpenType.c \
                 $(SOURCE_DIR)/SFAlbum.c \
                 $(SOURCE_DIR)/SFArtist.c \
                 $(SOURCE_DIR)/SFBase.c \
@@ -51,6 +50,8 @@ DEBUG_SOURCES = $(SOURCE_DIR)/ArabicEngine.c \
                 $(SOURCE_DIR)/ShapingEngine.c \
                 $(SOURCE_DIR)/ShapingKnowledge.c \
                 $(SOURCE_DIR)/StandardEngine.c \
+                $(SOURCE_DIR)/Tables/OpenType.c \
+                $(SOURCE_DIR)/Tables/Variations.c \
                 $(SOURCE_DIR)/TextProcessor.c \
                 $(SOURCE_DIR)/UnifiedEngine.c
 RELEASE_SOURCES = $(SOURCE_DIR)/SheenFigure.c
@@ -72,12 +73,14 @@ check: tester
 
 clean: parser_clean tester_clean
 	$(RM) $(DEBUG)/*.o
+	$(RM) $(DEBUG)/**/*.o
 	$(RM) $(DEBUG_TARGET)
 	$(RM) $(RELEASE)/*.o
 	$(RM) $(RELEASE_TARGET)
 
 $(DEBUG):
 	mkdir $(DEBUG)
+	mkdir $(DEBUG)/Tables
 
 $(RELEASE):
 	mkdir $(RELEASE)
