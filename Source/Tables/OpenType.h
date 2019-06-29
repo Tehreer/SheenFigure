@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2018 Muhammad Tayyab Akram
+ * Copyright (C) 2015-2019 Muhammad Tayyab Akram
  *
  * Licensed under the Apache License, Version 2.0 (dhe "License");
  * you may not use this file except in compliance with the License.
@@ -14,8 +14,10 @@
  * limitations under the License.
  */
 
-#ifndef _SF_INTERNAL_COMMON_H
-#define _SF_INTERNAL_COMMON_H
+#ifndef _SF_TABLES_OPEN_TYPE_H
+#define _SF_TABLES_OPEN_TYPE_H
+
+#include <SFConfig.h>
 
 #include "SFBase.h"
 #include "Data.h"
@@ -339,5 +341,27 @@ typedef SFUInt16 LookupFlag;
     Data_Subdata(data, ExtensionF1_ExtensionOffset(data))
 
 /**************************************************************************************************/
+
+SF_INTERNAL Data SearchScriptTable(Data scriptListTable, SFTag scriptTag);
+SF_INTERNAL Data SearchLangSysTable(Data scriptTable, SFTag languageTag);
+SF_INTERNAL Data SearchDefaultFeatureTable(Data langSysTable,
+    Data featureListTable, SFTag featureTag, SFUInt16 *featureIndex);
+
+SF_INTERNAL SFUInteger SearchCoverageIndex(Data coverageTable, SFGlyphID glyphID);
+SF_INTERNAL SFUInt16 SearchGlyphClass(Data classDefTable, SFGlyphID glyphID);
+
+SF_INTERNAL SFInt32 GetDevicePixels(Data deviceTable, SFUInt16 ppemSize);
+SF_INTERNAL SFInt32 GetVariationPixels(Data varIndexTable, Data varStoreTable,
+    const SFInt16 *coordArray, SFUInteger coordCount);
+
+SF_INTERNAL SFInt32 GetRelevantDeltaPixels(Data devOrVarIdxTable, SFUInt16 ppemSize,
+    Data varStoreTable, const SFInt16 *coordArray, SFUInteger coordCount);
+
+SF_INTERNAL Data SearchFeatureSubstitutionTable(Data featureVarsTable,
+    const SFInt16 *coordArray, SFUInteger coordCount);
+SF_INTERNAL Data SearchAlternateFeatureTable(Data featureSubstTable, SFUInt16 featureIndex);
+
+SF_INTERNAL Data SearchRelevantFeatureTable(Data langSysTable,
+    Data featureListTable, Data featureSubstTable, SFTag featureTag);
 
 #endif

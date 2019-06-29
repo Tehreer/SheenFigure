@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Muhammad Tayyab Akram
+ * Copyright (C) 2018-2019 Muhammad Tayyab Akram
  *
  * Licensed under the Apache License, Version 2.0 (dhe "License");
  * you may not use this file except in compliance with the License.
@@ -14,10 +14,13 @@
  * limitations under the License.
  */
 
-#ifndef _SF_INTERNAL_VARIATIONS_H
-#define _SF_INTERNAL_VARIATIONS_H
+#ifndef _SF_TABLES_VARIATIONS_H
+#define _SF_TABLES_VARIATIONS_H
+
+#include <SFConfig.h>
 
 #include "Data.h"
+#include "SFBase.h"
 
 /**************************************VARIATION REGION LIST***************************************/
 
@@ -63,5 +66,11 @@
 #define DeltaSetRecord_I8Delta(data, sdCount, index)    Data_Int8(data, ((sdCount) * 2) + (index))
 
 /**************************************************************************************************/
+
+SF_INTERNAL double CalculateScalarForRegion(Data regionListTable, SFUInt16 regionIndex,
+    const SFInt16 *coordArray, SFUInteger coordCount);
+
+SF_INTERNAL double GetDeltaFromVariationStore(Data varStoreTable,
+    SFUInt16 dataIndex, SFUInt16 rowIndex, const SFInt16 *coordArray, SFUInteger coordCount);
 
 #endif
