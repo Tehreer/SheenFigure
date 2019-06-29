@@ -19,9 +19,9 @@
 #include <vector>
 
 extern "C" {
-#include <Source/Common.h>
 #include <Source/Data.h>
-#include <Source/OpenType.h>
+#include <Tables/OpenType.h>
+#include <Tables/Variations.h>
 }
 
 #include "OpenType/Builder.h"
