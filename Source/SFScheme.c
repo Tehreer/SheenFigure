@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2018 Muhammad Tayyab Akram
+ * Copyright (C) 2015-2019 Muhammad Tayyab Akram
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,14 +19,13 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "Common.h"
 #include "Data.h"
-#include "OpenType.h"
-#include "UnifiedEngine.h"
 #include "SFBase.h"
 #include "SFFont.h"
 #include "SFPatternBuilder.h"
 #include "SFPattern.h"
+#include "Tables/OpenType.h"
+#include "UnifiedEngine.h"
 #include "SFScheme.h"
 
 static void AddFeatureLookups(SFPatternBuilderRef patternBuilder, Data featureTable)

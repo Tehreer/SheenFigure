@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2018 Muhammad Tayyab Akram
+ * Copyright (C) 2015-2019 Muhammad Tayyab Akram
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,9 +20,10 @@
 #include "SFBase.h"
 #include "SFCodepoints.h"
 #include "SFFont.h"
-#include "GDEF.h"
-#include "OpenType.h"
 #include "SFPattern.h"
+
+#include "Tables/GDEF.h"
+#include "Tables/OpenType.h"
 
 #include "GlyphDiscovery.h"
 #include "TextProcessor.h"

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2018 Muhammad Tayyab Akram
+ * Copyright (C) 2015-2019 Muhammad Tayyab Akram
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,13 +18,13 @@
 #include <stddef.h>
 #include <stdlib.h>
 
+#include "Data.h"
+#include "Locator.h"
 #include "SFAssert.h"
 #include "SFBase.h"
-#include "Common.h"
-#include "Data.h"
-#include "GPOS.h"
-#include "Locator.h"
-#include "OpenType.h"
+
+#include "Tables/GPOS.h"
+#include "Tables/OpenType.h"
 
 #include "GlyphManipulation.h"
 #include "GlyphPositioning.h"

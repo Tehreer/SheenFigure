@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2018 Muhammad Tayyab Akram
+ * Copyright (C) 2016-2019 Muhammad Tayyab Akram
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,7 +26,6 @@
 #include "GlyphSubstitution.c"
 #include "List.c"
 #include "Locator.c"
-#include "OpenType.c"
 #include "SFAlbum.c"
 #include "SFArtist.c"
 #include "SFBase.c"
@@ -39,6 +38,8 @@
 #include "ShapingEngine.c"
 #include "ShapingKnowledge.c"
 #include "StandardEngine.c"
+#include "Tables/OpenType.c"
+#include "Tables/Variations.c"
 #include "TextProcessor.c"
 #include "UnifiedEngine.c"
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2018 Muhammad Tayyab Akram
+ * Copyright (C) 2015-2019 Muhammad Tayyab Akram
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,11 +17,13 @@
 #include <SFConfig.h>
 #include <stddef.h>
 
-#include "SFAssert.h"
 #include "SFAlbum.h"
+#include "SFAssert.h"
 #include "SFBase.h"
-#include "GDEF.h"
-#include "OpenType.h"
+
+#include "Tables/GDEF.h"
+#include "Tables/OpenType.h"
+
 #include "Locator.h"
 
 SF_INTERNAL void LocatorInitialize(LocatorRef locator, SFAlbumRef album, Data gdef)
