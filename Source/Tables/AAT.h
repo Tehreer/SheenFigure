@@ -73,4 +73,6 @@
 
 /**************************************************************************************************/
 
+SF_INTERNAL Data GetLookupValueData(Data lookupTable, SFGlyphID glyphID, SFUInt16 valueSize);
+
 #endif
