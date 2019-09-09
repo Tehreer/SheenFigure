@@ -68,14 +68,14 @@ void SFArtistSetPattern(SFArtistRef artist, SFPatternRef pattern)
 void SFArtistSetTextDirection(SFArtistRef artist, SFTextDirection textDirection)
 {
     switch (textDirection) {
-        case SFTextDirectionLeftToRight:
-        case SFTextDirectionRightToLeft:
-            break;
+    case SFTextDirectionLeftToRight:
+    case SFTextDirectionRightToLeft:
+        break;
 
-        default:
-            /* Fallback to default value. */
-            textDirection = SFTextDirectionLeftToRight;
-            break;
+    default:
+        /* Fallback to default value. */
+        textDirection = SFTextDirectionLeftToRight;
+        break;
     }
 
     artist->textDirection = textDirection;
@@ -84,14 +84,14 @@ void SFArtistSetTextDirection(SFArtistRef artist, SFTextDirection textDirection)
 void SFArtistSetTextMode(SFArtistRef artist, SFTextMode textMode)
 {
     switch (textMode) {
-        case SFTextModeForward:
-        case SFTextModeBackward:
-            break;
+    case SFTextModeForward:
+    case SFTextModeBackward:
+        break;
 
-        default:
-            /* Fallback to default value. */
-            textMode = SFTextModeForward;
-            break;
+    default:
+        /* Fallback to default value. */
+        textMode = SFTextModeForward;
+        break;
     }
 
     artist->textMode = textMode;

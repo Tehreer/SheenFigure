@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2018 Muhammad Tayyab Akram
+ * Copyright (C) 2015-2019 Muhammad Tayyab Akram
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -183,18 +183,13 @@ SF_INTERNAL void SFPatternBuilderMakeFeatureUnit(SFPatternBuilderRef builder)
 
     /* Increase feature unit count. */
     switch (builder->_featureKind) {
-        case SFFeatureKindSubstitution:
-            builder->_gsubUnitCount++;
-            break;
+    case SFFeatureKindSubstitution:
+        builder->_gsubUnitCount++;
+        break;
 
-        case SFFeatureKindPositioning:
-            builder->_gposUnitCount++;
-            break;
-
-        default:
-            /* Invalid feature kind. */
-            SFAssert(0);
-            break;
+    case SFFeatureKindPositioning:
+        builder->_gposUnitCount++;
+        break;
     }
 
     /* Increase feature index. */

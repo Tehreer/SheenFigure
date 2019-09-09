@@ -41,57 +41,57 @@ static SFBoolean ApplySingleSubst(TextProcessorRef textProcessor, Data singleSub
     substFormat = SingleSubst_Format(singleSubst);
 
     switch (substFormat) {
-        case 1: {
-            Data coverage = SingleSubstF1_CoverageTable(singleSubst);
-            SFInt16 delta = SingleSubstF1_DeltaGlyphID(singleSubst);
-            SFGlyphID locGlyph;
-            SFUInteger covIndex;
+    case 1: {
+        Data coverage = SingleSubstF1_CoverageTable(singleSubst);
+        SFInt16 delta = SingleSubstF1_DeltaGlyphID(singleSubst);
+        SFGlyphID locGlyph;
+        SFUInteger covIndex;
 
-            locGlyph = SFAlbumGetGlyph(album, locator->index);
-            covIndex = SearchCoverageIndex(coverage, locGlyph);
+        locGlyph = SFAlbumGetGlyph(album, locator->index);
+        covIndex = SearchCoverageIndex(coverage, locGlyph);
 
-            if (covIndex != SFInvalidIndex) {
-                SFGlyphID subGlyph = (SFGlyphID)(locGlyph + delta);
-                GlyphTraits subTraits = GetGlyphTraits(textProcessor, subGlyph);
+        if (covIndex != SFInvalidIndex) {
+            SFGlyphID subGlyph = (SFGlyphID)(locGlyph + delta);
+            GlyphTraits subTraits = GetGlyphTraits(textProcessor, subGlyph);
 
-                /* Substitute the glyph and set its traits. */
-                SFAlbumSetGlyph(album, locator->index, subGlyph);
-                SFAlbumReplaceBasicTraits(album, locator->index, subTraits);
+            /* Substitute the glyph and set its traits. */
+            SFAlbumSetGlyph(album, locator->index, subGlyph);
+            SFAlbumReplaceBasicTraits(album, locator->index, subTraits);
 
-                return SFTrue;
-            }
-
-            return SFFalse;
+            return SFTrue;
         }
 
-        case 2: {
-            Data coverage = SingleSubstF2_CoverageTable(singleSubst);
-            SFUInt16 glyphCount = SingleSubstF2_GlyphCount(singleSubst);
-            SFGlyphID locGlyph;
-            SFUInteger covIndex;
+        return SFFalse;
+    }
 
-            locGlyph = SFAlbumGetGlyph(album, locator->index);
-            covIndex = SearchCoverageIndex(coverage, locGlyph);
+    case 2: {
+        Data coverage = SingleSubstF2_CoverageTable(singleSubst);
+        SFUInt16 glyphCount = SingleSubstF2_GlyphCount(singleSubst);
+        SFGlyphID locGlyph;
+        SFUInteger covIndex;
 
-            if (covIndex < glyphCount) {
-                SFGlyphID subGlyph = SingleSubstF2_Substitute(singleSubst, covIndex);
-                GlyphTraits subTraits;
+        locGlyph = SFAlbumGetGlyph(album, locator->index);
+        covIndex = SearchCoverageIndex(coverage, locGlyph);
 
-                subTraits = GetGlyphTraits(textProcessor, subGlyph);
+        if (covIndex < glyphCount) {
+            SFGlyphID subGlyph = SingleSubstF2_Substitute(singleSubst, covIndex);
+            GlyphTraits subTraits;
 
-                /* Substitute the glyph and set its traits. */
-                SFAlbumSetGlyph(album, locator->index, subGlyph);
-                SFAlbumReplaceBasicTraits(album, locator->index, subTraits);
+            subTraits = GetGlyphTraits(textProcessor, subGlyph);
 
-                return SFTrue;
-            }
+            /* Substitute the glyph and set its traits. */
+            SFAlbumSetGlyph(album, locator->index, subGlyph);
+            SFAlbumReplaceBasicTraits(album, locator->index, subTraits);
 
-            return SFFalse;
+            return SFTrue;
         }
 
-        default:
-            /* Invalid table format. */
-            return SFFalse;
+        return SFFalse;
+    }
+
+    default:
+        /* Invalid table format. */
+        return SFFalse;
     }
 }
 
@@ -104,26 +104,26 @@ static SFBoolean ApplyMultipleSubst(TextProcessorRef textProcessor, Data multipl
     substformat = MultipleSubst_Format(multipleSubst);
 
     switch (substformat) {
-        case 1: {
-            Data coverage = MultipleSubstF1_CoverageTable(multipleSubst);
-            SFUInt16 seqCount = MultipleSubstF1_SequenceCount(multipleSubst);
-            SFGlyphID locGlyph;
-            SFUInteger covIndex;
+    case 1: {
+        Data coverage = MultipleSubstF1_CoverageTable(multipleSubst);
+        SFUInt16 seqCount = MultipleSubstF1_SequenceCount(multipleSubst);
+        SFGlyphID locGlyph;
+        SFUInteger covIndex;
 
-            locGlyph = SFAlbumGetGlyph(album, locator->index);
-            covIndex = SearchCoverageIndex(coverage, locGlyph);
+        locGlyph = SFAlbumGetGlyph(album, locator->index);
+        covIndex = SearchCoverageIndex(coverage, locGlyph);
 
-            if (covIndex < seqCount) {
-                Data sequence = MultipleSubstF1_SequenceTable(multipleSubst, covIndex);
-                return ApplySequenceTable(textProcessor, sequence);
-            }
-
-            return SFFalse;
+        if (covIndex < seqCount) {
+            Data sequence = MultipleSubstF1_SequenceTable(multipleSubst, covIndex);
+            return ApplySequenceTable(textProcessor, sequence);
         }
 
-        default:
-            /* Invalid table format. */
-            return SFFalse;
+        return SFFalse;
+    }
+
+    default:
+        /* Invalid table format. */
+        return SFFalse;
     }
 }
 
@@ -189,26 +189,26 @@ static SFBoolean ApplyAlternateSubst(TextProcessorRef textProcessor, Data altern
     substFormat = AlternateSubst_Format(alternateSubst);
 
     switch (substFormat) {
-        case 1: {
-            Data coverage = AlternateSubstF1_CoverageTable(alternateSubst);
-            SFUInt16 altSetCount = AlternateSubstF1_AlternateSetCount(alternateSubst);
-            SFGlyphID locGlyph;
-            SFUInteger covIndex;
+    case 1: {
+        Data coverage = AlternateSubstF1_CoverageTable(alternateSubst);
+        SFUInt16 altSetCount = AlternateSubstF1_AlternateSetCount(alternateSubst);
+        SFGlyphID locGlyph;
+        SFUInteger covIndex;
 
-            locGlyph = SFAlbumGetGlyph(album, locator->index);
-            covIndex = SearchCoverageIndex(coverage, locGlyph);
+        locGlyph = SFAlbumGetGlyph(album, locator->index);
+        covIndex = SearchCoverageIndex(coverage, locGlyph);
 
-            if (covIndex < altSetCount) {
-                Data alternateSet = AlternateSubstF1_AlternateSetTable(alternateSubst, covIndex);
-                return ApplyAlternateSetTable(textProcessor, alternateSet);
-            }
-
-            return SFFalse;
+        if (covIndex < altSetCount) {
+            Data alternateSet = AlternateSubstF1_AlternateSetTable(alternateSubst, covIndex);
+            return ApplyAlternateSetTable(textProcessor, alternateSet);
         }
 
-        default:
-            /* Invalid table format. */
-            return SFFalse;
+        return SFFalse;
+    }
+
+    default:
+        /* Invalid table format. */
+        return SFFalse;
     }
 }
 
@@ -245,26 +245,26 @@ static SFBoolean ApplyLigatureSubst(TextProcessorRef textProcessor, Data ligatur
     substFormat = LigatureSubst_Format(ligatureSubst);
 
     switch (substFormat) {
-        case 1: {
-            Data coverage = LigatureSubstF1_CoverageTable(ligatureSubst);
-            SFUInt16 ligSetCount = LigatureSubstF1_LigSetCount(ligatureSubst);
-            SFGlyphID locGlyph;
-            SFUInteger covIndex;
+    case 1: {
+        Data coverage = LigatureSubstF1_CoverageTable(ligatureSubst);
+        SFUInt16 ligSetCount = LigatureSubstF1_LigSetCount(ligatureSubst);
+        SFGlyphID locGlyph;
+        SFUInteger covIndex;
 
-            locGlyph = SFAlbumGetGlyph(album, locator->index);
-            covIndex = SearchCoverageIndex(coverage, locGlyph);
+        locGlyph = SFAlbumGetGlyph(album, locator->index);
+        covIndex = SearchCoverageIndex(coverage, locGlyph);
 
-            if (covIndex < ligSetCount) {
-                Data ligatureSet = LigatureSubstF1_LigatureSetTable(ligatureSubst, covIndex);
-                return ApplyLigatureSetTable(textProcessor, ligatureSet);
-            }
-
-            return SFFalse;
+        if (covIndex < ligSetCount) {
+            Data ligatureSet = LigatureSubstF1_LigatureSetTable(ligatureSubst, covIndex);
+            return ApplyLigatureSetTable(textProcessor, ligatureSet);
         }
 
-        default:
-            /* Invalid table format. */
-            return SFFalse;
+        return SFFalse;
+    }
+
+    default:
+        /* Invalid table format. */
+        return SFFalse;
     }
 }
 
@@ -352,32 +352,32 @@ static SFBoolean ApplyLigatureSetTable(TextProcessorRef textProcessor, Data liga
 SF_PRIVATE SFBoolean ApplySubstitutionSubtable(TextProcessorRef textProcessor, LookupType lookupType, Data subtable)
 {
     switch (lookupType) {
-        case LookupTypeSingle:
-            return ApplySingleSubst(textProcessor, subtable);
+    case LookupTypeSingle:
+        return ApplySingleSubst(textProcessor, subtable);
 
-        case LookupTypeMultiple:
-            return ApplyMultipleSubst(textProcessor, subtable);
+    case LookupTypeMultiple:
+        return ApplyMultipleSubst(textProcessor, subtable);
 
-        case LookupTypeAlternate:
-            return ApplyAlternateSubst(textProcessor, subtable);
+    case LookupTypeAlternate:
+        return ApplyAlternateSubst(textProcessor, subtable);
 
-        case LookupTypeLigature:
-            return ApplyLigatureSubst(textProcessor, subtable);
+    case LookupTypeLigature:
+        return ApplyLigatureSubst(textProcessor, subtable);
 
-        case LookupTypeContext:
-            return ApplyContextSubtable(textProcessor, subtable);
+    case LookupTypeContext:
+        return ApplyContextSubtable(textProcessor, subtable);
 
-        case LookupTypeChainingContext:
-            return ApplyChainContextSubtable(textProcessor, subtable);
+    case LookupTypeChainingContext:
+        return ApplyChainContextSubtable(textProcessor, subtable);
 
-        case LookupTypeExtension:
-            return ApplyExtensionSubtable(textProcessor, subtable);
+    case LookupTypeExtension:
+        return ApplyExtensionSubtable(textProcessor, subtable);
 
-        case LookupTypeReverseChainingContext:
-            return ApplyReverseChainSubst(textProcessor, subtable);
+    case LookupTypeReverseChainingContext:
+        return ApplyReverseChainSubst(textProcessor, subtable);
 
-        default:
-            /* Invalid lookup type. */
-            return SFFalse;
+    default:
+        /* Invalid lookup type. */
+        return SFFalse;
     }
 }

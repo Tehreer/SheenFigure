@@ -48,11 +48,11 @@ SFTextDirection SFAlbumGetCaretDirection(SFAlbumRef album)
 {
     if (album->isBackward) {
         switch (album->renderingDirection) {
-            case SFTextDirectionRightToLeft:
-                return SFTextDirectionLeftToRight;
+        case SFTextDirectionRightToLeft:
+            return SFTextDirectionLeftToRight;
 
-            case SFTextDirectionLeftToRight:
-                return SFTextDirectionRightToLeft;
+        case SFTextDirectionLeftToRight:
+            return SFTextDirectionRightToLeft;
         }
     }
 

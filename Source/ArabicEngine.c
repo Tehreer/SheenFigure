@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2018 Muhammad Tayyab Akram
+ * Copyright (C) 2015-2019 Muhammad Tayyab Akram
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -88,8 +88,8 @@ ShapingKnowledge ArabicKnowledgeInstance = {
 static ScriptKnowledgeRef ArabicKnowledgeSeekScript(const void *object, SFTag scriptTag)
 {
     switch (scriptTag) {
-        case TAG('a', 'r', 'a', 'b'):
-            return &ArabicScriptKnowledge;
+    case TAG('a', 'r', 'a', 'b'):
+        return &ArabicScriptKnowledge;
     }
 
     return NULL;
@@ -113,15 +113,15 @@ static SFJoiningType DetermineJoiningType(SFCodepoint codepoint)
         SBGeneralCategory generalCategory = SBCodepointGetGeneralCategory(codepoint);
 
         switch (generalCategory) {
-            case SBGeneralCategoryMN:
-            case SBGeneralCategoryME:
-            case SBGeneralCategoryCF:
-                joiningType = SFJoiningTypeT;
-                break;
-                
-            default:
-                joiningType = SFJoiningTypeU;
-                break;
+        case SBGeneralCategoryMN:
+        case SBGeneralCategoryME:
+        case SBGeneralCategoryCF:
+            joiningType = SFJoiningTypeT;
+            break;
+
+        default:
+            joiningType = SFJoiningTypeU;
+            break;
         }
     }
 
@@ -163,47 +163,47 @@ static void PutArabicFeatureMask(SFAlbumRef album)
 
     Process:
         switch (joiningType) {
-            case SFJoiningTypeL:
+        case SFJoiningTypeL:
+            if (nextJoiningType == SFJoiningTypeD || nextJoiningType == SFJoiningTypeR) {
+                featureMask |= ArabicFeatureMaskInitial;
+            } else {
+                featureMask |= ArabicFeatureMaskIsolated;
+            }
+            break;
+
+        case SFJoiningTypeR:
+            if (priorJoiningType == SFJoiningTypeD || priorJoiningType == SFJoiningTypeL) {
+                featureMask |= ArabicFeatureMaskFinal;
+            } else {
+                featureMask |= ArabicFeatureMaskIsolated;
+            }
+            break;
+
+        case SFJoiningTypeD:
+            if (priorJoiningType == SFJoiningTypeD || priorJoiningType == SFJoiningTypeL) {
+                if (nextJoiningType == SFJoiningTypeD || nextJoiningType == SFJoiningTypeR) {
+                    featureMask |= ArabicFeatureMaskMedial;
+                } else {
+                    featureMask |= ArabicFeatureMaskFinal;
+                }
+            } else {
                 if (nextJoiningType == SFJoiningTypeD || nextJoiningType == SFJoiningTypeR) {
                     featureMask |= ArabicFeatureMaskInitial;
                 } else {
                     featureMask |= ArabicFeatureMaskIsolated;
                 }
-                break;
+            }
+            break;
 
-            case SFJoiningTypeR:
-                if (priorJoiningType == SFJoiningTypeD || priorJoiningType == SFJoiningTypeL) {
-                    featureMask |= ArabicFeatureMaskFinal;
-                } else {
-                    featureMask |= ArabicFeatureMaskIsolated;
-                }
-                break;
+        /* Can only occur for first character. Should be treated same as dual joining. */
+        case SFJoiningTypeC:
+            joiningType = SFJoiningTypeD;
+            goto Process;
 
-            case SFJoiningTypeD:
-                if (priorJoiningType == SFJoiningTypeD || priorJoiningType == SFJoiningTypeL) {
-                    if (nextJoiningType == SFJoiningTypeD || nextJoiningType == SFJoiningTypeR) {
-                        featureMask |= ArabicFeatureMaskMedial;
-                    } else {
-                        featureMask |= ArabicFeatureMaskFinal;
-                    }
-                } else {
-                    if (nextJoiningType == SFJoiningTypeD || nextJoiningType == SFJoiningTypeR) {
-                        featureMask |= ArabicFeatureMaskInitial;
-                    } else {
-                        featureMask |= ArabicFeatureMaskIsolated;
-                    }
-                }
-                break;
-
-            /* Can only occur for first character. Should be treated same as dual joining. */
-            case SFJoiningTypeC:
-                joiningType = SFJoiningTypeD;
-                goto Process;
-
-            /* Can only occur for first character. Should be treated as if there was no character. */
-            case SFJoiningTypeT:
-                joiningType = SFJoiningTypeU;
-                break;
+        /* Can only occur for first character. Should be treated as if there was no character. */
+        case SFJoiningTypeT:
+            joiningType = SFJoiningTypeU;
+            break;
         }
 
         /* Save the mask of current character. */

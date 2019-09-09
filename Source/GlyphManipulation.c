@@ -75,17 +75,17 @@ static SFBoolean AssessGlyphByClass(GlyphAgent *glyphAgent)
     SFUInt16 glyphClass;
 
     switch (glyphAgent->glyphZone) {
-        case GlyphZoneInput:
-            classDef = ((Data *)glyphAgent->helperPtr)[0];
-            break;
+    case GlyphZoneInput:
+        classDef = ((Data *)glyphAgent->helperPtr)[0];
+        break;
 
-        case GlyphZoneBacktrack:
-            classDef = ((Data *)glyphAgent->helperPtr)[1];
-            break;
+    case GlyphZoneBacktrack:
+        classDef = ((Data *)glyphAgent->helperPtr)[1];
+        break;
 
-        case GlyphZoneLookahead:
-            classDef = ((Data *)glyphAgent->helperPtr)[2];
-            break;
+    case GlyphZoneLookahead:
+        classDef = ((Data *)glyphAgent->helperPtr)[2];
+        break;
     }
 
     glyphClass = SearchGlyphClass(classDef, glyphAgent->glyphID);
@@ -218,55 +218,55 @@ SF_PRIVATE SFBoolean ApplyContextSubtable(TextProcessorRef textProcessor, Data c
     tblFormat = Context_Format(context);
 
     switch (tblFormat) {
-        case 1: {
-            Data coverage = ContextF1_CoverageTable(context);
-            SFUInt16 ruleSetCount = ContextF1_RuleSetCount(context);
-            SFGlyphID locGlyph;
-            SFUInteger covIndex;
+    case 1: {
+        Data coverage = ContextF1_CoverageTable(context);
+        SFUInt16 ruleSetCount = ContextF1_RuleSetCount(context);
+        SFGlyphID locGlyph;
+        SFUInteger covIndex;
 
-            locGlyph = SFAlbumGetGlyph(album, locator->index);
-            covIndex = SearchCoverageIndex(coverage, locGlyph);
+        locGlyph = SFAlbumGetGlyph(album, locator->index);
+        covIndex = SearchCoverageIndex(coverage, locGlyph);
 
-            if (covIndex < ruleSetCount) {
-                Data ruleSet = ContextF1_RuleSetTable(context, covIndex);
-                return ApplyRuleSetTable(textProcessor, ruleSet, AssessGlyphByEquality, NULL);
+        if (covIndex < ruleSetCount) {
+            Data ruleSet = ContextF1_RuleSetTable(context, covIndex);
+            return ApplyRuleSetTable(textProcessor, ruleSet, AssessGlyphByEquality, NULL);
+        }
+
+        return SFFalse;
+    }
+
+    case 2: {
+        Data coverage = ContextF2_CoverageTable(context);
+        SFGlyphID locGlyph;
+        SFUInteger covIndex;
+
+        locGlyph = SFAlbumGetGlyph(album, locator->index);
+        covIndex = SearchCoverageIndex(coverage, locGlyph);
+
+        if (covIndex != SFInvalidIndex) {
+            Data classDef = ContextF2_ClassDefTable(context);
+            SFUInt16 ruleSetCount = ContextF2_RuleSetCount(context);
+            SFUInt16 locClass;
+
+            locClass = SearchGlyphClass(classDef, locGlyph);
+
+            if (locClass < ruleSetCount) {
+                Data ruleSet = ContextF2_RuleSetTable(context, locClass);
+                return ApplyRuleSetTable(textProcessor, ruleSet, AssessGlyphByClass, &classDef);
             }
-
-            return SFFalse;
         }
 
-        case 2: {
-            Data coverage = ContextF2_CoverageTable(context);
-            SFGlyphID locGlyph;
-            SFUInteger covIndex;
+        return SFFalse;
+    }
 
-            locGlyph = SFAlbumGetGlyph(album, locator->index);
-            covIndex = SearchCoverageIndex(coverage, locGlyph);
+    case 3: {
+        Data rule = ContextF3_Rule(context);
+        return ApplyRuleTable(textProcessor, rule, SFTrue, AssessGlyphByCoverage, (void *)context);
+    }
 
-            if (covIndex != SFInvalidIndex) {
-                Data classDef = ContextF2_ClassDefTable(context);
-                SFUInt16 ruleSetCount = ContextF2_RuleSetCount(context);
-                SFUInt16 locClass;
-
-                locClass = SearchGlyphClass(classDef, locGlyph);
-
-                if (locClass < ruleSetCount) {
-                    Data ruleSet = ContextF2_RuleSetTable(context, locClass);
-                    return ApplyRuleSetTable(textProcessor, ruleSet, AssessGlyphByClass, &classDef);
-                }
-            }
-
-            return SFFalse;
-        }
-
-        case 3: {
-            Data rule = ContextF3_Rule(context);
-            return ApplyRuleTable(textProcessor, rule, SFTrue, AssessGlyphByCoverage, (void *)context);
-        }
-
-        default:
-            /* Invalid table format. */
-            return SFFalse;
+    default:
+        /* Invalid table format. */
+        return SFFalse;
     }
 }
 
@@ -305,8 +305,8 @@ static SFBoolean ApplyRuleTable(TextProcessorRef textProcessor,
         SFUInteger contextStart = textProcessor->_locator.index;
         SFUInteger contextEnd;
 
-        return (AssessInputGlyphs(textProcessor, valueArray, glyphCount, includeFirst, glyphAsessment, helperPtr, &contextEnd)
-             && ApplyContextLookups(textProcessor, lookupArray, lookupCount, contextStart, contextEnd));
+        return AssessInputGlyphs(textProcessor, valueArray, glyphCount, includeFirst, glyphAsessment, helperPtr, &contextEnd)
+            && ApplyContextLookups(textProcessor, lookupArray, lookupCount, contextStart, contextEnd);
     }
 
     return SFFalse;
@@ -321,63 +321,63 @@ SF_PRIVATE SFBoolean ApplyChainContextSubtable(TextProcessorRef textProcessor, D
     tblFormat = ChainContext_Format(chainContext);
 
     switch (tblFormat) {
-        case 1: {
-            Data coverage = ChainContextF1_CoverageTable(chainContext);
-            SFUInt16 ruleSetCount = ChainContextF1_ChainRuleSetCount(chainContext);
-            SFGlyphID locGlyph;
-            SFUInteger covIndex;
+    case 1: {
+        Data coverage = ChainContextF1_CoverageTable(chainContext);
+        SFUInt16 ruleSetCount = ChainContextF1_ChainRuleSetCount(chainContext);
+        SFGlyphID locGlyph;
+        SFUInteger covIndex;
 
-            locGlyph = SFAlbumGetGlyph(album, locator->index);
-            covIndex = SearchCoverageIndex(coverage, locGlyph);
+        locGlyph = SFAlbumGetGlyph(album, locator->index);
+        covIndex = SearchCoverageIndex(coverage, locGlyph);
 
-            if (covIndex < ruleSetCount) {
-                Data chainRuleSet = ChainContextF1_ChainRuleSetTable(chainContext, covIndex);
-                return ApplyChainRuleSetTable(textProcessor, chainRuleSet, AssessGlyphByEquality, NULL);
+        if (covIndex < ruleSetCount) {
+            Data chainRuleSet = ChainContextF1_ChainRuleSetTable(chainContext, covIndex);
+            return ApplyChainRuleSetTable(textProcessor, chainRuleSet, AssessGlyphByEquality, NULL);
+        }
+
+        return SFFalse;
+    }
+
+    case 2: {
+        Data coverage = ChainContextF2_CoverageTable(chainContext);
+        SFGlyphID locGlyph;
+        SFUInteger covIndex;
+
+        locGlyph = SFAlbumGetGlyph(album, locator->index);
+        covIndex = SearchCoverageIndex(coverage, locGlyph);
+
+        if (covIndex != SFInvalidIndex) {
+            Data backtrackClassDef = ChainContextF2_BacktrackClassDefTable(chainContext);
+            Data inputClassDef = ChainContextF2_InputClassDefTable(chainContext);
+            Data lookaheadClassDef = ChainContextF2_LookaheadClassDefTable(chainContext);
+            SFUInt16 chainRuleSetCount = ChainContextF2_ChainRuleSetCount(chainContext);
+            SFUInt16 inputClass;
+
+            inputClass = SearchGlyphClass(inputClassDef, locGlyph);
+
+            if (inputClass < chainRuleSetCount) {
+                Data chainRuleSet = ChainContextF2_ChainRuleSetTable(chainContext, inputClass);
+                Data helpers[3];
+
+                helpers[0] = inputClassDef;
+                helpers[1] = backtrackClassDef;
+                helpers[2] = lookaheadClassDef;
+
+                return ApplyChainRuleSetTable(textProcessor, chainRuleSet, AssessGlyphByClass, helpers);
             }
-
-            return SFFalse;
         }
 
-        case 2: {
-            Data coverage = ChainContextF2_CoverageTable(chainContext);
-            SFGlyphID locGlyph;
-            SFUInteger covIndex;
+        return SFFalse;
+    }
 
-            locGlyph = SFAlbumGetGlyph(album, locator->index);
-            covIndex = SearchCoverageIndex(coverage, locGlyph);
+    case 3: {
+        Data chainRule = ChainContextF3_ChainRuleTable(chainContext);
+        return ApplyChainRuleTable(textProcessor, chainRule, SFTrue, AssessGlyphByCoverage, (void *)chainContext);
+    }
 
-            if (covIndex != SFInvalidIndex) {
-                Data backtrackClassDef = ChainContextF2_BacktrackClassDefTable(chainContext);
-                Data inputClassDef = ChainContextF2_InputClassDefTable(chainContext);
-                Data lookaheadClassDef = ChainContextF2_LookaheadClassDefTable(chainContext);
-                SFUInt16 chainRuleSetCount = ChainContextF2_ChainRuleSetCount(chainContext);
-                SFUInt16 inputClass;
-
-                inputClass = SearchGlyphClass(inputClassDef, locGlyph);
-
-                if (inputClass < chainRuleSetCount) {
-                    Data chainRuleSet = ChainContextF2_ChainRuleSetTable(chainContext, inputClass);
-                    Data helpers[3];
-
-                    helpers[0] = inputClassDef;
-                    helpers[1] = backtrackClassDef;
-                    helpers[2] = lookaheadClassDef;
-
-                    return ApplyChainRuleSetTable(textProcessor, chainRuleSet, AssessGlyphByClass, helpers);
-                }
-            }
-
-            return SFFalse;
-        }
-
-        case 3: {
-            Data chainRule = ChainContextF3_ChainRuleTable(chainContext);
-            return ApplyChainRuleTable(textProcessor, chainRule, SFTrue, AssessGlyphByCoverage, (void *)chainContext);
-        }
-
-        default:
-            /* Invalid table format. */
-            return SFFalse;
+    default:
+        /* Invalid table format. */
+        return SFFalse;
     }
 }
 
@@ -420,10 +420,10 @@ static SFBoolean ApplyChainRuleTable(TextProcessorRef textProcessor,
         SFUInteger contextStart = textProcessor->_locator.index;
         SFUInteger contextEnd;
 
-        return (AssessInputGlyphs(textProcessor, inputArray, inputCount, includeFirst, glyphAsessment, helperPtr, &contextEnd)
-             && AssessBacktrackGlyphs(textProcessor, backtrackArray, backtrackCount, glyphAsessment, helperPtr)
-             && AssessLookaheadGlyphs(textProcessor, lookaheadArray, lookaheadCount, glyphAsessment, helperPtr, contextEnd)
-             && ApplyContextLookups(textProcessor, lookupArray, lookupCount, contextStart, contextEnd));
+        return AssessInputGlyphs(textProcessor, inputArray, inputCount, includeFirst, glyphAsessment, helperPtr, &contextEnd)
+            && AssessBacktrackGlyphs(textProcessor, backtrackArray, backtrackCount, glyphAsessment, helperPtr)
+            && AssessLookaheadGlyphs(textProcessor, lookaheadArray, lookaheadCount, glyphAsessment, helperPtr, contextEnd)
+            && ApplyContextLookups(textProcessor, lookupArray, lookupCount, contextStart, contextEnd);
     }
 
     return SFFalse;
@@ -479,16 +479,16 @@ SF_PRIVATE SFBoolean ApplyExtensionSubtable(TextProcessorRef textProcessor, Data
     SFUInt16 tblFormat = Extension_Format(extension);
 
     switch (tblFormat) {
-        case 1: {
-            LookupType lookupType = ExtensionF1_LookupType(extension);
-            Data innerSubtable = ExtensionF1_ExtensionData(extension);
+    case 1: {
+        LookupType lookupType = ExtensionF1_LookupType(extension);
+        Data innerSubtable = ExtensionF1_ExtensionData(extension);
 
-            return textProcessor->_lookupOperation(textProcessor, lookupType, innerSubtable);
-        }
+        return textProcessor->_lookupOperation(textProcessor, lookupType, innerSubtable);
+    }
 
-        default:
-            /* Invalid table format. */
-            return SFFalse;
+    default:
+        /* Invalid table format. */
+        return SFFalse;
     }
 }
 
@@ -501,45 +501,45 @@ SF_PRIVATE SFBoolean ApplyReverseChainSubst(TextProcessorRef textProcessor, Data
     substFormat = ReverseChainSubst_Format(reverseChain);
 
     switch (substFormat) {
-        case 1: {
-            Data coverage = ReverseChainSubstF1_CoverageTable(reverseChain);
-            SFGlyphID locGlyph;
-            SFUInteger covIndex;
+    case 1: {
+        Data coverage = ReverseChainSubstF1_CoverageTable(reverseChain);
+        SFGlyphID locGlyph;
+        SFUInteger covIndex;
 
-            locGlyph = SFAlbumGetGlyph(album, locator->index);
-            covIndex = SearchCoverageIndex(coverage, locGlyph);
+        locGlyph = SFAlbumGetGlyph(album, locator->index);
+        covIndex = SearchCoverageIndex(coverage, locGlyph);
 
-            if (covIndex != SFInvalidIndex) {
-                Data backtrackRecord = ReverseChainSubstF1_RevBacktrackRecord(reverseChain);
-                SFUInt16 backtrackCount = RevBacktrackRecord_GlyphCount(backtrackRecord);
-                Data backtrackOffsets = RevBacktrackRecord_CoverageOffsets(backtrackRecord);
-                Data lookaheadRecord = RevBacktrackRecord_RevLookaheadRecord(backtrackRecord, backtrackCount);
-                SFUInt16 lookaheadCount = RevLookaheadRecord_GlyphCount(lookaheadRecord);
-                Data lookaheadOffsets = RevLookaheadRecord_CoverageOffsets(lookaheadRecord);
-                Data substRecord = RevLookaheadRecord_RevSubstRecord(lookaheadRecord, lookaheadCount);
-                SFUInt16 substCount = RevSubstRecord_GlyphCount(substRecord);
+        if (covIndex != SFInvalidIndex) {
+            Data backtrackRecord = ReverseChainSubstF1_RevBacktrackRecord(reverseChain);
+            SFUInt16 backtrackCount = RevBacktrackRecord_GlyphCount(backtrackRecord);
+            Data backtrackOffsets = RevBacktrackRecord_CoverageOffsets(backtrackRecord);
+            Data lookaheadRecord = RevBacktrackRecord_RevLookaheadRecord(backtrackRecord, backtrackCount);
+            SFUInt16 lookaheadCount = RevLookaheadRecord_GlyphCount(lookaheadRecord);
+            Data lookaheadOffsets = RevLookaheadRecord_CoverageOffsets(lookaheadRecord);
+            Data substRecord = RevLookaheadRecord_RevSubstRecord(lookaheadRecord, lookaheadCount);
+            SFUInt16 substCount = RevSubstRecord_GlyphCount(substRecord);
 
-                if (AssessBacktrackGlyphs(textProcessor, backtrackOffsets, backtrackCount, AssessGlyphByCoverage, (void *)reverseChain)
-                    && AssessLookaheadGlyphs(textProcessor, lookaheadOffsets, lookaheadCount, AssessGlyphByCoverage, (void *)reverseChain, locator->index)
-                    && covIndex < substCount) {
-                    SFGlyphID subGlyph = RevSubstRecord_Substitute(substRecord, covIndex);
-                    GlyphTraits subTraits;
+            if (AssessBacktrackGlyphs(textProcessor, backtrackOffsets, backtrackCount, AssessGlyphByCoverage, (void *)reverseChain)
+                && AssessLookaheadGlyphs(textProcessor, lookaheadOffsets, lookaheadCount, AssessGlyphByCoverage, (void *)reverseChain, locator->index)
+                && covIndex < substCount) {
+                SFGlyphID subGlyph = RevSubstRecord_Substitute(substRecord, covIndex);
+                GlyphTraits subTraits;
 
-                    subTraits = GetGlyphTraits(textProcessor, subGlyph);
+                subTraits = GetGlyphTraits(textProcessor, subGlyph);
 
-                    /* Substitute the glyph and set its traits. */
-                    SFAlbumSetGlyph(album, locator->index, subGlyph);
-                    SFAlbumReplaceBasicTraits(album, locator->index, subTraits);
+                /* Substitute the glyph and set its traits. */
+                SFAlbumSetGlyph(album, locator->index, subGlyph);
+                SFAlbumReplaceBasicTraits(album, locator->index, subTraits);
 
-                    return SFTrue;
-                }
+                return SFTrue;
             }
-
-            return SFFalse;
         }
 
-        default:
-            /* Invalid table format. */
-            return SFFalse;
+        return SFFalse;
+    }
+
+    default:
+        /* Invalid table format. */
+        return SFFalse;
     }
 }

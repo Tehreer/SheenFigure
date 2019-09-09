@@ -70,81 +70,88 @@ SF_INTERNAL Data GetLookupValueData(Data lookupTable, SFGlyphID glyphID, SFUInt1
     SFUInt16 format = Lookup_Format(lookupTable);
 
     switch (format) {
-        case 0: {
-            Data valueArray = LookupF0_ValueArray(lookupTable);
-            return Data_Subdata(valueArray, glyphID * valueSize);
-        }
-
-        case 2: {
-            Data binSrchHeader = LookupF2_BinSrchHeader(lookupTable);
-            Data segmentArray = LookupF2_Segments(lookupTable);
-            Data lookupSegment;
-
-            lookupSegment = BinarySearchLookupSegment(binSrchHeader, segmentArray, glyphID);
-
-            if (lookupSegment) {
-                return LookupSegment_ValueData(lookupSegment);
-            }
-            break;
-        }
-
-        case 4: {
-            Data binSrchHeader = LookupF4_BinSrchHeader(lookupTable);
-            Data segmentArray = LookupF4_Segments(lookupTable);
-            Data lookupSegment;
-
-            lookupSegment = BinarySearchLookupSegment(binSrchHeader, segmentArray, glyphID);
-
-            if (lookupSegment) {
-                SFUInt16 firstGlyph = LookupSegment_FirstGlyph(lookupSegment);
-                Data offsetData = LookupSegment_ValueData(lookupSegment);
-                SFUInt16 arrayOffset = Data_UInt16(offsetData, 0);
-                Data arrayData = Data_Subdata(lookupTable, arrayOffset);
-                SFUInt16 valueIndex = glyphID - firstGlyph;
-
-                return Data_Subdata(arrayData, valueIndex * valueSize);
-            }
-            break;
-        }
-
-        case 6: {
-            Data binSrchHeader = LookupF6_BinSrchHeader(lookupTable);
-            Data entryArray = LookupF6_Entries(lookupTable);
-            Data lookupSingle;
-
-            lookupSingle = BinarySearchLookupSingle(binSrchHeader, entryArray, glyphID);
-
-            if (lookupSingle) {
-                return LookupSegment_ValueData(lookupSingle);
-            }
-            break;
-        }
-
-        case 8: {
-            SFUInt16 firstGlyph = LookupF8_FirstGlyph(lookupTable);
-            SFUInt16 glyphCount = LookupF8_GlyphCount(lookupTable);
-            Data valueArray = LookupF8_ValueArray(lookupTable);
-            SFUInt16 valueIndex = glyphID - firstGlyph;
-
-            if (valueIndex < glyphCount) {
-                return Data_Subdata(valueArray, valueIndex * valueSize);
-            }
-            break;
-        }
-
-        case 10: {
-            SFUInt16 unitSize = LookupF10_UnitSize(lookupTable);
-            SFUInt16 firstGlyph = LookupF10_FirstGlyph(lookupTable);
-            SFUInt16 glyphCount = LookupF10_GlyphCount(lookupTable);
-            Data valueArray = LookupF10_ValueArray(lookupTable);
-            SFUInt16 valueIndex = glyphID - firstGlyph;
-
-            if (valueIndex < glyphCount) {
-                return Data_Subdata(valueArray, valueIndex * unitSize);
-            }
-            break;
-        }
+    case 0: {
+        Data valueArray = LookupF0_ValueArray(lookupTable);
+        return Data_Subdata(valueArray, glyphID * valueSize);
     }
 
-    return NULL;
+    case 2: {
+        Data binSrchHeader = LookupF2_BinSrchHeader(lookupTable);
+        Data segmentArray = LookupF2_Segments(lookupTable);
+        Data lookupSegment;
+
+        lookupSegment = BinarySearchLookupSegment(binSrchHeader, segmentArray, glyphID);
+
+        if (lookupSegment) {
+            return LookupSegment_ValueData(lookupSegment);
+        }
+
+        return NULL;
+    }
+
+    case 4: {
+        Data binSrchHeader = LookupF4_BinSrchHeader(lookupTable);
+        Data segmentArray = LookupF4_Segments(lookupTable);
+        Data lookupSegment;
+
+        lookupSegment = BinarySearchLookupSegment(binSrchHeader, segmentArray, glyphID);
+
+        if (lookupSegment) {
+            SFUInt16 firstGlyph = LookupSegment_FirstGlyph(lookupSegment);
+            Data offsetData = LookupSegment_ValueData(lookupSegment);
+            SFUInt16 arrayOffset = Data_UInt16(offsetData, 0);
+            Data arrayData = Data_Subdata(lookupTable, arrayOffset);
+            SFUInt16 valueIndex = glyphID - firstGlyph;
+
+            return Data_Subdata(arrayData, valueIndex * valueSize);
+        }
+
+        return NULL;
+    }
+
+    case 6: {
+        Data binSrchHeader = LookupF6_BinSrchHeader(lookupTable);
+        Data entryArray = LookupF6_Entries(lookupTable);
+        Data lookupSingle;
+
+        lookupSingle = BinarySearchLookupSingle(binSrchHeader, entryArray, glyphID);
+
+        if (lookupSingle) {
+            return LookupSegment_ValueData(lookupSingle);
+        }
+
+        return NULL;
+    }
+
+    case 8: {
+        SFUInt16 firstGlyph = LookupF8_FirstGlyph(lookupTable);
+        SFUInt16 glyphCount = LookupF8_GlyphCount(lookupTable);
+        Data valueArray = LookupF8_ValueArray(lookupTable);
+        SFUInt16 valueIndex = glyphID - firstGlyph;
+
+        if (valueIndex < glyphCount) {
+            return Data_Subdata(valueArray, valueIndex * valueSize);
+        }
+
+        return NULL;
+    }
+
+    case 10: {
+        SFUInt16 unitSize = LookupF10_UnitSize(lookupTable);
+        SFUInt16 firstGlyph = LookupF10_FirstGlyph(lookupTable);
+        SFUInt16 glyphCount = LookupF10_GlyphCount(lookupTable);
+        Data valueArray = LookupF10_ValueArray(lookupTable);
+        SFUInt16 valueIndex = glyphID - firstGlyph;
+
+        if (valueIndex < glyphCount) {
+            return Data_Subdata(valueArray, valueIndex * unitSize);
+        }
+
+        return NULL;
+    }
+
+    default:
+        /* Invalid table format. */
+        return NULL;
+    }
 }

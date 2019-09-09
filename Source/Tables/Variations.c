@@ -102,17 +102,20 @@ SF_INTERNAL double GetDeltaFromVariationStore(Data varStoreTable,
     SFUInt16 format = ItemVarStore_Format(varStoreTable);
 
     switch (format) {
-        case 1: {
-            Data regionList = ItemVarStore_VarRegionListTable(varStoreTable);
-            SFUInt16 dataCount = ItemVarStore_ItemVarDataCount(varStoreTable);
+    case 1: {
+        Data regionList = ItemVarStore_VarRegionListTable(varStoreTable);
+        SFUInt16 dataCount = ItemVarStore_ItemVarDataCount(varStoreTable);
 
-            if (dataIndex < dataCount) {
-                Data varDataTable = ItemVarStore_ItemVarDataTable(varStoreTable, dataIndex);
-                return CalculateVariationAdjustment(varDataTable, regionList, rowIndex, coordArray, coordCount);
-            }
-            break;
+        if (dataIndex < dataCount) {
+            Data varDataTable = ItemVarStore_ItemVarDataTable(varStoreTable, dataIndex);
+            return CalculateVariationAdjustment(varDataTable, regionList, rowIndex, coordArray, coordCount);
         }
+
+        return 0;
     }
 
-    return 0;
+    default:
+        /* Invalid table format. */
+        return 0;
+    }
 }

@@ -95,15 +95,20 @@ SF_INTERNAL void LocatorSetMarkFilteringSet(LocatorRef locator, SFUInt16 markFil
 
     if (markGlyphSetsDef) {
         SFUInt16 format = MarkGlyphSets_Format(markGlyphSetsDef);
-        switch (format) {
-            case 1: {
-                SFUInt16 markSetCount = MarkGlyphSets_MarkSetCount(markGlyphSetsDef);
 
-                if (markFilteringSet < markSetCount) {
-                    locator->filter.markFilteringCoverage = MarkGlyphSets_CoverageTable(markGlyphSetsDef, markFilteringSet);
-                }
-                break;
+        switch (format) {
+        case 1: {
+            SFUInt16 markSetCount = MarkGlyphSets_MarkSetCount(markGlyphSetsDef);
+
+            if (markFilteringSet < markSetCount) {
+                locator->filter.markFilteringCoverage = MarkGlyphSets_CoverageTable(markGlyphSetsDef, markFilteringSet);
             }
+            break;
+        }
+
+        default:
+            /* Invalid table format. */
+            break;
         }
     }
 }

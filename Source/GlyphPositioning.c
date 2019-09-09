@@ -79,12 +79,12 @@ static void ApplyValueRecord(TextProcessorRef textProcessor, Data parentTable,
 
     if (ValueFormat_XAdvance(valueFormat)) {
         switch (textProcessor->_textDirection) {
-            case SFTextDirectionLeftToRight:
-            case SFTextDirectionRightToLeft: {
-                    SFInt16 adjustment = Data_Int16(valueRecord, valueOffset);
-                    SFAlbumAddAdvance(album, inputIndex, adjustment);
-                }
-                break;
+        case SFTextDirectionLeftToRight:
+        case SFTextDirectionRightToLeft: {
+                SFInt16 adjustment = Data_Int16(valueRecord, valueOffset);
+                SFAlbumAddAdvance(album, inputIndex, adjustment);
+            }
+            break;
         }
 
         valueOffset += 2;
@@ -124,20 +124,19 @@ static void ApplyValueRecord(TextProcessorRef textProcessor, Data parentTable,
     }
 
     if (ValueFormat_XAdvDevice(valueFormat)) {
+        SFOffset deviceOffset = Data_UInt16(valueRecord, valueOffset);
+
         switch (textProcessor->_textDirection) {
-            case SFTextDirectionLeftToRight:
-            case SFTextDirectionRightToLeft: {
-                SFOffset deviceOffset = Data_UInt16(valueRecord, valueOffset);
+        case SFTextDirectionLeftToRight:
+        case SFTextDirectionRightToLeft:
+            if (deviceOffset) {
+                Data deviceTable = Data_Subdata(parentTable, deviceOffset);
+                SFInt32 adjustment;
 
-                if (deviceOffset) {
-                    Data deviceTable = Data_Subdata(parentTable, deviceOffset);
-                    SFInt32 adjustment;
-
-                    adjustment = GetXDeltaPixels(textProcessor, deviceTable);
-                    SFAlbumAddAdvance(album, inputIndex, adjustment);
-                }
-                break;
+                adjustment = GetXDeltaPixels(textProcessor, deviceTable);
+                SFAlbumAddAdvance(album, inputIndex, adjustment);
             }
+            break;
         }
 
         valueOffset += 2;
@@ -157,51 +156,51 @@ static SFBoolean ApplySinglePos(TextProcessorRef textProcessor, Data singlePos)
     posFormat = SinglePos_Format(singlePos);
 
     switch (posFormat) {
-        case 1: {
-            Data coverage = SinglePosF1_CoverageTable(singlePos);
-            SFGlyphID locGlyph;
-            SFUInteger covIndex;
+    case 1: {
+        Data coverage = SinglePosF1_CoverageTable(singlePos);
+        SFGlyphID locGlyph;
+        SFUInteger covIndex;
 
-            locGlyph = SFAlbumGetGlyph(album, locator->index);
-            covIndex = SearchCoverageIndex(coverage, locGlyph);
+        locGlyph = SFAlbumGetGlyph(album, locator->index);
+        covIndex = SearchCoverageIndex(coverage, locGlyph);
 
-            if (covIndex != SFInvalidIndex) {
-                SFUInt16 valueFormat = SinglePosF1_ValueFormat(singlePos);
-                Data valueRecord = SinglePosF1_ValueRecord(singlePos);
+        if (covIndex != SFInvalidIndex) {
+            SFUInt16 valueFormat = SinglePosF1_ValueFormat(singlePos);
+            Data valueRecord = SinglePosF1_ValueRecord(singlePos);
 
-                ApplyValueRecord(textProcessor, singlePos, valueRecord, valueFormat, locator->index);
+            ApplyValueRecord(textProcessor, singlePos, valueRecord, valueFormat, locator->index);
 
-                return SFTrue;
-            }
-
-            return SFFalse;
+            return SFTrue;
         }
 
-        case 2: {
-            Data coverage = SinglePosF2_CoverageTable(singlePos);
-            SFUInt16 valueFormat = SinglePosF2_ValueFormat(singlePos);
-            SFUInt16 valueCount = SinglePosF2_ValueCount(singlePos);
-            SFGlyphID locGlyph;
-            SFUInteger covIndex;
+        return SFFalse;
+    }
 
-            locGlyph = SFAlbumGetGlyph(album, locator->index);
-            covIndex = SearchCoverageIndex(coverage, locGlyph);
+    case 2: {
+        Data coverage = SinglePosF2_CoverageTable(singlePos);
+        SFUInt16 valueFormat = SinglePosF2_ValueFormat(singlePos);
+        SFUInt16 valueCount = SinglePosF2_ValueCount(singlePos);
+        SFGlyphID locGlyph;
+        SFUInteger covIndex;
 
-            if (covIndex < valueCount) {
-                SFUInteger valueSize = ValueRecord_Size(valueFormat);
-                Data valueRecord = SinglePosF2_ValueRecord(singlePos, covIndex, valueSize);
+        locGlyph = SFAlbumGetGlyph(album, locator->index);
+        covIndex = SearchCoverageIndex(coverage, locGlyph);
 
-                ApplyValueRecord(textProcessor, singlePos, valueRecord, valueFormat, locator->index);
+        if (covIndex < valueCount) {
+            SFUInteger valueSize = ValueRecord_Size(valueFormat);
+            Data valueRecord = SinglePosF2_ValueRecord(singlePos, covIndex, valueSize);
 
-                return SFTrue;
-            }
+            ApplyValueRecord(textProcessor, singlePos, valueRecord, valueFormat, locator->index);
 
-            return SFFalse;
+            return SFTrue;
         }
 
-        default:
-            /* Invalid table format. */
-            return SFFalse;
+        return SFFalse;
+    }
+
+    default:
+        /* Invalid table format. */
+        return SFFalse;
     }
 }
 
@@ -231,13 +230,13 @@ static SFBoolean ApplyPairPos(TextProcessorRef textProcessor, Data pairPos)
         SFUInt16 format = PairPos_Format(pairPos);
 
         switch (format) {
-            case 1:
-                didPosition = ApplyPairPosF1(textProcessor, pairPos, firstIndex, secondIndex, &shouldSkip);
-                break;
+        case 1:
+            didPosition = ApplyPairPosF1(textProcessor, pairPos, firstIndex, secondIndex, &shouldSkip);
+            break;
 
-            case 2:
-                didPosition = ApplyPairPosF2(textProcessor, pairPos, firstIndex, secondIndex, &shouldSkip);
-                break;
+        case 2:
+            didPosition = ApplyPairPosF2(textProcessor, pairPos, firstIndex, secondIndex, &shouldSkip);
+            break;
         }
     }
 
@@ -367,42 +366,42 @@ static SFPoint ConvertAnchorToPoint(TextProcessorRef textProcessor, Data anchor)
     format = Anchor_Format(anchor);
 
     switch (format) {
-        case 1: {
-            point.x = AnchorF1_XCoordinate(anchor);
-            point.y = AnchorF1_YCoordinate(anchor);
-            break;
+    case 1: {
+        point.x = AnchorF1_XCoordinate(anchor);
+        point.y = AnchorF1_YCoordinate(anchor);
+        break;
+    }
+
+    case 2: {
+        point.x = AnchorF2_XCoordinate(anchor);
+        point.y = AnchorF2_YCoordinate(anchor);
+        /* TODO: Add support for contour point. */
+        break;
+    }
+
+    case 3: {
+        SFOffset xDeviceOffset = AnchorF3_XDeviceOffset(anchor);
+        SFOffset yDeviceOffset = AnchorF3_YDeviceOffset(anchor);
+
+        point.x = AnchorF3_XCoordinate(anchor);
+        point.y = AnchorF3_YCoordinate(anchor);
+
+        if (xDeviceOffset) {
+            Data deviceTable = Data_Subdata(anchor, xDeviceOffset);
+            point.x += GetXDeltaPixels(textProcessor, deviceTable);
         }
 
-        case 2: {
-            point.x = AnchorF2_XCoordinate(anchor);
-            point.y = AnchorF2_YCoordinate(anchor);
-            /* TODO: Add support for contour point. */
-            break;
+        if (yDeviceOffset) {
+            Data deviceTable = Data_Subdata(anchor, yDeviceOffset);
+            point.y += GetYDeltaPixels(textProcessor, deviceTable);
         }
+        break;
+    }
 
-        case 3: {
-            SFOffset xDeviceOffset = AnchorF3_XDeviceOffset(anchor);
-            SFOffset yDeviceOffset = AnchorF3_YDeviceOffset(anchor);
-
-            point.x = AnchorF3_XCoordinate(anchor);
-            point.y = AnchorF3_YCoordinate(anchor);
-
-            if (xDeviceOffset) {
-                Data deviceTable = Data_Subdata(anchor, xDeviceOffset);
-                point.x += GetXDeltaPixels(textProcessor, deviceTable);
-            }
-
-            if (yDeviceOffset) {
-                Data deviceTable = Data_Subdata(anchor, yDeviceOffset);
-                point.y += GetYDeltaPixels(textProcessor, deviceTable);
-            }
-            break;
-        }
-
-        default:
-            point.x = 0;
-            point.y = 0;
-            break;
+    default:
+        point.x = 0;
+        point.y = 0;
+        break;
     }
 
     return point;
@@ -441,34 +440,34 @@ static SFBoolean ApplyCursivePos(TextProcessorRef textProcessor, Data cursivePos
     posFormat = CursivePos_Format(cursivePos);
 
     switch (posFormat) {
-        case 1: {
-            SFUInteger firstIndex = locator->index;
-            SFGlyphID firstGlyph = SFAlbumGetGlyph(album, firstIndex);
-            Data exitAnchor = NULL;
+    case 1: {
+        SFUInteger firstIndex = locator->index;
+        SFGlyphID firstGlyph = SFAlbumGetGlyph(album, firstIndex);
+        Data exitAnchor = NULL;
 
-            SearchCursiveAnchors(cursivePos, firstGlyph, &exitAnchor, NULL);
+        SearchCursiveAnchors(cursivePos, firstGlyph, &exitAnchor, NULL);
 
-            /* Proceed only if exit anchor of first glyph exists. */
-            if (exitAnchor) {
-                SFUInteger secondIndex = LocatorGetAfter(locator, firstIndex, SFTrue);
+        /* Proceed only if exit anchor of first glyph exists. */
+        if (exitAnchor) {
+            SFUInteger secondIndex = LocatorGetAfter(locator, firstIndex, SFTrue);
 
-                if (secondIndex != SFInvalidIndex) {
-                    SFGlyphID secondGlyph = SFAlbumGetGlyph(album, secondIndex);
-                    Data entryAnchor = NULL;
+            if (secondIndex != SFInvalidIndex) {
+                SFGlyphID secondGlyph = SFAlbumGetGlyph(album, secondIndex);
+                Data entryAnchor = NULL;
 
-                    SearchCursiveAnchors(cursivePos, secondGlyph, NULL, &entryAnchor);
+                SearchCursiveAnchors(cursivePos, secondGlyph, NULL, &entryAnchor);
 
-                    /* Proceed only if entry anchor of second glyph exists. */
-                    if (entryAnchor) {
-                        return ApplyCursiveAnchors(textProcessor, exitAnchor, entryAnchor, firstIndex, secondIndex);
-                    }
+                /* Proceed only if entry anchor of second glyph exists. */
+                if (entryAnchor) {
+                    return ApplyCursiveAnchors(textProcessor, exitAnchor, entryAnchor, firstIndex, secondIndex);
                 }
             }
         }
+    }
 
-        default:
-            /* Invalid table format. */
-            return SFFalse;
+    default:
+        /* Invalid table format. */
+        return SFFalse;
     }
 }
 
@@ -486,69 +485,69 @@ static SFBoolean ApplyCursiveAnchors(TextProcessorRef textProcessor,
     traits = GlyphTraitCursive;
 
     switch (textProcessor->_textDirection) {
-        case SFTextDirectionLeftToRight:
-            /*
-             * PROCESS:
-             *      - Set advance of first glyph in such a way that it ends at exit x.
-             *      - Set x of second glyph in such a way that it starts at entry x while preserving
-             *        its advance.
-             *      - Set y of second glyph in such a way that entry y and exit y meet.
-             */
+    case SFTextDirectionLeftToRight:
+        /*
+         * PROCESS:
+         *      - Set advance of first glyph in such a way that it ends at exit x.
+         *      - Set x of second glyph in such a way that it starts at entry x while preserving its
+         *        advance.
+         *      - Set y of second glyph in such a way that entry y and exit y meet.
+         */
 
-            /* Set advance of first glyph. */
-            offset = SFAlbumGetX(album, firstIndex);
-            SFAlbumSetAdvance(album, firstIndex, offset + exitPoint.x);
+        /* Set advance of first glyph. */
+        offset = SFAlbumGetX(album, firstIndex);
+        SFAlbumSetAdvance(album, firstIndex, offset + exitPoint.x);
 
-            /* Preserve advance of second glyph. */
-            offset = SFAlbumGetX(album, secondIndex);
-            advance = SFAlbumGetAdvance(album, secondIndex);
-            SFAlbumSetAdvance(album, secondIndex, advance - offset + -entryPoint.x);
+        /* Preserve advance of second glyph. */
+        offset = SFAlbumGetX(album, secondIndex);
+        advance = SFAlbumGetAdvance(album, secondIndex);
+        SFAlbumSetAdvance(album, secondIndex, advance - offset + -entryPoint.x);
 
-            /* Set x of second glyph. */
-            SFAlbumSetX(album, secondIndex, -entryPoint.x);
+        /* Set x of second glyph. */
+        SFAlbumSetX(album, secondIndex, -entryPoint.x);
 
-            /* Set y of second glyph taking RTL flag into account. */
-            if (locator->filter.lookupFlag & LookupFlagRightToLeft) {
-                traits |= GlyphTraitRightToLeft;
-                SFAlbumSetY(album, secondIndex, entryPoint.y - exitPoint.y);
-            } else {
-                SFAlbumSetY(album, secondIndex, exitPoint.y - entryPoint.y);
-            }
-            break;
+        /* Set y of second glyph taking RTL flag into account. */
+        if (locator->filter.lookupFlag & LookupFlagRightToLeft) {
+            traits |= GlyphTraitRightToLeft;
+            SFAlbumSetY(album, secondIndex, entryPoint.y - exitPoint.y);
+        } else {
+            SFAlbumSetY(album, secondIndex, exitPoint.y - entryPoint.y);
+        }
+        break;
 
-        case SFTextDirectionRightToLeft:
-            /*
-             * REMARKS:
-             *      - In case of RTL, the direction of a glyph is reversed. So, it starts from
-             *        advance and ends at zero.
-             * PROCESS:
-             *      - Set advance of second glyph in such a way that it ends at entry x.
-             *      - Set x of first glyph in such a way that it starts at exit x while preserving
-             *        its advance.
-             *      - Set y of first glyph in such a way that entry y and exit y meet.
-             */
+    case SFTextDirectionRightToLeft:
+        /*
+         * REMARKS:
+         *      - In case of RTL, the direction of a glyph is reversed. So, it starts from advance
+         *        and ends at zero.
+         * PROCESS:
+         *      - Set advance of second glyph in such a way that it ends at entry x.
+         *      - Set x of first glyph in such a way that it starts at exit x while preserving its
+         *        advance.
+         *      - Set y of first glyph in such a way that entry y and exit y meet.
+         */
 
-            /* Set advance of second glyph. */
-            offset = SFAlbumGetX(album, secondIndex);
-            SFAlbumSetAdvance(album, secondIndex, offset + entryPoint.x);
+        /* Set advance of second glyph. */
+        offset = SFAlbumGetX(album, secondIndex);
+        SFAlbumSetAdvance(album, secondIndex, offset + entryPoint.x);
 
-            /* Preserve advance of first glyph. */
-            offset = SFAlbumGetX(album, firstIndex);
-            advance = SFAlbumGetAdvance(album, firstIndex);
-            SFAlbumSetAdvance(album, firstIndex, advance - offset + -exitPoint.x);
+        /* Preserve advance of first glyph. */
+        offset = SFAlbumGetX(album, firstIndex);
+        advance = SFAlbumGetAdvance(album, firstIndex);
+        SFAlbumSetAdvance(album, firstIndex, advance - offset + -exitPoint.x);
 
-            /* Set x of first glyph. */
-            SFAlbumSetX(album, firstIndex, -exitPoint.x);
+        /* Set x of first glyph. */
+        SFAlbumSetX(album, firstIndex, -exitPoint.x);
+        SFAlbumSetY(album, firstIndex, entryPoint.y - exitPoint.y);
+
+        /* Set y of first glyph taking RTL flag into account. */
+        if (locator->filter.lookupFlag & LookupFlagRightToLeft) {
+            traits |= GlyphTraitRightToLeft;
             SFAlbumSetY(album, firstIndex, entryPoint.y - exitPoint.y);
-
-            /* Set y of first glyph taking RTL flag into account. */
-            if (locator->filter.lookupFlag & LookupFlagRightToLeft) {
-                traits |= GlyphTraitRightToLeft;
-                SFAlbumSetY(album, firstIndex, entryPoint.y - exitPoint.y);
-            } else {
-                SFAlbumSetY(album, firstIndex, exitPoint.y - entryPoint.y);
-            }
-            break;
+        } else {
+            SFAlbumSetY(album, firstIndex, exitPoint.y - entryPoint.y);
+        }
+        break;
     }
 
     /* Update the details of first glyph. */
@@ -589,38 +588,38 @@ static SFBoolean ApplyMarkToBasePos(TextProcessorRef textProcessor, Data markBas
     posFormat = MarkBasePos_Format(markBasePos);
 
     switch (posFormat) {
-        case 1: {
-            Data markCoverage = MarkBasePos_MarkCoverageTable(markBasePos);
-            SFGlyphID locGlyph;
-            SFUInteger markIndex;
+    case 1: {
+        Data markCoverage = MarkBasePos_MarkCoverageTable(markBasePos);
+        SFGlyphID locGlyph;
+        SFUInteger markIndex;
 
-            locGlyph = SFAlbumGetGlyph(album, locator->index);
-            markIndex = SearchCoverageIndex(markCoverage, locGlyph);
+        locGlyph = SFAlbumGetGlyph(album, locator->index);
+        markIndex = SearchCoverageIndex(markCoverage, locGlyph);
 
-            if (markIndex != SFInvalidIndex) {
-                SFUInteger prevIndex = LocatorGetPrecedingBaseIndex(locator);
-                SFGlyphID prevGlyph;
+        if (markIndex != SFInvalidIndex) {
+            SFUInteger prevIndex = LocatorGetPrecedingBaseIndex(locator);
+            SFGlyphID prevGlyph;
 
-                /* Proceed only if there is a previous base glyph. */
-                if (prevIndex != SFInvalidIndex) {
-                    Data baseCoverage = MarkBasePos_BaseCoverageTable(markBasePos);
-                    SFUInteger baseIndex;
+            /* Proceed only if there is a previous base glyph. */
+            if (prevIndex != SFInvalidIndex) {
+                Data baseCoverage = MarkBasePos_BaseCoverageTable(markBasePos);
+                SFUInteger baseIndex;
 
-                    prevGlyph = SFAlbumGetGlyph(album, prevIndex);
-                    baseIndex = SearchCoverageIndex(baseCoverage, prevGlyph);
+                prevGlyph = SFAlbumGetGlyph(album, prevIndex);
+                baseIndex = SearchCoverageIndex(baseCoverage, prevGlyph);
 
-                    if (baseIndex != SFInvalidIndex) {
-                        return ApplyMarkToBaseArrays(textProcessor, markBasePos, markIndex, baseIndex, prevIndex);
-                    }
+                if (baseIndex != SFInvalidIndex) {
+                    return ApplyMarkToBaseArrays(textProcessor, markBasePos, markIndex, baseIndex, prevIndex);
                 }
             }
-
-            return SFFalse;
         }
 
-        default:
-            /* Invalid table format. */
-            return SFFalse;
+        return SFFalse;
+    }
+
+    default:
+        /* Invalid table format. */
+        return SFFalse;
     }
 }
 
@@ -684,41 +683,41 @@ static SFBoolean ApplyMarkToLigPos(TextProcessorRef textProcessor, Data markLigP
     posFormat = MarkLigPos_Format(markLigPos);
 
     switch (posFormat) {
-        case 1: {
-            Data markCoverage = MarkLigPos_MarkCoverageTable(markLigPos);
-            SFGlyphID locGlyph;
-            SFUInteger markIndex;
+    case 1: {
+        Data markCoverage = MarkLigPos_MarkCoverageTable(markLigPos);
+        SFGlyphID locGlyph;
+        SFUInteger markIndex;
 
-            locGlyph = SFAlbumGetGlyph(album, locator->index);
-            markIndex = SearchCoverageIndex(markCoverage, locGlyph);
+        locGlyph = SFAlbumGetGlyph(album, locator->index);
+        markIndex = SearchCoverageIndex(markCoverage, locGlyph);
 
-            if (markIndex != SFInvalidIndex) {
-                SFUInteger prevIndex;
-                SFUInteger ligComponent;
-                SFGlyphID prevGlyph;
+        if (markIndex != SFInvalidIndex) {
+            SFUInteger prevIndex;
+            SFUInteger ligComponent;
+            SFGlyphID prevGlyph;
 
-                prevIndex = LocatorGetPrecedingLigatureIndex(locator, &ligComponent);
+            prevIndex = LocatorGetPrecedingLigatureIndex(locator, &ligComponent);
 
-                /* Proceed only if there is a previous ligature glyph. */
-                if (prevIndex != SFInvalidIndex) {
-                    Data ligCoverage = MarkLigPos_LigatureCoverageTable(markLigPos);
-                    SFUInteger ligIndex;
+            /* Proceed only if there is a previous ligature glyph. */
+            if (prevIndex != SFInvalidIndex) {
+                Data ligCoverage = MarkLigPos_LigatureCoverageTable(markLigPos);
+                SFUInteger ligIndex;
 
-                    prevGlyph = SFAlbumGetGlyph(album, prevIndex);
-                    ligIndex = SearchCoverageIndex(ligCoverage, prevGlyph);
+                prevGlyph = SFAlbumGetGlyph(album, prevIndex);
+                ligIndex = SearchCoverageIndex(ligCoverage, prevGlyph);
 
-                    if (ligIndex != SFInvalidIndex) {
-                        return ApplyMarkToLigArrays(textProcessor, markLigPos, markIndex, ligIndex, ligComponent, prevIndex);
-                    }
+                if (ligIndex != SFInvalidIndex) {
+                    return ApplyMarkToLigArrays(textProcessor, markLigPos, markIndex, ligIndex, ligComponent, prevIndex);
                 }
             }
-
-            return SFFalse;
         }
 
-        default:
-            /* Invalid table format. */
-            return SFFalse;
+        return SFFalse;
+    }
+
+    default:
+        /* Invalid table format. */
+        return SFFalse;
     }
 }
 
@@ -792,36 +791,36 @@ static SFBoolean ApplyMarkToMarkPos(TextProcessorRef textProcessor, Data markMar
     posFormat = MarkMarkPos_Format(markMarkPos);
 
     switch (posFormat) {
-        case 1: {
-            Data mark1Coverage = MarkMarkPos_Mark1CoverageTable(markMarkPos);
-            SFUInteger mark1Index;
+    case 1: {
+        Data mark1Coverage = MarkMarkPos_Mark1CoverageTable(markMarkPos);
+        SFUInteger mark1Index;
 
-            mark1Index = SearchCoverageIndex(mark1Coverage, inputGlyph);
+        mark1Index = SearchCoverageIndex(mark1Coverage, inputGlyph);
 
-            if (mark1Index != SFInvalidIndex) {
-                SFUInteger prevIndex = LocatorGetPrecedingMarkIndex(locator);
-                SFGlyphID prevGlyph;
+        if (mark1Index != SFInvalidIndex) {
+            SFUInteger prevIndex = LocatorGetPrecedingMarkIndex(locator);
+            SFGlyphID prevGlyph;
 
-                /* Proceed only if there is a previous mark glyph. */
-                if (prevIndex != SFInvalidIndex) {
-                    Data mark2Coverage = MarkMarkPos_Mark2CoverageTable(markMarkPos);
-                    SFUInteger mark2Index;
+            /* Proceed only if there is a previous mark glyph. */
+            if (prevIndex != SFInvalidIndex) {
+                Data mark2Coverage = MarkMarkPos_Mark2CoverageTable(markMarkPos);
+                SFUInteger mark2Index;
 
-                    prevGlyph = SFAlbumGetGlyph(album, prevIndex);
-                    mark2Index = SearchCoverageIndex(mark2Coverage, prevGlyph);
+                prevGlyph = SFAlbumGetGlyph(album, prevIndex);
+                mark2Index = SearchCoverageIndex(mark2Coverage, prevGlyph);
 
-                    if (mark2Index != SFInvalidIndex) {
-                        return ApplyMarkToMarkArrays(textProcessor, markMarkPos, mark1Index, mark2Index, prevIndex);
-                    }
+                if (mark2Index != SFInvalidIndex) {
+                    return ApplyMarkToMarkArrays(textProcessor, markMarkPos, mark1Index, mark2Index, prevIndex);
                 }
             }
-
-            return SFFalse;
         }
 
-        default:
-            /* Invalid table format. */
-            return SFFalse;
+        return SFFalse;
+    }
+
+    default:
+        /* Invalid table format. */
+        return SFFalse;
     }
 }
 
@@ -877,36 +876,36 @@ static SFBoolean ApplyMarkToMarkArrays(TextProcessorRef textProcessor, Data mark
 SF_PRIVATE SFBoolean ApplyPositioningSubtable(TextProcessorRef textProcessor, LookupType lookupType, Data subtable)
 {
     switch (lookupType) {
-        case LookupTypeSingleAdjustment:
-            return ApplySinglePos(textProcessor, subtable);
+    case LookupTypeSingleAdjustment:
+        return ApplySinglePos(textProcessor, subtable);
 
-        case LookupTypePairAdjustment:
-            return ApplyPairPos(textProcessor, subtable);
+    case LookupTypePairAdjustment:
+        return ApplyPairPos(textProcessor, subtable);
 
-        case LookupTypeCursiveAttachment:
-            return ApplyCursivePos(textProcessor, subtable);
+    case LookupTypeCursiveAttachment:
+        return ApplyCursivePos(textProcessor, subtable);
 
-        case LookupTypeMarkToBaseAttachment:
-            return ApplyMarkToBasePos(textProcessor, subtable);
+    case LookupTypeMarkToBaseAttachment:
+        return ApplyMarkToBasePos(textProcessor, subtable);
 
-        case LookupTypeMarkToLigatureAttachment:
-            return ApplyMarkToLigPos(textProcessor, subtable);
+    case LookupTypeMarkToLigatureAttachment:
+        return ApplyMarkToLigPos(textProcessor, subtable);
 
-        case LookupTypeMarkToMarkAttachment:
-            return ApplyMarkToMarkPos(textProcessor, subtable);
+    case LookupTypeMarkToMarkAttachment:
+        return ApplyMarkToMarkPos(textProcessor, subtable);
 
-        case LookupTypeContextPositioning:
-            return ApplyContextSubtable(textProcessor, subtable);
+    case LookupTypeContextPositioning:
+        return ApplyContextSubtable(textProcessor, subtable);
 
-        case LookupTypeChainedContextPositioning:
-            return ApplyChainContextSubtable(textProcessor, subtable);
+    case LookupTypeChainedContextPositioning:
+        return ApplyChainContextSubtable(textProcessor, subtable);
 
-        case LookupTypeExtensionPositioning:
-            return ApplyExtensionSubtable(textProcessor, subtable);
+    case LookupTypeExtensionPositioning:
+        return ApplyExtensionSubtable(textProcessor, subtable);
 
-        default:
-            /* Invalid lookup type. */
-            return SFFalse;
+    default:
+        /* Invalid lookup type. */
+        return SFFalse;
     }
 }
 
@@ -936,14 +935,13 @@ static void ResolveLeftCursiveSegment(TextProcessorRef textProcessor, SFUInteger
         SFInt32 nextY;
 
         switch (textProcessor->_textDirection) {
-            case SFTextDirectionLeftToRight:
-            case SFTextDirectionRightToLeft: {
-                inputY = SFAlbumGetY(album, inputIndex);
-                nextY = SFAlbumGetY(album, nextIndex);
+        case SFTextDirectionLeftToRight:
+        case SFTextDirectionRightToLeft:
+            inputY = SFAlbumGetY(album, inputIndex);
+            nextY = SFAlbumGetY(album, nextIndex);
 
-                SFAlbumSetY(album, nextIndex, nextY + inputY);
-                break;
-            }
+            SFAlbumSetY(album, nextIndex, nextY + inputY);
+            break;
         }
 
         ResolveLeftCursiveSegment(textProcessor, nextIndex);
@@ -979,14 +977,13 @@ static void ResolveRightCursiveSegment(TextProcessorRef textProcessor, SFUIntege
         ResolveRightCursiveSegment(textProcessor, nextIndex);
 
         switch (textProcessor->_textDirection) {
-            case SFTextDirectionLeftToRight:
-            case SFTextDirectionRightToLeft: {
-                inputY = SFAlbumGetY(album, inputIndex);
-                nextY = SFAlbumGetY(album, nextIndex);
+        case SFTextDirectionLeftToRight:
+        case SFTextDirectionRightToLeft:
+            inputY = SFAlbumGetY(album, inputIndex);
+            nextY = SFAlbumGetY(album, nextIndex);
 
-                SFAlbumSetY(album, inputIndex, inputY + nextY);
-                break;
-            }
+            SFAlbumSetY(album, inputIndex, inputY + nextY);
+            break;
         }
 
         /* Mark this glyph as resolved. */
@@ -1034,17 +1031,17 @@ static void ResolveMarkPositions(TextProcessorRef textProcessor, LocatorRef loca
 
             /* Close the gap between the mark glyph and previous glyph. */
             switch (textProcessor->_textDirection) {
-                case SFTextDirectionLeftToRight:
-                    for (index = attachmentIndex; index < locIndex; index++) {
-                        markX -= SFAlbumGetAdvance(album, index);
-                    }
-                    break;
+            case SFTextDirectionLeftToRight:
+                for (index = attachmentIndex; index < locIndex; index++) {
+                    markX -= SFAlbumGetAdvance(album, index);
+                }
+                break;
 
-                case SFTextDirectionRightToLeft:
-                    for (index = attachmentIndex + 1; index <= locIndex; index++) {
-                        markX += SFAlbumGetAdvance(album, index);
-                    }
-                    break;
+            case SFTextDirectionRightToLeft:
+                for (index = attachmentIndex + 1; index <= locIndex; index++) {
+                    markX += SFAlbumGetAdvance(album, index);
+                }
+                break;
             }
 
             /* Update the position of mark glyph. */

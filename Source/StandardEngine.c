@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2018 Muhammad Tayyab Akram
+ * Copyright (C) 2015-2019 Muhammad Tayyab Akram
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -68,14 +68,14 @@ ShapingKnowledge StandardKnowledgeInstance = {
 static ScriptKnowledgeRef StandardKnowledgeSeekScript(const void *object, SFTag scriptTag)
 {
     switch (scriptTag) {
-        case TAG('a', 'r', 'm', 'n'):
-        case TAG('c', 'y', 'r', 'l'):
-        case TAG('g', 'e', 'o', 'r'):
-        case TAG('g', 'r', 'e', 'k'):
-        case TAG('l', 'a', 't', 'n'):
-        case TAG('o', 'g', 'a', 'm'):
-        case TAG('r', 'u', 'n', 'r'):
-            return &StandardScriptKnowledge;
+    case TAG('a', 'r', 'm', 'n'):
+    case TAG('c', 'y', 'r', 'l'):
+    case TAG('g', 'e', 'o', 'r'):
+    case TAG('g', 'r', 'e', 'k'):
+    case TAG('l', 'a', 't', 'n'):
+    case TAG('o', 'g', 'a', 'm'):
+    case TAG('r', 'u', 'n', 'r'):
+        return &StandardScriptKnowledge;
     }
 
     /* Use same features for unknown scripts as they are not script specific. */
