@@ -173,7 +173,8 @@ static SFBoolean ApplySinglePos(TextProcessorRef textProcessor, Data singlePos)
 
                 return SFTrue;
             }
-            break;
+
+            return SFFalse;
         }
 
         case 2: {
@@ -194,11 +195,14 @@ static SFBoolean ApplySinglePos(TextProcessorRef textProcessor, Data singlePos)
 
                 return SFTrue;
             }
-            break;
-        }
-    }
 
-    return SFFalse;
+            return SFFalse;
+        }
+
+        default:
+            /* Invalid table format. */
+            return SFFalse;
+    }
 }
 
 static int PairRecordGlyphComparison(const void *item1, const void *item2)
@@ -461,9 +465,11 @@ static SFBoolean ApplyCursivePos(TextProcessorRef textProcessor, Data cursivePos
                 }
             }
         }
-    }
 
-    return SFFalse;
+        default:
+            /* Invalid table format. */
+            return SFFalse;
+    }
 }
 
 static SFBoolean ApplyCursiveAnchors(TextProcessorRef textProcessor,
@@ -608,11 +614,14 @@ static SFBoolean ApplyMarkToBasePos(TextProcessorRef textProcessor, Data markBas
                     }
                 }
             }
-            break;
-        }
-    }
 
-    return SFFalse;
+            return SFFalse;
+        }
+
+        default:
+            /* Invalid table format. */
+            return SFFalse;
+    }
 }
 
 static SFBoolean ApplyMarkToBaseArrays(TextProcessorRef textProcessor, Data markBasePos,
@@ -703,11 +712,14 @@ static SFBoolean ApplyMarkToLigPos(TextProcessorRef textProcessor, Data markLigP
                     }
                 }
             }
-            break;
-        }
-    }
 
-    return SFFalse;
+            return SFFalse;
+        }
+
+        default:
+            /* Invalid table format. */
+            return SFFalse;
+    }
 }
 
 static SFBoolean ApplyMarkToLigArrays(TextProcessorRef textProcessor, Data markLigPos,
@@ -803,11 +815,14 @@ static SFBoolean ApplyMarkToMarkPos(TextProcessorRef textProcessor, Data markMar
                     }
                 }
             }
-            break;
-        }
-    }
 
-    return SFFalse;
+            return SFFalse;
+        }
+
+        default:
+            /* Invalid table format. */
+            return SFFalse;
+    }
 }
 
 static SFBoolean ApplyMarkToMarkArrays(TextProcessorRef textProcessor, Data markMarkPos,
@@ -888,9 +903,11 @@ SF_PRIVATE SFBoolean ApplyPositioningSubtable(TextProcessorRef textProcessor, Lo
 
         case LookupTypeExtensionPositioning:
             return ApplyExtensionSubtable(textProcessor, subtable);
-    }
 
-    return SFFalse;
+        default:
+            /* Invalid lookup type. */
+            return SFFalse;
+    }
 }
 
 static void ResolveLeftCursiveSegment(TextProcessorRef textProcessor, SFUInteger inputIndex)

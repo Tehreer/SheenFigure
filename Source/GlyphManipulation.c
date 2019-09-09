@@ -231,7 +231,8 @@ SF_PRIVATE SFBoolean ApplyContextSubtable(TextProcessorRef textProcessor, Data c
                 Data ruleSet = ContextF1_RuleSetTable(context, covIndex);
                 return ApplyRuleSetTable(textProcessor, ruleSet, AssessGlyphByEquality, NULL);
             }
-            break;
+
+            return SFFalse;
         }
 
         case 2: {
@@ -254,17 +255,19 @@ SF_PRIVATE SFBoolean ApplyContextSubtable(TextProcessorRef textProcessor, Data c
                     return ApplyRuleSetTable(textProcessor, ruleSet, AssessGlyphByClass, &classDef);
                 }
             }
-            break;
+
+            return SFFalse;
         }
 
         case 3: {
             Data rule = ContextF3_Rule(context);
-            return ApplyRuleTable(textProcessor, rule, SFTrue, AssessGlyphByCoverage,
-                                  (void *) context);
+            return ApplyRuleTable(textProcessor, rule, SFTrue, AssessGlyphByCoverage, (void *)context);
         }
-    }
 
-    return SFFalse;
+        default:
+            /* Invalid table format. */
+            return SFFalse;
+    }
 }
 
 static SFBoolean ApplyRuleSetTable(TextProcessorRef textProcessor,
@@ -331,7 +334,8 @@ SF_PRIVATE SFBoolean ApplyChainContextSubtable(TextProcessorRef textProcessor, D
                 Data chainRuleSet = ChainContextF1_ChainRuleSetTable(chainContext, covIndex);
                 return ApplyChainRuleSetTable(textProcessor, chainRuleSet, AssessGlyphByEquality, NULL);
             }
-            break;
+
+            return SFFalse;
         }
 
         case 2: {
@@ -359,21 +363,22 @@ SF_PRIVATE SFBoolean ApplyChainContextSubtable(TextProcessorRef textProcessor, D
                     helpers[1] = backtrackClassDef;
                     helpers[2] = lookaheadClassDef;
 
-                    return ApplyChainRuleSetTable(textProcessor, chainRuleSet, AssessGlyphByClass,
-                                                  helpers);
+                    return ApplyChainRuleSetTable(textProcessor, chainRuleSet, AssessGlyphByClass, helpers);
                 }
             }
-            break;
+
+            return SFFalse;
         }
 
         case 3: {
             Data chainRule = ChainContextF3_ChainRuleTable(chainContext);
-            return ApplyChainRuleTable(textProcessor, chainRule, SFTrue, AssessGlyphByCoverage,
-                                       (void *) chainContext);
+            return ApplyChainRuleTable(textProcessor, chainRule, SFTrue, AssessGlyphByCoverage, (void *)chainContext);
         }
-    }
 
-    return SFFalse;
+        default:
+            /* Invalid table format. */
+            return SFFalse;
+    }
 }
 
 static SFBoolean ApplyChainRuleSetTable(TextProcessorRef textProcessor,
@@ -480,9 +485,11 @@ SF_PRIVATE SFBoolean ApplyExtensionSubtable(TextProcessorRef textProcessor, Data
 
             return textProcessor->_lookupOperation(textProcessor, lookupType, innerSubtable);
         }
-    }
 
-    return SFFalse;
+        default:
+            /* Invalid table format. */
+            return SFFalse;
+    }
 }
 
 SF_PRIVATE SFBoolean ApplyReverseChainSubst(TextProcessorRef textProcessor, Data reverseChain)
@@ -527,9 +534,12 @@ SF_PRIVATE SFBoolean ApplyReverseChainSubst(TextProcessorRef textProcessor, Data
                     return SFTrue;
                 }
             }
-            break;
-        }
-    }
 
-    return SFFalse;
+            return SFFalse;
+        }
+
+        default:
+            /* Invalid table format. */
+            return SFFalse;
+    }
 }

@@ -60,7 +60,8 @@ static SFBoolean ApplySingleSubst(TextProcessorRef textProcessor, Data singleSub
 
                 return SFTrue;
             }
-            break;
+
+            return SFFalse;
         }
 
         case 2: {
@@ -84,11 +85,14 @@ static SFBoolean ApplySingleSubst(TextProcessorRef textProcessor, Data singleSub
 
                 return SFTrue;
             }
-            break;
-        }
-    }
 
-    return SFFalse;
+            return SFFalse;
+        }
+
+        default:
+            /* Invalid table format. */
+            return SFFalse;
+    }
 }
 
 static SFBoolean ApplyMultipleSubst(TextProcessorRef textProcessor, Data multipleSubst)
@@ -113,11 +117,14 @@ static SFBoolean ApplyMultipleSubst(TextProcessorRef textProcessor, Data multipl
                 Data sequence = MultipleSubstF1_SequenceTable(multipleSubst, covIndex);
                 return ApplySequenceTable(textProcessor, sequence);
             }
-            break;
-        }
-    }
 
-    return SFFalse;
+            return SFFalse;
+        }
+
+        default:
+            /* Invalid table format. */
+            return SFFalse;
+    }
 }
 
 static SFBoolean ApplySequenceTable(TextProcessorRef textProcessor, Data sequence)
@@ -195,11 +202,14 @@ static SFBoolean ApplyAlternateSubst(TextProcessorRef textProcessor, Data altern
                 Data alternateSet = AlternateSubstF1_AlternateSetTable(alternateSubst, covIndex);
                 return ApplyAlternateSetTable(textProcessor, alternateSet);
             }
-            break;
-        }
-    }
 
-    return SFFalse;
+            return SFFalse;
+        }
+
+        default:
+            /* Invalid table format. */
+            return SFFalse;
+    }
 }
 
 static SFBoolean ApplyAlternateSetTable(TextProcessorRef textProcessor, Data alternateSet)
@@ -248,11 +258,14 @@ static SFBoolean ApplyLigatureSubst(TextProcessorRef textProcessor, Data ligatur
                 Data ligatureSet = LigatureSubstF1_LigatureSetTable(ligatureSubst, covIndex);
                 return ApplyLigatureSetTable(textProcessor, ligatureSet);
             }
-            break;
-        }
-    }
 
-    return SFFalse;
+            return SFFalse;
+        }
+
+        default:
+            /* Invalid table format. */
+            return SFFalse;
+    }
 }
 
 static SFBoolean ApplyLigatureSetTable(TextProcessorRef textProcessor, Data ligatureSet)
@@ -362,7 +375,9 @@ SF_PRIVATE SFBoolean ApplySubstitutionSubtable(TextProcessorRef textProcessor, L
 
         case LookupTypeReverseChainingContext:
             return ApplyReverseChainSubst(textProcessor, subtable);
-    }
 
-    return SFFalse;
+        default:
+            /* Invalid lookup type. */
+            return SFFalse;
+    }
 }
