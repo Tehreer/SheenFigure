@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2018 Muhammad Tayyab Akram
+ * Copyright (C) 2015-2019 Muhammad Tayyab Akram
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +19,9 @@
 
 #include "SFBase.h"
 
-typedef SFUInt16        SFOffset;
+typedef SFUInt16        Offset16;
+typedef SFUInt32        Offset32;
+
 typedef const SFUInt8 * Data;
 
 #define Data_UInt8(data, offset)            (data)[offset]

@@ -34,7 +34,7 @@ SF_INTERNAL Data SearchScriptTable(Data scriptListTable, SFTag scriptTag)
     for (index = 0; index < scriptCount; index++) {
         Data scriptRecord = ScriptList_ScriptRecord(scriptListTable, index);
         SFTag scriptRecTag = ScriptRecord_ScriptTag(scriptRecord);
-        SFOffset scriptOffset;
+        Offset16 scriptOffset;
 
         if (scriptRecTag == scriptTag) {
             scriptOffset = ScriptRecord_ScriptOffset(scriptRecord);
@@ -51,7 +51,7 @@ SF_INTERNAL Data SearchLangSysTable(Data scriptTable, SFTag languageTag)
     Data langSysTable = NULL;
 
     if (languageTag == SFTagMake('d', 'f', 'l', 't')) {
-        SFOffset langSysOffset = Script_DefaultLangSysOffset(scriptTable);
+        Offset16 langSysOffset = Script_DefaultLangSysOffset(scriptTable);
 
         if (langSysOffset) {
             langSysTable = Data_Subdata(scriptTable, langSysOffset);
@@ -63,7 +63,7 @@ SF_INTERNAL Data SearchLangSysTable(Data scriptTable, SFTag languageTag)
         for (index = 0; index < langSysCount; index++) {
             Data langSysRecord = Script_LangSysRecord(scriptTable, index);
             SFTag langSysTag = LangSysRecord_LangSysTag(langSysRecord);
-            SFOffset langSysOffset;
+            Offset16 langSysOffset;
 
             if (langSysTag == languageTag) {
                 langSysOffset = LangSysRecord_LangSysOffset(langSysRecord);
@@ -88,7 +88,7 @@ SF_INTERNAL Data SearchDefaultFeatureTable(Data langSysTable,
         SFTag recordTag = FeatureRecord_FeatureTag(featureRecord);
 
         if (recordTag == featureTag) {
-            SFOffset featureOffset = FeatureRecord_FeatureOffset(featureRecord);
+            Offset16 featureOffset = FeatureRecord_FeatureOffset(featureRecord);
             Data featureTable = Data_Subdata(featureListTable, featureOffset);
 
             if (featureIndex) {
@@ -345,11 +345,11 @@ SF_INTERNAL Data SearchFeatureSubstitutionTable(Data featureVarsTable,
 
     for (recordIndex = 0; recordIndex < recordCount; recordIndex++) {
         Data varRecord = FeatureVars_FeatureVarRecord(featureVarsTable, recordIndex);
-        SFUInt32 condSetOffset = FeatureVarRecord_ConditionSetOffset(varRecord);
+        Offset32 condSetOffset = FeatureVarRecord_ConditionSetOffset(varRecord);
         Data condSetTable = Data_Subdata(featureVarsTable, condSetOffset);
 
         if (MatchConditionSet(condSetTable, coordArray, coordCount)) {
-            SFUInt32 featureSubstOffset = FeatureVarRecord_FeatureSubstOffset(varRecord);
+            Offset32 featureSubstOffset = FeatureVarRecord_FeatureSubstOffset(varRecord);
             return Data_Subdata(featureVarsTable, featureSubstOffset);
         }
     }
@@ -367,7 +367,7 @@ SF_INTERNAL Data SearchAlternateFeatureTable(Data featureSubstTable, SFUInt16 fe
         SFUInt16 recFeatureIndex = FeatureSubstRecord_FeatureIndex(substRec);
 
         if (recFeatureIndex == featureIndex) {
-            SFUInt32 altFeatureOffset = FeatureSubstRecord_AltFeatureOffset(substRec);
+            Offset32 altFeatureOffset = FeatureSubstRecord_AltFeatureOffset(substRec);
             return Data_Subdata(featureSubstTable, altFeatureOffset);
         }
 

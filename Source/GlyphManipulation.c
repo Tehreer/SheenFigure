@@ -278,7 +278,7 @@ static SFBoolean ApplyRuleSetTable(TextProcessorRef textProcessor,
 
     /* Match each rule sequentially as they are ordered by preference. */
     for (ruleIndex = 0; ruleIndex < ruleCount; ruleIndex++) {
-        SFOffset ruleOffset = RuleSet_RuleOffset(ruleSet, ruleIndex);
+        Offset16 ruleOffset = RuleSet_RuleOffset(ruleSet, ruleIndex);
 
         if (ruleOffset) {
             Data rule = Data_Subdata(ruleSet, ruleOffset);

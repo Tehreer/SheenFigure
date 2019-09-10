@@ -63,7 +63,7 @@ static void ApplyValueRecord(TextProcessorRef textProcessor, Data parentTable,
     Data valueRecord, SFUInt16 valueFormat, SFUInteger inputIndex)
 {
     SFAlbumRef album = textProcessor->_album;
-    SFOffset valueOffset = 0;
+    Offset16 valueOffset = 0;
 
     if (ValueFormat_XPlacement(valueFormat)) {
         SFInt16 adjustment = Data_Int16(valueRecord, valueOffset);
@@ -96,7 +96,7 @@ static void ApplyValueRecord(TextProcessorRef textProcessor, Data parentTable,
     }
 
     if (ValueFormat_XPlaDevice(valueFormat)) {
-        SFOffset deviceOffset = Data_UInt16(valueRecord, valueOffset);
+        Offset16 deviceOffset = Data_UInt16(valueRecord, valueOffset);
 
         if (deviceOffset) {
             Data deviceTable = Data_Subdata(parentTable, deviceOffset);
@@ -110,7 +110,7 @@ static void ApplyValueRecord(TextProcessorRef textProcessor, Data parentTable,
     }
 
     if (ValueFormat_YPlaDevice(valueFormat)) {
-        SFOffset deviceOffset = Data_UInt16(valueRecord, valueOffset);
+        Offset16 deviceOffset = Data_UInt16(valueRecord, valueOffset);
 
         if (deviceOffset) {
             Data deviceTable = Data_Subdata(parentTable, deviceOffset);
@@ -124,7 +124,7 @@ static void ApplyValueRecord(TextProcessorRef textProcessor, Data parentTable,
     }
 
     if (ValueFormat_XAdvDevice(valueFormat)) {
-        SFOffset deviceOffset = Data_UInt16(valueRecord, valueOffset);
+        Offset16 deviceOffset = Data_UInt16(valueRecord, valueOffset);
 
         switch (textProcessor->_textDirection) {
         case SFTextDirectionLeftToRight:
@@ -380,8 +380,8 @@ static SFPoint ConvertAnchorToPoint(TextProcessorRef textProcessor, Data anchor)
     }
 
     case 3: {
-        SFOffset xDeviceOffset = AnchorF3_XDeviceOffset(anchor);
-        SFOffset yDeviceOffset = AnchorF3_YDeviceOffset(anchor);
+        Offset16 xDeviceOffset = AnchorF3_XDeviceOffset(anchor);
+        Offset16 yDeviceOffset = AnchorF3_YDeviceOffset(anchor);
 
         point.x = AnchorF3_XCoordinate(anchor);
         point.y = AnchorF3_YCoordinate(anchor);
@@ -418,8 +418,8 @@ static void SearchCursiveAnchors(Data cursivePos, SFGlyphID glyph,
 
     if (entryExitIndex < entryExitCount) {
         Data entryExitRecord = CursivePos_EntryExitRecord(cursivePos, entryExitIndex);
-        SFOffset exitAnchorOffset = EntryExitRecord_ExitAnchorOffset(entryExitRecord);
-        SFOffset entryAnchorOffset = EntryExitRecord_EntryAnchorOffset(entryExitRecord);
+        Offset16 exitAnchorOffset = EntryExitRecord_ExitAnchorOffset(entryExitRecord);
+        Offset16 entryAnchorOffset = EntryExitRecord_EntryAnchorOffset(entryExitRecord);
 
         if (refExitAnchor && exitAnchorOffset) {
             *refExitAnchor = Data_Subdata(cursivePos, exitAnchorOffset);
@@ -568,7 +568,7 @@ static Data GetMarkArrayFromAnchorTable(Data markArray, SFUInteger markIndex, SF
     if (markIndex < markCount) {
         Data markRecord = MarkArray_MarkRecord(markArray, markIndex);
         SFUInt16 classValue = MarkRecord_Class(markRecord);
-        SFOffset anchorOffset = MarkRecord_MarkAnchorOffset(markRecord);
+        Offset16 anchorOffset = MarkRecord_MarkAnchorOffset(markRecord);
         Data markAnchor = Data_Subdata(markArray, anchorOffset);
 
         *outClass = classValue;
@@ -651,7 +651,7 @@ static SFBoolean ApplyMarkToBaseArrays(TextProcessorRef textProcessor, Data mark
         /* Validate base index. */
         if (baseIndex < baseCount) {
             Data baseRecord = BaseArray_BaseRecord(baseArray, baseIndex, classCount);
-            SFOffset anchorOffset = BaseArray_BaseAnchorOffset(baseRecord, classValue);
+            Offset16 anchorOffset = BaseArray_BaseAnchorOffset(baseRecord, classValue);
             Data baseAnchor = Data_Subdata(baseArray, anchorOffset);
             SFPoint markPoint;
             SFPoint basePoint;
@@ -749,7 +749,7 @@ static SFBoolean ApplyMarkToLigArrays(TextProcessorRef textProcessor, Data markL
             Data ligAttach = LigatureArray_LigatureAttachTable(ligArray, ligIndex);
             SFUInteger compCount = LigatureAttach_ComponentCount(ligAttach);
             Data compRecord;
-            SFOffset anchorOffset;
+            Offset16 anchorOffset;
             Data ligAnchor;
             SFPoint markPoint;
             SFPoint ligPoint;
@@ -850,7 +850,7 @@ static SFBoolean ApplyMarkToMarkArrays(TextProcessorRef textProcessor, Data mark
         /* Validate mark 2 index. */
         if (mark2Index < mark2Count) {
             Data mark2Record = Mark2Array_Mark2Record(mark2Array, mark2Index, classCount);
-            SFOffset anchorOffset = Mark2Record_Mark2AnchorOffset(mark2Record, classValue);
+            Offset16 anchorOffset = Mark2Record_Mark2AnchorOffset(mark2Record, classValue);
             Data mark2Anchor = Data_Subdata(mark2Array, anchorOffset);
             SFPoint mark1Point;
             SFPoint mark2Point;
