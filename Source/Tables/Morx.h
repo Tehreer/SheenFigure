@@ -24,6 +24,7 @@
 #define Morx_Version(data)                          Data_UInt16(data, 0)
 #define Morx_Unused(data)                           Data_UInt16(data, 2)
 #define Morx_NChains(data)                          Data_UInt32(data, 4)
+#define Morx_FirstChain(data)                       Data_Subdata(data, 8)
 
 /**************************************************************************************************/
 
@@ -33,6 +34,10 @@
 #define MorxChain_ChainLength(data)                 Data_UInt32(data, 4)
 #define MorxChain_NFeatureEntries(data)             Data_UInt32(data, 8)
 #define MorxChain_NSubtables(data)                  Data_UInt32(data, 12)
+#define MorxChain_Feature(data, index)              Data_Subdata(data, 16 + ((index) * 12))
+#define MorxChain_FirstSubtable(data, featureCount) Data_Subdata(data, 16 + ((featureCount) * 12))
+#define MorxChain_NextChain(data) \
+    Data_Subdata(data, MorxChain_ChainLength(data))
 
 /**************************************************************************************************/
 
@@ -50,6 +55,9 @@
 #define MorxSubtable_Length(data)                   Data_UInt32(data, 0)
 #define MorxSubtable_Coverage(data)                 Data_UInt32(data, 4)
 #define MorxSubtable_SubFeatureFlags(data)          Data_UInt32(data, 8)
+#define MorxSubtable_TypedSubtable(data)            Data_Subdata(data, 12)
+#define MorxSubtable_NextSubtable(data) \
+    Data_Subdata(data, MorxSubtable_Length(data))
 
 /**************************************************************************************************/
 
