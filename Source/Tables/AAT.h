@@ -22,6 +22,14 @@
 #include "Data.h"
 #include "SFBase.h"
 
+enum {
+    ClassCodeEndOfText = 0,
+    ClassCodeOutOfBounds = 1,
+    ClassCodeDeletedGlyph = 2,
+    ClassCodeEndOfLine = 3
+};
+typedef SFUInt8 ClassCode;
+
 /**************************************BINARY SEARCH HEADER***************************************/
 
 #define BinSrchHeader_UnitSize(data)                    Data_UInt16(data, 0)
@@ -70,6 +78,53 @@
 
 #define LookupSingle_Glyph(data)                        Data_UInt16(data, 0)
 #define LookupSingle_ValueData(data)                    Data_Subdata(data, 2)
+
+/**************************************************************************************************/
+
+/*******************************************STATE TABLE********************************************/
+
+#define State_StateSize(data)                           Data_UInt16(data, 0)
+#define State_ClassOffset(data)                         Data_UInt16(data, 2)
+#define State_StatesOffset(data)                        Data_UInt16(data, 4)
+#define State_EntryOffset(data)                         Data_UInt16(data, 6)
+#define State_ClassTable(data) \
+    Data_Subdata(data, State_ClassOffset(data))
+#define State_StateArray(data) \
+    Data_Subdata(data, State_StatesOffset(data))
+#define State_EntryTable(data) \
+    Data_Subdata(data, State_EntryOffset(data))
+
+/**************************************************************************************************/
+
+/******************************************CLASS SUBTABLE******************************************/
+
+#define Class_FirstGlyph(data)                          Data_UInt16(data, 0)
+#define Class_NGlyphs(data)                             Data_UInt16(data, 2)
+#define Class_Code(data, index)                         Data_UInt8(data, 4 + (index))
+
+/**************************************************************************************************/
+
+/******************************************ENTRY SUBTABLE******************************************/
+
+#define Entry_NewStateOffset(data)                      Data_UInt16(data, 0)
+#define Entry_Flags(data)                               Data_UInt16(data, 2)
+#define Entry_NewStateTable(data) \
+    Data_Subdata(data, StateHeader_ClassOffset(data))
+
+/**************************************************************************************************/
+
+/***************************************EXTENDED STATE TABLE***************************************/
+
+#define XState_NClasses(data)                           Data_UInt32(data, 0)
+#define XState_ClassOffset(data)                        Data_UInt32(data, 4)
+#define XState_StatesOffset(data)                       Data_UInt32(data, 8)
+#define XState_EntryOffset(data)                        Data_UInt32(data, 12)
+#define XState_ClassTable(data) \
+    Data_Subdata(data, XState_ClassOffset(data))
+#define XState_StateArray(data) \
+    Data_Subdata(data, XState_StatesOffset(data))
+#define XState_EntryTable(data) \
+    Data_Subdata(data, XState_EntryOffset(data))
 
 /**************************************************************************************************/
 
