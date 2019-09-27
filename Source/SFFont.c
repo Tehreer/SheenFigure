@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2018 Muhammad Tayyab Akram
+ * Copyright (C) 2015-2019 Muhammad Tayyab Akram
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -46,6 +46,7 @@ static FontResourceRef CreateFontResource(const SFFontProtocol *protocol, void *
     fontResource->gdef = CopySFNTTable(protocol, object, TAG('G', 'D', 'E', 'F'));
     fontResource->gsub = CopySFNTTable(protocol, object, TAG('G', 'S', 'U', 'B'));
     fontResource->gpos = CopySFNTTable(protocol, object, TAG('G', 'P', 'O', 'S'));
+    fontResource->morx = CopySFNTTable(protocol, object, TAG('m', 'o', 'r', 'x'));
 
     return fontResource;
 }
