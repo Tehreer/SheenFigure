@@ -89,12 +89,19 @@ const SFUInteger *SFAlbumGetCodeunitToGlyphMapPtr(SFAlbumRef album)
     return album->_indexMap.items;
 }
 
-SFFloat SFAlbumGetCaretEdges(SFAlbumRef album, SFBoolean *caretStops, SFFloat advanceScale, SFFloat *caretEdges)
+SFInt32 SFAlbumGetCaretAdvances(SFAlbumRef album, SFBoolean *caretStops, SFInt32 *caretAdvances)
+{
+    return LoadCaretAdvances(album->_indexMap.items, album->codeunitCount,
+                             album->isBackward, album->_advances.items, album->glyphCount,
+                             caretStops, caretAdvances);
+}
+
+SFInt32 SFAlbumGetCaretEdges(SFAlbumRef album, SFBoolean *caretStops, SFInt32 *caretEdges)
 {
     return LoadCaretEdges(album->_indexMap.items, album->codeunitCount,
                           album->isBackward, IsRTLAlbum(album),
                           album->_advances.items, album->glyphCount,
-                          advanceScale, caretStops, caretEdges);
+                          caretStops, caretEdges);
 }
 
 SFAlbumRef SFAlbumRetain(SFAlbumRef album)
@@ -492,27 +499,26 @@ static SFBoolean IsRTLAlbum(SFAlbumRef album)
     return album->renderingDirection == SFTextDirectionRightToLeft;
 }
 
-SF_INTERNAL SFFloat LoadCaretEdges(SFUInteger *clusterMap, SFUInteger codeunitCount,
-    SFBoolean isBackward, SFBoolean isRTL, SFInt32 *glyphAdvances, SFUInteger glyphCount,
-    SFFloat advanceScale, SFBoolean *caretStops, SFFloat *caretEdges)
+SF_INTERNAL SFInt32 LoadCaretAdvances(SFUInteger *clusterMap, SFUInteger codeUnitCount,
+    SFBoolean isBackward, SFInt32 *glyphAdvances, SFUInteger glyphCount,
+    SFBoolean *caretStops, SFInt32 *caretAdvances)
 {
     SFUInteger glyphIndex = clusterMap[0] + 1;
     SFUInteger refIndex = glyphIndex;
     SFUInteger totalStops = 0;
     SFUInteger clusterStart = 0;
-    SFUInteger codeunitIndex;
-    SFFloat distance;
+    SFUInteger codeUnitIndex;
+    SFInt32 totalDistance;
 
-    distance = 0.0f;
-    caretEdges[0] = 0.0f;
+    totalDistance = 0;
 
-    for (codeunitIndex = 1; codeunitIndex <= codeunitCount; codeunitIndex++) {
+    for (codeUnitIndex = 1; codeUnitIndex <= codeUnitCount; codeUnitIndex++) {
         SFUInteger oldIndex = glyphIndex;
 
-        if (codeunitIndex != codeunitCount) {
-            glyphIndex = clusterMap[codeunitIndex] + 1;
+        if (codeUnitIndex != codeUnitCount) {
+            glyphIndex = clusterMap[codeUnitIndex] + 1;
 
-            if (caretStops && !caretStops[codeunitIndex - 1]) {
+            if (caretStops && !caretStops[codeUnitIndex - 1]) {
                 continue;
             }
 
@@ -523,40 +529,78 @@ SF_INTERNAL SFFloat LoadCaretEdges(SFUInteger *clusterMap, SFUInteger codeunitCo
         }
 
         if (glyphIndex != oldIndex) {
-            SFFloat clusterAdvance = 0.0f;
-            SFFloat charAdvance;
+            SFInt32 clusterAdvance = 0;
+            SFInt32 distance = 0;
+            SFInt32 counter = 1;
 
             /* Find the advance of current cluster. */
             if (isBackward) {
                 for (; refIndex > glyphIndex; refIndex--) {
-                    clusterAdvance += glyphAdvances[refIndex - 1] * advanceScale;
+                    clusterAdvance += glyphAdvances[refIndex - 1];
                 }
             } else {
                 for (; refIndex < glyphIndex; refIndex++) {
-                    clusterAdvance += glyphAdvances[refIndex - 1] * advanceScale;
+                    clusterAdvance += glyphAdvances[refIndex - 1];
                 }
             }
 
             /* Divide the advance evenly between cluster length. */
-            charAdvance = clusterAdvance / totalStops;
+            while (clusterStart < codeUnitIndex) {
+                SFInt32 advance = 0;
 
-            for (; clusterStart < codeunitIndex; clusterStart++) {
-                if (!caretStops || (caretStops && caretStops[clusterStart]) || clusterStart == codeunitCount - 1) {
-                    distance += (isRTL ? -charAdvance : charAdvance);
+                if (!caretStops || (caretStops && caretStops[clusterStart]) || clusterStart == codeUnitCount - 1) {
+                    SFInt32 steps = (SFInt32)totalStops;
+                    SFInt32 rounding = steps / 2;
+                    SFInt32 previous = distance;
+
+                    distance = ((clusterAdvance * counter) + rounding) / steps;
+                    advance = distance - previous;
+                    counter += 1;
                 }
-                caretEdges[clusterStart + 1] = distance;
+
+                caretAdvances[clusterStart] = advance;
+                clusterStart += 1;
             }
 
             totalStops = 0;
         }
     }
 
-    if (isRTL) {
-        distance *= -1.0;
+    return totalDistance;
+}
 
-        /* Normalize the edges. */
-        for (codeunitIndex = 0; codeunitIndex <= codeunitCount; codeunitIndex++) {
-            caretEdges[codeunitIndex] += distance;
+SF_INTERNAL SFInt32 LoadCaretEdges(SFUInteger *clusterMap, SFUInteger codeunitCount,
+    SFBoolean isBackward, SFBoolean isRTL, SFInt32 *glyphAdvances, SFUInteger glyphCount,
+    SFBoolean *caretStops, SFInt32 *caretEdges)
+{
+    SFInt32 distance = 0;
+
+    LoadCaretAdvances(clusterMap, codeunitCount, isBackward,
+                      glyphAdvances, glyphCount, caretStops, caretEdges);
+
+    if (isRTL) {
+        SFUInteger index = codeunitCount;
+
+        /* Last edge should be zero. */
+        caretEdges[index] = 0;
+
+        /* Iterate in reverse direction. */
+        while (index--) {
+            distance += caretEdges[index];
+            caretEdges[index] = distance;
+        }
+    } else {
+        SFInt32 advance = caretEdges[0];
+        SFUInteger index;
+
+        /* First edge should be zero. */
+        caretEdges[0] = 0;
+
+        /* Iterate in forward direction. */
+        for (index = 1; index <= codeunitCount; index++) {
+            distance += advance;
+            advance = caretEdges[index];
+            caretEdges[index] = distance;
         }
     }
 

@@ -180,8 +180,12 @@ SF_INTERNAL void SFAlbumWrapUp(SFAlbumRef album);
  */
 SF_INTERNAL void SFAlbumFinalize(SFAlbumRef album);
 
-SF_INTERNAL SFFloat LoadCaretEdges(SFUInteger *clusterMap, SFUInteger codeunitCount,
+SF_INTERNAL SFInt32 LoadCaretAdvances(SFUInteger *clusterMap, SFUInteger codeUnitCount,
+    SFBoolean isBackward, SFInt32 *glyphAdvances, SFUInteger glyphCount,
+    SFBoolean *caretStops, SFInt32 *caretAdvances);
+
+SF_INTERNAL SFInt32 LoadCaretEdges(SFUInteger *clusterMap, SFUInteger codeunitCount,
     SFBoolean isBackward, SFBoolean isRTL, SFInt32 *glyphAdvances, SFUInteger glyphCount,
-    SFFloat advanceScale, SFBoolean *caretStops, SFFloat *caretEdges);
+    SFBoolean *caretStops, SFInt32 *caretEdges);
 
 #endif
