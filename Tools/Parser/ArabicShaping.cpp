@@ -33,10 +33,10 @@ static inline string getField(const string &data, size_t offset) {
 }
 
 ArabicShaping::ArabicShaping(const string &directory) :
-    m_data(""),
-    m_offsets(0x200000),
     m_firstCodePoint(0),
-    m_lastCodePoint(0)
+    m_lastCodePoint(0),
+    m_data(""),
+    m_offsets(0x200000)
 {
     ifstream stream(directory + "/" + FILE_ARABIC_SHAPING, ios::binary);
     char buffer[4096];
