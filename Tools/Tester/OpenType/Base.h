@@ -42,6 +42,7 @@ inline F2DOT14 toF2DOT14(float value) {
 }
 
 struct Table {
+    virtual ~Table() {}
     virtual void write(Writer &writer) = 0;
 };
 
