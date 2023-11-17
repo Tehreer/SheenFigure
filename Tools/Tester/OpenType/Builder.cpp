@@ -44,7 +44,10 @@ Builder::~Builder()
 template<class T, class... Args>
 T &Builder::createObject(Args&&... args)
 {
-    shared_ptr<T> object = make_shared<T>(forward<Args>(args)...);
+    // Apple C++ clang 15.0 emits compiler warnings if std::forward
+    // is not explicitly qualified with the namespace, despite
+    // "using namespace std" earlier in this file.
+    shared_ptr<T> object = make_shared<T>(std::forward<Args>(args)...);
     m_pool.push_back(object);
 
     return *object;
